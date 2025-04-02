@@ -8,7 +8,7 @@ from asapdiscovery.ml.config import (
     EarlyStoppingType,
     OptimizerType,
 )
-from mtenn.config import CombinationConfig, ReadoutConfig, StrategyConfig
+from mtenn.config import CombinationConfig, ModelType, ReadoutConfig, StrategyConfig
 
 
 ################################################################################
@@ -355,7 +355,7 @@ def extra_config(func):
 # MTENN args
 def mtenn_args(func):
     for fn in [
-        grouped,
+        model_type,
         strategy,
         strategy_layer_norm,
         pred_readout,
@@ -373,11 +373,14 @@ def mtenn_args(func):
     return func
 
 
-def grouped(func):
+def model_type(func):
     return click.option(
-        "--grouped",
-        type=bool,
-        help="Model is a grouped (multi-pose) model.",
+        "--model-type",
+        type=ModelType,
+        help=(
+            "What type of model to use. "
+            f"Options are [{', '.join(ModelType.get_values())}]."
+        ),
     )(func)
 
 
