@@ -22,12 +22,12 @@ from asapdiscovery.ml.config import (
 from asapdiscovery.ml.dataset import dataset_to_csv
 from asapdiscovery.ml.schema import TrainingPredictionTracker
 from mtenn.config import (
-    E3NNModelConfig,
-    GATModelConfig,
+    GroupedModelConfig,
+    LigandOnlyModelConfig,
+    ModelConfig,
     ModelConfigBase,
     ModelType,
-    SchNetModelConfig,
-    ViSNetModelConfig,
+    SplitModelConfig,
 )
 from pydantic.v1 import (
     BaseModel,
@@ -257,14 +257,14 @@ class Trainer(BaseModel):
         #  class
         if config_cls is ModelConfigBase:
             match config_kwargs["model_type"]:
-                case ModelType.GAT:
-                    config_cls = GATModelConfig
-                case ModelType.schnet:
-                    config_cls = SchNetModelConfig
-                case ModelType.e3nn:
-                    config_cls = E3NNModelConfig
-                case ModelType.visnet:
-                    config_cls = ViSNetModelConfig
+                case ModelType.model:
+                    config_cls = ModelConfig
+                case ModelType.grouped:
+                    config_cls = GroupedModelConfig
+                case ModelType.ligand:
+                    config_cls = LigandOnlyModelConfig
+                case ModelType.split:
+                    config_cls = SplitModelConfig
                 case other:
                     raise ValueError(
                         f"Can't instantiate model config for type {other}."
