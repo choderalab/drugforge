@@ -370,6 +370,8 @@ class Trainer(BaseModel):
         xtal_regex = config_kwargs.pop("xtal_regex", None)
         cpd_regex = config_kwargs.pop("cpd_regex", None)
 
+        if ds_config_cache and (not ds_config_cache.exists()):
+            print(f"ds_config_cache {ds_config_cache} not found", flush=True)
         if ds_config_cache and ds_config_cache.exists() and (not overwrite):
             print("loading from cache", flush=True)
             return DatasetConfig(**json.loads(ds_config_cache.read_text()))
