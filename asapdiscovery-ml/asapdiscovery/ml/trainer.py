@@ -4,6 +4,7 @@ from copy import deepcopy
 from glob import glob
 from pathlib import Path
 from time import time
+from typing import Any
 
 import numpy as np
 import torch
@@ -35,7 +36,13 @@ from pydantic.v1 import (
     confloat,
     conlist,
 )
-from pydantic import field_validator, model_validator, BaseModel, Field
+from pydantic import (
+    field_serializer,
+    field_validator,
+    model_validator,
+    BaseModel,
+    Field,
+)
 
 
 class Trainer(BaseModel):
@@ -185,34 +192,34 @@ class Trainer(BaseModel):
     # Tracker to make sure the optimizer and ML model are built before trying to train
     _is_initialized = False
 
-    # model_config
-    class Config:
-        # Temporary fix for now. This is necessary for the asapdiscovery Dataset
-        #  classes, but we should probably figure out a workaround eventurally. Probably
-        #  best to implement __get_validators__ for the Dataset classes.
-        arbitrary_types_allowed = True
+    # Fields for the actual built python objects, only defined so we can exclude them
+    #  from serialization
+    model: None = Field(None, description="Actual model object.", exclude=True)
+    optimizer: None = Field(None, description="Actual optimizer object.", exclude=True)
+    es: None = Field(None, description="Actual EarlyStopping object.", exclude=True)
+    ds: None = Field(None, description="Actual Dataset object.", exclude=True)
+    ds_train: None = Field(
+        None, description="Actual train set Dataset object.", exclude=True
+    )
+    ds_val: None = Field(
+        None, description="Actual val set Dataset object.", exclude=True
+    )
+    ds_test: None = Field(
+        None, description="Actual test set Dataset object.", exclude=True
+    )
+    loss_funcs: None = Field(
+        None, description="Actual loss function objects.", exclude=True
+    )
 
-        # Exclude everything that was built (should be able to fully reconstruct from
-        #  the configs)
-        fields = {
-            "model": {"exclude": True},
-            "optimizer": {"exclude": True},
-            "es": {"exclude": True},
-            "ds": {"exclude": True},
-            "ds_train": {"exclude": True},
-            "ds_val": {"exclude": True},
-            "ds_test": {"exclude": True},
-            "loss_funcs": {"exclude": True},
-        }
+    model_config = {"arbitrary_types_allowed": True, "extra": "allow"}
 
-        # Allow things to be added to the object after initialization/validation
-        extra = Extra.allow
+    @field_serializer("device", when_used="json")
+    def serialize_torch_device(self, device: torch.device):
+        return str(device)
 
-        # Custom encoder to cast device to str before trying to serialize
-        json_encoders = {
-            torch.device: lambda d: str(d),
-            torch.Tensor: lambda t: t.tolist(),
-        }
+    @field_serializer("loss_weights", "eval_loss_weights", when_used="json")
+    def serialize_torch_tensor(self, tensor: torch.Tensor):
+        return tensor.tolist()
 
     # Validator to make sure that if output_dir exists, it is a directory
     @validator("output_dir")
