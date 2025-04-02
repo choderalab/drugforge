@@ -292,6 +292,66 @@ def model_config_cache(func):
     )(func)
 
 
+def representation_config_cache_args(func):
+    for fn in [
+        representation_config_cache,
+        complex_representation_config_cache,
+        ligand_representation_config_cache,
+        protein_representation_config_cache,
+    ]:
+        func = fn(func)
+
+    return func
+
+
+def representation_config_cache(func):
+    return click.option(
+        "--representation-config-cache",
+        type=click.Path(exists=False, file_okay=True, dir_okay=False, path_type=Path),
+        help=(
+            "Config JSON cache file for a single representation. Other "
+            "representation-related args that are passed will supersede anything "
+            "stored in this file."
+        ),
+    )(func)
+
+
+def complex_representation_config_cache(func):
+    return click.option(
+        "--complex_representation-config-cache",
+        type=click.Path(exists=False, file_okay=True, dir_okay=False, path_type=Path),
+        help=(
+            "Config JSON cache file for the representation to be used for the complex "
+            "in a SplitModel. Other representation-related args that are passed will "
+            "supersede anything stored in this file."
+        ),
+    )(func)
+
+
+def ligand_representation_config_cache(func):
+    return click.option(
+        "--ligand_representation-config-cache",
+        type=click.Path(exists=False, file_okay=True, dir_okay=False, path_type=Path),
+        help=(
+            "Config JSON cache file for the representation to be used for the ligand "
+            "in a SplitModel. Other representation-related args that are passed will "
+            "supersede anything stored in this file."
+        ),
+    )(func)
+
+
+def protein_representation_config_cache(func):
+    return click.option(
+        "--protein_representation-config-cache",
+        type=click.Path(exists=False, file_okay=True, dir_okay=False, path_type=Path),
+        help=(
+            "Config JSON cache file for the representation to be used for the protein "
+            "in a SplitModel. Other representation-related args that are passed will "
+            "supersede anything stored in this file."
+        ),
+    )(func)
+
+
 def model_rand_seed(func):
     return click.option(
         "--model-rand-seed", type=int, help="Random seed for initializing the model."
@@ -356,6 +416,10 @@ def extra_config(func):
 def mtenn_args(func):
     for fn in [
         model_type,
+        representation,
+        complex_representation,
+        ligand_representation,
+        protein_representation,
         strategy,
         strategy_layer_norm,
         pred_readout,
@@ -380,6 +444,54 @@ def model_type(func):
         help=(
             "What type of model to use. "
             f"Options are [{', '.join(ModelType.get_values())}]."
+        ),
+    )(func)
+
+
+def representation(func):
+    return click.option(
+        "--representation",
+        type=str,
+        help=(
+            "Single Representation to use. Should be specified as a comma separated "
+            "list of <key>:<value> pairs, which will be passed directly to the "
+            "appropriate class constructor."
+        ),
+    )(func)
+
+
+def complex_representation(func):
+    return click.option(
+        "--complex-representation",
+        type=str,
+        help=(
+            "Representation to use for the complex in a SplitModel. Should be "
+            "specified as a comma separated list of <key>:<value> pairs, which will be "
+            "passed directly to the appropriate class constructor."
+        ),
+    )(func)
+
+
+def ligand_representation(func):
+    return click.option(
+        "--ligand-representation",
+        type=str,
+        help=(
+            "Representation to use for the ligand in a SplitModel. Should be "
+            "specified as a comma separated list of <key>:<value> pairs, which will be "
+            "passed directly to the appropriate class constructor."
+        ),
+    )(func)
+
+
+def protein_representation(func):
+    return click.option(
+        "--protein-representation",
+        type=str,
+        help=(
+            "Representation to use for the protein in a SplitModel. Should be "
+            "specified as a comma separated list of <key>:<value> pairs, which will be "
+            "passed directly to the appropriate class constructor."
         ),
     )(func)
 
