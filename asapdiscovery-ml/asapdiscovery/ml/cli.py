@@ -278,7 +278,7 @@ def build(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
