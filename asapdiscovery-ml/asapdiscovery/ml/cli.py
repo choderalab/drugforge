@@ -5,9 +5,37 @@ from pathlib import Path
 import click
 import torch
 from asapdiscovery.data.util.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
-from asapdiscovery.ml.cli_args import kvp_list_to_dict
-from asapdiscovery.ml.cli_mlops import mlops
-from asapdiscovery.ml.cli_sweep import sweep
+from asapdiscovery.ml.cli_args import (
+    ds_cache_overwrite,
+    ds_config_cache_overwrite,
+    ds_split_args,
+    e3nn_args,
+    es_args,
+    gat_args,
+    graph_ds_args,
+    kvp_list_to_dict,
+    loss_args,
+    model_config_cache,
+    model_rand_seed,
+    model_tag,
+    mtenn_args,
+    optim_args,
+    output_dir,
+    overwrite_args,
+    representation_config_cache_args,
+    s3_args,
+    save_weights,
+    schnet_args,
+    struct_ds_args,
+    trainer_args,
+    trainer_config_cache,
+    visnet_args,
+    wandb_args,
+    weights_path,
+)
+
+# from asapdiscovery.ml.cli_mlops import mlops
+# from asapdiscovery.ml.cli_sweep import sweep
 from asapdiscovery.ml.config import (
     DatasetConfig,
     DatasetSplitterType,
@@ -46,12 +74,30 @@ def build_ds():
 # ml.add_command(build)
 # ml.add_command(build_and_train)
 # ml.add_command(build_ds)
-ml.add_command(sweep)
-ml.add_command(mlops)
+# ml.add_command(sweep)
+# ml.add_command(mlops)
 
 
 # Functions for just building a Trainer and then dumping it
 @ml.command()
+@output_dir
+@save_weights
+@weights_path
+@trainer_config_cache
+@optim_args
+@wandb_args
+@model_config_cache
+@representation_config_cache_args
+@model_rand_seed
+@model_tag
+@mtenn_args
+@es_args
+@graph_ds_args
+@ds_split_args
+@loss_args
+@trainer_args
+@overwrite_args
+@s3_args
 def build(
     output_dir: Path | None = None,
     save_weights: str | None = None,
