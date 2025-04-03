@@ -30,18 +30,15 @@ from mtenn.config import (
     ModelType,
     SplitModelConfig,
 )
-from pydantic.v1 import (
-    Extra,
-    ValidationError,
-    confloat,
-    conlist,
-)
 from pydantic import (
     field_serializer,
     field_validator,
     model_validator,
     BaseModel,
     Field,
+    ValidationError,
+    confloat,
+    conlist,
 )
 
 
@@ -70,7 +67,7 @@ class Trainer(BaseModel):
             "test splits."
         ),
     )
-    loss_configs: conlist(item_type=LossFunctionConfig, min_items=1) = Field(
+    loss_configs: conlist(item_type=LossFunctionConfig, min_length=1) = Field(
         ...,
         description="Config describing the loss function for training.",
     )
@@ -222,7 +219,7 @@ class Trainer(BaseModel):
         return tensor.tolist()
 
     # Validator to make sure that if output_dir exists, it is a directory
-    @validator("output_dir")
+    @field_validator("output_dir")
     def output_dir_check(cls, p):
         if p.exists():
             assert (
@@ -231,14 +228,14 @@ class Trainer(BaseModel):
 
         return p
 
-    @validator(
+    @field_validator(
         "optimizer_config",
         "mtenn_model_config",
         "es_config",
         "ds_splitter_config",
-        pre=True,
+        mode="before",
     )
-    def load_cache_files(cls, config_kwargs, field):
+    def load_cache_files(cls, config_kwargs, info):
         """
         This validator will load an existing cache file, and update the config with any
         explicitly passed kwargs. If passed, the cache file must be an entry in config
@@ -246,7 +243,12 @@ class Trainer(BaseModel):
         "overwrite_cache" in config, which, if given and True, will overwrite the given
         cache file.
         """
-        config_cls = field.type_
+        config_cls = cls.model_fields[info.field_name].annotation
+        try:
+            config_cls = config_cls._evaluate(globals(), locals(), frozenset())
+            config_cls = config_cls.__args__[0]
+        except AttributeError:
+            pass
 
         # If an instance of the actual config class is passed, there's no cache file so
         #  just return
@@ -258,9 +260,9 @@ class Trainer(BaseModel):
         if config_kwargs is None:
             return config_kwargs
 
-        # Special case to handle mtenn_model_config since the Field annotation is an abstract
-        #  class
-        if config_cls is ModelConfigBase:
+        # Special case to handle mtenn_model_config since the Field annotation is an
+        #  abstract class
+        if info.field_name == "mtenn_model_config":
             match config_kwargs["model_type"]:
                 case ModelType.model:
                     config_cls = ModelConfig
@@ -280,6 +282,7 @@ class Trainer(BaseModel):
         config_file = config_kwargs.pop("cache", None)
         overwrite = config_kwargs.pop("overwrite_cache", False)
 
+        ## still need to figure out how to get config_cls
         return Trainer._build_arbitrary_config(
             config_cls=config_cls,
             config_file=config_file,
@@ -287,13 +290,18 @@ class Trainer(BaseModel):
             **config_kwargs,
         )
 
-    @validator("data_aug_configs", "loss_configs", pre=True)
-    def load_cache_files_lists(cls, kwargs_list, field):
+    @field_validator("data_aug_configs", "loss_configs", mode="before")
+    def load_cache_files_lists(cls, kwargs_list, info):
         """
         This validator performs the same functionality as the above function, but for
         Fields that contain a list of some type.
         """
-        config_cls = field.type_
+        config_cls = cls.model_fields[info.field_name].annotation
+        try:
+            config_cls = config_cls._evaluate(globals(), locals(), frozenset())
+            config_cls = config_cls.__args__[0]
+        except AttributeError:
+            pass
 
         if isinstance(kwargs_list, dict):
             # This will occur in the even of a Sweep, in which case the values will be
@@ -339,7 +347,7 @@ class Trainer(BaseModel):
 
         return configs
 
-    @validator("ds_config", pre=True)
+    @field_validator("ds_config", mode="before")
     def check_and_build_ds(cls, config_kwargs):
         """
         This validator will first check that the appropriate files exist, and then parse
@@ -492,7 +500,7 @@ class Trainer(BaseModel):
 
         return config
 
-    @validator("device", pre=True)
+    @field_validator("device", mode="before")
     def fix_device(cls, v):
         """
         The torch device gets serialized as a string and the Trainer class doesn't
@@ -500,7 +508,7 @@ class Trainer(BaseModel):
         """
         return torch.device(v)
 
-    @validator("extra_config", pre=True)
+    @field_validator("extra_config", mode="before")
     def parse_extra_config(cls, v):
         """
         This is for compatibility with the CLI, in which these config args will be
@@ -522,7 +530,7 @@ class Trainer(BaseModel):
 
         return extra_config
 
-    @validator("loss_weights", pre=True, always=True)
+    @field_validator("loss_weights", mode="before")
     def check_loss_weights(cls, v, values):
         """
         Make sure that we have the right number of loss function weights, and cast to
@@ -557,7 +565,7 @@ class Trainer(BaseModel):
 
         return v
 
-    @validator("eval_loss_weights", pre=True, always=True)
+    @field_validator("eval_loss_weights", mode="before")
     def check_eval_loss_weights(cls, v, values):
         """
         Make sure that we have the right number of loss function weights, and cast to
@@ -592,7 +600,7 @@ class Trainer(BaseModel):
 
         return v
 
-    @validator("pred_tracker", always=True)
+    @field_validator("pred_tracker")
     def init_pred_tracker(cls, pred_tracker):
         # If a value was passed, it's already been validated so just return that
         if isinstance(pred_tracker, TrainingPredictionTracker):
@@ -601,7 +609,7 @@ class Trainer(BaseModel):
             # Otherwise need to init an empty one
             return TrainingPredictionTracker()
 
-    @validator("save_weights")
+    @field_validator("save_weights")
     def check_save_weights(cls, v):
         """
         Just make sure the option is one of the valid ones.
@@ -613,18 +621,18 @@ class Trainer(BaseModel):
 
         return v
 
-    @root_validator
-    def check_s3_settings(cls, values):
+    @model_validator(mode="after")
+    def check_s3_settings(self):
         """
         check that if we uploading to S3 that the S3 path is set
         """
-        upload_to_s3 = values.get("upload_to_s3")
-        s3_path = values.get("s3_path")
+        upload_to_s3 = self["upload_to_s3"]
+        s3_path = self["s3_path"]
         if upload_to_s3 and not s3_path:
             raise ValueError("Must provide an S3 path if uploading to S3.")
-        return values
+        return self
 
-    @validator("s3_path", pre=True)
+    @field_validator("s3_path", mode="before")
     def check_s3_path(cls, v):
         # check it is a folder path not a file path, cast to Path
         if v:
