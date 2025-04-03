@@ -37,7 +37,7 @@ from asapdiscovery.data.schema.identifiers import (
     LigandProvenance,
 )
 from asapdiscovery.data.schema.schema_base import DataStorageType
-from pydantic.v1 import Field, root_validator, validator
+from pydantic import Field, model_validator, field_validator
 
 from .experimental import ExperimentalCompoundData
 from .schema_base import (
@@ -53,7 +53,8 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class InvalidLigandError(ValueError): ...  # noqa: E701
+class InvalidLigandError(ValueError):
+    ...  # noqa: E701
 
 
 class ChemicalRelationship(Flag):
@@ -145,18 +146,13 @@ class Ligand(DataModelAbstractBase):
         description="SDF file stored as a string to hold internal data state",
         repr=False,
     )
-    data_format: DataStorageType = Field(
-        DataStorageType.sdf,
-        description="Enum describing the data storage method",
-        const=True,
-        allow_mutation=False,
-    )
+    data_format: Literal[DataStorageType.sdf] = DataStorageType.sdf
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     @classmethod
-    def _validate_at_least_one_id(cls, v):
-        ids = v.get("ids")
-        compound_name = v.get("compound_name")
+    def _validate_at_least_one_id(self):
+        ids = self.ids
+        compound_name = self.compound_name
         # check if all the identifiers are None, sometimes when this is called from
         # already instantiated ligand we need to be able to handle a dict and instantiated class
         if compound_name is None:
@@ -166,9 +162,9 @@ class Ligand(DataModelAbstractBase):
                 raise ValueError(
                     "At least one identifier must be provide, or compound_name must be provided"
                 )
-        return v
+        return self
 
-    @validator("tags")
+    @field_validator("tags")
     @classmethod
     def _validate_tags(cls, v):
         # check that tags are not reserved attribute names and format partial charges

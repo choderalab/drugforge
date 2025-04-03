@@ -8,7 +8,7 @@ import numpy as np
 import pandas
 import torch
 from asapdiscovery.ml.config import LossFunctionConfig
-from pydantic.v1 import BaseModel, Extra, Field, validator
+from pydantic import BaseModel, Field, field_serializer, field_validator
 from scipy.stats import bootstrap, kendalltau, spearmanr
 
 
@@ -53,19 +53,17 @@ class TrainingPrediction(BaseModel):
         1.0, description="Contribution of this loss function to the full loss."
     )
 
-    class Config:
-        # Allow things to be added to the object after initialization/validation
-        extra = Extra.allow
+    model_config = {
+        "extra": "allow",
+        "arbitrary_types_allowed": True,
+        "validate_assignment": True,
+    }
 
-        # Allow torch types
-        arbitrary_types_allowed = True
+    @field_serializer("target_val", when_used="json")
+    def serialize_torch_tensor(self, tensor: torch.Tensor):
+        return tensor.tolist()
 
-        # Custom encoder to cast device to str before trying to serialize
-        json_encoders = {
-            torch.Tensor: lambda t: t.tolist(),
-        }
-
-    @validator("target_val", pre=True, always=True)
+    @field_validator("target_val", mode="before")
     def cast_target_val(cls, v):
         if isinstance(v, float):
             return v
@@ -105,16 +103,9 @@ class TrainingPredictionTracker(BaseModel):
         None, description="Internal dict storing all TrainingPredictions."
     )
 
-    class Config:
-        # Allow things to be added to the object after initialization/validation
-        extra = Extra.allow
+    model_config = {"extra": "allow", "validate_assignment": True}
 
-        # Custom encoder to cast device to str before trying to serialize
-        json_encoders = {
-            torch.Tensor: lambda t: t.tolist(),
-        }
-
-    @validator("split_dict", always=True)
+    @field_validator("split_dict")
     def init_split_dict(cls, split_dict):
         # If nothing was passed, just init an empty dict
         if not split_dict:
