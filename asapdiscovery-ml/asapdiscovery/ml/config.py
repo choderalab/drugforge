@@ -202,7 +202,7 @@ class EarlyStoppingConfig(ConfigBase):
         ),
     )
 
-    @root_validator(pre=False)
+    @model_validator(mode="after")
     def check_args(cls, values):
         match values["es_type"]:
             case EarlyStoppingType.none:
@@ -641,7 +641,7 @@ class DatasetSplitterConfig(ConfigBase):
         ),
     )
 
-    @root_validator(pre=False)
+    @model_validator(mode="after")
     def check_frac_sum(cls, values):
         # Don't need to check if we're doing manual split mode
         if values["split_type"] is DatasetSplitterType.manual:
@@ -665,7 +665,7 @@ class DatasetSplitterConfig(ConfigBase):
 
         return values
 
-    @root_validator(pre=False)
+    @model_validator(mode="after")
     def check_split_dict(cls, values):
         if values["split_type"] is DatasetSplitterType.manual:
             if values["split_dict"] is None:
@@ -1004,7 +1004,7 @@ class LossFunctionConfig(ConfigBase):
         None, description="Upper range of acceptable prediction values."
     )
 
-    @root_validator(pre=False)
+    @model_validator(mode="after")
     def check_range_lims(cls, values):
         if values["loss_type"] is not LossFunctionType.range_penalty:
             return values
