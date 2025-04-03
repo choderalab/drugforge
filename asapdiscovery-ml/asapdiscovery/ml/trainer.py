@@ -4,7 +4,6 @@ from copy import deepcopy
 from glob import glob
 from pathlib import Path
 from time import time
-from typing import Any
 
 import numpy as np
 import torch
@@ -299,6 +298,9 @@ class Trainer(BaseModel):
         config_cls = cls.model_fields[info.field_name].annotation
         try:
             config_cls = config_cls._evaluate(globals(), locals(), frozenset())
+        except AttributeError:
+            pass
+        try:
             config_cls = config_cls.__args__[0]
         except AttributeError:
             pass
