@@ -21,7 +21,14 @@ from asapdiscovery.ml.es import (
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,
 )
-from pydantic import BaseModel, Field, confloat, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    confloat,
+    field_serializer,
+    field_validator,
+    model_validator,
+)
 
 
 class ConfigBase(BaseModel):
@@ -315,17 +322,16 @@ class DatasetConfig(ConfigBase):
     # Torch device to send loaded dataset to
     device: torch.device = Field("cpu", description="Device to send loaded dataset to.")
 
-    class Config:
-        # Allow torch.device Fields
-        arbitrary_types_allowed = True
+    model_config = {"arbitrary_types_allowed": True}
 
-        # Custom encoder to cast device to str before trying to serialize
-        json_encoders = {torch.device: lambda d: str(d)}
+    @field_serializer("device", when_used="json")
+    def serialize_torch_device(self, device: torch.device):
+        return str(device)
 
-    @model_validator(mode="before")
-    def check_data_type(cls, values):
-        inp = values["input_data"][0]
-        match values["ds_type"]:
+    @model_validator(mode="after")
+    def check_data_type(self):
+        inp = self.input_data[0]
+        match self.ds_type:
             case DatasetType.graph:
                 if not isinstance(inp, Ligand):
                     raise ValueError(
@@ -343,7 +349,7 @@ class DatasetConfig(ConfigBase):
             case other:
                 raise ValueError(f"Unknown dataset type {other}.")
 
-        return values
+        return self
 
     @field_validator("device", mode="before")
     def fix_device(cls, v):

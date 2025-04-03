@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Any
 
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class ExperimentalCompoundData(BaseModel):
@@ -53,6 +53,4 @@ class ExperimentalCompoundData(BaseModel):
         exp_data = {str(k): float(v) for k, v in exp_data.items() if v is not None}
         return data, exp_data
 
-    class Config:
-        allow_mutation = False
-        extra = "forbid"
+    model_config = {"frozen": True, "extra": "forbid"}

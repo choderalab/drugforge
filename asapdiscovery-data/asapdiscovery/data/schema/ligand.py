@@ -110,7 +110,7 @@ class Ligand(DataModelAbstractBase):
     provenance: LigandProvenance = Field(
         ...,
         description="Identifiers for the input state of the ligand used to ensure the sdf data is correct.",
-        allow_mutation=False,
+        frozen=True,
     )
     experimental_data: Optional[ExperimentalCompoundData] = Field(
         None,
@@ -149,10 +149,9 @@ class Ligand(DataModelAbstractBase):
     data_format: Literal[DataStorageType.sdf] = DataStorageType.sdf
 
     @model_validator(mode="before")
-    @classmethod
-    def _validate_at_least_one_id(self):
-        ids = self.ids
-        compound_name = self.compound_name
+    def _validate_at_least_one_id(cls, values):
+        ids = values.get("ids")
+        compound_name = values.get("compound_name")
         # check if all the identifiers are None, sometimes when this is called from
         # already instantiated ligand we need to be able to handle a dict and instantiated class
         if compound_name is None:
@@ -162,7 +161,7 @@ class Ligand(DataModelAbstractBase):
                 raise ValueError(
                     "At least one identifier must be provide, or compound_name must be provided"
                 )
-        return self
+        return values
 
     @field_validator("tags")
     @classmethod

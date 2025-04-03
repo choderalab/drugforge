@@ -215,7 +215,11 @@ class Trainer(BaseModel):
 
     @field_serializer("loss_weights", "eval_loss_weights", when_used="json")
     def serialize_torch_tensor(self, tensor: torch.Tensor):
-        return tensor.tolist()
+        try:
+            return tensor.tolist()
+        except AttributeError:
+            # Just have lists not Tensors
+            return tensor
 
     # Validator to make sure that if output_dir exists, it is a directory
     @field_validator("output_dir")
@@ -628,8 +632,8 @@ class Trainer(BaseModel):
         """
         check that if we uploading to S3 that the S3 path is set
         """
-        upload_to_s3 = self["upload_to_s3"]
-        s3_path = self["s3_path"]
+        upload_to_s3 = self.upload_to_s3
+        s3_path = self.s3_path
         if upload_to_s3 and not s3_path:
             raise ValueError("Must provide an S3 path if uploading to S3.")
         return self
