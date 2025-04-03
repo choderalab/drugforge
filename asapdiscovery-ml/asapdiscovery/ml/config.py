@@ -21,7 +21,7 @@ from asapdiscovery.ml.es import (
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,
 )
-from pydantic.v1 import BaseModel, Field, confloat, root_validator, validator
+from pydantic import BaseModel, Field, confloat, field_validator, model_validator
 
 
 class ConfigBase(BaseModel):
@@ -322,7 +322,7 @@ class DatasetConfig(ConfigBase):
         # Custom encoder to cast device to str before trying to serialize
         json_encoders = {torch.device: lambda d: str(d)}
 
-    @root_validator(pre=False)
+    @model_validator(mode="before")
     def check_data_type(cls, values):
         inp = values["input_data"][0]
         match values["ds_type"]:
@@ -345,7 +345,7 @@ class DatasetConfig(ConfigBase):
 
         return values
 
-    @validator("device", pre=True)
+    @field_validator("device", mode="before")
     def fix_device(cls, v):
         """
         The torch device gets serialized as a string and the Trainer class doesn't
