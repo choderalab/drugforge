@@ -6,6 +6,8 @@ from asapdiscovery.data.schema.complex import Complex
 from asapdiscovery.data.schema.ligand import Ligand
 from torch.utils.data import Dataset
 
+from dgllife.utils import CanonicalAtomFeaturizer, SMILESToBigraph
+
 
 class DockedDataset(Dataset):
     """
@@ -296,6 +298,45 @@ class DockedDataset(Dataset):
             yield (s["compound"], s)
 
 
+class SplitDockedDataset(DockedDataset):
+    """
+    Same layout as DockedDataset, but each entry is a dict that has entries for
+    "complex", "protein", and "ligand", which store the corresponding representations.
+    """
+
+    @staticmethod
+    def _complex_to_pose(comp, compound=None, exp_dict=None, ignore_h=True):
+        """
+        Helper function to convert a Complex to a pose.
+        """
+        # First use already written code to do the actual parsing
+        pose = DockedDataset._complex_to_pose(
+            comp=comp, compound=compound, exp_dict=exp_dict, ignore_h=ignore_h
+        )
+
+        # Get just the actual structural data
+        complex_pose = {k: pose.pop(k) for k in ["pos", "z", "lig", "x", "b"]}
+
+        # Extract the protein atoms
+        lig_idx = complex_pose["lig"]
+        prot_pose = {k: complex_pose[k][~lig_idx] for k in ["pos", "z", "x", "b"]}
+
+        # Convert ligand to a DGL graph
+        # Function for encoding SMILES to a graph
+        smiles_to_g = SMILESToBigraph(
+            add_self_loop=True,
+            node_featurizer=CanonicalAtomFeaturizer(),
+            edge_featurizer=None,
+        )
+        lig_pose = {"g": smiles_to_g(comp.ligand.smiles)}
+
+        pose["complex"] = complex_pose
+        pose["protein"] = prot_pose
+        pose["ligand"] = lig_pose
+
+        return pose
+
+
 class GroupedDockedDataset(Dataset):
     """
     Version of DockedDataset where data is grouped by compound_id, so all poses
@@ -546,8 +587,6 @@ class GraphDataset(Dataset):
             Featurizer for edges
         """
 
-        from dgllife.utils import SMILESToBigraph
-
         # Function for encoding SMILES to a graph
         smiles_to_g = SMILESToBigraph(
             add_self_loop=True,
@@ -617,8 +656,6 @@ class GraphDataset(Dataset):
             Cache file for graph dataset
 
         """
-        from dgllife.utils import SMILESToBigraph
-
         # Function for encoding SMILES to a graph
         smiles_to_g = SMILESToBigraph(
             add_self_loop=True,
