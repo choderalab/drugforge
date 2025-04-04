@@ -59,12 +59,6 @@ def train():
     pass
 
 
-# Functions for building a Trainer and subsequently training the model
-@click.group(name="build-and-train")
-def build_and_train():
-    pass
-
-
 # Functions for just building a Dataset and DatasetConfig
 @click.group(name="build-dataset")
 def build_ds():
@@ -307,7 +301,36 @@ def build(
         "model_tag": model_tag,
     }
 
-    _build_trainer(trainer_kwargs, trainer_config_cache, overwrite_trainer_config_cache)
+    t = _build_trainer(
+        trainer_kwargs, trainer_config_cache, overwrite_trainer_config_cache
+    )
+    return t
+
+
+# Functions for building a Trainer and subsequently training the model
+@ml.command(name="build-and-train")
+@output_dir
+@save_weights
+@weights_path
+@trainer_config_cache
+@optim_args
+@wandb_args
+@model_config_cache
+@representation_config_cache_args
+@model_rand_seed
+@model_tag
+@mtenn_args
+@es_args
+@graph_ds_args
+@ds_split_args
+@loss_args
+@trainer_args
+@overwrite_args
+@s3_args
+def build_and_train(*args, **kwargs):
+    t = build(*args, **kwargs)
+    t.initialize()
+    t.train()
 
 
 def _build_trainer(
