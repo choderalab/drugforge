@@ -614,7 +614,7 @@ class DatasetConfig(ConfigBase):
     def fix_e3nn_labels(ds, grouped=False):
         new_ds = deepcopy(ds)
         for _, data in new_ds:
-            if grouped:
+            if isinstance(ds, GroupedDockedDataset):
                 for pose in data["poses"]:
                     # Check if this pose has already been adjusted
                     if pose["z"].is_floating_point():
@@ -623,6 +623,17 @@ class DatasetConfig(ConfigBase):
 
                     pose["x"] = torch.nn.functional.one_hot(pose["z"] - 1, 100).float()
                     pose["z"] = pose["lig"].reshape((-1, 1)).float()
+            elif isinstance(ds, SplitDockedDataset):
+                for lab in ["complex", "protein"]:
+                    # Check if this data has already been adjusted
+                    if data[lab]["z"].is_floating_point():
+                        # Assume it'll only be floats if we've already run this function
+                        continue
+
+                    data[lab]["x"] = torch.nn.functional.one_hot(
+                        data[lab]["z"] - 1, 100
+                    ).float()
+                    data[lab]["z"] = data[lab]["lig"].reshape((-1, 1)).float()
             else:
                 # Check if this data has already been adjusted
                 if data["z"].is_floating_point():
