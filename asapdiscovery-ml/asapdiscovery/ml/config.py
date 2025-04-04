@@ -15,7 +15,12 @@ from asapdiscovery.data.schema.experimental import ExperimentalCompoundData
 from asapdiscovery.data.schema.ligand import Ligand
 from asapdiscovery.data.util.stringenum import StringEnum
 from asapdiscovery.data.util.utils import extract_compounds_from_filenames
-from asapdiscovery.ml.dataset import DockedDataset, GraphDataset, GroupedDockedDataset
+from asapdiscovery.ml.dataset import (
+    DockedDataset,
+    GraphDataset,
+    GroupedDockedDataset,
+    SplitDockedDataset,
+)
 from asapdiscovery.ml.es import (
     BestEarlyStopping,
     ConvergedEarlyStopping,
@@ -267,6 +272,7 @@ class DatasetType(StringEnum):
 
     graph = "graph"
     structural = "structural"
+    split = "split"
 
 
 class DatasetConfig(ConfigBase):
@@ -302,6 +308,14 @@ class DatasetConfig(ConfigBase):
     # Cache file to save to/load from. Probably want to move away from pickle eventually
     cache_file: Path | None = Field(
         None, description="Pickle cache file of the actual dataset object."
+    )
+    cache_protein: bool = Field(
+        False,
+        description=(
+            "Actually save the coordinates when caching the Dataset. Leaving this as "
+            "False will make loading a bit longer, but will save a significant amount "
+            "of disk space when caching."
+        ),
     )
 
     # Parallelize data processing
@@ -342,10 +356,16 @@ class DatasetConfig(ConfigBase):
             case DatasetType.structural:
                 if not isinstance(inp, Complex):
                     raise ValueError(
-                        "Expected Complex input data for structure-based model, but got "
-                        f"{type(inp)}."
+                        "Expected Complex input data for structure-based model, but "
+                        f"got {type(inp)}."
                     )
-
+            case DatasetType.split:
+                # Still need to make sure we have Complex data
+                if not isinstance(inp, Complex):
+                    raise ValueError(
+                        "Expected Complex input data for structure-based model, but "
+                        f"got {type(inp)}."
+                    )
             case other:
                 raise ValueError(f"Unknown dataset type {other}.")
 
@@ -418,6 +438,7 @@ class DatasetConfig(ConfigBase):
         cpd_regex: str,
         for_training: bool = False,
         exp_file: Path | None = None,
+        ds_type: DatasetType = DatasetType.structural,
         **config_kwargs,
     ):
         """
@@ -504,7 +525,7 @@ class DatasetConfig(ConfigBase):
         }
 
         return cls(
-            ds_type=DatasetType.structural,
+            ds_type=ds_type,
             exp_data=exp_data,
             input_data=input_data,
             **config_kwargs,
@@ -515,6 +536,18 @@ class DatasetConfig(ConfigBase):
         if self.cache_file and self.cache_file.exists() and (not self.overwrite):
             print("loading from cache", flush=True)
             ds = pkl.loads(self.cache_file.read_bytes())
+
+            # Protein data might not exist if we're not caching it to save space, so
+            #  make sure
+            if "protein" not in next(iter(ds))[1]:
+                for pose in ds.structures:
+                    # Extract the protein atoms
+                    lig_idx = pose["complex"]["lig"]
+                    prot_pose = {
+                        k: pose["complex"][k][~lig_idx] for k in ["pos", "z", "x", "b"]
+                    }
+                    pose["protein"] = prot_pose
+
             if self.for_e3nn:
                 ds = DatasetConfig.fix_e3nn_labels(ds, grouped=self.grouped)
 
@@ -550,11 +583,22 @@ class DatasetConfig(ConfigBase):
                     )
                 if self.for_e3nn:
                     ds = DatasetConfig.fix_e3nn_labels(ds, grouped=self.grouped)
+            case DatasetType.split:
+                ds = SplitDockedDataset.from_complexes(
+                    self.input_data, exp_dict=self.exp_data
+                )
             case other:
                 raise ValueError(f"Unknwon dataset type {other}.")
 
         if self.cache_file:
-            self.cache_file.write_bytes(pkl.dumps(ds))
+            if (self.ds_type == DatasetType.split) and (not self.cache_protein):
+                tmp_ds = deepcopy(ds)
+                for pose in tmp_ds.structures:
+                    del pose["protein"]
+                self.cache_file.write_bytes(pkl.dumps(tmp_ds))
+                del tmp_ds
+            else:
+                self.cache_file.write_bytes(pkl.dumps(ds))
 
         # Shuttle data to desired device
         for _, d in ds:
