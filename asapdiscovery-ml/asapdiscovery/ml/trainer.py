@@ -958,27 +958,34 @@ class Trainer(BaseModel):
                     else None
                 )
 
-                # Get input poses for GroupedModel
-                if self.mtenn_model_config.grouped:
-                    model_inp = []
-                    for single_pose in pose["poses"]:
+                if self.mtenn_model_config.model_type == ModelType.split:
+                    # Data augmentation not yet implemented for split models
+                    # Make prediction and calculate loss
+                    pred, pose_preds = self.model(
+                        comp=pose["complex"], prot=pose["protein"], lig=pose["ligand"]
+                    )
+                else:
+                    # Get input poses for GroupedModel
+                    if self.mtenn_model_config.grouped:
+                        model_inp = []
+                        for single_pose in pose["poses"]:
+                            # Apply all data augmentations
+                            aug_pose = deepcopy(single_pose)
+                            for aug in self.data_augs:
+                                aug_pose = aug(aug_pose)
+
+                            model_inp.append(aug_pose)
+
+                    else:
                         # Apply all data augmentations
-                        aug_pose = deepcopy(single_pose)
+                        aug_pose = deepcopy(pose)
                         for aug in self.data_augs:
                             aug_pose = aug(aug_pose)
 
-                        model_inp.append(aug_pose)
+                        model_inp = aug_pose
 
-                else:
-                    # Apply all data augmentations
-                    aug_pose = deepcopy(pose)
-                    for aug in self.data_augs:
-                        aug_pose = aug(aug_pose)
-
-                    model_inp = aug_pose
-
-                # Make prediction and calculate loss
-                pred, pose_preds = self.model(model_inp)
+                    # Make prediction and calculate loss
+                    pred, pose_preds = self.model(model_inp)
 
                 losses = [
                     (
@@ -1137,15 +1144,25 @@ class Trainer(BaseModel):
                     else None
                 )
 
-                # Get input poses for GroupedModel
-                if self.mtenn_model_config.grouped:
-                    model_inp = pose["poses"]
+                if self.mtenn_model_config.model_type == ModelType.split:
+                    # Make prediction and calculate loss
+                    with torch.no_grad():
+                        pred, pose_preds = self.model(
+                            comp=pose["complex"],
+                            prot=pose["protein"],
+                            lig=pose["ligand"],
+                        )
                 else:
-                    model_inp = pose
+                    # Get input poses for GroupedModel
+                    if self.mtenn_model_config.grouped:
+                        model_inp = pose["poses"]
+                    else:
+                        model_inp = pose
 
-                # Make prediction and calculate loss
-                with torch.no_grad():
-                    pred, pose_preds = self.model(model_inp)
+                    # Make prediction and calculate loss
+                    with torch.no_grad():
+                        pred, pose_preds = self.model(model_inp)
+
                 losses = [
                     (
                         loss_func(
@@ -1229,15 +1246,25 @@ class Trainer(BaseModel):
                     else None
                 )
 
-                # Get input poses for GroupedModel
-                if self.mtenn_model_config.grouped:
-                    model_inp = pose["poses"]
+                if self.mtenn_model_config.model_type == ModelType.split:
+                    # Make prediction and calculate loss
+                    with torch.no_grad():
+                        pred, pose_preds = self.model(
+                            comp=pose["complex"],
+                            prot=pose["protein"],
+                            lig=pose["ligand"],
+                        )
                 else:
-                    model_inp = pose
+                    # Get input poses for GroupedModel
+                    if self.mtenn_model_config.grouped:
+                        model_inp = pose["poses"]
+                    else:
+                        model_inp = pose
 
-                # Make prediction and calculate loss
-                with torch.no_grad():
-                    pred, pose_preds = self.model(model_inp)
+                    # Make prediction and calculate loss
+                    with torch.no_grad():
+                        pred, pose_preds = self.model(model_inp)
+
                 losses = [
                     (
                         loss_func(
