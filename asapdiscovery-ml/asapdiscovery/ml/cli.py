@@ -1,3 +1,4 @@
+import collections
 import json
 from glob import glob
 from pathlib import Path
@@ -573,9 +574,21 @@ def _build_trainer(
         if not ((v is None) or (isinstance(v, tuple) and len(v) == 0))
     }
 
+    def update_potentially_nested_dict(orig_dict, update_dict):
+        update_dict = {
+            k: v
+            for k, v in update_dict.items()
+            if not ((v is None) or (isinstance(v, tuple) and len(v) == 0))
+        }
+        for k, v in update_dict.items():
+            if isinstance(v, collections.abc.Mapping):
+                orig_dict[k] = update_potentially_nested_dict(orig_dict.get(k, {}), v)
+            else:
+                orig_dict[k] = v
+        return orig_dict
+
     # If we got a config for the Trainer, load those args and merge with CLI args
     if trainer_config_cache and trainer_config_cache.exists():
-        print("loading trainer args from cache", flush=True)
         config_trainer_kwargs = json.loads(trainer_config_cache.read_text())
 
         for config_name, config_val in config_trainer_kwargs.items():
@@ -584,13 +597,12 @@ def _build_trainer(
                 continue
 
             if isinstance(config_val, dict):
-                config_val.update(
-                    {
-                        k: v
-                        for k, v in trainer_kwargs[config_name].items()
-                        if not ((v is None) or (isinstance(v, tuple) and len(v) == 0))
-                    }
-                )
+                update_dict = {
+                    k: v
+                    for k, v in trainer_kwargs[config_name].items()
+                    if not ((v is None) or (isinstance(v, tuple) and len(v) == 0))
+                }
+                update_potentially_nested_dict(config_val, update_dict)
             elif (isinstance(config_val, list) or isinstance(config_val, tuple)) and (
                 len(trainer_kwargs[config_name]) == 0
             ):
