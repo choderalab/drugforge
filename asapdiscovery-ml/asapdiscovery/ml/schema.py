@@ -26,14 +26,14 @@ class TrainingPrediction(BaseModel):
     target_val: float | torch.Tensor = Field(
         ..., description="Target value to predict."
     )
-    in_range: int = Field(
+    in_range: int | None = Field(
         None,
         description=(
             "Whether target is below (-1), within (0), or above (1) the assay range. "
             "Not always applicable."
         ),
     )
-    uncertainty: float = Field(
+    uncertainty: float | None = Field(
         None, description="Uncertainty in experimental measurement."
     )
 
