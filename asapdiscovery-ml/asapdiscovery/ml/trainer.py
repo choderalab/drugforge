@@ -606,7 +606,7 @@ class Trainer(BaseModel):
 
         return v
 
-    @field_validator("pred_tracker")
+    @field_validator("pred_tracker", mode="before")
     def init_pred_tracker(cls, pred_tracker):
         # If a value was passed, it's already been validated so just return that
         if isinstance(pred_tracker, TrainingPredictionTracker):
