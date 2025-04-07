@@ -537,20 +537,20 @@ class Trainer(BaseModel):
         return extra_config
 
     @field_validator("loss_weights", mode="before")
-    def check_loss_weights(cls, v, values):
+    def check_loss_weights(cls, v, info):
         """
         Make sure that we have the right number of loss function weights, and cast to
         normalized tensor.
         """
-        if (len(v) > 0) and (len(v) != len(values["loss_configs"])):
+        if (len(v) > 0) and (len(v) != len(info.data["loss_configs"])):
             raise ValueError(
                 f"Mismatch between number of loss function weights ({len(v)}) and "
-                f"number of loss functions ({len(values['loss_configs'])})."
+                f"number of loss functions ({len(info.data['loss_configs'])})."
             )
 
         # Fill with 1s if no values passed
         if len(v) == 0:
-            v = [1] * len(values["loss_configs"])
+            v = [1] * len(info.data["loss_configs"])
         elif isinstance(v, dict):
             # This will occur in the even of a Sweep, in which case the values will be
             #  a dict mapping index in the list to a value
@@ -572,20 +572,20 @@ class Trainer(BaseModel):
         return v
 
     @field_validator("eval_loss_weights", mode="before")
-    def check_eval_loss_weights(cls, v, values):
+    def check_eval_loss_weights(cls, v, info):
         """
         Make sure that we have the right number of loss function weights, and cast to
         normalized tensor.
         """
-        if (len(v) > 0) and (len(v) != len(values["loss_configs"])):
+        if (len(v) > 0) and (len(v) != len(info.data["loss_configs"])):
             raise ValueError(
                 f"Mismatch between number of loss function weights ({len(v)}) and "
-                f"number of loss functions ({len(values['loss_configs'])})."
+                f"number of loss functions ({len(info.data['loss_configs'])})."
             )
 
         # Fill with 1s if no values passed
         if len(v) == 0:
-            return values["loss_weights"]
+            return info.data["loss_weights"]
         elif isinstance(v, dict):
             # This will occur in the even of a Sweep, in which case the values will be
             #  a dict mapping index in the list to a value
