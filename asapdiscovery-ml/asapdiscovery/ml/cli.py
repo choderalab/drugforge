@@ -10,9 +10,8 @@ from asapdiscovery.ml.cli_args import (
     ds_cache_overwrite,
     ds_config_cache_overwrite,
     ds_split_args,
-    e3nn_args,
+    ds_type,
     es_args,
-    gat_args,
     graph_ds_args,
     kvp_list_to_dict,
     loss_args,
@@ -26,11 +25,9 @@ from asapdiscovery.ml.cli_args import (
     representation_config_cache_args,
     s3_args,
     save_weights,
-    schnet_args,
     struct_ds_args,
     trainer_args,
     trainer_config_cache,
-    visnet_args,
     wandb_args,
     weights_path,
 )
@@ -61,16 +58,23 @@ def train():
 
 
 # Functions for just building a Dataset and DatasetConfig
-@click.group(name="build-dataset")
-def build_ds():
+@ml.command(name="build-dataset")
+@ds_type
+@graph_ds_args
+@struct_ds_args
+@ds_cache_overwrite
+@ds_config_cache_overwrite
+def build_ds(
+    exp_file: Path | None = None,
+    ds_cache: Path | None = None,
+    ds_config_cache: Path | None = None,
+    structures: str | None = None,
+    xtal_regex: str = MPRO_ID_REGEX,
+    cpd_regex: str = MOONSHOT_CDD_ID_REGEX,
+    overwrite_ds_config_cache: bool = False,
+    overwrite_ds_cache: bool = False,
+):
     pass
-
-
-# ml.add_command(build)
-# ml.add_command(build_and_train)
-# ml.add_command(build_ds)
-# ml.add_command(sweep)
-# ml.add_command(mlops)
 
 
 # Functions for just building a Trainer and then dumping it

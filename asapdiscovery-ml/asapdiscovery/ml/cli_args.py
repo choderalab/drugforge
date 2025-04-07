@@ -5,6 +5,7 @@ import torch
 from asapdiscovery.data.util.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
 from asapdiscovery.ml.config import (
     DatasetSplitterType,
+    DatasetType,
     EarlyStoppingType,
     OptimizerType,
 )
@@ -1231,6 +1232,17 @@ def ds_config_cache(func):
         help=(
             "DatasetConfig JSON cache file. If this is given, no other dataset-related "
             "args will be parsed."
+        ),
+    )(func)
+
+
+def ds_type(func):
+    return click.option(
+        "--dataset-type",
+        type=DatasetType,
+        help=(
+            "Which type of dataset to build. "
+            f"Options are [{', '.join(DatasetType.get_values())}]."
         ),
     )(func)
 
