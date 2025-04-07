@@ -103,9 +103,13 @@ class TrainingPredictionTracker(BaseModel):
         None, description="Internal dict storing all TrainingPredictions."
     )
 
-    model_config = {"extra": "allow", "validate_assignment": True}
+    model_config = {
+        "extra": "allow",
+        "validate_assignment": True,
+        "validate_default": True,
+    }
 
-    @field_validator("split_dict")
+    @field_validator("split_dict", mode="before")
     def init_split_dict(cls, split_dict):
         # If nothing was passed, just init an empty dict
         if not split_dict:
