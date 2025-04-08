@@ -1165,8 +1165,15 @@ def es_config_cache(func):
 
 ################################################################################
 # Dataset args
+def general_ds_args(func):
+    for fn in [ds_type, grouped_ds, e3nn_ds, ds_cache, ds_config_cache]:
+        func = fn(func)
+
+    return func
+
+
 def graph_ds_args(func):
-    for fn in [exp_file, ds_cache, ds_config_cache]:
+    for fn in [exp_file]:
         func = fn(func)
 
     return func
@@ -1244,6 +1251,18 @@ def ds_type(func):
             "Which type of dataset to build. "
             f"Options are [{', '.join(DatasetType.get_values())}]."
         ),
+    )(func)
+
+
+def grouped_ds(func):
+    return click.option(
+        "--grouped-dataset", type=bool, help="Building a multi-pose dataset."
+    )(func)
+
+
+def e3nn_ds(func):
+    return click.option(
+        "--e3nn-dataset", type=bool, help="Building a dataset for use with e3nn model."
     )(func)
 
 
