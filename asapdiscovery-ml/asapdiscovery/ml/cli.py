@@ -10,8 +10,8 @@ from asapdiscovery.ml.cli_args import (
     ds_cache_overwrite,
     ds_config_cache_overwrite,
     ds_split_args,
-    ds_type,
     es_args,
+    general_ds_args,
     graph_ds_args,
     kvp_list_to_dict,
     loss_args,
@@ -37,6 +37,7 @@ from asapdiscovery.ml.cli_args import (
 from asapdiscovery.ml.config import (
     DatasetConfig,
     DatasetSplitterType,
+    DatasetType,
     EarlyStoppingType,
     OptimizerType,
 )
@@ -59,22 +60,133 @@ def train():
 
 # Functions for just building a Dataset and DatasetConfig
 @ml.command(name="build-dataset")
-@ds_type
+@general_ds_args
 @graph_ds_args
 @struct_ds_args
 @ds_cache_overwrite
 @ds_config_cache_overwrite
 def build_ds(
-    exp_file: Path | None = None,
+    dataset_type: DatasetType | None = None,
+    grouped_dataset: bool | None = None,
+    e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
     ds_config_cache: Path | None = None,
+    exp_file: Path | None = None,
     structures: str | None = None,
     xtal_regex: str = MPRO_ID_REGEX,
     cpd_regex: str = MOONSHOT_CDD_ID_REGEX,
     overwrite_ds_config_cache: bool = False,
     overwrite_ds_cache: bool = False,
 ):
-    pass
+    if dataset_type is None:
+        raise ValueError(
+            "A value must be specified for --dataset-type when building a dataset."
+        )
+
+    is_structural = dataset_type != DatasetType.graph
+
+    if not _check_ds_args(
+        exp_file=exp_file,
+        structures=structures,
+        ds_cache=ds_cache,
+        ds_config_cache=ds_config_cache,
+        is_structural=is_structural,
+        config_overwrite=overwrite_ds_config_cache,
+    ):
+        raise ValueError("Invalid combination of dataset args.")
+
+    if ds_config_cache and ds_config_cache.exists() and (not overwrite_ds_config_cache):
+        print("loading from cache", flush=True)
+        return DatasetConfig(**json.loads(ds_config_cache.read_text()))
+
+    config_kwargs = {
+        "cache_file": ds_cache,
+        "grouped": grouped_dataset,
+        "for_e3nn": e3nn_dataset,
+        "overwrite": overwrite_ds_cache,
+    }
+    config_kwargs = {
+        k: v
+        for k, v in config_kwargs.items()
+        if not ((v is None) or (isinstance(v, tuple) and len(v) == 0))
+    }
+
+    # Pick correct DatasetType
+    if is_structural:
+        if (xtal_regex is None) or (cpd_regex is None):
+            raise ValueError(
+                "Must pass values for xtal_regex and cpd_regex if building a "
+                "structure-based dataset."
+            )
+        ds_config = DatasetConfig.from_str_files(
+            structures=structures,
+            xtal_regex=xtal_regex,
+            cpd_regex=cpd_regex,
+            for_training=True,
+            exp_file=exp_file,
+            **config_kwargs,
+        )
+    else:
+        ds_config = DatasetConfig.from_exp_file(exp_file, **config_kwargs)
+
+    # Save file if desired
+    if ds_config_cache:
+        ds_config_cache.write_text(ds_config.json())
+
+    ds_config.build()
+
+
+def _check_ds_args(
+    exp_file, structures, ds_cache, ds_config_cache, is_structural, config_overwrite
+):
+    """
+    Helper function to check that all necessary dataset files were passed.
+
+    Parameters
+    ----------
+    exp_file : Path
+        JSON file giving a list of ExperimentalDataCompound objects
+    structures : Path
+        Glob or directory containing PDB files
+    ds_cache : Path
+        Dataset cache file
+    ds_config_cache : Path
+        Dataset config cache function
+    is_structural : bool
+        Is this a structure-based dataset
+    config_overwrite : bool
+        Should any existing DatasetConfig JSON file be ignored/overwritten
+
+    Returns
+    -------
+    bool
+        Whether an appropriate combination of args was passed
+    """
+    # Can just load from the config cache file so don't need anything else
+    if ds_config_cache and ds_config_cache.exists() and (not config_overwrite):
+        return True
+
+    # Otherwise need to load data so make sure they all exist
+    if (not exp_file) or (not exp_file.exists()):
+        return False
+    if is_structural:
+        if not structures:
+            return False
+        if Path(structures).is_dir():
+            # Make sure there's at least one PDB file
+            try:
+                _ = next(iter(Path(structures).glob("*.pdb")))
+            except StopIteration:
+                return False
+        else:
+            # Make sure there's at least one file that matches the glob
+            try:
+                _ = next(iter(glob(structures)))
+            except StopIteration:
+                return False
+
+    # Nothing has failed so we should be good to go
+    return True
 
 
 # Functions for just building a Trainer and then dumping it
