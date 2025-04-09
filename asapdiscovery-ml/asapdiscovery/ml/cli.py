@@ -119,6 +119,7 @@ def build_ds(
                 "structure-based dataset."
             )
         ds_config = DatasetConfig.from_str_files(
+            ds_type=dataset_type,
             structures=structures,
             xtal_regex=xtal_regex,
             cpd_regex=cpd_regex,
@@ -203,7 +204,9 @@ def _check_ds_args(
 @model_tag
 @mtenn_args
 @es_args
+@general_ds_args
 @graph_ds_args
+@struct_ds_args
 @ds_split_args
 @loss_args
 @trainer_args
@@ -257,9 +260,15 @@ def build(
     es_divergence: float | None = None,
     es_burnin: int | None = None,
     es_config_cache: Path | None = None,
-    exp_file: Path | None = None,
+    dataset_type: DatasetType | None = None,
+    grouped_dataset: bool | None = None,
+    e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
     ds_config_cache: Path | None = None,
+    exp_file: Path | None = None,
+    structures: str | None = None,
+    xtal_regex: str = MPRO_ID_REGEX,
+    cpd_regex: str = MOONSHOT_CDD_ID_REGEX,
     ds_split_type: DatasetSplitterType | None = None,
     train_frac: float | None = None,
     val_frac: float | None = None,
