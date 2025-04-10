@@ -313,6 +313,14 @@ class DatasetConfig(ConfigBase):
             "constructing the dataset will be impossible."
         ),
     )
+    export_exp_data: bool = Field(
+        False,
+        description=(
+            "Whether to actually save the exp_data. If this is set to False (default), "
+            "a value must be provided for cache_file, otherwise constructing the "
+            "dataset will be impossible."
+        ),
+    )
 
     # Cache file to save to/load from. Probably want to move away from pickle eventually
     cache_file: Path | None = Field(
@@ -347,7 +355,7 @@ class DatasetConfig(ConfigBase):
 
     model_config = {"arbitrary_types_allowed": True}
 
-    @field_serializer("device", when_used="json")
+    @field_serializer("device", when_used="always")
     def serialize_torch_device(self, device: torch.device):
         return str(device)
 
@@ -411,22 +419,28 @@ class DatasetConfig(ConfigBase):
     # Override the pydantic functions to conditionally exclude input_data from being
     #  serialized
     def model_dump(self, **kwargs):
-        if ("include" not in kwargs) or ("input_data" not in kwargs["include"]):
-            if not self.export_input_data:
-                try:
-                    kwargs["exclude"].add("input_data")
-                except KeyError:
-                    kwargs["exclude"] = {"input_data"}
+        for check_field, export_field in zip(
+            ["input_data", "exp_data"], [self.export_input_data, self.export_exp_data]
+        ):
+            if ("include" not in kwargs) or (check_field not in kwargs["include"]):
+                if not export_field:
+                    try:
+                        kwargs["exclude"].add(check_field)
+                    except KeyError:
+                        kwargs["exclude"] = {check_field}
 
         return super().model_dump(**kwargs)
 
     def model_dump_json(self, **kwargs):
-        if ("include" not in kwargs) or ("input_data" not in kwargs["include"]):
-            if not self.export_input_data:
-                try:
-                    kwargs["exclude"].add("input_data")
-                except KeyError:
-                    kwargs["exclude"] = {"input_data"}
+        for check_field, export_field in zip(
+            ["input_data", "exp_data"], [self.export_input_data, self.export_exp_data]
+        ):
+            if ("include" not in kwargs) or (check_field not in kwargs["include"]):
+                if not export_field:
+                    try:
+                        kwargs["exclude"].add(check_field)
+                    except KeyError:
+                        kwargs["exclude"] = {check_field}
 
         return super().model_dump_json(**kwargs)
 
@@ -590,7 +604,9 @@ class DatasetConfig(ConfigBase):
 
             # Protein data might not exist if we're not caching it to save space, so
             #  make sure
-            if "protein" not in next(iter(ds))[1]:
+            if (self.ds_type == DatasetType.split) and (
+                "protein" not in next(iter(ds))[1]
+            ):
                 for pose in ds.structures:
                     # Extract the protein atoms
                     lig_idx = pose["complex"]["lig"]
