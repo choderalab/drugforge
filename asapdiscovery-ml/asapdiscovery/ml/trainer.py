@@ -221,6 +221,10 @@ class Trainer(BaseModel):
             # Just have lists not Tensors
             return tensor
 
+    @field_serializer("ds_config", when_used="json")
+    def use_ds_config_serializer(self, ds_config: DatasetConfig):
+        return ds_config.model_dump()
+
     # Validator to make sure that if output_dir exists, it is a directory
     @field_validator("output_dir")
     def output_dir_check(cls, p):
