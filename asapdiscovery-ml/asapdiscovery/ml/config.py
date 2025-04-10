@@ -297,11 +297,20 @@ class DatasetConfig(ConfigBase):
             "experimental data."
         ),
     )
-    input_data: list[Complex] | list[Ligand] = Field(
-        ...,
+    input_data: list[Complex] | list[Ligand] | None = Field(
+        None,
         description=(
             "List of Complex objects (structure-based models) or Ligand objects "
             "(graph-based models), which will be used to generate the input structures."
+        ),
+    )
+    export_input_data: bool = Field(
+        False,
+        description=(
+            "Whether to actually save the input_data. Note that if this is "
+            "True, you are essentially saving multiple SDF/PDB files. If this is set "
+            "to False (default), a value must be provided for cache_file, otherwise "
+            "constructing the dataset will be impossible."
         ),
     )
 
@@ -343,7 +352,25 @@ class DatasetConfig(ConfigBase):
         return str(device)
 
     @model_validator(mode="after")
+    def check_input_data_exists(self):
+        if self.input_data is None:
+            if self.cache_file is None:
+                raise ValueError(
+                    "A value must be supplied for cache_file if no data is passed to "
+                    "input_data."
+                )
+            if not self.cache_file.exists():
+                raise ValueError(
+                    "If no data is passed to input_data the passed cache_file must "
+                    "exist."
+                )
+
+    @model_validator(mode="after")
     def check_data_type(self):
+        # Just return here, make sure cache_file is supplied in a different function
+        if self.input_data is None:
+            return self
+
         inp = self.input_data[0]
         match self.ds_type:
             case DatasetType.graph:
