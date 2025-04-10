@@ -365,6 +365,8 @@ class DatasetConfig(ConfigBase):
                     "exist."
                 )
 
+        return self
+
     @model_validator(mode="after")
     def check_data_type(self):
         # Just return here, make sure cache_file is supplied in a different function
@@ -405,6 +407,28 @@ class DatasetConfig(ConfigBase):
         automatically cast it back to a device.
         """
         return torch.device(v)
+
+    # Override the pydantic functions to conditionally exclude input_data from being
+    #  serialized
+    def model_dump(self, **kwargs):
+        if ("include" not in kwargs) or ("input_data" not in kwargs["include"]):
+            if not self.export_input_data:
+                try:
+                    kwargs["exclude"].add("input_data")
+                except KeyError:
+                    kwargs["exclude"] = {"input_data"}
+
+        return super().model_dump(**kwargs)
+
+    def model_dump_json(self, **kwargs):
+        if ("include" not in kwargs) or ("input_data" not in kwargs["include"]):
+            if not self.export_input_data:
+                try:
+                    kwargs["exclude"].add("input_data")
+                except KeyError:
+                    kwargs["exclude"] = {"input_data"}
+
+        return super().model_dump_json(**kwargs)
 
     @classmethod
     def from_exp_file(cls, exp_file: Path, **config_kwargs):
