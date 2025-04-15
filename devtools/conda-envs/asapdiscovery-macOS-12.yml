@@ -63,10 +63,10 @@ dependencies:
   - numpy
   - h5py
   - e3nn
-  - dgl <=2.0.0
+  - dgl
   - dgllife
   - pooch
-  - mtenn =0.6.2
+  - mtenn >=0.6.3
   - wandb
 
   # md
