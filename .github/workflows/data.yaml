@@ -58,7 +58,7 @@ jobs:
         # micromamba-version: latest
         # pin to latest 1.x release
         micromamba-version: '1.5.10-0'
-        environment-file: devtools/conda-envs/asapdiscovery-${{ matrix.os }}.yml
+        environment-file: devtools/conda-envs/${{ matrix.os }}/data.yaml
         environment-name: asapdiscovery
         cache-environment: true
         cache-downloads: true
