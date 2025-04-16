@@ -33,6 +33,7 @@ dependencies:
   - gufe >=1.0.0
   - pymol-open-source
   - rdkit
+  - plip
 
   # Math
   - numpy
