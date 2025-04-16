@@ -68,7 +68,7 @@ dependencies:
   - boto3
 
   # ML
-  - dgl
+  - dgl<=2.0.0
   - dgllife
   - mtenn >=0.6.3
   - pytorch
