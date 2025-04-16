@@ -424,13 +424,13 @@ class DatasetConfig(ConfigBase):
         ):
             if (
                 ("include" not in kwargs)
-                or (kwargs[check_field] is None)
+                or (kwargs["include"] is None)
                 or (check_field not in kwargs["include"])
             ):
                 if not export_field:
                     try:
                         kwargs["exclude"].add(check_field)
-                    except KeyError:
+                    except (KeyError, AttributeError):
                         kwargs["exclude"] = {check_field}
 
         return super().model_dump(**kwargs)
@@ -441,13 +441,13 @@ class DatasetConfig(ConfigBase):
         ):
             if (
                 ("include" not in kwargs)
-                or (kwargs[check_field] is None)
+                or (kwargs["include"] is None)
                 or (check_field not in kwargs["include"])
             ):
                 if not export_field:
                     try:
                         kwargs["exclude"].add(check_field)
-                    except KeyError:
+                    except (KeyError, AttributeError):
                         kwargs["exclude"] = {check_field}
 
         return super().model_dump_json(**kwargs)
