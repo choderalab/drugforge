@@ -664,7 +664,11 @@ class Trainer(BaseModel):
 
         # Don't serialize input_data for confidentiality/size reasons
         ds_config = self.ds_config.dict()
-        del ds_config["input_data"]
+        try:
+            del ds_config["input_data"]
+        except KeyError:
+            # Don't need to do anything since it's already not there
+            pass
         config = self.dict()
         config["ds_config"] = ds_config
 
