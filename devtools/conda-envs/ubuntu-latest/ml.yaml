@@ -35,10 +35,14 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openff-toolkit
   - openff-forcefields >=2024.04.0
+  - openff-toolkit
   - openfe
   - openmm
+  - openmmtools
+  - openmmforcefields >= 0.13.0
+  - mdtraj
+  - cudatoolkit
   - gufe >=1.0.0
   - pymol-open-source
   - rdkit
