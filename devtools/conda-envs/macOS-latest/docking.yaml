@@ -10,6 +10,9 @@ dependencies:
   - typing-extensions
 
   # drugforge-data
+  # drugforge-modeling
+  # drugforge-ml
+  # drugforge-spectrum
 
   # Command Line Tools & Scripting
   - rich
@@ -30,7 +33,8 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe
+  - openfe >=1.1.0
+  - openff-toolkit
   - openmm
   - gufe >=1.0.0
   - pymol-open-source
@@ -46,10 +50,13 @@ dependencies:
   - netifaces
   - dask
   - dask-jobqueue
-  - dask-cuda
   - distributed
 
   # Services
   - requests
   - moto
   - boto3
+
+  # ML
+  - mtenn >=0.6.3
+  - multimethod
