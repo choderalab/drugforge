@@ -1166,7 +1166,15 @@ def es_config_cache(func):
 ################################################################################
 # Dataset args
 def general_ds_args(func):
-    for fn in [ds_type, grouped_ds, e3nn_ds, ds_cache, ds_config_cache]:
+    for fn in [
+        ds_type,
+        export_input_data,
+        export_exp_data,
+        grouped_ds,
+        e3nn_ds,
+        ds_cache,
+        ds_config_cache,
+    ]:
         func = fn(func)
 
     return func
@@ -1263,6 +1271,22 @@ def grouped_ds(func):
 def e3nn_ds(func):
     return click.option(
         "--e3nn-dataset", type=bool, help="Building a dataset for use with e3nn model."
+    )(func)
+
+
+def export_input_data(func):
+    return click.option(
+        "--export-input-data",
+        type=bool,
+        help="Export the input_data field in the DatasetConfig.",
+    )(func)
+
+
+def export_exp_data(func):
+    return click.option(
+        "--export-exp-data",
+        type=bool,
+        help="Export the exp_data field in the DatasetConfig.",
     )(func)
 
 

@@ -67,6 +67,8 @@ def train():
 @ds_config_cache_overwrite
 def build_ds(
     dataset_type: DatasetType | None = None,
+    export_input_data: bool | None = None,
+    export_exp_data: bool | None = None,
     grouped_dataset: bool | None = None,
     e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
@@ -125,10 +127,17 @@ def build_ds(
             cpd_regex=cpd_regex,
             for_training=True,
             exp_file=exp_file,
+            export_input_data=export_input_data,
+            export_exp_data=export_exp_data,
             **config_kwargs,
         )
     else:
-        ds_config = DatasetConfig.from_exp_file(exp_file, **config_kwargs)
+        ds_config = DatasetConfig.from_exp_file(
+            exp_file,
+            export_input_data=export_input_data,
+            export_exp_data=export_exp_data,
+            **config_kwargs,
+        )
 
     # Save file if desired
     if ds_config_cache:
