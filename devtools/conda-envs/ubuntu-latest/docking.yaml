@@ -13,6 +13,7 @@ dependencies:
   # drugforge-modeling
   # drugforge-ml
   # drugforge-spectrum
+  # drugforge-dataviz
 
   # Command Line Tools & Scripting
   - rich
