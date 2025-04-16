@@ -35,13 +35,22 @@ def docked_files():
     return docked_files
 
 
-def test_build_ds_graph(exp_file, tmp_path):
+@pytest.mark.parametrize(
+    "export_input_data,export_exp_data",
+    [(True, True), (True, False), (False, True), (False, False)],
+)
+def test_build_ds_graph(exp_file, tmp_path, export_input_data, export_exp_data):
     runner = CliRunner()
     result = runner.invoke(
         cli,
         [
             "build-dataset",
-            "gat",
+            "--dataset-type",
+            "graph",
+            "--export-input-data",
+            export_input_data,
+            "--export-exp-data",
+            export_exp_data,
             "--exp-file",
             exp_file,
             "--ds-cache",
@@ -64,7 +73,14 @@ def test_build_ds_graph(exp_file, tmp_path):
 
     ds_config = DatasetConfig(**json.loads(ds_config_cache.read_text()))
     assert ds_config.ds_type == "graph"
-    assert len(ds_config.input_data) == 10
+    if export_input_data:
+        assert len(ds_config.input_data) == 10
+    else:
+        assert ds_config.input_data is None
+    if export_exp_data:
+        assert len(ds_config.exp_data) > 0
+    else:
+        assert len(ds_config.exp_data) == 0
     assert ds_config.cache_file == ds_cache
     assert not ds_config.overwrite
 
