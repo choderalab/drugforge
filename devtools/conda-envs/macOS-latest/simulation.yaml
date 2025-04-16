@@ -12,6 +12,7 @@ dependencies:
   # drugforge-cli
   # drugforge-data
   # drugforge-docking
+  # drugforge-simulation
 
   # Command Line Tools & Scripting
   - rich
