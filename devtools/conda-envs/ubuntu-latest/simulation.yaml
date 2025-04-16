@@ -15,6 +15,7 @@ dependencies:
   # drugforge-data
   # drugforge-docking
   # drugforge-simulation
+  # drugforge-modeling
   # drugforge-ml
 
   # Command Line Tools & Scripting
