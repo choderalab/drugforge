@@ -1,4 +1,4 @@
-name: docking
+name: ml
 channels:
   - openeye
   - conda-forge
@@ -8,12 +8,13 @@ dependencies:
   - python >=3.10,<3.12
   - pydantic >=2.0.0a0
   - typing-extensions
+  - semver
 
+  # drugforge-alchemy
+  # drugforge-cli
   # drugforge-data
-  # drugforge-modeling
+  # drugforge-docking
   # drugforge-ml
-  # drugforge-spectrum
-  # drugforge-dataviz
 
   # Command Line Tools & Scripting
   - rich
@@ -34,8 +35,9 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe >=1.1.0
   - openff-toolkit
+  - openff-forcefields >=2024.04.0
+  - openfe
   - openmm
   - gufe >=1.0.0
   - pymol-open-source
@@ -46,12 +48,15 @@ dependencies:
   - numpy
   - pandas
   - sigfig
+  - matplotlib
+  - seaborn
 
   # Execution
   - netifaces
   - dask
   - dask-jobqueue
   - distributed
+  - multiprocessing
 
   # Services
   - requests
@@ -59,5 +64,13 @@ dependencies:
   - boto3
 
   # ML
+  - dgl
+  - dgllife
   - mtenn >=0.6.3
-  - multimethod
+  - pytorch
+  - pytorch_geometric >=2.5.0
+  - pytorch_cluster
+  - pytorch_scatter
+  - pytorch_sparse
+  - scipy >=1.13.1
+  - wandb

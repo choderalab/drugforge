@@ -1,4 +1,4 @@
-name: modeling
+name: docking
 channels:
   - openeye
   - conda-forge
