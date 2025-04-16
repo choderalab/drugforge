@@ -62,3 +62,4 @@ dependencies:
   # ML
   - mtenn >=0.6.3
   - multimethod
+  - torchdata
