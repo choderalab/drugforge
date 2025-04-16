@@ -8,11 +8,14 @@ dependencies:
   - python >=3.10,<3.12
   - pydantic >=2.0.0a0
   - typing-extensions
+  - semver
 
+  # drugforge-alchemy
   # drugforge-cli
   # drugforge-data
   # drugforge-docking
   # drugforge-simulation
+  # drugforge-ml
 
   # Command Line Tools & Scripting
   - rich
@@ -32,10 +35,10 @@ dependencies:
   # Molecule Manipulation
   - biopython
   - mdanalysis
-  - mdanalysis
   - openeye-toolkits
   - openff-forcefields >=2024.04.0
   - openff-toolkit
+  - openfe
   - openmm
   - openmmtools
   - openmmforcefields >= 0.13.0
@@ -50,6 +53,8 @@ dependencies:
   - numpy
   - pandas
   - sigfig
+  - matplotlib
+  - seaborn
 
   # Execution
   - netifaces

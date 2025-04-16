@@ -62,7 +62,6 @@ dependencies:
   - dask-jobqueue
   - dask-cuda
   - distributed
-  - multiprocessing
 
   # Services
   - requests
