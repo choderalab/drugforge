@@ -60,7 +60,6 @@ dependencies:
   - dask
   - dask-jobqueue
   - distributed
-  - multiprocessing
 
   # Services
   - requests
