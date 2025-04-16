@@ -422,7 +422,11 @@ class DatasetConfig(ConfigBase):
         for check_field, export_field in zip(
             ["input_data", "exp_data"], [self.export_input_data, self.export_exp_data]
         ):
-            if ("include" not in kwargs) or (check_field not in kwargs["include"]):
+            if (
+                ("include" not in kwargs)
+                or (kwargs[check_field] is None)
+                or (check_field not in kwargs["include"])
+            ):
                 if not export_field:
                     try:
                         kwargs["exclude"].add(check_field)
@@ -435,7 +439,11 @@ class DatasetConfig(ConfigBase):
         for check_field, export_field in zip(
             ["input_data", "exp_data"], [self.export_input_data, self.export_exp_data]
         ):
-            if ("include" not in kwargs) or (check_field not in kwargs["include"]):
+            if (
+                ("include" not in kwargs)
+                or (kwargs[check_field] is None)
+                or (check_field not in kwargs["include"])
+            ):
                 if not export_field:
                     try:
                         kwargs["exclude"].add(check_field)
