@@ -68,3 +68,6 @@ dependencies:
   - moto
   - boto3
   - multimethod
+
+  # ML
+  - mtenn >=0.6.3
