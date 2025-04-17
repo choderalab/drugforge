@@ -469,6 +469,7 @@ def build(
 @model_tag
 @mtenn_args
 @es_args
+@general_ds_args
 @graph_ds_args
 @ds_split_args
 @loss_args
