@@ -1125,7 +1125,7 @@ class LossFunctionConfig(ConfigBase):
     )
 
     # Value to fill in for semiquant uncertainty values in gaussian_sq loss
-    semiquant_fill: float = Field(
+    semiquant_fill: float | None = Field(
         None,
         description=(
             "Value to fill in for semiquant uncertainty values in gaussian_sq loss."
@@ -1133,10 +1133,10 @@ class LossFunctionConfig(ConfigBase):
     )
 
     # Range values for RangeLoss
-    range_lower_lim: float = Field(
+    range_lower_lim: float | None = Field(
         None, description="Lower range of acceptable prediction values."
     )
-    range_upper_lim: float = Field(
+    range_upper_lim: float | None = Field(
         None, description="Upper range of acceptable prediction values."
     )
 
