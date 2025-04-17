@@ -416,9 +416,12 @@ def test_build_and_train_graph(exp_file, tmp_path):
         cli,
         [
             "build-and-train",
-            "gat",
             "--output-dir",
             tmp_path / "model_out",
+            "--model-type",
+            "ligand",
+            "--representation",
+            "representation_type:gat",
             "--trainer-config-cache",
             tmp_path / "trainer.json",
             "--ds-split-type",
@@ -471,9 +474,12 @@ def test_build_and_train_schnet(exp_file, docked_files, tmp_path):
         cli,
         [
             "build-and-train",
-            "schnet",
             "--output-dir",
             tmp_path / "model_out",
+            "--model-type",
+            "model",
+            "--representation",
+            "representation_type:schnet",
             "--trainer-config-cache",
             tmp_path / "trainer.json",
             "--ds-split-type",
@@ -496,9 +502,7 @@ def test_build_and_train_schnet(exp_file, docked_files, tmp_path):
             "False",
         ],
     )
-    # assert result.exit_code == 0
-    if result.exit_code:
-        raise result.exception
+    assert result.exit_code == 0
 
     # Make sure the right files exist
     trainer_config_cache = tmp_path / "trainer.json"
@@ -530,9 +534,12 @@ def test_build_and_train_e3nn(exp_file, docked_files, tmp_path):
         cli,
         [
             "build-and-train",
-            "e3nn",
             "--output-dir",
             tmp_path / "model_out",
+            "--model-type",
+            "model",
+            "--representation",
+            "representation_type:e3nn,irreps_hidden:0:5",
             "--trainer-config-cache",
             tmp_path / "trainer.json",
             "--ds-split-type",
@@ -545,8 +552,6 @@ def test_build_and_train_e3nn(exp_file, docked_files, tmp_path):
             tmp_path / "ds_cache.pkl",
             "--ds-config-cache",
             tmp_path / "ds_config_cache.json",
-            "--irreps-hidden",
-            "0:5",
             "--loss",
             "loss_type:mse_step",
             "--device",
@@ -557,9 +562,7 @@ def test_build_and_train_e3nn(exp_file, docked_files, tmp_path):
             "False",
         ],
     )
-    # assert result.exit_code == 0
-    if result.exit_code:
-        raise result.exception
+    assert result.exit_code == 0
 
     # Make sure the right files exist
     trainer_config_cache = tmp_path / "trainer.json"
