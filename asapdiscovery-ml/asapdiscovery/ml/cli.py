@@ -106,6 +106,8 @@ def build_ds(
         "grouped": grouped_dataset,
         "for_e3nn": e3nn_dataset,
         "overwrite": overwrite_ds_cache,
+        "export_input_data": export_input_data,
+        "export_exp_data": export_exp_data,
     }
     config_kwargs = {
         k: v
@@ -127,15 +129,11 @@ def build_ds(
             cpd_regex=cpd_regex,
             for_training=True,
             exp_file=exp_file,
-            export_input_data=export_input_data,
-            export_exp_data=export_exp_data,
             **config_kwargs,
         )
     else:
         ds_config = DatasetConfig.from_exp_file(
             exp_file,
-            export_input_data=export_input_data,
-            export_exp_data=export_exp_data,
             **config_kwargs,
         )
 
@@ -270,6 +268,8 @@ def build(
     es_burnin: int | None = None,
     es_config_cache: Path | None = None,
     dataset_type: DatasetType | None = None,
+    export_input_data: bool | None = None,
+    export_exp_data: bool | None = None,
     grouped_dataset: bool | None = None,
     e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
@@ -383,6 +383,8 @@ def build(
         "is_structural": False,
         "cache_file": ds_cache,
         "overwrite": overwrite_ds_cache,
+        "export_input_data": export_input_data,
+        "export_exp_data": export_exp_data,
     }
 
     ds_splitter_config = {
