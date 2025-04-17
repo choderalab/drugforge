@@ -1056,6 +1056,12 @@ def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop):
         compound_df[new_key] = new_val
         epoch_df[new_key] = new_val
 
+    # Capitalize the split keys (unless something else is already there)
+    if "Split" not in compound_df.columns:
+        compound_df["Split"] = [s.title() for s in compound_df["split"]]
+    if "Split" not in epoch_df.columns:
+        epoch_df["Split"] = [s.title() for s in epoch_df["split"]]
+
     # Will be a list of lists, so need to get the right list index
     per_compound_dfs = []
     for epoch in extract_epochs:
