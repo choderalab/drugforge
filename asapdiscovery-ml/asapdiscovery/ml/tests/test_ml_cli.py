@@ -209,9 +209,12 @@ def test_build_trainer_graph(exp_file, tmp_path):
         cli,
         [
             "build",
-            "gat",
             "--output-dir",
             tmp_path / "model_out",
+            "--model-type",
+            "ligand",
+            "--representation",
+            "representation_type:gat",
             "--trainer-config-cache",
             tmp_path / "trainer.json",
             "--ds-split-type",
@@ -222,6 +225,10 @@ def test_build_trainer_graph(exp_file, tmp_path):
             tmp_path / "ds_cache.pkl",
             "--ds-config-cache",
             tmp_path / "ds_config_cache.json",
+            "--export-input-data",
+            "True",
+            "--export-exp-data",
+            "True",
             "--loss",
             "loss_type:mse_step",
             "--device",
@@ -248,14 +255,17 @@ def test_build_trainer_graph(exp_file, tmp_path):
     assert t.output_dir == output_dir
     assert not t.use_wandb
     assert not t._is_initialized
-    assert not hasattr(t, "model")
-    assert not hasattr(t, "optimizer")
-    assert not hasattr(t, "es")
-    assert not hasattr(t, "ds")
-    assert not hasattr(t, "ds_train")
-    assert not hasattr(t, "ds_val")
-    assert not hasattr(t, "ds_test")
-    assert not hasattr(t, "loss_func")
+    assert t.model is None
+    assert t.optimizer is None
+    assert t.es is None
+    assert t.ds is None
+    assert t.ds_train is None
+    assert t.ds_val is None
+    assert t.ds_test is None
+    assert t.loss_funcs is None
+
+    assert t.ds_config.ds_type == "graph"
+    assert not t.ds_config.for_e3nn
 
 
 def test_build_trainer_schnet(exp_file, docked_files, tmp_path):
@@ -266,9 +276,12 @@ def test_build_trainer_schnet(exp_file, docked_files, tmp_path):
         cli,
         [
             "build",
-            "schnet",
             "--output-dir",
             tmp_path / "model_out",
+            "--model-type",
+            "model",
+            "--representation",
+            "representation_type:schnet",
             "--trainer-config-cache",
             tmp_path / "trainer.json",
             "--ds-split-type",
@@ -281,6 +294,10 @@ def test_build_trainer_schnet(exp_file, docked_files, tmp_path):
             tmp_path / "ds_cache.pkl",
             "--ds-config-cache",
             tmp_path / "ds_config_cache.json",
+            "--export-input-data",
+            "True",
+            "--export-exp-data",
+            "True",
             "--loss",
             "loss_type:mse_step",
             "--device",
@@ -307,15 +324,16 @@ def test_build_trainer_schnet(exp_file, docked_files, tmp_path):
     assert t.output_dir == output_dir
     assert not t.use_wandb
     assert not t._is_initialized
-    assert not hasattr(t, "model")
-    assert not hasattr(t, "optimizer")
-    assert not hasattr(t, "es")
-    assert not hasattr(t, "ds")
-    assert not hasattr(t, "ds_train")
-    assert not hasattr(t, "ds_val")
-    assert not hasattr(t, "ds_test")
-    assert not hasattr(t, "loss_func")
+    assert t.model is None
+    assert t.optimizer is None
+    assert t.es is None
+    assert t.ds is None
+    assert t.ds_train is None
+    assert t.ds_val is None
+    assert t.ds_test is None
+    assert t.loss_funcs is None
 
+    assert t.ds_config.ds_type == "structural"
     assert not t.ds_config.for_e3nn
 
 
@@ -327,9 +345,12 @@ def test_build_trainer_e3nn(exp_file, docked_files, tmp_path):
         cli,
         [
             "build",
-            "e3nn",
             "--output-dir",
             tmp_path / "model_out",
+            "--model-type",
+            "model",
+            "--representation",
+            "representation_type:e3nn,irreps_hidden:0:5",
             "--trainer-config-cache",
             tmp_path / "trainer.json",
             "--ds-split-type",
@@ -342,8 +363,12 @@ def test_build_trainer_e3nn(exp_file, docked_files, tmp_path):
             tmp_path / "ds_cache.pkl",
             "--ds-config-cache",
             tmp_path / "ds_config_cache.json",
-            "--irreps-hidden",
-            "0:5",
+            "--export-input-data",
+            "True",
+            "--export-exp-data",
+            "True",
+            "--e3nn-dataset",
+            "True",
             "--loss",
             "loss_type:mse_step",
             "--device",
@@ -370,18 +395,19 @@ def test_build_trainer_e3nn(exp_file, docked_files, tmp_path):
     assert t.output_dir == output_dir
     assert not t.use_wandb
     assert not t._is_initialized
-    assert not hasattr(t, "model")
-    assert not hasattr(t, "optimizer")
-    assert not hasattr(t, "es")
-    assert not hasattr(t, "ds")
-    assert not hasattr(t, "ds_train")
-    assert not hasattr(t, "ds_val")
-    assert not hasattr(t, "ds_test")
-    assert not hasattr(t, "loss_func")
+    assert t.model is None
+    assert t.optimizer is None
+    assert t.es is None
+    assert t.ds is None
+    assert t.ds_train is None
+    assert t.ds_val is None
+    assert t.ds_test is None
+    assert t.loss_funcs is None
 
+    assert t.ds_config.ds_type == "structural"
     assert t.ds_config.for_e3nn
 
-    assert t.model_config.irreps_hidden == "5x0o+5x0e"
+    assert t.mtenn_model_config.representation.irreps_hidden == "5x0o+5x0e"
 
 
 def test_build_trainer_visnet(exp_file, docked_files, tmp_path):
