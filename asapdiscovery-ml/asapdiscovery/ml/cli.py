@@ -139,7 +139,7 @@ def build_ds(
 
     # Save file if desired
     if ds_config_cache:
-        ds_config_cache.write_text(ds_config.json())
+        ds_config_cache.write_text(ds_config.model_dump_json())
 
     ds_config.build()
 
@@ -808,6 +808,6 @@ def _build_trainer(
     if trainer_config_cache and (
         (not trainer_config_cache.exists()) or overwrite_trainer_config_cache
     ):
-        trainer_config_cache.write_text(t.json())
+        trainer_config_cache.write_text(t.model_dump_json())
 
     return t

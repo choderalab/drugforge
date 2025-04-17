@@ -442,7 +442,7 @@ class Trainer(BaseModel):
             ds_config = DatasetConfig.from_exp_file(exp_file, **config_kwargs)
 
         if ds_config_cache:
-            ds_config_cache.write_text(ds_config.json())
+            ds_config_cache.write_text(ds_config.model_dump_json())
 
         return ds_config
 
@@ -506,7 +506,7 @@ class Trainer(BaseModel):
 
         # If a non-existent file was passed, store the Config
         if config_file and ((not config_file.exists()) or overwrite):
-            config_file.write_text(config.json())
+            config_file.write_text(config.model_dump_json())
 
         return config
 
@@ -1340,7 +1340,9 @@ class Trainer(BaseModel):
                 torch.save(
                     self.optimizer.state_dict(), self.output_dir / "optimizer.th"
                 )
-            (self.output_dir / "pred_tracker.json").write_text(self.pred_tracker.json())
+            (self.output_dir / "pred_tracker.json").write_text(
+                self.pred_tracker.model_dump_json()
+            )
 
             # Stop if loss has gone to infinity or is NaN
             if (
@@ -1418,7 +1420,7 @@ class Trainer(BaseModel):
 
         if use_epoch is not None:
             (self.output_dir / "pred_tracker_full.json").write_text(
-                self.pred_tracker.json()
+                self.pred_tracker.model_dump_json()
             )
             # Trim the pred_tracker
             for _, tp in self.pred_tracker:
@@ -1428,11 +1430,13 @@ class Trainer(BaseModel):
 
         final_model_path = self.output_dir / "final.th"
         torch.save(self.model.state_dict(), final_model_path)
-        (self.output_dir / "pred_tracker.json").write_text(self.pred_tracker.json())
+        (self.output_dir / "pred_tracker.json").write_text(
+            self.pred_tracker.model_dump_json()
+        )
 
         # write to json
         model_config_path = self.output_dir / "model_config.json"
-        model_config_path.write_text(self.mtenn_model_config.json())
+        model_config_path.write_text(self.mtenn_model_config.model_dump_json())
 
         # copy over the final to tagged model if present
         import shutil
