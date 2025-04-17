@@ -376,15 +376,29 @@ def build(
         "divergence": es_divergence,
         "burnin": es_burnin,
     }
+    if dataset_type is not None:
+        is_structural = dataset_type != DatasetType.graph
+    elif structures is not None:
+        # Assume structural since structures were passed
+        is_structural = True
+    else:
+        # Don't know what to do so punt and hope there's an appropriate cache file
+        is_structural = None
     ds_config = {
         "cache": ds_config_cache,
         "overwrite_cache": overwrite_ds_config_cache,
+        "ds_type": dataset_type,
+        "structures": structures,
+        "xtal_regex": xtal_regex,
+        "cpd_regex": cpd_regex,
         "exp_file": exp_file,
-        "is_structural": False,
+        "is_structural": is_structural,
         "cache_file": ds_cache,
         "overwrite": overwrite_ds_cache,
         "export_input_data": export_input_data,
         "export_exp_data": export_exp_data,
+        "grouped": grouped_dataset,
+        "for_e3nn": e3nn_dataset,
     }
 
     ds_splitter_config = {
@@ -510,6 +524,14 @@ def build_and_train(
     es_burnin: int | None = None,
     es_config_cache: Path | None = None,
     exp_file: Path | None = None,
+    structures: str | None = None,
+    xtal_regex: str = MPRO_ID_REGEX,
+    cpd_regex: str = MOONSHOT_CDD_ID_REGEX,
+    dataset_type: DatasetType | None = None,
+    export_input_data: bool | None = None,
+    export_exp_data: bool | None = None,
+    grouped_dataset: bool | None = None,
+    e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
     ds_config_cache: Path | None = None,
     ds_split_type: DatasetSplitterType | None = None,
@@ -610,13 +632,29 @@ def build_and_train(
         "divergence": es_divergence,
         "burnin": es_burnin,
     }
+    if dataset_type is not None:
+        is_structural = dataset_type != DatasetType.graph
+    elif structures is not None:
+        # Assume structural since structures were passed
+        is_structural = True
+    else:
+        # Don't know what to do so punt and hope there's an appropriate cache file
+        is_structural = None
     ds_config = {
         "cache": ds_config_cache,
         "overwrite_cache": overwrite_ds_config_cache,
+        "ds_type": dataset_type,
+        "structures": structures,
+        "xtal_regex": xtal_regex,
+        "cpd_regex": cpd_regex,
         "exp_file": exp_file,
-        "is_structural": False,
+        "is_structural": is_structural,
         "cache_file": ds_cache,
         "overwrite": overwrite_ds_cache,
+        "export_input_data": export_input_data,
+        "export_exp_data": export_exp_data,
+        "grouped": grouped_dataset,
+        "for_e3nn": e3nn_dataset,
     }
 
     ds_splitter_config = {
