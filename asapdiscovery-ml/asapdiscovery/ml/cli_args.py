@@ -1612,7 +1612,10 @@ def kvp_list_to_dict(kvp_list_str):
         Python dict built from the input string
     """
 
-    return {kvp.split(":")[0]: kvp.split(":")[1] for kvp in kvp_list_str.split(",")}
+    return {
+        kvp.split(":")[0]: ":".join(kvp.split(":")[1:])
+        for kvp in kvp_list_str.split(",")
+    }
 
 
 ################################################################################
