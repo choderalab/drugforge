@@ -77,6 +77,7 @@ class Trainer(BaseModel):
             "If no values are passed, each loss function will be weighted equally. If "
             "any values are passed, there must be one for each loss function."
         ),
+        validate_default=True,
     )
     eval_loss_weights: torch.Tensor = Field(
         [],
@@ -86,6 +87,7 @@ class Trainer(BaseModel):
             "weights from loss_weights will be used. If any values are passed, there "
             "must be one for each loss function."
         ),
+        validate_default=True,
     )
     weight_decay: confloat(ge=0.0, allow_inf_nan=False) = Field(
         0.0,
@@ -141,6 +143,7 @@ class Trainer(BaseModel):
             "TrainingPredictionTracker to keep track of predictions and losses over "
             "training."
         ),
+        validate_default=True,
     )
     device: torch.device = Field("cpu", description="Device to train on.")
 
