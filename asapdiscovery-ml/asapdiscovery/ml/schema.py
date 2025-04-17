@@ -54,7 +54,6 @@ class TrainingPrediction(BaseModel):
     )
 
     model_config = {
-        "extra": "allow",
         "arbitrary_types_allowed": True,
         "validate_assignment": True,
     }
@@ -104,7 +103,6 @@ class TrainingPredictionTracker(BaseModel):
     )
 
     model_config = {
-        "extra": "allow",
         "validate_assignment": True,
         "validate_default": True,
     }
@@ -115,6 +113,10 @@ class TrainingPredictionTracker(BaseModel):
         if not split_dict:
             return {"train": [], "val": [], "test": []}
 
+        return split_dict
+
+    @field_validator("split_dict", mode="after")
+    def check_split_dict_values(cls, split_dict):
         # Make sure that the format is correct
         if split_dict.keys() != {"train", "val", "test"}:
             raise ValueError(f"Received unexpected dict keys: {split_dict.keys()}")
