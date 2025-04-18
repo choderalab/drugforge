@@ -441,7 +441,7 @@ class TrainingPredictionTracker(BaseModel):
                     except KeyError:
                         cur_loss_configs[tp.compound_id] = {tp.loss_config.json()}
 
-                cur_loss_configs = {tuple(s) for s in cur_loss_configs.values()}
+                cur_loss_configs = {tuple(sorted(s)) for s in cur_loss_configs.values()}
                 if len(cur_loss_configs) > 1:
                     raise ValueError(f"Mismatched loss_configs in split {sp}")
                 elif len(cur_loss_configs) == 0:
