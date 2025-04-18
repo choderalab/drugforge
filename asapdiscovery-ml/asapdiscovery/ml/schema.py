@@ -8,7 +8,7 @@ import numpy as np
 import pandas
 import torch
 from asapdiscovery.ml.config import LossFunctionConfig
-from pydantic import BaseModel, Field, field_serializer, field_validator
+from pydantic import BaseModel, Field, field_validator
 from scipy.stats import bootstrap, kendalltau, spearmanr
 
 
