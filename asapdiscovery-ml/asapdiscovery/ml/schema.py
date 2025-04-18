@@ -23,9 +23,7 @@ class TrainingPrediction(BaseModel):
 
     # Target info
     target_prop: str = Field(..., description="Target property being predicted.")
-    target_val: float | torch.Tensor = Field(
-        ..., description="Target value to predict."
-    )
+    target_val: float = Field(..., description="Target value to predict.")
     in_range: int | None = Field(
         None,
         description=(
@@ -58,19 +56,12 @@ class TrainingPrediction(BaseModel):
         "validate_assignment": True,
     }
 
-    @field_serializer("target_val", when_used="json")
-    def serialize_torch_tensor(self, tensor: torch.Tensor):
-        return tensor.tolist()
-
     @field_validator("target_val", mode="before")
     def cast_target_val(cls, v):
-        if isinstance(v, float):
-            return v
-
         if isinstance(v, torch.Tensor):
-            return v.clone().detach()
+            return v.item()
 
-        return torch.tensor(v)
+        return v
 
     def to_empty(self):
         """
