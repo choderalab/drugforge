@@ -91,17 +91,18 @@ class DockedDataset(Dataset):
                 comp_exp_dict = {}
             comp_exp_dict |= exp_dict.get(comp.ligand.compound_name, {})
 
-            # compound = get_complex_id(comp)
             compound = (comp.target.target_name, comp.ligand.compound_name)
+            pose = cls._complex_to_pose(
+                comp, compound=compound, exp_dict=comp_exp_dict, ignore_h=ignore_h
+            )
+            if pose is None:
+                continue
+            structures.append(pose)
+
             try:
                 compound_idxs[compound].append(comp_counter)
             except KeyError:
                 compound_idxs[compound] = [comp_counter]
-
-            pose = cls._complex_to_pose(
-                comp, compound=compound, exp_dict=comp_exp_dict, ignore_h=ignore_h
-            )
-            structures.append(pose)
 
             comp_counter += 1
 
@@ -328,7 +329,11 @@ class SplitDockedDataset(DockedDataset):
             node_featurizer=CanonicalAtomFeaturizer(),
             edge_featurizer=None,
         )
-        lig_pose = {"g": smiles_to_g(comp.ligand.smiles)}
+        g = smiles_to_g(comp.ligand.smiles)
+        if g is None:
+            print(f"{compound} ligand couldn't be converted to graph", flush=True)
+            return None
+        lig_pose = {"g": g}
 
         pose["complex"] = complex_pose
         pose["protein"] = prot_pose
