@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import multiprocessing as mp
 from functools import partial
@@ -1029,7 +1030,11 @@ def calc_epoch_stats(g):
 
 def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop):
     print(fn, flush=True)
-    pred_tracker = TrainingPredictionTracker(**json.loads(fn.read_text()))
+    try:
+        pred_tracker = TrainingPredictionTracker(**json.loads(fn.read_text()))
+    except json.JSONDecodeError:
+        print("failed to read", fn, flush=True)
+        return None
 
     # DF with each compound's pred for each epoch
     compound_df = pred_tracker.to_plot_df(
@@ -1081,6 +1086,7 @@ def load_collection_df(
     spec_lab_to_output_lab: dict[str, dict[str, str]] = None,
     extract_epochs: list[str | int] = None,
     target_prop: str = "pIC50",
+    run_date: datetime = None,
     n_workers: int = 1,
 ):
     """
@@ -1125,6 +1131,9 @@ def load_collection_df(
         * "best_mae": take the epoch with lowest MAE
     target_prop : str, default="pIC50"
         Target property to use when calling `pred_tracker.to_plot_df`
+    run_date : datetime, optional
+        Farthest date from which to accept a run. Any runs started before this date will
+        be ignored. If left blank, will include all found runs
     n_workers : int, default=1
         Number of concurrent processes to use for loading files
 
@@ -1147,8 +1156,15 @@ def load_collection_df(
         cur_model_dir = model_dir_str.format(**kwargs_dict)
         run_id_fn = top_level_dir / cur_model_dir / "run_id"
         if not run_id_fn.exists():
-            print(kwargs_dict, "not run yet", flush=True)
+            print(kwargs_dict, run_id_fn, "not run yet", flush=True)
             continue
+
+        # Make sure that the file was updated this year (ie recent run)
+        mod_time = datetime.fromtimestamp(run_id_fn.stat().st_mtime)
+        if run_date and (mod_time < run_date):
+            print(kwargs_dict, "missed date cutoff", flush=True)
+            continue
+
         run_id = run_id_fn.read_text()
         pred_tracker_fn = top_level_dir / cur_model_dir / f"{run_id}/pred_tracker.json"
         if not pred_tracker_fn.exists():
@@ -1169,6 +1185,9 @@ def load_collection_df(
 
     with mp.Pool(processes=n_workers) as pool:
         res = pool.starmap(mp_func, mp_args)
+
+    # Get rid of any failed runs
+    res = [r for r in res if r is not None]
 
     # Extract the results into lists of DFs to concatenate
     per_epoch_df = [r[0] for r in res]
