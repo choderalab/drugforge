@@ -1,5 +1,4 @@
-from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic.v1 import BaseSettings, Field
 
 
 class AlchemiscaleSettings(BaseSettings):
