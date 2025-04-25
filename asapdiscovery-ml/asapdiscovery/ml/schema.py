@@ -1028,12 +1028,14 @@ def calc_epoch_stats(g):
     )
 
 
-def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop):
-    print(fn, flush=True)
+def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop, verbose):
+    if verbose:
+        print(fn, flush=True)
     try:
         pred_tracker = TrainingPredictionTracker(**json.loads(fn.read_text()))
     except json.JSONDecodeError:
-        print("failed to read", fn, flush=True)
+        if verbose:
+            print("failed to read", fn, flush=True)
         return None
 
     # DF with each compound's pred for each epoch
@@ -1088,6 +1090,7 @@ def load_collection_df(
     target_prop: str = "pIC50",
     run_date: datetime = None,
     n_workers: int = 1,
+    verbose: bool = True,
 ):
     """
     Load a collection of TrainingPredictionTracker objects from a group of run
@@ -1136,6 +1139,9 @@ def load_collection_df(
         be ignored. If left blank, will include all found runs
     n_workers : int, default=1
         Number of concurrent processes to use for loading files
+    verbose : bool, default=True
+        Print whether each individual pred tracker file was successfully loaded. Useful
+        for debugging but can get noisy if you're loading a lot of files
 
     Returns
     -------
@@ -1144,7 +1150,10 @@ def load_collection_df(
     if extract_epochs is None:
         extract_epochs = []
     mp_func = partial(
-        _load_one_df, extract_epochs=extract_epochs, target_prop=target_prop
+        _load_one_df,
+        extract_epochs=extract_epochs,
+        target_prop=target_prop,
+        verbose=verbose,
     )
 
     mp_args = []
@@ -1156,19 +1165,22 @@ def load_collection_df(
         cur_model_dir = model_dir_str.format(**kwargs_dict)
         run_id_fn = top_level_dir / cur_model_dir / "run_id"
         if not run_id_fn.exists():
-            print(kwargs_dict, run_id_fn, "not run yet", flush=True)
+            if verbose:
+                print(kwargs_dict, run_id_fn, "not run yet", flush=True)
             continue
 
         # Make sure that the file was updated this year (ie recent run)
         mod_time = datetime.fromtimestamp(run_id_fn.stat().st_mtime)
         if run_date and (mod_time < run_date):
-            print(kwargs_dict, "missed date cutoff", flush=True)
+            if verbose:
+                print(kwargs_dict, "missed date cutoff", flush=True)
             continue
 
         run_id = run_id_fn.read_text()
         pred_tracker_fn = top_level_dir / cur_model_dir / f"{run_id}/pred_tracker.json"
         if not pred_tracker_fn.exists():
-            print(kwargs_dict, "still running", flush=True)
+            if verbose:
+                print(kwargs_dict, "still running", flush=True)
             continue
 
         new_cols_dict = {}
