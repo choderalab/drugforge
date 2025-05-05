@@ -10,6 +10,7 @@ import pandas
 import torch
 from asapdiscovery.ml.config import LossFunctionConfig
 from pydantic import BaseModel, Field, field_validator
+import pydantic
 from scipy.stats import bootstrap, kendalltau, spearmanr
 
 
@@ -63,6 +64,18 @@ class TrainingPrediction(BaseModel):
             return v.item()
 
         return v
+
+    @field_validator("predictions", "loss_vals", mode="before")
+    def handle_nones(cls, val_list):
+        # Make sure there aren't any Nones being passed in
+        val_list = [v if v is not None else np.nan for v in val_list]
+        return val_list
+
+    @field_validator("pose_predictions", mode="before")
+    def handle_nones_nested_lists(cls, val_list):
+        # Make sure there aren't any Nones being passed in
+        val_list = [[v if v is not None else np.nan] for vals in val_list for v in vals]
+        return val_list
 
     def to_empty(self):
         """
@@ -1036,6 +1049,9 @@ def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop, verbose):
     except json.JSONDecodeError:
         if verbose:
             print("failed to read", fn, flush=True)
+        return None
+    except pydantic.ValidationError:
+        print("pydantic error parsing", fn, flush=True)
         return None
 
     # DF with each compound's pred for each epoch
