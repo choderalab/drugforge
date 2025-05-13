@@ -666,13 +666,13 @@ class Trainer(BaseModel):
         run_id_fn = self.output_dir / "run_id"
 
         # Don't serialize input_data for confidentiality/size reasons
-        ds_config = self.ds_config.dict()
+        ds_config = self.ds_config.model_dump()
         try:
             del ds_config["input_data"]
         except KeyError:
             # Don't need to do anything since it's already not there
             pass
-        config = self.dict()
+        config = self.model_dump()
         config["ds_config"] = ds_config
 
         if self.cont:

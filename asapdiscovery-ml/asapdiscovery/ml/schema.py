@@ -88,7 +88,7 @@ class TrainingPrediction(BaseModel):
         """
 
         # Make a copy
-        d = self.dict()
+        d = self.model_dump()
 
         # Get rid of tracked values
         del d["predictions"]

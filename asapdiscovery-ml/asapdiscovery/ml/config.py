@@ -51,7 +51,7 @@ class ConfigBase(BaseModel):
         that a class needs to handle (see GATModelConfig as an example).
         """
 
-        orig_config = self.dict()
+        orig_config = self.model_dump()
 
         # Get new config by overwriting old stuff with any new stuff
         new_config = orig_config | config_updates
