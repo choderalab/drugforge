@@ -68,7 +68,6 @@ jobs:
     - name: Install packages
       run: |
         micromamba install -n modeling --file devtools/conda-envs/${{ matrix.os }}/data.yaml
-        python -m pip install -e ./asapdiscovery-data --no-deps
         python -m pip install -e ./asapdiscovery-modeling --no-deps
         python -m pip install -e ./asapdiscovery-cli --no-deps
         python -m pip install -e ./asapdiscovery-dataviz --no-deps
