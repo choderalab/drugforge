@@ -311,7 +311,7 @@ def test_update_values_new(identifiers, loss_configs):
     tp_tracker.update_values(
         split="train",
         prediction=1.0,
-        pose_predictions=[1.0, 2.0, 3.0],
+        pose_predictions=[[1.0, 2.0, 3.0]],
         loss_val=0.0,
         **identifiers[0],
         loss_config=loss_configs[0],
