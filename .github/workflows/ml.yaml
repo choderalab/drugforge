@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.11"]
 
     env:
@@ -53,12 +53,8 @@ jobs:
 
     # More info on options: https://github.com/mamba-org/provision-with-micromamba
     - name: Setup Conda Environment
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v2
       with:
-        # default - will pull down 2.0 which we don't want!
-        # micromamba-version: latest
-        # pin to latest 1.x release
-        micromamba-version: '1.5.10-0'
         environment-file: devtools/conda-envs/${{ matrix.os }}/ml.yaml
         environment-name: asapdiscovery
         cache-environment: true
