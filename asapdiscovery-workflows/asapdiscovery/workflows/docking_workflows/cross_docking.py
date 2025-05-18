@@ -6,7 +6,7 @@ Removes all the additional layers in the other workflows and adds some features 
 from pathlib import Path
 from shutil import rmtree
 
-from asapdiscovery.data.operators.selectors.selector_list import StructureSelector
+from asapdiscovery.docking.selectors.selector_list import StructureSelector
 from asapdiscovery.data.readers.meta_structure_factory import MetaStructureFactory
 from asapdiscovery.data.readers.molfile import MolFileFactory
 from asapdiscovery.data.services.postera.manifold_data_validation import (
