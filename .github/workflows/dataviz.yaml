@@ -56,7 +56,7 @@ jobs:
       uses: mamba-org/setup-micromamba@v2
       with:
         environment-file: devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
-        environment-name: data
+        environment-name: dataviz
         cache-environment: true
         cache-downloads: true
         cache-environment-key: environment-${{ steps.date.outputs.date }}
@@ -66,7 +66,7 @@ jobs:
 
     - name: Install packages
       run: |
-        micromamba install -n modeling --file devtools/conda-envs/${{ matrix.os }}/data.yaml
+        micromamba install -n dataviz --file devtools/conda-envs/${{ matrix.os }}/data.yaml
         python -m pip install -e ./asapdiscovery-data --no-deps
         python -m pip install -e ./asapdiscovery-modeling --no-deps
         python -m pip install -e ./asapdiscovery-cli --no-deps
