@@ -82,6 +82,8 @@ def find_all_imports_with_files(directory: str) -> Dict[str, Dict[str, Set[str]]
                 std_libs.add(pkg)
         except ImportError:
             continue
+        except TypeError:
+            continue
 
     for pkg in std_libs:
         import_to_files.pop(pkg)

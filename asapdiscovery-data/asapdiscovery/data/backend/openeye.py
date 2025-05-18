@@ -17,8 +17,6 @@ from openeye import (  # noqa: F401
     oespruce,
     oeszybki,
 )
-
-from asapdiscovery.modeling.modeling import trim_small_chains
 from schema.schema_base import MoleculeFilter
 
 # exec on module import
@@ -1337,3 +1335,47 @@ def split_openeye_design_unit(du, lig=None, lig_title=None):
     openeye_perceive_residues(prot)
     openeye_perceive_residues(complex_)
     return lig, prot, complex_
+
+
+def trim_small_chains(input_mol, cutoff_len=10):
+    """
+    Remove short chains from a protein molecule object. The goal is to get rid
+    of any peptide ligands that were mistakenly collected by OESplitMolComplex.
+
+    Parameters
+    ----------
+    input_mol : oechem.OEGraphMol
+        OEGraphMol object containing the protein to trim
+    cutoff_len : int, default=10
+        The cutoff length for peptide chains (chains must have more than this
+        many residues to be included)
+
+    Returns
+    -------
+    oechem.OEGraphMol
+        Trimmed molecule
+    """
+    # Copy the molecule
+    mol_copy = input_mol.CreateCopy()
+
+    # Remove chains from mol_copy that are too short (possibly a better way of
+    #  doing this with OpenEye functions)
+    # Get number of residues per chain
+    chain_len_dict = {}
+    hv = oechem.OEHierView(mol_copy)
+    for chain in hv.GetChains():
+        chain_id = chain.GetChainID()
+        for frag in chain.GetFragments():
+            frag_len = len(list(frag.GetResidues()))
+            try:
+                chain_len_dict[chain_id] += frag_len
+            except KeyError:
+                chain_len_dict[chain_id] = frag_len
+
+    # Remove short chains atom by atom
+    for a in mol_copy.GetAtoms():
+        chain_id = oechem.OEAtomGetResidue(a).GetExtChainID()
+        if (chain_id not in chain_len_dict) or (chain_len_dict[chain_id] <= cutoff_len):
+            mol_copy.DeleteAtom(a)
+
+    return mol_copy
