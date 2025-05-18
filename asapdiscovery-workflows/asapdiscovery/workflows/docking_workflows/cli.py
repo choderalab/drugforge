@@ -22,7 +22,7 @@ from asapdiscovery.cli.cli_args import (
     target,
     use_only_cache,
 )
-from asapdiscovery.data.operators.selectors.selector_list import StructureSelector
+from asapdiscovery.docking.selectors.selector_list import StructureSelector
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.data.util.dask_utils import DaskType, FailureMode
 from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE

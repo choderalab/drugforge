@@ -14,7 +14,7 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Optional
 
-from asapdiscovery.data.operators.selectors.selector_list import StructureSelector
+from asapdiscovery.docking.selectors.selector_list import StructureSelector
 from asapdiscovery.data.readers.meta_structure_factory import MetaStructureFactory
 from asapdiscovery.data.util.dask_utils import (
     BackendType,

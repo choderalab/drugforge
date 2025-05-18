@@ -414,7 +414,7 @@ def select_reference_for_compounds(
     Returns:
         The PreppedComplex most suitable for the input ligands and the largest ligand that it was selected to match.
     """
-    from asapdiscovery.data.operators.selectors.mcs_selector import sort_by_mcs
+    from asapdiscovery.docking.selectors.mcs_selector import sort_by_mcs
 
     # sort the ligands by the number of atoms
     compounds_by_size = [
