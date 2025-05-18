@@ -11,7 +11,7 @@ from asapdiscovery.data.services.postera.manifold_data_validation import (
     TargetTags,
     map_output_col_to_manifold_tag,
 )
-from asapdiscovery.workflows.postera.molecule_set import MoleculeSetAPI
+from asapdiscovery.data.services.postera.molecule_set import MoleculeSetAPI
 from asapdiscovery.data.services.services_config import (
     CloudfrontSettings,
     PosteraSettings,

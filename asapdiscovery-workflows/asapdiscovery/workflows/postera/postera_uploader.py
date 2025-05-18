@@ -4,7 +4,7 @@ from uuid import UUID
 import numpy as np
 import pandas as pd
 from asapdiscovery.data.backend.rdkit import rdkit_smiles_roundtrip
-from asapdiscovery.workflows.postera.molecule_set import (
+from asapdiscovery.data.services.postera.molecule_set import (
     MoleculeSetAPI,
     MoleculeSetKeys,
 )
