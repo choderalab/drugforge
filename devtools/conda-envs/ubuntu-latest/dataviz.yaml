@@ -1,7 +1,6 @@
 name: workflows
 channels:
-  - openeye
-  - conda-forge
+  - bioconda
 dependencies:
 # drugforge {all the other packages}
   logomaker
