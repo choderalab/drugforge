@@ -22,7 +22,7 @@ from asapdiscovery.modeling.modeling import (
     spruce_protein,
     superpose_molecule,
 )
-from backend.openeye import split_openeye_design_unit
+from asapdiscovery.data.backend.openeye import split_openeye_design_unit
 from pydantic.v1 import BaseModel, Field
 
 if TYPE_CHECKING:
