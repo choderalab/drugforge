@@ -3,18 +3,19 @@ channels:
   - bioconda
   - openeye
   - conda-forge
+  - defaults
 dependencies:
-# drugforge {all the other packages}
-  logomaker
-  airium
-  PIL
-  click
-  imageio
-  matplotlib
-  mdtraj
-  multimethod
-  pandas
-  pydantic
-  pygifsicle
-  pymol2
-  pytest
+  # drugforge {all the other packages}
+  - logomaker
+  - airium
+  - pillow  # This is the correct package name for PIL
+  - click
+  - imageio
+  - matplotlib
+  - mdtraj
+  - multimethod
+  - pandas
+  - pydantic
+  - pygifsicle
+  - pymol-open-source  # The correct package name for PyMOL
+  - pytest
