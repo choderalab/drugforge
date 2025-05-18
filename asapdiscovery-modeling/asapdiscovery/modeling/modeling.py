@@ -8,7 +8,7 @@ from asapdiscovery.data.backend.openeye import (
     oespruce,
     openeye_perceive_residues,
 )
-from schema.schema_base import MoleculeComponent
+from asapdiscovery.data.schema.schema_base import MoleculeComponent
 
 
 def add_seqres_to_openeye_protein(
