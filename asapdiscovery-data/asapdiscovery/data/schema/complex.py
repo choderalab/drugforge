@@ -10,12 +10,12 @@ from asapdiscovery.data.backend.openeye import (
     load_openeye_pdb,
     oechem,
     save_openeye_pdb,
+    split_openeye_mol
 )
 from asapdiscovery.data.schema.ligand import Ligand
 from asapdiscovery.data.schema.schema_base import DataModelAbstractBase
 from asapdiscovery.data.schema.target import PreppedTarget, Target
-from asapdiscovery.modeling.modeling import split_openeye_mol
-from asapdiscovery.modeling.schema import MoleculeFilter
+from schema.schema_base import MoleculeFilter
 from pydantic.v1 import Field
 
 logger = logging.getLogger(__name__)

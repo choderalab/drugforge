@@ -19,10 +19,10 @@ from asapdiscovery.data.util.utils import seqres_to_res_list
 from asapdiscovery.modeling.modeling import (
     make_design_unit,
     mutate_residues,
-    split_openeye_design_unit,
     spruce_protein,
     superpose_molecule,
 )
+from backend.openeye import split_openeye_design_unit
 from pydantic.v1 import BaseModel, Field
 
 if TYPE_CHECKING:

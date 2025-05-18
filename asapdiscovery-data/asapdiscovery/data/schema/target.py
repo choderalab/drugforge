@@ -13,21 +13,18 @@ from asapdiscovery.data.backend.openeye import (
     pdb_string_to_oemol,
     save_openeye_design_unit,
     save_openeye_pdb,
-)
-from asapdiscovery.data.schema.identifiers import TargetIdentifiers
-from asapdiscovery.modeling.modeling import (  # TODO: move to backend
     split_openeye_design_unit,
     split_openeye_mol,
 )
-from asapdiscovery.modeling.schema import MoleculeFilter  # TODO: move to backend
+from asapdiscovery.data.schema.identifiers import TargetIdentifiers
 from pydantic.v1 import Field, root_validator
 
-from .schema_base import (
+from asapdiscovery.data.schema.schema_base import (
     DataModelAbstractBase,
     DataStorageType,
     check_strings_for_equality_with_exclusion,
     schema_dict_get_val_overload,
-    write_file_directly,
+    write_file_directly, MoleculeFilter,
 )
 
 logger = logging.getLogger(__name__)
