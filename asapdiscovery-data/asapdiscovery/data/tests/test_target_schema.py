@@ -24,12 +24,6 @@ def sars2_spruced_pdb():
     return pdb
 
 
-@pytest.fixture(scope="session")
-def oedu_file():
-    oedu = fetch_test_file("Mpro-P0008_0A_ERI-UCB-ce40166b-17_prepped_receptor_0.oedu")
-    return oedu
-
-
 def test_target_from_pdb_at_least_one_id(moonshot_pdb):
     with pytest.raises(ValueError):
         # neither id is set
