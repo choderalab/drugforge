@@ -81,9 +81,9 @@ def find_all_imports_with_files(directory: str) -> Dict[str, Dict[str, Set[str]]
             if not hasattr(__import__(pkg), '__file__'):
                 std_libs.add(pkg)
         except ImportError:
-            continue
+            print("Failed to import:", pkg)
         except TypeError:
-            continue
+            print("TypeError:", pkg)
 
     for pkg in std_libs:
         import_to_files.pop(pkg)

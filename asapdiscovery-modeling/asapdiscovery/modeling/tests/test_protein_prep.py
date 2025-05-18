@@ -39,6 +39,11 @@ def prep_complex():
         ligand_kwargs={"compound_name": "test2"},
     )
 
+@pytest.fixture(scope="session")
+def complex_oedu():
+    oedu = fetch_test_file("Mpro-P2660_0A_bound-prepped_receptor.oedu")
+    return oedu
+
 
 @pytest.fixture(scope="session")
 def all_structure_dir_fns():

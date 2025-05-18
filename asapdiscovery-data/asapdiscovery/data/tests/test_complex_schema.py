@@ -11,12 +11,6 @@ def complex_pdb():
     return pdb
 
 
-@pytest.fixture(scope="session")
-def complex_oedu():
-    oedu = fetch_test_file("Mpro-P2660_0A_bound-prepped_receptor.oedu")
-    return oedu
-
-
 def test_complex_from_oemol(complex_pdb):
     complex_mol = load_openeye_pdb(complex_pdb)
 
