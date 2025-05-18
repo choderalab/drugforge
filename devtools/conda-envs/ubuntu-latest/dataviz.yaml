@@ -1,4 +1,4 @@
-name: workflows
+name: dataviz
 channels:
   - bioconda
   - openeye
