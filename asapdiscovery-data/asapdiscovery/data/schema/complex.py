@@ -15,7 +15,7 @@ from asapdiscovery.data.backend.openeye import (
 from asapdiscovery.data.schema.ligand import Ligand
 from asapdiscovery.data.schema.schema_base import DataModelAbstractBase
 from asapdiscovery.data.schema.target import PreppedTarget, Target
-from schema.schema_base import MoleculeFilter
+from asapdiscovery.data.schema.schema_base import MoleculeFilter
 from pydantic.v1 import Field
 
 logger = logging.getLogger(__name__)
