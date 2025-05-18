@@ -1,9 +1,9 @@
 import pytest
-from asapdiscovery.data.operators.selectors.mcs_selector import (
+from asapdiscovery.docking.selectors.mcs_selector import (
     MCSSelector,
     RascalMCESSelector,
 )
-from asapdiscovery.data.operators.selectors.pairwise_selector import (
+from asapdiscovery.docking.selectors.pairwise_selector import (
     LeaveOneOutSelector,
     LeaveSimilarOutSelector,
     PairwiseSelector,

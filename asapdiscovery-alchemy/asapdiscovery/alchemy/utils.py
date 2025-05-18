@@ -13,9 +13,8 @@ from asapdiscovery.alchemy.schema.forcefield import ForceFieldParams
 from openmm.app import ForceField, Modeller, PDBFile
 
 if TYPE_CHECKING:
-    from asapdiscovery.data.schema.complex import PreppedComplex
+    from asapdiscovery.modeling.schema import PreppedComplex, PreppedTarget
     from asapdiscovery.data.schema.ligand import Ligand
-    from asapdiscovery.data.schema.target import PreppedTarget
     from openff.bespokefit.workflows import BespokeWorkflowFactory
 
 

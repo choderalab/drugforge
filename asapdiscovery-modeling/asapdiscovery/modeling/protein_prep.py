@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, Literal, Optional, Union
 import dask
 import yaml
 from asapdiscovery.data.backend.openeye import oechem
-from asapdiscovery.data.schema.complex import Complex, PreppedComplex
+from asapdiscovery.data.schema.complex import Complex
+from asapdiscovery.modeling.schema import PreppedComplex, PreppedTarget
 from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.schema.target import PreppedTarget
 from asapdiscovery.data.util.dask_utils import (
     FailureMode,
     actualise_dask_delayed_iterable,
