@@ -17,7 +17,7 @@ from openeye import (  # noqa: F401
     oespruce,
     oeszybki,
 )
-from schema.schema_base import MoleculeFilter
+from asapdiscovery.data.schema.schema_base import MoleculeFilter
 
 # exec on module import
 
