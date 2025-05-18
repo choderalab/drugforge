@@ -1,0 +1,130 @@
+Unique third-party packages and their submodules:
+
+asapdiscovery:
+  - asapdiscovery.cli.cli_args.active_site_chain
+  - asapdiscovery.cli.cli_args.cache_dir
+  - asapdiscovery.cli.cli_args.dask_args
+  - asapdiscovery.cli.cli_args.fragalysis_dir
+  - asapdiscovery.cli.cli_args.input_json
+  - asapdiscovery.cli.cli_args.ligands
+  - asapdiscovery.cli.cli_args.loglevel
+  - asapdiscovery.cli.cli_args.md_args
+  - asapdiscovery.cli.cli_args.ml_score
+  - asapdiscovery.cli.cli_args.output_dir
+  - asapdiscovery.cli.cli_args.overwrite
+  - asapdiscovery.cli.cli_args.pdb_file
+  - asapdiscovery.cli.cli_args.postera_args
+  - asapdiscovery.cli.cli_args.ref_chain
+  - asapdiscovery.cli.cli_args.save_to_cache
+  - asapdiscovery.cli.cli_args.structure_dir
+  - asapdiscovery.cli.cli_args.target
+  - asapdiscovery.cli.cli_args.use_only_cache
+  - asapdiscovery.data.backend.openeye.oechem
+  - asapdiscovery.data.metadata.resources.active_site_chains
+  - asapdiscovery.data.metadata.resources.master_structures
+  - asapdiscovery.data.operators.deduplicator.LigandDeDuplicator
+  - asapdiscovery.data.operators.selectors.mcs_selector.RascalMCESSelector
+  - asapdiscovery.data.operators.selectors.selector_list.StructureSelector
+  - asapdiscovery.data.operators.symmetry_expander.SymmetryExpander
+  - asapdiscovery.data.readers.meta_ligand_factory.MetaLigandFactory
+  - asapdiscovery.data.readers.meta_structure_factory.MetaStructureFactory
+  - asapdiscovery.data.readers.molfile.MolFileFactory
+  - asapdiscovery.data.readers.structure_dir.StructureDirFactory
+  - asapdiscovery.data.schema.complex.Complex
+  - asapdiscovery.data.schema.complex.PreppedComplex
+  - asapdiscovery.data.schema.ligand.Ligand
+  - asapdiscovery.data.services.aws.cloudfront.CloudFront
+  - asapdiscovery.data.services.aws.s3.S3
+  - asapdiscovery.data.services.fragalysis.fragalysis_reader.FragalysisFactory
+  - asapdiscovery.data.services.postera.manifold_artifacts.ArtifactType
+  - asapdiscovery.data.services.postera.manifold_artifacts.ManifoldArtifactUploader
+  - asapdiscovery.data.services.postera.manifold_data_validation.TargetProteinMap
+  - asapdiscovery.data.services.postera.manifold_data_validation.TargetTags
+  - asapdiscovery.data.services.postera.manifold_data_validation.map_output_col_to_manifold_tag
+  - asapdiscovery.data.services.postera.manifold_data_validation.rename_output_columns_for_manifold
+  - asapdiscovery.data.services.postera.molecule_set.MoleculeSetAPI
+  - asapdiscovery.data.services.postera.postera_uploader.PosteraUploader
+  - asapdiscovery.data.services.services_config.CloudfrontSettings
+  - asapdiscovery.data.services.services_config.PosteraSettings
+  - asapdiscovery.data.services.services_config.S3Settings
+  - asapdiscovery.data.testing.test_resources.fetch_test_file
+  - asapdiscovery.data.util.dask_utils.BackendType
+  - asapdiscovery.data.util.dask_utils.DaskType
+  - asapdiscovery.data.util.dask_utils.FailureMode
+  - asapdiscovery.data.util.dask_utils.make_dask_client_meta
+  - asapdiscovery.data.util.logging.FileLogger
+  - asapdiscovery.data.util.utils.check_empty_dataframe
+  - asapdiscovery.dataviz.gif_viz.GIFVisualizer
+  - asapdiscovery.dataviz.html_viz.ColorMethod
+  - asapdiscovery.dataviz.html_viz.HTMLVisualizer
+  - asapdiscovery.docking.docking.DockingInputMultiStructure
+  - asapdiscovery.docking.docking.DockingInputPair
+  - asapdiscovery.docking.docking.DockingResult
+  - asapdiscovery.docking.docking.write_results_to_multi_sdf
+  - asapdiscovery.docking.docking_data_validation.DockingResultCols
+  - asapdiscovery.docking.openeye.POSITDocker
+  - asapdiscovery.docking.openeye.POSITDockingResults
+  - asapdiscovery.docking.openeye.POSIT_METHOD
+  - asapdiscovery.docking.openeye.POSIT_RELAX_MODE
+  - asapdiscovery.docking.scorer.ChemGauss4Scorer
+  - asapdiscovery.docking.scorer.FINTScorer
+  - asapdiscovery.docking.scorer.MLModelScorer
+  - asapdiscovery.docking.scorer.MetaScorer
+  - asapdiscovery.docking.scorer.SymClashScorer
+  - asapdiscovery.ml.models.ASAPMLModelRegistry
+  - asapdiscovery.modeling.protein_prep.LigandTransferProteinPrepper
+  - asapdiscovery.modeling.protein_prep.ProteinPrepper
+  - asapdiscovery.simulation.simulate.OpenMMPlatform
+  - asapdiscovery.simulation.simulate.SimulationResult
+  - asapdiscovery.simulation.simulate.VanillaMDSimulator
+  - asapdiscovery.spectrum.fitness.target_has_fitness_data
+  - asapdiscovery.workflows.docking_workflows.cli.docking
+  - asapdiscovery.workflows.docking_workflows.cross_docking.CrossDockingWorkflowInputs
+  - asapdiscovery.workflows.docking_workflows.cross_docking.cross_docking_workflow
+  - asapdiscovery.workflows.docking_workflows.large_scale_docking.LargeScaleDockingInputs
+  - asapdiscovery.workflows.docking_workflows.large_scale_docking.large_scale_docking_workflow
+  - asapdiscovery.workflows.docking_workflows.ligand_transfer_docking.LigandTransferDockingWorkflowInputs
+  - asapdiscovery.workflows.docking_workflows.ligand_transfer_docking.ligand_transfer_docking_workflow
+  - asapdiscovery.workflows.docking_workflows.small_scale_docking.SmallScaleDockingInputs
+  - asapdiscovery.workflows.docking_workflows.small_scale_docking.small_scale_docking_workflow
+  - asapdiscovery.workflows.docking_workflows.symexp_crystal_packing.SymExpCrystalPackingInputs
+  - asapdiscovery.workflows.docking_workflows.symexp_crystal_packing.symexp_crystal_packing_workflow
+  - asapdiscovery.workflows.docking_workflows.workflows.DockingWorkflowInputsBase
+  - asapdiscovery.workflows.docking_workflows.workflows.PosteraDockingWorkflowInputs
+  - asapdiscovery.workflows.prep_workflows.cli.protein_prep
+  - asapdiscovery.workflows.prep_workflows.protein_prep.ProteinPrepInputs
+  - asapdiscovery.workflows.prep_workflows.protein_prep.protein_prep_workflow
+
+click:
+  - click.testing.CliRunner
+
+importlib:
+  - importlib.metadata.version
+
+logging:
+
+os:
+
+pathlib:
+  - Path
+
+pydantic:
+  - pydantic.v1.BaseModel
+  - pydantic.v1.Field
+  - pydantic.v1.PositiveInt
+  - pydantic.v1.root_validator
+
+pytest:
+
+shutil:
+  - rmtree
+
+traceback:
+
+typing:
+  - Optional
+  - TYPE_CHECKING
+  - Union
+
+unittest:
+  - mock
