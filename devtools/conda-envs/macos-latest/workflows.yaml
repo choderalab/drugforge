@@ -7,3 +7,9 @@ dependencies:
   click
   pydantic
   unittest
+name: workflows
+channels:
+  - openeye
+  - conda-forge
+dependencies:
+# drugforge {all the other packages}
