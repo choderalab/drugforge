@@ -6,4 +6,3 @@ dependencies:
   # drugforge {all the other packages}
   - click
   - pydantic
-  - unittest
