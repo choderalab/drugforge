@@ -74,7 +74,7 @@ class TrainingPrediction(BaseModel):
     @field_validator("pose_predictions", mode="before")
     def handle_nones_nested_lists(cls, val_list):
         # Make sure there aren't any Nones being passed in
-        val_list = [[v if v is not None else np.nan] for vals in val_list for v in vals]
+        val_list = [[v if v is not None else np.nan for v in vals] for vals in val_list]
         return val_list
 
     def to_empty(self):
