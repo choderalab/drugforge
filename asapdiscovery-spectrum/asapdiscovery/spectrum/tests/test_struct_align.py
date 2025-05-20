@@ -77,7 +77,6 @@ def test_pymol_seq_align(protein_path, tmp_path):
     assert pse_out.exists()
 
 
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Slow on macOS")
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_struct_alignment_single_pdb(blast_csv_path, protein_path, tmp_path):
     runner = CliRunner()
@@ -101,7 +100,6 @@ def test_struct_alignment_single_pdb(blast_csv_path, protein_path, tmp_path):
     assert click_success(result)
 
 
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Slow in macOS")
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_struct_alignment_one_chain(
     blast_csv_path, protein_path, protein_apo_path, tmp_path
@@ -129,7 +127,6 @@ def test_struct_alignment_one_chain(
     assert click_success(result)
 
 
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Slow in macOS")
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_struct_alignment_struct_dir(
     blast_csv_path, protein_path, structure_dir, tmp_path
@@ -158,7 +155,6 @@ def test_struct_alignment_struct_dir(
     assert click_success(result)
 
 
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Slow in macOS")
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_struct_alignment_cfold_dir(blast_csv_path, protein_path, cfold_dir, tmp_path):
     runner = CliRunner()
@@ -187,7 +183,6 @@ def test_struct_alignment_cfold_dir(blast_csv_path, protein_path, cfold_dir, tmp
     assert click_success(result)
 
 
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Slow in macOS")
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_fitness_alignment_pairwise(blast_csv_path, protein_path, tmp_path):
     runner = CliRunner()
@@ -210,7 +205,6 @@ def test_fitness_alignment_pairwise(blast_csv_path, protein_path, tmp_path):
     assert click_success(result)
 
 
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Slow in macOS")
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_fitness_alignment_fasta(
     blast_csv_path, fasta_alignment_path, protein_path, protein_mers_path, tmp_path
