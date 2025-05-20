@@ -164,6 +164,7 @@ class Alignment:
         # Run alignment with MAFFT
         # SeqIO.write(self.seq_records, temp_file, "fasta")
         cmd = f"mafft {self.seq_records} > {alignment_file}"
+        # TODO: We need to check return code of this command is successful
         subprocess.run(cmd, shell=True, capture_output=True)
 
         self.align_obj = AlignIO.read(alignment_file, "fasta")
