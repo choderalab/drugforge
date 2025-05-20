@@ -115,7 +115,6 @@ class Alignment:
                 host_str = " ".join(q.strip().split(" ")[1:])
             elif "organism" in q:
                 org_str = " ".join(q.strip().split(" ")[1:])
-
         filtered_idxs = [
             idx
             for idx in ordered_idxs
@@ -462,7 +461,10 @@ def do_MSA(
     if select_mode == "checkbox":
         select_file = alignment.select_checkbox()
     elif "host" in select_mode or "organism" in select_mode:
-        select_file = alignment.select_taxonomy(select_mode, f"{save_file}.fasta")
+        if alignment.hosts[0] is None:
+            raise NameError("The csv input file provided does not have host information, you have to use the 'keyword' mode.")
+        else:
+            select_file = alignment.select_taxonomy(select_mode, f"{save_file}.fasta")
     else:
         select_file = alignment.select_keyword(select_mode, f"{save_file}.fasta")
 
