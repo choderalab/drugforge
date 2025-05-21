@@ -225,7 +225,7 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
         write_results_to_multi_sdf(
             output_dir / "docking_results.sdf",
             results,
-            backend=BackendType.DISK,
+            backend=BackendType.IN_MEMORY,
             reconstruct_cls=docker.result_cls,
         )
 
