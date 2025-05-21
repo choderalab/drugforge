@@ -21,8 +21,6 @@ from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from multimethod import multimethod
 from pydantic.v1 import BaseModel, Field
 
-from asapdiscovery.workflows.scorers import _get_disk_path_from_docking_result
-
 logger = logging.getLogger(__name__)
 
 
@@ -445,3 +443,10 @@ class MetaScorer(BaseModel):
         return np.ravel(results).tolist()
 
 
+def _get_disk_path_from_docking_result(docking_result: DockingResult) -> Path:
+    if docking_result.provenance is None:
+        raise ValueError("DockingResult does not have provenance")
+    disk_path = docking_result.provenance.get("on_disk_location", None)
+    if not disk_path:
+        raise ValueError("DockingResult provenance does not have on_disk_location")
+    return disk_path

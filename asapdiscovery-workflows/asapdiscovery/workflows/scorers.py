@@ -18,7 +18,8 @@ from asapdiscovery.data.services.postera.manifold_data_validation import TargetT
 from asapdiscovery.data.util.dask_utils import dask_vmap, backend_wrapper
 from asapdiscovery.dataviz.plip import compute_fint_score
 from asapdiscovery.docking.docking import DockingResult
-from asapdiscovery.docking.scorer import ScoreType, ScorerBase, ScoreUnits, logger, Score
+from asapdiscovery.docking.scorer import ScoreType, ScorerBase, ScoreUnits, logger, Score, \
+    _get_disk_path_from_docking_result
 from asapdiscovery.ml.inference import InferenceBase, get_inference_cls_from_model_type
 from asapdiscovery.ml.models import MLModelSpecBase
 from asapdiscovery.spectrum.fitness import target_has_fitness_data
@@ -58,14 +59,6 @@ def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> Sco
     else:
         raise ValueError(f"Model type {model_type} not recognized")
 
-
-def _get_disk_path_from_docking_result(docking_result: DockingResult) -> Path:
-    if docking_result.provenance is None:
-        raise ValueError("DockingResult does not have provenance")
-    disk_path = docking_result.provenance.get("on_disk_location", None)
-    if not disk_path:
-        raise ValueError("DockingResult provenance does not have on_disk_location")
-    return disk_path
 
 # keep track of all the ml scorers
 _ml_scorer_classes_meta = []
