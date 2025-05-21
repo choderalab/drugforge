@@ -225,6 +225,7 @@ class POSITDocker(DockingBase):
 
         docking_results = []
 
+        logger.info(f"Running docking on {len(inputs)} sets")
         for set in inputs:
             try:
                 # make sure its a path
@@ -263,6 +264,7 @@ class POSITDocker(DockingBase):
                         else:
                             omegaOpts = oeomega.OEOmegaOptions()
                         # set stereochemistry to non-strict
+                        print("CAN ANYONE HEAR ME")
                         omegaOpts.SetStrictStereo(False)
                         omega = oeomega.OEOmega(omegaOpts)
                         omega_retcode = omega.Build(lig_oemol)
