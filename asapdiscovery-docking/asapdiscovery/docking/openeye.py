@@ -344,7 +344,7 @@ class POSITDocker(DockingBase):
                         input_pairs = []
                         posed_ligands = []
                         num_poses = pose_res.GetNumPoses()
-                        logger.info(f"Prepping results for {len(num_poses)} poses")
+                        logger.info(f"Prepping results for {num_poses} poses")
                         for i, result in enumerate(pose_res.GetSinglePoseResults()):
                             posed_mol = result.GetPose()
                             prob = result.GetProbability()
