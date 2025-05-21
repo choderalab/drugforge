@@ -205,7 +205,7 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
         use_dask=inputs.use_dask,
         dask_client=dask_client,
         failure_mode=inputs.failure_mode,
-        return_for_disk_backend=True,
+        return_for_disk_backend=False,
     )
     n_results = len(results)
     logger.info(f"Docked {n_results} pairs successfully")
@@ -242,18 +242,5 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
 
     del results
 
-    scores_df.to_csv(data_intermediates / "docking_scores_raw.csv", index=False)
-
-    # rename columns for manifold
-    logger.info("Renaming columns for manifold")
-    result_df = rename_output_columns_for_manifold(
-        scores_df,
-        inputs.target,
-        [DockingResultCols],
-        manifold_validate=True,
-        drop_non_output=True,
-        allow=[DockingResultCols.LIGAND_ID.value],
-    )
-
-    result_df.to_csv(output_dir / "docking_results_final.csv", index=False)
+    scores_df.to_csv(output_dir / "docking_scores_raw.csv", index=False)
     logger.info("Finished successfully!")
