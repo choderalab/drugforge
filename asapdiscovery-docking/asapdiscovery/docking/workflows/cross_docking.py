@@ -236,7 +236,7 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
         dask_client=dask_client,
         failure_mode=inputs.failure_mode,
         return_df=True,
-        backend=BackendType.DISK,
+        backend=BackendType.IN_MEMORY,
         reconstruct_cls=docker.result_cls,
     )
 
