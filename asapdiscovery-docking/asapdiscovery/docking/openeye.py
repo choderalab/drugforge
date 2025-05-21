@@ -254,9 +254,11 @@ class POSITDocker(DockingBase):
                             )
                 # run docking if output does not exist
                 else:
+                    logger.info("Making design units")
                     dus = set.to_design_units()
                     lig_oemol = oechem.OEMol(set.ligand.to_oemol())
                     if self.use_omega:
+                        logger.info("Running omega on ligand")
                         if self.omega_dense:
                             omegaOpts = oeomega.OEOmegaOptions(
                                 oeomega.OEOmegaSampling_Dense
@@ -264,7 +266,6 @@ class POSITDocker(DockingBase):
                         else:
                             omegaOpts = oeomega.OEOmegaOptions()
                         # set stereochemistry to non-strict
-                        print("CAN ANYONE HEAR ME")
                         omegaOpts.SetStrictStereo(False)
                         omega = oeomega.OEOmega(omegaOpts)
                         omega_retcode = omega.Build(lig_oemol)
@@ -278,12 +279,13 @@ class POSITDocker(DockingBase):
                                 raise ValueError(
                                     f"Unknown error handling option {failure_mode}"
                                 )
-
+                    logger.info("Prepping docking options")
                     opts = oedocking.OEPositOptions()
                     opts.SetIgnoreNitrogenStereo(True)
                     opts.SetPositMethods(self.posit_method.value)
                     opts.SetPoseRelaxMode(self.relax_mode.value)
 
+                    logger.info("Run docking")
                     pose_res = oedocking.OEPositResults()
                     pose_res, retcode = self.run_oe_posit_docking(
                         opts, pose_res, dus, lig_oemol, self.num_poses
@@ -338,9 +340,11 @@ class POSITDocker(DockingBase):
                         )
 
                     if retcode == oedocking.OEDockingReturnCode_Success:
+                        logger.info("Docking Success!")
                         input_pairs = []
                         posed_ligands = []
                         num_poses = pose_res.GetNumPoses()
+                        logger.info(f"Prepping results for {len(num_poses)} poses")
                         for i, result in enumerate(pose_res.GetSinglePoseResults()):
                             posed_mol = result.GetPose()
                             prob = result.GetProbability()
@@ -372,6 +376,7 @@ class POSITDocker(DockingBase):
                                 input_pairs.append(set)
 
                         # Create Docking Results Objects
+                        logger.info("Creating POSITDockingResults objects")
                         docking_results_objects = []
                         for input_pair, posed_ligand in zip(input_pairs, posed_ligands):
                             docking_results_objects.append(
