@@ -201,7 +201,6 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
     )
     results = docker.dock(
         sets,
-        output_dir=output_dir / "docking_results",
         use_dask=inputs.use_dask,
         dask_client=dask_client,
         failure_mode=inputs.failure_mode,
