@@ -7,7 +7,11 @@ from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE
 from asapdiscovery.docking.selectors.selector_list import StructureSelector
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.data.util.dask_utils import DaskType, FailureMode
-@click.command()
+
+@click.group()
+def cli(help="Command-line interface for asapdiscovery-docking"): ...
+
+@cli.command()
 @target
 @click.option(
     "--use-omega",
