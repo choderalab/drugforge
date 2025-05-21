@@ -256,3 +256,4 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
     )
 
     result_df.to_csv(output_dir / "docking_results_final.csv", index=False)
+    logger.info("Finished successfully!")
