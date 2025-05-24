@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import random
 import torch
 from asapdiscovery.data.backend.openeye import oechem
 from asapdiscovery.data.schema.complex import Complex
@@ -15,7 +16,7 @@ class DockedDataset(Dataset):
     learning.
     """
 
-    def __init__(self, compounds={}, structures=[]):
+    def __init__(self, compounds={}, structures=[], random_iter=False):
         """
         Constructor for DockedDataset object.
 
@@ -28,11 +29,14 @@ class DockedDataset(Dataset):
             List of pose dicts, containing at minimum tensors for atomic number, atomic
             positions, and a ligand idx. Indices in this list should match the indices
             in the lists in compounds.
+        random_iter : bool, default=False
+            Iterate through the dataset randomly each time
         """
         super().__init__()
 
         self.compounds = compounds
         self.structures = structures
+        self.random_iter = random_iter
 
     @classmethod
     def from_complexes(cls, complexes: list[Complex], exp_dict=None, ignore_h=True):
@@ -295,8 +299,14 @@ class DockedDataset(Dataset):
             return (compounds[0], str_list[0])
 
     def __iter__(self):
-        for s in self.structures:
-            yield (s["compound"], s)
+        if self.random_iter:
+            rand_idx = random.sample(range(len(self.structures)), len(self.structures))
+            for i in rand_idx:
+                s = self.structures[i]
+                yield (s["compound"], s)
+        else:
+            for s in self.structures:
+                yield (s["compound"], s)
 
 
 class SplitDockedDataset(DockedDataset):
