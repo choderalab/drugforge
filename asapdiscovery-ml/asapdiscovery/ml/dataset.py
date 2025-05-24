@@ -39,7 +39,9 @@ class DockedDataset(Dataset):
         self.random_iter = random_iter
 
     @classmethod
-    def from_complexes(cls, complexes: list[Complex], exp_dict=None, ignore_h=True):
+    def from_complexes(
+        cls, complexes: list[Complex], exp_dict=None, ignore_h=True, random_iter=False
+    ):
         """
         Build from a list of Complex objects.
 
@@ -53,6 +55,8 @@ class DockedDataset(Dataset):
             a ligand witht that compound_id
         ignore_h : bool, default=True
             Whether to remove hydrogens from the loaded structure
+        random_iter : bool, default=False
+            Iterate through the dataset randomly each time
 
         Returns
         -------
@@ -110,7 +114,7 @@ class DockedDataset(Dataset):
 
             comp_counter += 1
 
-        return cls(compound_idxs, structures)
+        return cls(compound_idxs, structures, random_iter=random_iter)
 
     @staticmethod
     def _complex_to_pose(comp, compound=None, exp_dict=None, ignore_h=True):
@@ -183,6 +187,7 @@ class DockedDataset(Dataset):
         ignore_h=True,
         extra_dict=None,
         num_workers=1,
+        random_iter=False,
     ):
         """
         Parameters
@@ -200,6 +205,8 @@ class DockedDataset(Dataset):
             keys ["z", "pos", "lig", "compound"]
         num_workers : int, default=1
             Number of cores to use to load structures
+        random_iter : bool, default=False
+            Iterate through the dataset randomly each time
         """
         if extra_dict is None:
             extra_dict = {}
@@ -222,7 +229,12 @@ class DockedDataset(Dataset):
         else:
             all_complexes = [mp_func(*args) for args in mp_args]
 
-        return cls.from_complexes(all_complexes, exp_dict=extra_dict, ignore_h=ignore_h)
+        return cls.from_complexes(
+            all_complexes,
+            exp_dict=extra_dict,
+            ignore_h=ignore_h,
+            random_iter=random_iter,
+        )
 
     def __len__(self):
         return len(self.structures)
