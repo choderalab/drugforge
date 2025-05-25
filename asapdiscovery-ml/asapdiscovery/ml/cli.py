@@ -73,6 +73,7 @@ def build_ds(
     e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
     ds_config_cache: Path | None = None,
+    ds_random_iter: bool | None = None,
     exp_file: Path | None = None,
     structures: str | None = None,
     xtal_regex: str = MPRO_ID_REGEX,
@@ -108,6 +109,7 @@ def build_ds(
         "overwrite": overwrite_ds_cache,
         "export_input_data": export_input_data,
         "export_exp_data": export_exp_data,
+        "random_iter": ds_random_iter,
     }
     config_kwargs = {
         k: v
@@ -274,6 +276,7 @@ def build(
     e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
     ds_config_cache: Path | None = None,
+    ds_random_iter: bool | None = None,
     exp_file: Path | None = None,
     structures: str | None = None,
     xtal_regex: str = MPRO_ID_REGEX,
@@ -399,6 +402,7 @@ def build(
         "export_exp_data": export_exp_data,
         "grouped": grouped_dataset,
         "for_e3nn": e3nn_dataset,
+        "random_iter": ds_random_iter,
     }
 
     ds_splitter_config = {
@@ -536,6 +540,7 @@ def build_and_train(
     e3nn_dataset: bool | None = None,
     ds_cache: Path | None = None,
     ds_config_cache: Path | None = None,
+    ds_random_iter: bool | None = None,
     ds_split_type: DatasetSplitterType | None = None,
     train_frac: float | None = None,
     val_frac: float | None = None,
@@ -657,6 +662,7 @@ def build_and_train(
         "export_exp_data": export_exp_data,
         "grouped": grouped_dataset,
         "for_e3nn": e3nn_dataset,
+        "random_iter": ds_random_iter,
     }
 
     ds_splitter_config = {

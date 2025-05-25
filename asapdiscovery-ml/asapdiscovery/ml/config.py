@@ -353,6 +353,11 @@ class DatasetConfig(ConfigBase):
     # Torch device to send loaded dataset to
     device: torch.device = Field("cpu", description="Device to send loaded dataset to.")
 
+    # Randomly iterate through the dataset each time
+    random_iter: bool = Field(
+        False, description="Randomly iterate through the dataset each time."
+    )
+
     model_config = {"arbitrary_types_allowed": True}
 
     @field_serializer("device", when_used="always")
@@ -635,6 +640,10 @@ class DatasetConfig(ConfigBase):
                         # Not a tensor so just let it go
                         pass
 
+            # Check this for backwards compatibility with datasets that were built
+            #  before this feature was added
+            if hasattr(ds, "random_iter"):
+                ds.random_iter = self.random_iter
             return ds
 
         # Build directly from Complexes/Ligands
@@ -654,13 +663,17 @@ class DatasetConfig(ConfigBase):
                     )
                 else:
                     ds = DockedDataset.from_complexes(
-                        self.input_data, exp_dict=self.exp_data
+                        self.input_data,
+                        exp_dict=self.exp_data,
+                        random_iter=self.random_iter,
                     )
                 if self.for_e3nn:
                     ds = DatasetConfig.fix_e3nn_labels(ds, grouped=self.grouped)
             case DatasetType.split:
                 ds = SplitDockedDataset.from_complexes(
-                    self.input_data, exp_dict=self.exp_data
+                    self.input_data,
+                    exp_dict=self.exp_data,
+                    random_iter=self.random_iter,
                 )
             case other:
                 raise ValueError(f"Unknwon dataset type {other}.")

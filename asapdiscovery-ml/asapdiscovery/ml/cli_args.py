@@ -1174,6 +1174,7 @@ def general_ds_args(func):
         e3nn_ds,
         ds_cache,
         ds_config_cache,
+        ds_random_iter,
     ]:
         func = fn(func)
 
@@ -1287,6 +1288,14 @@ def export_exp_data(func):
         "--export-exp-data",
         type=bool,
         help="Export the exp_data field in the DatasetConfig.",
+    )(func)
+
+
+def ds_random_iter(func):
+    return click.option(
+        "--ds-random-iter",
+        type=bool,
+        help="Randomly iterate through the dataset each time.",
     )(func)
 
 
