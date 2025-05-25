@@ -1,3 +1,4 @@
+import itertools as it
 import json
 import pickle as pkl
 
@@ -85,12 +86,12 @@ def test_build_ds_graph(exp_file, tmp_path, export_input_data, export_exp_data):
     assert not ds_config.overwrite
 
 
+# All 3-permutations of True and False
 @pytest.mark.parametrize(
-    "export_input_data,export_exp_data",
-    [(True, True), (True, False), (False, True), (False, False)],
+    "export_input_data,export_exp_data,random_iter", it.product([True, False], repeat=3)
 )
 def test_build_ds_schnet(
-    exp_file, docked_files, tmp_path, export_input_data, export_exp_data
+    exp_file, docked_files, tmp_path, export_input_data, export_exp_data, random_iter
 ):
     docked_dir = docked_files[0].parent
 
@@ -113,6 +114,8 @@ def test_build_ds_schnet(
             tmp_path / "ds_cache.pkl",
             "--ds-config-cache",
             tmp_path / "ds_config_cache.json",
+            "--ds-random-iter",
+            random_iter,
         ],
     )
     assert result.exit_code == 0
@@ -141,6 +144,7 @@ def test_build_ds_schnet(
     assert not ds_config.grouped
     assert not ds_config.for_e3nn
     assert not ds_config.overwrite
+    assert ds.random_iter == random_iter
 
 
 @pytest.mark.parametrize(
