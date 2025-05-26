@@ -396,11 +396,25 @@ class Trainer(BaseModel):
         xtal_regex = config_kwargs.pop("xtal_regex", None)
         cpd_regex = config_kwargs.pop("cpd_regex", None)
 
+        # Filter out None kwargs so defaults kick in
+        config_kwargs = {k: v for k, v in config_kwargs.items() if v is not None}
+
         if ds_config_cache and (not ds_config_cache.exists()):
             print(f"ds_config_cache {ds_config_cache} not found", flush=True)
         if ds_config_cache and ds_config_cache.exists() and (not overwrite):
             print("loading from cache", flush=True)
-            return DatasetConfig(**json.loads(ds_config_cache.read_text()))
+            loaded_kwargs = json.loads(ds_config_cache.read_text())
+
+            # Merge passed kwargs and loaded kwargs (passed take precedence)
+            overlap_keys = set(loaded_kwargs.keys()).intersection(config_kwargs.keys())
+            print(
+                "Using passed vals instead of loaded vals for:",
+                ", ".join(overlap_keys),
+                flush=True,
+            )
+            loaded_kwargs |= config_kwargs
+
+            return DatasetConfig(**loaded_kwargs)
 
         # Can't just load from cache so make sure all the right files exist
         if (not exp_file) or (not exp_file.exists()):
@@ -422,9 +436,6 @@ class Trainer(BaseModel):
                     _ = next(iter(glob(structures)))
                 except StopIteration:
                     raise ValueError("No structure files found.")
-
-        # Filter out None kwargs so defaults kick in
-        config_kwargs = {k: v for k, v in config_kwargs.items() if v is not None}
 
         # Pick correct DatasetType
         if is_structural:
