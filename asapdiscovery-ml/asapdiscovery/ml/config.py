@@ -615,6 +615,10 @@ class DatasetConfig(ConfigBase):
             print("loading from cache", flush=True)
             ds = pkl.loads(self.cache_file.read_bytes())
 
+            # Set in case ds doesn't have this attr (older version of the class) or
+            #  there's a mismatch
+            ds.random_iter = self.random_iter
+
             # Protein data might not exist if we're not caching it to save space, so
             #  make sure
             if (self.ds_type == DatasetType.split) and (
@@ -640,10 +644,6 @@ class DatasetConfig(ConfigBase):
                         # Not a tensor so just let it go
                         pass
 
-            # Check this for backwards compatibility with datasets that were built
-            #  before this feature was added
-            if hasattr(ds, "random_iter"):
-                ds.random_iter = self.random_iter
             return ds
 
         # Build directly from Complexes/Ligands
