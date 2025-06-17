@@ -14,14 +14,13 @@ def click_success(result):
 
 
 @pytest.mark.parametrize("use_dask", [True, False])
-@pytest.mark.parametrize("color_method", ["subpockets", "fitness"])
 @pytest.mark.parametrize("align", [True, False])
 def test_viz_cli(tmp_path, pose, protein, use_dask, color_method, align):
     runner = CliRunner()
     args = [
         "pose-html",
         "--colour-method",
-        color_method,
+        "subpockets",
         "--target",
         "SARS-CoV-2-Mpro",
         "--ligands",

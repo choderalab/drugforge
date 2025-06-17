@@ -21,7 +21,6 @@ from asapdiscovery.data.backend.openeye import (
 )
 from asapdiscovery.dataviz.plip import (
     get_interactions_plip,
-    make_color_res_fitness,
     make_color_res_subpockets,
 )
 from asapdiscovery.data.metadata.resources import active_site_chains, master_structures
@@ -38,12 +37,6 @@ from asapdiscovery.dataviz.visualizer import VisualizerBase
 from asapdiscovery.docking.docking import DockingResult
 from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.modeling.modeling import superpose_molecule  # TODO: move to backend
-from asapdiscovery.spectrum.fitness import (
-    _FITNESS_DATA_FIT_THRESHOLD,
-    get_fitness_scores_bloom_by_target,
-    parse_fitness_json,
-    target_has_fitness_data,
-)
 from multimethod import multimethod
 from pydantic.v1 import Field, root_validator
 
@@ -52,7 +45,6 @@ logger = logging.getLogger(__name__)
 
 class ColorMethod(str, Enum):
     subpockets = "subpockets"
-    fitness = "fitness"
 
 
 class HTMLVisualizer(VisualizerBase):
@@ -69,7 +61,7 @@ class HTMLVisualizer(VisualizerBase):
     target : TargetTags
         Target to visualize poses for
     color_method : ColorMethod
-        Protein surface coloring method. Can be either by `subpockets` or `fitness`
+        Protein surface coloring method. Can `subpockets` 
     debug : bool
         Whether to run in debug mode
     write_to_disk : bool
@@ -84,7 +76,7 @@ class HTMLVisualizer(VisualizerBase):
     target: TargetTags = Field(..., description="Target to visualize poses for")
     color_method: ColorMethod = Field(
         ColorMethod.subpockets,
-        description="Protein surface coloring method. Can be either by `subpockets` or `fitness`",
+        description="Protein surface coloring method. Can be `subpockets`",
     )
     debug: bool = Field(False, description="Whether to run in debug mode")
     write_to_disk: bool = Field(
@@ -102,8 +94,6 @@ class HTMLVisualizer(VisualizerBase):
     active_site_chain: Optional[str] = Field(
         None, description="Mobile chain ID to align."
     )
-    fitness_data: Optional[Any]
-    fitness_data_logoplots: Optional[Any]
     reference_protein: Optional[Any]
 
     @root_validator(pre=True)
@@ -120,23 +110,10 @@ class HTMLVisualizer(VisualizerBase):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if target_has_fitness_data(self.target):
-            self.fitness_data = parse_fitness_json(self.target)
-            self.fitness_data_logoplots = get_fitness_scores_bloom_by_target(
-                self.target
-            )
         self.reference_protein = load_openeye_pdb(master_structures[self.target])
 
     @root_validator
     @classmethod
-    def must_have_fitness_data(cls, values):
-        target = values.get("target")
-        color_method = values.get("color_method")
-        if color_method == ColorMethod.fitness and not target_has_fitness_data(target):
-            raise ValueError(
-                f"Attempting to color by fitness and {target} does not have fitness data, use `subpockets` instead."
-            )
-        return values
 
     def get_tag_for_color_method(self):
         """
@@ -144,8 +121,6 @@ class HTMLVisualizer(VisualizerBase):
         """
         if self.color_method == ColorMethod.subpockets:
             return DockingResultCols.HTML_PATH_POSE.value
-        elif self.color_method == ColorMethod.fitness:
-            return DockingResultCols.HTML_PATH_FITNESS.value
 
     def get_color_dict(self, protein) -> dict:
         """
@@ -153,8 +128,10 @@ class HTMLVisualizer(VisualizerBase):
         """
         if self.color_method == "subpockets":
             return make_color_res_subpockets(protein, self.target)
-        elif self.color_method == "fitness":
-            return make_color_res_fitness(protein, self.target)
+        else:
+            raise ValueError(
+                f"Unknown color method: {self.color_method}, must be 'subpockets'"
+                )
 
     @dask_vmap(["inputs"], has_failure_mode=True)
     @backend_wrapper("inputs")
@@ -577,140 +554,49 @@ class HTMLVisualizer(VisualizerBase):
                 with a.div(klass="box"):
                     a.div(id="gldiv", style="width: 100vw; height: 100vh;")
 
-                # dropdowns. Need to make these different between fitness and subpocket views.
-                if self.color_method == "fitness":
-                    a("<!-- show the top dropdown (surfaces) -->")
-                    with a.div(klass="dropdown"):
-                        a.button(klass="dropbtn", _t="Surface coloration")
-                        with a.div(
-                            klass="dropdown-content", style="text-align: center"
-                        ):
-                            a.a(
-                                href="#",
-                                _t="Protein residue surfaces are colored by mutability:",
-                            )
-                        with a.div(klass="dropdown-content"):
-                            a.a(
-                                href="#",
-                                _t="⚪ : No amino acid substitutions tolerated",
-                            )
-                            a.a(
-                                href="#",
-                                _t="🔴 : increasing tolerance for amino acid substitutions (increasing with 🔴 intensity)",
-                            )
-                            a.a(href="#", _t="🟣 : No data for residue")
+                # dropdowns. 
+                
+                show_logoplot_insert = hide_logoplot_insert = ""
+                # drop-down buttons for subpocket view:
+                a("<!-- show the top dropdown (surfaces) -->")
+                with a.div(klass="dropdown"):
+                    a.button(klass="dropbtn", _t="Key (Surfaces)")
+                    with a.div(
+                        klass="dropdown-content", style="text-align: center"
+                    ):
+                        a.a(
+                            href="#",
+                            _t="Protein residue surfaces are colored by subpockets, see<br /> notion -> asapdiscovery -> Computational Chemistry Core -><br /> Computational Chemsitry Core Reference Documents -> Canonical-views-of-target-structures",
+                        )
+                    with a.div(klass="dropdown-content"):
+                        a.a(
+                            href="#",
+                            _t="⚪ : Residue in chain with binding pocket, but not part of binding pocket",
+                        )
+                        a.a(
+                            href="#",
+                            _t="⚫ : Residue not in chain with binding pocket",
+                        )
 
-                    a("<!-- show the bottom dropdown (contacts) -->")
-                    with a.div(klass="dropdown_ctcs"):
-                        a.button(klass="dropbtn", _t="Ligand-protein contacts")
-                        with a.div(
-                            klass="dropdown-content", style="text-align: center"
-                        ):
-                            a.a(
-                                href="#",
-                                _t="Ligand-protein contacts are shown as dashed lines colored by:",
-                            )
-                        with a.div(klass="dropdown-content"):
-                            a.a(
-                                href="#",
-                                _t="⬜ : Ligand contact is with amino acid side chain that has no tolerated substitutions",
-                            )
-                            a.a(
-                                href="#",
-                                _t="🟩 : Ligand contact is with peptide backbone",
-                            )
-                            a.a(
-                                href="#",
-                                _t="🟥 : Ligand contact is with amino acid side chain that has tolerated substitutions (increasing with 🔴 intensity)",
-                            )
-                            a.a(href="#", _t="🟪 : No data for contacted residue")
-
-                    a("<!-- show the bottom dropdown (logoplots) -->")
-                    with a.div(klass="dropdown_lgplts"):
-                        a.button(klass="dropbtn", _t="Logo Plots")
-                        with a.div(
-                            klass="dropdown-content", style="text-align: center"
-                        ):
-                            a.a(
-                                href="#",
-                                _t="Fitness logo plots are shown on hover of residue atoms:",
-                            )
-                        with a.div(klass="dropdown-content"):
-                            a.a(
-                                href="#",
-                                _t="Left: amino acids at this position that are consistent with virus viability. Letter heights are scaled to  indicate<br />the fractions of the viable viral populations with the particular residue at this position",
-                            )
-                            a.a(
-                                href="#",
-                                _t="Right: amino acids at this position that are present in the selected population at background frequencies,<br />and thus likely to be inconsistent with viral viability. Stop codons (*) can also be present in these populations<br />of unselected genomes",
-                            )
-
-                    a("<!-- show logoplots per residue on hover -->")
-                    a("<!-- bake in the base64 divs of all the residues. -->")
-                    for resi, _ in self.fitness_data.items():
-                        resnum, chain = resi.split("_")
-                        # get the base64 for this residue in this chain.
-                        for fit_type, base64_bj in self.make_logoplot_input(
-                            resi
-                        ).items():
-                            with a.div(
-                                klass=f"logoplotbox_{fit_type}",
-                                id=f"{fit_type}DIV_{resnum}_{chain}",
-                                style="display:none",
-                            ):
-                                # add the base64 string while making some corrections.
-                                a.img(
-                                    alt=f"{fit_type} residue logoplot",
-                                    src=str(base64_bj)
-                                    .replace("b'", "data:image/png;base64,")
-                                    .replace("'", ""),
-                                )
-                    show_logoplot_insert = "showLogoPlots(atom.resi, atom.chain);"
-                    hide_logoplot_insert = (
-                        "if (atom.chain){\n hideLogoPlots(atom.resi, atom.chain);\n }\n"
-                    )
-                else:
-                    show_logoplot_insert = hide_logoplot_insert = ""
-                    # drop-down buttons for subpocket view:
-                    a("<!-- show the top dropdown (surfaces) -->")
-                    with a.div(klass="dropdown"):
-                        a.button(klass="dropbtn", _t="Key (Surfaces)")
-                        with a.div(
-                            klass="dropdown-content", style="text-align: center"
-                        ):
-                            a.a(
-                                href="#",
-                                _t="Protein residue surfaces are colored by subpockets, see<br /> notion -> asapdiscovery -> Computational Chemistry Core -><br /> Computational Chemsitry Core Reference Documents -> Canonical-views-of-target-structures",
-                            )
-                        with a.div(klass="dropdown-content"):
-                            a.a(
-                                href="#",
-                                _t="⚪ : Residue in chain with binding pocket, but not part of binding pocket",
-                            )
-                            a.a(
-                                href="#",
-                                _t="⚫ : Residue not in chain with binding pocket",
-                            )
-
-                    a("<!-- show the bottom dropdown (contacts) -->")
-                    with a.div(klass="dropdown_ctcs"):
-                        a.button(klass="dropbtn", _t="Key (Contacts)")
-                        with a.div(
-                            klass="dropdown-content", style="text-align: center"
-                        ):
-                            a.a(
-                                href="#",
-                                _t="Ligand-protein contacts are shown as dashed lines colored as:",
-                            )
-                        with a.div(klass="dropdown-content"):
-                            a.a(href="#", _t="Gray : Hydrophobic interaction")
-                            a.a(href="#", _t="Blue : Hydrogen bond")
-                            a.a(href="#", _t="Lilac : Water bridge")
-                            a.a(href="#", _t="Yellow : Salt bridge")
-                            a.a(href="#", _t="Green : pi-stacking")
-                            a.a(href="#", _t="Orange : pi-cation interaction")
-                            a.a(href="#", _t="Light-green : Halogen bond")
-                            a.a(href="#", _t="Purple : Metal complex")
+                a("<!-- show the bottom dropdown (contacts) -->")
+                with a.div(klass="dropdown_ctcs"):
+                    a.button(klass="dropbtn", _t="Key (Contacts)")
+                    with a.div(
+                        klass="dropdown-content", style="text-align: center"
+                    ):
+                        a.a(
+                            href="#",
+                            _t="Ligand-protein contacts are shown as dashed lines colored as:",
+                        )
+                    with a.div(klass="dropdown-content"):
+                        a.a(href="#", _t="Gray : Hydrophobic interaction")
+                        a.a(href="#", _t="Blue : Hydrogen bond")
+                        a.a(href="#", _t="Lilac : Water bridge")
+                        a.a(href="#", _t="Yellow : Salt bridge")
+                        a.a(href="#", _t="Green : pi-stacking")
+                        a.a(href="#", _t="Orange : pi-cation interaction")
+                        a.a(href="#", _t="Light-green : Halogen bond")
+                        a.a(href="#", _t="Purple : Metal complex")
 
             with a.script():
                 # function to show/hide the logoplots
@@ -803,98 +689,6 @@ class HTMLVisualizer(VisualizerBase):
                 )
 
         return str(a)
-
-    def make_logoplot_input(self, resi) -> dict:
-        """
-        given a residue number with underscored chain ID, get data for the fitness of all mutants for the residue. Use
-        LogoMaker to create a logoplot for both the fit and unfit mutants, return the base64
-        string of the image.
-        """
-
-        # get just the fitness data for the queried residue index, at the right chain.
-        resi, chain = resi.split("_")
-        site_df_resi = self.fitness_data_logoplots[
-            self.fitness_data_logoplots["site"] == int(resi)
-        ]
-        site_df = site_df_resi[site_df_resi["chain"] == chain]
-        # add the fitness threshold to normalize so that fit mutants end up in the left-hand logoplot.
-        site_df.loc[site_df.index, "fitness"] = site_df["fitness"] + abs(
-            _FITNESS_DATA_FIT_THRESHOLD[TargetVirusMap[self.target]]
-        )
-
-        # split the mutant data into fit/unfit.
-        site_df_fit = site_df[site_df["fitness"] > 0]
-        site_df_unfit = site_df[site_df["fitness"] < 0]
-
-        if len(site_df_fit) == 0:
-            raise ValueError(
-                f"No fit mutants found for residue {resi} in chain {chain}. Are you sure the fitness threshold is set correctly? At least the wildtype residue should be fit."
-            )
-        elif len(site_df_unfit) == 0:
-            warnings.warn(
-                f"Warning: no unfit residues found for residue {resi} in chain {chain}."
-            )
-            # make a dataframe with a fake unfit mutant instead.
-            site_df_unfit = pd.DataFrame(
-                [
-                    {
-                        "gene": site_df_fit["gene"].values[0],
-                        "site": resi,
-                        "mutant": "X",
-                        "fitness": -0.00001,
-                        "expected_count": 0,
-                        "wildtype": site_df_fit["wildtype"].values[0],
-                        "chain": chain,
-                    }
-                ]
-            )
-
-        logoplot_base64s_dict = {}
-        for fit_type, fitness_df in zip(["fit", "unfit"], [site_df_fit, site_df_unfit]):
-            # pivot table to make into LogoMaker format
-            logoplot_df = pd.DataFrame(
-                [fitness_df["fitness"].values], columns=fitness_df["mutant"]
-            )
-
-        # hide a shockingly large number of prints from inside logomaker
-        with tempfile.TemporaryDirectory() as tmpdirname, HiddenPrint() as _:
-            import matplotlib
-
-            matplotlib.use("agg")
-            for fit_type, fitness_df in zip(
-                ["fit", "unfit"], [site_df_fit, site_df_unfit]
-            ):
-                # pivot table to make into LogoMaker format
-                logoplot_df = pd.DataFrame(
-                    [fitness_df["fitness"].values], columns=fitness_df["mutant"]
-                )
-                # create Logo object
-                logomaker.Logo(
-                    logoplot_df,
-                    shade_below=0.5,
-                    fade_below=0.5,
-                    font_name="Sans Serif",
-                    figsize=(3, 10),
-                    color_scheme="dmslogo_funcgroup",
-                    flip_below=False,
-                    show_spines=True,
-                )
-
-                plt.xticks([])
-                plt.yticks([])
-
-                # we could get base64 from buffer, but easier to write as tmp and read back as bas64.
-                plt.savefig(
-                    f"{tmpdirname}/logoplot.png",
-                    bbox_inches="tight",
-                    pad_inches=0,
-                    dpi=50,
-                )
-                plt.close()  # prevent matplotlib from freaking out due to large volume of figures.
-                with open(f"{tmpdirname}/logoplot.png", "rb") as f:
-                    logoplot_base64s_dict[fit_type] = base64.b64encode(f.read())
-
-        return logoplot_base64s_dict
 
     @staticmethod
     def write_html(html, path) -> None:
