@@ -112,9 +112,6 @@ class HTMLVisualizer(VisualizerBase):
         super().__init__(**kwargs)
         self.reference_protein = load_openeye_pdb(master_structures[self.target])
 
-    @root_validator
-    @classmethod
-
     def get_tag_for_color_method(self):
         """
         Get the tag to use for the color method.
