@@ -39,7 +39,6 @@ from asapdiscovery.docking.scorer import (
 )
 from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import ProteinPrepper
-from asapdiscovery.spectrum.fitness import target_has_fitness_data
 from asapdiscovery.workflows.docking_workflows.workflows import (
     PosteraDockingWorkflowInputs,
 )
@@ -284,9 +283,6 @@ def large_scale_docking_workflow(inputs: LargeScaleDockingInputs):
     # add chemgauss4 scorer
     scorers = [ChemGauss4Scorer()]
 
-    if target_has_fitness_data(inputs.target):
-        logger.info("Target has fitness data, adding FINT scorer")
-        scorers.append(FINTScorer(target=inputs.target))
 
     # load ml scorers
     if inputs.ml_score:
@@ -352,46 +348,6 @@ def large_scale_docking_workflow(inputs: LargeScaleDockingInputs):
         ],
         how="outer",  # preserves rows where there is no visualisation
     )
-
-    # run html viz of target fitness to get web-ready vis of docked poses
-    if target_has_fitness_data(inputs.target):
-        logger.info("Running fitness HTML visualiser")
-        html_fitness_output_dir = output_dir / "fitness"
-        html_fitness_visualizer = HTMLVisualizer(
-            color_method=ColorMethod.fitness,
-            target=inputs.target,
-            output_dir=html_fitness_output_dir,
-            ref_chain=inputs.ref_chain,
-            active_site_chain=inputs.ref_chain,
-        )
-        fitness_visualizations = html_fitness_visualizer.visualize(
-            results,
-            use_dask=inputs.use_dask,
-            dask_client=dask_client,
-            failure_mode=inputs.failure_mode,
-            backend=BackendType.DISK,
-            reconstruct_cls=docker.result_cls,
-        )
-
-        # duplicate target id column so we can join
-        fitness_visualizations[DockingResultCols.DOCKING_STRUCTURE_POSIT.value] = (
-            fitness_visualizations[DockingResultCols.TARGET_ID.value]
-        )
-
-        # join the two dataframes on ligand_id, target_id and smiles
-        scores_df = scores_df.merge(
-            fitness_visualizations,
-            on=[
-                DockingResultCols.LIGAND_ID.value,
-                DockingResultCols.DOCKING_STRUCTURE_POSIT.value,
-                DockingResultCols.SMILES.value,
-            ],
-            how="outer",  # preserves rows where there is no fitness visualisation
-        )
-    else:
-        logger.info(
-            f"Target {inputs.target} does not have fitness data, skipping fitness visualisation"
-        )
 
     logger.info("Filtering docking results")
     # filter for POSIT probability > 0.7
@@ -534,10 +490,6 @@ def large_scale_docking_workflow(inputs: LargeScaleDockingInputs):
         artifact_types = [
             ArtifactType.DOCKING_POSE_POSIT,
         ]
-
-        if target_has_fitness_data(inputs.target):
-            artifact_columns.append(DockingResultCols.HTML_PATH_FITNESS.value)
-            artifact_types.append(ArtifactType.DOCKING_POSE_FITNESS_POSIT)
 
         # upload artifacts to S3 and link them to postera
         uploader = ManifoldArtifactUploader(
