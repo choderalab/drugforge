@@ -39,7 +39,6 @@ from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSITDocker
 from asapdiscovery.docking.scorer import (
     ChemGauss4Scorer,
-    FINTScorer,
     MetaScorer,
     MLModelScorer,
 )
