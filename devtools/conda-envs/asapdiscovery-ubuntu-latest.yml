@@ -54,6 +54,7 @@ dependencies:
   - multimethod
 
   # ml
+  - torchdata == 0.8.0
   - pytorch
   - pytorch_geometric >=2.5.0
   - pytorch_cluster
