@@ -56,27 +56,6 @@ seqres_data = {
     TargetTags("EV-D68-Capsid").value: EV_D68_Capsid_SEQRES,
 }
 
-# Fitness data in JSON format
-SARS_CoV_2_fitness_data = pkg_resources.resource_filename(
-    __name__, "aa_fitness_sars_cov_2.json"
-)
-
-ZIKV_NS2B_NS3pro_fitness_data = pkg_resources.resource_filename(
-    __name__, "aa_fitness_zikv_ns2b3.json"
-)
-
-ZIKV_RdRppro_fitness_data = pkg_resources.resource_filename(
-    __name__, "aa_fitness_zikv_rdrppro.json"
-)
-
-targets_with_fitness_data = [
-    TargetTags("SARS-CoV-2-Mpro"),
-    TargetTags("SARS-CoV-2-Mac1"),
-    TargetTags("SARS-CoV-2-N-protein"),
-    TargetTags("ZIKV-NS2B-NS3pro"),
-    TargetTags("ZIKV-RdRppro"),
-]
-
 # Reference PDB files to align targets to for consistent dataviz
 master_structures = {
     "SARS-CoV-2-Mpro": pkg_resources.resource_filename(
@@ -137,7 +116,3 @@ active_site_chains = {
     "EV-D68-Capsid": "A",
 }
 
-
-FINTSCORE_PARAMETERS = pkg_resources.resource_filename(
-    __name__, "fintscore_parameters.yaml"
-)

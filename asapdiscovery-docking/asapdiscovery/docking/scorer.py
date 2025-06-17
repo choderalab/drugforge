@@ -37,7 +37,6 @@ class ScoreType(str, Enum):
     """
 
     chemgauss4 = "chemgauss4"
-    FINT = "FINT"
     GAT_pIC50 = "GAT-pIC50"
     GAT_LogD = "GAT-LogD"
     schnet_pIC50 = "schnet-pIC50"
@@ -95,7 +94,6 @@ def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> Sco
 
 _SCORE_MANIFOLD_ALIAS = {
     ScoreType.chemgauss4: DockingResultCols.DOCKING_SCORE_POSIT.value,
-    ScoreType.FINT: DockingResultCols.FITNESS_SCORE_FINT.value,
     ScoreType.GAT_pIC50: DockingResultCols.COMPUTED_GAT_PIC50.value,
     ScoreType.GAT_LogD: DockingResultCols.COMPUTED_GAT_LOGD.value,
     ScoreType.schnet_pIC50: DockingResultCols.COMPUTED_SCHNET_PIC50.value,
