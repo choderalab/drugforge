@@ -64,13 +64,6 @@ jobs:
         create-args: >-
           python==${{ matrix.python-version }}
 
-    - name: Test OE License & Write License to File
-      env:
-        OE_LICENSE_TEXT: ${{ secrets.OE_LICENSE }}
-      run: |
-        echo "${OE_LICENSE_TEXT}" > ${OE_LICENSE}
-        python -c "import openeye; assert openeye.oechem.OEChemIsLicensed(), 'OpenEye license checks failed!'"
-
     - name: Install packages
       run: |
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/data.yaml
@@ -86,9 +79,14 @@ jobs:
         python -m pip install -e ./asapdiscovery-alchemy --no-deps
         python -m pip install -e ./asapdiscovery-workflows --no-deps
         python -m pip install -e ./asapdiscovery-cli --no-deps
+        micromamba list
 
-        micromamba list
-        micromamba list
+    - name: Test OE License & Write License to File
+      env:
+        OE_LICENSE_TEXT: ${{ secrets.OE_LICENSE }}
+      run: |
+        echo "${OE_LICENSE_TEXT}" > ${OE_LICENSE}
+        python -c "import openeye; assert openeye.oechem.OEChemIsLicensed(), 'OpenEye license checks failed!'"
 
     - name: Run tests
       run: |
