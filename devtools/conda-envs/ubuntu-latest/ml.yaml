@@ -70,7 +70,7 @@ dependencies:
   # ML
   - dgl<=2.0.0
   - dgllife
-  - mtenn >=0.6.3
+  - mtenn =0.6.2
   - pytorch
   - pytorch_geometric >=2.5.0
   - pytorch_cluster
