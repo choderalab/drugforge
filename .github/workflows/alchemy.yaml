@@ -55,7 +55,7 @@ jobs:
     - name: Setup Conda Environment
       uses: mamba-org/setup-micromamba@v2
       with:
-        environment-file: devtools/conda-envs/asapdiscovery-${{ matrix.os }}.yml
+        environment-file: devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
         environment-name: asapdiscovery
         cache-environment: true
         cache-downloads: true
