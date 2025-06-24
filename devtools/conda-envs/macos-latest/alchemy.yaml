@@ -13,7 +13,7 @@ dependencies:
   - networkx
   - numpy
   - openeye-toolkits
-  - openfe
+  - openfe ~=1
   - openff-toolkit
   - openff-models
   - openff-qcsubmit
