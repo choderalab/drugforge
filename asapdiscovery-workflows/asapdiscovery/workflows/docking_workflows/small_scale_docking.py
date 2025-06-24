@@ -39,14 +39,12 @@ from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSITDocker
 from asapdiscovery.docking.scorer import (
     ChemGauss4Scorer,
-    FINTScorer,
     MetaScorer,
     MLModelScorer,
 )
 from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import ProteinPrepper
 from asapdiscovery.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
-from asapdiscovery.spectrum.fitness import target_has_fitness_data
 from asapdiscovery.workflows.docking_workflows.workflows import (
     PosteraDockingWorkflowInputs,
 )
@@ -294,9 +292,6 @@ def small_scale_docking_workflow(inputs: SmallScaleDockingInputs):
     # add chemgauss4 scorer
     scorers = [ChemGauss4Scorer()]
 
-    if target_has_fitness_data(inputs.target):
-        logger.info("Target has fitness data, adding FINT scorer")
-        scorers.append(FINTScorer(target=inputs.target))
 
     # load ml scorers
     if inputs.ml_score:
@@ -391,45 +386,6 @@ def small_scale_docking_workflow(inputs: SmallScaleDockingInputs):
         ],
         how="outer",
     )
-
-    if target_has_fitness_data(inputs.target):
-        logger.info("Running fitness HTML visualiser")
-        html_fitness_output_dir = output_dir / "fitness"
-        html_fitness_visualizer = HTMLVisualizer(
-            color_method=ColorMethod.fitness,
-            target=inputs.target,
-            output_dir=html_fitness_output_dir,
-            ref_chain=inputs.ref_chain,
-            active_site_chain=inputs.ref_chain,
-        )
-        fitness_visualizations = html_fitness_visualizer.visualize(
-            results,
-            use_dask=inputs.use_dask,
-            dask_client=dask_client,
-            failure_mode=inputs.failure_mode,
-            backend=BackendType.DISK,
-            reconstruct_cls=docker.result_cls,
-        )
-
-        # duplicate target id column so we can join
-        fitness_visualizations[DockingResultCols.DOCKING_STRUCTURE_POSIT.value] = (
-            fitness_visualizations[DockingResultCols.TARGET_ID.value]
-        )
-
-        # join the two dataframes on ligand_id, target_id and smiles
-        combined_df = combined_df.merge(
-            fitness_visualizations,
-            on=[
-                DockingResultCols.LIGAND_ID.value,
-                DockingResultCols.DOCKING_STRUCTURE_POSIT.value,
-                DockingResultCols.SMILES.value,
-            ],
-            how="outer",
-        )
-    else:
-        logger.info(
-            f"Not running fitness HTML visualiser because {inputs.target} does not have fitness data"
-        )
 
     # filter out clashes (chemgauss4 score > 0)
     combined_df = combined_df[combined_df[DockingResultCols.DOCKING_SCORE_POSIT] <= 0]
@@ -611,9 +567,6 @@ def small_scale_docking_workflow(inputs: SmallScaleDockingInputs):
             ArtifactType.DOCKING_POSE_POSIT,
         ]
 
-        if target_has_fitness_data(inputs.target):
-            artifact_columns.append(DockingResultCols.HTML_PATH_FITNESS.value)
-            artifact_types.append(ArtifactType.DOCKING_POSE_FITNESS_POSIT)
 
         if inputs.md:
             artifact_columns.append(DockingResultCols.GIF_PATH.value)

@@ -2,7 +2,6 @@ import pytest
 from asapdiscovery.docking.scorer import (
     ChemGauss4Scorer,
     E3NNScorer,
-    FINTScorer,
     GATScorer,
     MetaScorer,
     SchnetScorer,
@@ -82,15 +81,3 @@ def test_meta_scorer_df(results_multi):
 
     scores = scorer.score(results_multi, return_df=True)
     assert len(scores) == 2  # 3 scorers for each of 2 inputs
-
-
-@pytest.mark.parametrize(
-    "data_fixture", ["results_simple_nolist", "complex_simple", "pdb_simple"]
-)
-@pytest.mark.parametrize("return_df", [True, False])
-@pytest.mark.parametrize("use_dask", [True, False])
-def test_FINT_scorer(use_dask, return_df, data_fixture, request):
-    data = request.getfixturevalue(data_fixture)
-    scorer = FINTScorer(target="SARS-CoV-2-Mpro")
-    scores = scorer.score([data], use_dask=use_dask, return_df=return_df)
-    assert len(scores) == 1

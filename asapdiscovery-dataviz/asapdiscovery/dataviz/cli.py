@@ -33,7 +33,7 @@ def visualization():
     "--colour-method",
     default="subpockets",
     help="Coloring method",
-    type=click.Choice(["subpockets", "fitness"]),
+    type=str,
 )
 @click.option("--align", is_flag=True, help="Align the protein to reference structure")
 @target

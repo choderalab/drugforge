@@ -40,8 +40,3 @@ class HTMLBlockData:
         protein.addRepresentation( 'surface', {color: pocket_scheme, sele: 'not ligand', opacity: 0.8, side: 'front', surfaceType: 'av'} );
         protein.addRepresentation( 'ball+stick', {sele: 'ligand', opacity: 1, multipleBond: 'symmetric'} );
 """
-    color_method_fitness = """\
-        protein.removeAllRepresentations();
-        protein.addRepresentation( 'surface', {color: pocket_scheme, sele: 'not ligand', opacity: 1, side: 'front', surfaceType: 'av'} );
-        protein.addRepresentation( 'ball+stick', {sele: 'ligand', opacity: 1, multipleBond: 'symmetric'} );
-"""

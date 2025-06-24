@@ -13,10 +13,7 @@ from asapdiscovery.data.backend.openeye import (
     oechem,
     save_openeye_pdb,
 )
-from asapdiscovery.data.metadata.resources import FINTSCORE_PARAMETERS
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.dataviz._gif_blocks import GIFBlockData
-from asapdiscovery.spectrum.fitness import parse_fitness_json, target_has_fitness_data
 
 logger = logging.getLogger(__name__)
 
@@ -52,55 +49,6 @@ def make_color_res_subpockets(protein, target) -> dict[str, str]:
         if res not in treated_res_nums
     ]
     color_res_dict["white"] = non_treated_res_nums
-
-    return color_res_dict
-
-
-def make_color_res_fitness(protein, target) -> dict[str, str]:
-    """
-    Based on fitness coloring, creates a dict where keys are colors, values are residue numbers.
-    """
-
-    # get a list of all residue numbers of the protein.
-    protein_residues = [
-        oechem.OEAtomGetResidue(atom).GetResidueNumber() for atom in protein.GetAtoms()
-    ]
-    protein_chainIDs = [
-        oechem.OEAtomGetResidue(atom).GetChainID() for atom in protein.GetAtoms()
-    ]
-
-    hex_color_codes = [
-        "#ffffff",
-        "#ff9e83",
-        "#ff8a6c",
-        "#ff7454",
-        "#ff5c3d",
-        "#ff3f25",
-        "#ff0707",
-    ]
-
-    color_res_dict = {}
-    json_data = parse_fitness_json(target)
-    for res_num, chain in set(zip(protein_residues, protein_chainIDs)):
-        try:
-            # color residue white->red depending on fitness value.
-            color_index_to_grab = json_data[f"{res_num}_{chain}"]
-            try:
-                color = hex_color_codes[color_index_to_grab]
-            except IndexError:
-                # insane residue that has tons of fit mutants; just assign the darkest red.
-                color = hex_color_codes[-1]
-            if color not in color_res_dict:
-                color_res_dict[color] = [f"{res_num}_{chain}"]
-            else:
-                color_res_dict[color].append(f"{res_num}_{chain}")
-        except KeyError:
-            # fitness data is missing for this residue, color blue instead.
-            color = "#642df0"
-            if color not in color_res_dict:
-                color_res_dict[color] = [f"{res_num}_{chain}"]
-            else:
-                color_res_dict[color].append(f"{res_num}_{chain}")
 
     return color_res_dict
 
@@ -161,43 +109,15 @@ def is_backbone_residue(protein, x, y, z) -> bool:
         return False
 
 
-def get_interaction_fitness_color(plip_xml_dict, protein, target) -> str:
-    """
-    Get fitness color for a residue. If the interaction is with a backbone atom on
-    the residue, color it green.
-    """
-    # first get the fitness color of the residue the interaction hits, this
-    # can be white->red or blue if fitness data is missing.
-    intn_color = None
-    for fitness_color, res_ids in make_color_res_fitness(protein, target).items():
-        if f"{plip_xml_dict['resnr']}_{plip_xml_dict['reschain']}" in res_ids:
-            intn_color = fitness_color
-            break
-
-    # overwrite the interaction as green if it hits a backbone atom.
-    if is_backbone_residue(
-        protein,
-        plip_xml_dict["protcoo"]["x"],
-        plip_xml_dict["protcoo"]["y"],
-        plip_xml_dict["protcoo"]["z"],
-    ):
-        intn_color = "#008000"
-
-    return intn_color
-
-
 def build_interaction_dict(
-    plip_xml_dict, intn_counter, intn_type, color_method, protein, target
+    plip_xml_dict, intn_counter, intn_type,
 ):
     """
     Parses a PLIP interaction dict and builds the dict key values needed for 3DMol.
     """
     k = f"{intn_counter}_{plip_xml_dict['restype']}{plip_xml_dict['resnr']}.{plip_xml_dict['reschain']}"
 
-    if color_method == "fitness":
-        intn_color = get_interaction_fitness_color(plip_xml_dict, protein, target)
-    else:
-        intn_color = get_interaction_color(intn_type)
+    intn_color = get_interaction_color(intn_type)
     v = {
         "lig_at_x": plip_xml_dict["ligcoo"]["x"],
         "lig_at_y": plip_xml_dict["ligcoo"]["y"],
@@ -211,7 +131,7 @@ def build_interaction_dict(
     return k, v
 
 
-def get_interactions_plip(protein, pose, color_method, target) -> dict:
+def get_interactions_plip(protein, pose) -> dict:
     """
     Get protein-ligand interactions according to PLIP.
 
@@ -261,9 +181,6 @@ def get_interactions_plip(protein, pose, color_method, target) -> dict:
                                 intn_data_i,
                                 intn_counter,
                                 intn_type,
-                                color_method,
-                                protein,
-                                target,
                             )
                             intn_dict[k] = v
                             intn_counter += 1
@@ -273,85 +190,8 @@ def get_interactions_plip(protein, pose, color_method, target) -> dict:
                             intn_data,
                             intn_counter,
                             intn_type,
-                            color_method,
-                            protein,
-                            target,
                         )
                         intn_dict[k] = v
                         intn_counter += 1
 
     return intn_dict
-
-
-# this should be placed around that area as well, but FINTscore should be added to docking scores by default
-def compute_fint_score(
-    protein: oechem.OEMol, pose: oechem.OEMol, target: TargetTags
-) -> tuple[float, float]:
-    """
-    Compute the Fitness Interaction Score (FINTscore) given a dict with interactions generated by PLIP.
-
-    Parameters
-    ----------
-    protein: oechem.OEMol
-        Protein molecule
-    pose: oechem.OEMol
-        Pose molecule
-    target: str
-        Target name
-
-
-    Returns
-    ----------
-    intn_score: float
-        Score based purely on interactions, without penalties applied
-    fint_score: float
-        FINTscore which is computed as the `intn_score` with penalties applied
-    """
-    if not target_has_fitness_data(target):
-        raise ValueError(
-            f"Target {target} does not have fitness data, cannot compute FINTscore."
-        )
-
-    # read YAML file that contains settings for rewards/penalties of interaction types.
-    fintscore_parameters = yaml.safe_load(Path(FINTSCORE_PARAMETERS).read_text())
-
-    # set empty parameters to add to when iterating over interactions.
-    penalty_multipliers = 1
-    reward_multipliers = 1
-    intn_score_bucket = []
-
-    # iterate over each interaction that was found.
-    intn_dict = get_interactions_plip(protein, pose, "fitness", target)
-
-    for _, data in intn_dict.items():
-        # if the interaction is with backbone, add a reward to the score.
-        if data["color"] == "#008000":
-            reward_multipliers += 1
-
-        # if the interaction is with a residue that is shown to be able to mutate, add a penalty to the score.
-        if data["color"] in fintscore_parameters.keys():
-            penalty_multipliers += fintscore_parameters[data["color"]]
-
-        # compute this interaction's score (set in metadata yaml).
-        intn_score_bucket.append(fintscore_parameters[data["type"]])
-
-    # simply compute the mean score, will end up being between 0.5 and 1.0, typically.
-    # we need to take the mean because we don't want a compound with many interactions being favored by this score.
-    intn_score = np.mean(intn_score_bucket)
-
-    # now compute the FINTscore by applying the reward/penalty correction terms.
-    # this follows FINT_{score} = INT_{score} * (REWARD*N_{backbone}) * PENALTY^{N_{mutable}},
-    # where PENALTY <= 1.0 <= REWARD.
-    fint_score = (
-        intn_score
-        * reward_multipliers
-        * fintscore_parameters["backbone_reward_multiplier"]
-        * fintscore_parameters["mutating_intn_penalty_multiplier"]
-        ** penalty_multipliers
-    )
-
-    # finally, in some cases with lots of reward the FINTscore can shoot over 1.0; then just set as 1.0.
-    if fint_score > 1.0:
-        fint_score = 1.0
-
-    return intn_score, fint_score

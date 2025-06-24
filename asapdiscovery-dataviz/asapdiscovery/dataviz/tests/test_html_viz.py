@@ -36,35 +36,15 @@ def test_html_viz_subpockets_in_mem(
 
 
 @pytest.mark.parametrize("use_dask", [True, False])
-@pytest.mark.parametrize("align", [True, False])
-@pytest.mark.parametrize("write_to_disk", [True, False])
-def test_html_viz_fitness_in_mem(
-    docking_results_in_memory, use_dask, align, write_to_disk, tmp_path
-):
-    html_viz = HTMLVisualizer(
-        target="SARS-CoV-2-Mpro",
-        output_dir=tmp_path,
-        colour_method="fitness",
-        align=align,
-        write_to_disk=write_to_disk,
-    )
-    vizs = html_viz.visualize(
-        inputs=docking_results_in_memory, use_dask=use_dask, backend="in-memory"
-    )
-    assert len(vizs) == 1
-
-
-@pytest.mark.parametrize("use_dask", [True, False])
 @pytest.mark.parametrize("write_to_disk", [True, False])
 @pytest.mark.parametrize("align", [True, False])
-@pytest.mark.parametrize("color_method", ["fitness", "subpockets"])
 def test_html_viz_from_pdb_file(
     use_dask, tmp_path, protein, write_to_disk, align, color_method
 ):
     html_viz = HTMLVisualizer(
         target="SARS-CoV-2-Mpro",
         output_dir=tmp_path,
-        color_method=color_method,
+        color_method="subpockets",
         align=align,
         write_to_disk=write_to_disk,
     )
@@ -75,7 +55,6 @@ def test_html_viz_from_pdb_file(
 @pytest.mark.parametrize("use_dask", [True, False])
 @pytest.mark.parametrize("write_to_disk", [True, False])
 @pytest.mark.parametrize("align", [True, False])
-@pytest.mark.parametrize("color_method", ["fitness", "subpockets"])
 @pytest.mark.parametrize("outpaths", [["my_sub_path/viz.html"], None])
 def test_html_viz_from_complex(
     use_dask, tmp_path, protein, write_to_disk, align, color_method, outpaths
@@ -83,7 +62,7 @@ def test_html_viz_from_complex(
     html_viz = HTMLVisualizer(
         target="SARS-CoV-2-Mpro",
         output_dir=tmp_path,
-        color_method=color_method,
+        color_method="subpockets",
         align=align,
         write_to_disk=write_to_disk,
     )
