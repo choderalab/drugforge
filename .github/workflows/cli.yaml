@@ -55,7 +55,7 @@ jobs:
     - name: Setup Conda Environment
       uses: mamba-org/setup-micromamba@v2
       with:
-        environment-file: devtools/conda-envs/asapdiscovery-${{ matrix.os }}.yml
+        environment-file: devtools/conda-envs/${{ matrix.os }}/cli.yaml
         environment-name: asapdiscovery
         cache-environment: true
         cache-downloads: true
@@ -73,7 +73,21 @@ jobs:
 
     - name: Install packages
       run: |
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/data.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/workflows.yaml
+        python -m pip install -e ./asapdiscovery-data --no-deps
+        python -m pip install -e ./asapdiscovery-docking --no-deps
+        python -m pip install -e ./asapdiscovery-ml --no-deps
+        python -m pip install -e ./asapdiscovery-modeling --no-deps
+        python -m pip install -e ./asapdiscovery-alchemy --no-deps
+        python -m pip install -e ./asapdiscovery-workflows --no-deps
         python -m pip install -e ./asapdiscovery-cli --no-deps
+
+        micromamba list
         micromamba list
 
     - name: Run tests
