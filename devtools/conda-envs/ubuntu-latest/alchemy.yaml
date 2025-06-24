@@ -28,7 +28,6 @@ dependencies:
   - rich
   - tqdm
   - pip
-  - python >=3.10,<3.12
   - pydantic >=2.0.0a0
   - typing-extensions
   - pyyaml
