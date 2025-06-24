@@ -3,7 +3,7 @@ channels:
   - openeye
   - conda-forge
 dependencies:
-  - alchemiscale
+  - alchemiscale-client
   - bokeh
   - cinnabar
   - click
