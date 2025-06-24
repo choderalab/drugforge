@@ -10,6 +10,7 @@ dependencies:
   - gufe
   - kartograf
   - lomap2
+  - netifaces # Added because it needs data subpkg
   - networkx
   - numpy
   - openeye-toolkits
