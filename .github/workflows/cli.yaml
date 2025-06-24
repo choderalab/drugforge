@@ -56,7 +56,7 @@ jobs:
       uses: mamba-org/setup-micromamba@v2
       with:
         environment-file: devtools/conda-envs/${{ matrix.os }}/cli.yaml
-        environment-name: asapdiscovery
+        environment-name: cli-ci
         cache-environment: true
         cache-downloads: true
         cache-environment-key: environment-${{ steps.date.outputs.date }}
