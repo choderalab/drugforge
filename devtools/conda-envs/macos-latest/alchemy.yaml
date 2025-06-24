@@ -3,7 +3,7 @@ channels:
   - openeye
   - conda-forge
 dependencies:
-  - alchemiscale
+  - alchemiscale-client
   - bokeh
   - cinnabar
   - click
@@ -13,7 +13,7 @@ dependencies:
   - networkx
   - numpy
   - openeye-toolkits
-  - openfe
+  - openfe ~=1.0
   - openff-toolkit
   - openff-models
   - openff-qcsubmit
@@ -28,7 +28,6 @@ dependencies:
   - rich
   - tqdm
   - pip
-  - python >=3.10,<3.12
   - pydantic >=2.0.0a0
   - typing-extensions
   - pyyaml
