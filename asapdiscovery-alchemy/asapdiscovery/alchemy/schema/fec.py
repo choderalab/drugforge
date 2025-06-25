@@ -413,7 +413,7 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
         ...,
         description="The JSON str of the receptor which should be used in the FEC calculation.",
     )
-    results: Optional[AlchemiscaleResults] = Field(
+    results: Union[AlchemiscaleResults, None] = Field(
         None,
         description="The results object which tracks how the calculation was run locally or on alchemiscale and stores the physical results.",
     )
