@@ -431,6 +431,7 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
 
         allow_mutation = False
         orm_mode = True
+        arbitrary_types_allowed=True
 
     def to_openfe_receptor(self) -> openfe.ProteinComponent:
         return openfe.ProteinComponent.from_json(self.receptor)
