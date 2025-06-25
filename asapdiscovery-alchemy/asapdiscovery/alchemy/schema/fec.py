@@ -1,5 +1,5 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Literal, Optional
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union
 
 import gufe
 import openfe
@@ -421,7 +421,7 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
         None,
         description="The name of the experimental protocol in the CDD vault that should be associated with this Alchemy network.",
     )
-    target: Optional[str] = Field(
+    target: Union[str, None] = Field(
         None,
         description="The name of the biological target associated with this Alchemy network.",
     )
