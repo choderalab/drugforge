@@ -73,6 +73,8 @@ jobs:
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/workflows.yaml
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
         python -m pip install -e ./asapdiscovery-data --no-deps
         python -m pip install -e ./asapdiscovery-docking --no-deps
         python -m pip install -e ./asapdiscovery-ml --no-deps
@@ -81,6 +83,8 @@ jobs:
         python -m pip install -e ./asapdiscovery-workflows --no-deps
         python -m pip install -e ./asapdiscovery-cli --no-deps
         python -m pip install -e ./asapdiscovery-simulation --no-deps
+        python -m pip install -e ./asapdiscovery-dataviz --no-deps
+        python -m pip install -e ./asapdiscovery-spectrum --no-deps
         micromamba list
 
     - name: Test OE License & Write License to File
