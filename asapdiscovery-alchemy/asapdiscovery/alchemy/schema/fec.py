@@ -1,5 +1,5 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union, Dict
 
 import gufe
 import openfe
@@ -21,7 +21,7 @@ from openfe.protocols.openmm_utils.omm_settings import (
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
 from openff.models.types import FloatQuantity
 from openff.units import unit as OFFUnit
-from pydantic.v1 import Field
+from pydantic.v1 import Field, validator
 
 from ._util import check_ligand_series_uniqueness_and_names
 from .base import _SchemaBase, _SchemaBaseFrozen
@@ -298,6 +298,13 @@ class AlchemiscaleResults(_BaseResults):
         ...,
         description="The alchemiscale key associated with this submited network, which is used to gather results from the client.",
     )
+    @validator("network_key", pre=True)
+    def convert_to_scoped_key(cls, value:Union[Dict, ScopedKey]) -> ScopedKey:
+        #if we have a dict convert it to a ScopedKey
+        if isinstance(value, dict):
+            return ScopedKey.from_dict(value)
+        elif isinstance(value, ScopedKey):
+            return value
 
 
 class _FreeEnergyBase(_SchemaBase):
@@ -660,7 +667,7 @@ class AlchemiscaleFailure(_BaseFailure):
 
     type: Literal["AlchemiscaleFailure"] = "AlchemiscaleFailure"
 
-    network_key: ScopedKey = Field(
+    network_key: Union[ScopedKey, None] = Field(
         ...,
         description="The alchemiscale key associated with this submitted network, which is used to gather the failed results from the client.",
     )

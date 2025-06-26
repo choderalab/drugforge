@@ -3,6 +3,7 @@ channels:
   - openeye
   - conda-forge
 dependencies:
+  - python == 3.11.0
   - alchemiscale-client
   - bokeh
   - cinnabar
