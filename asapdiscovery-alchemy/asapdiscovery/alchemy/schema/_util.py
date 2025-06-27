@@ -10,8 +10,13 @@ if TYPE_CHECKING:
 # create a codec for ScopedKey to be able to serialize to JSON
 SCOPEDKEY_CODEC = JSONCodec(
     cls=ScopedKey,
-    to_dict=lambda obj: {obj.dict()},
-    from_dict=lambda dict: ScopedKey(**dict),
+    to_dict=lambda obj: {
+        "gufe_key": obj.gufe_key,
+        "org": obj.org,
+        "campaign": obj.campaign,
+        "project": obj.project,
+    },
+    from_dict=lambda dic: ScopedKey(**dic),
 )
 
 
