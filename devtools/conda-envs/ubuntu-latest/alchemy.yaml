@@ -40,3 +40,4 @@ dependencies:
   - pytest-console-scripts
   - pytest-timeout
   - requests-mock
+  - netifaces
