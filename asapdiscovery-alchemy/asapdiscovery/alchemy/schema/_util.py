@@ -1,8 +1,18 @@
 from collections import Counter
 from typing import TYPE_CHECKING
+from gufe.custom_json import JSONCodec
+from alchemiscale import ScopedKey
 
 if TYPE_CHECKING:
     from asapdiscovery.data.schema.ligand import Ligand
+
+
+# create a codec for ScopedKey to be able to serialize to JSON
+SCOPEDKEY_CODEC = JSONCodec(
+    cls=ScopedKey,
+    to_dict=lambda obj: {obj.dict()},
+    from_dict=lambda dict: ScopedKey(**dict),
+)
 
 
 def check_ligand_series_uniqueness_and_names(ligands: list["Ligand"]) -> None:

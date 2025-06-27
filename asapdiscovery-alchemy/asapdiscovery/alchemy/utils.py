@@ -12,6 +12,7 @@ from asapdiscovery.alchemy.schema.fec import (
 from asapdiscovery.alchemy.schema.forcefield import ForceFieldParams
 from openmm.app import ForceField, Modeller, PDBFile
 
+
 if TYPE_CHECKING:
     from asapdiscovery.modeling.schema import PreppedComplex, PreppedTarget
     from asapdiscovery.data.schema.ligand import Ligand

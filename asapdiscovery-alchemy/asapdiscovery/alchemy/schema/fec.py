@@ -298,11 +298,12 @@ class AlchemiscaleResults(_BaseResults):
         ...,
         description="The alchemiscale key associated with this submited network, which is used to gather results from the client.",
     )
+
     @validator("network_key", pre=True)
-    def convert_to_scoped_key(cls, value:Union[Dict, ScopedKey]) -> ScopedKey:
-        #if we have a dict convert it to a ScopedKey
+    def convert_to_scoped_key(cls, value: Union[Dict, ScopedKey]) -> ScopedKey:
+        # if we have a dict convert it to a ScopedKey
         if isinstance(value, dict):
-            return ScopedKey.from_dict(value)
+            return ScopedKey(**value)
         elif isinstance(value, ScopedKey):
             return value
 
@@ -438,7 +439,7 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
 
         allow_mutation = False
         orm_mode = True
-        arbitrary_types_allowed=True
+        arbitrary_types_allowed = True
 
     def to_openfe_receptor(self) -> openfe.ProteinComponent:
 
