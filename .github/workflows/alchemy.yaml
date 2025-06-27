@@ -91,7 +91,7 @@ jobs:
         # can only run tests on a single worker because "Only one live display may be activate at once"
         pytest -n 1 --durations=10 -v --cov-report=xml --cov-report=term --color=yes \
                        --cov=asapdiscovery-alchemy \
-                       asapdiscovery-alchemy/asapdiscovery/alchemy/tests/test_cli.py  -k test_alchemy_predict_ccd_data
+                       asapdiscovery-alchemy/asapdiscovery/alchemy/
 
     - name: Upload Code Coverage to Codecov
       uses: codecov/codecov-action@v3
