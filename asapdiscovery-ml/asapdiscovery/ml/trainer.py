@@ -50,7 +50,7 @@ class Trainer(BaseModel):
     optimizer_config: OptimizerConfig = Field(
         ..., description="Config describing the optimizer to use in training."
     )
-    model_config: ModelConfigBase = Field(
+    mtenn_model_config: ModelConfigBase = Field(
         ..., description="Config describing the model to train."
     )
     es_config: EarlyStoppingConfig = Field(
@@ -210,7 +210,7 @@ class Trainer(BaseModel):
         None, description="Actual loss function objects.", exclude=True
     )
 
-    model_config = {"arbitrary_types_allowed": True, "extra": "allow"}
+    _model_config = {"arbitrary_types_allowed": True, "extra": "allow"}
 
     @field_serializer("device", when_used="json")
     def serialize_torch_device(self, device: torch.device):
@@ -236,7 +236,7 @@ class Trainer(BaseModel):
 
     @field_validator(
         "optimizer_config",
-        "model_config",
+        "mtenn_model_config",
         "es_config",
         "ds_splitter_config",
         mode="before",
@@ -778,7 +778,7 @@ class Trainer(BaseModel):
                 # First build a dict mapping compound_id: idx in ds
                 compound_idx_dict = {}
                 for i, (compound, _) in enumerate(self.ds):
-                    if self.model_config.grouped:
+                    if self.mtenn_model_config.grouped:
                         compound_id = compound
                     else:
                         compound_id = compound[1]
@@ -813,7 +813,7 @@ class Trainer(BaseModel):
                 if not weights_path.exists():
                     weights_path = self.output_dir / "weights.th"
                 print(f"Using weights file {weights_path.name}", flush=True)
-                self.model_config = self.model_config.update(
+                self.mtenn_model_config = self.mtenn_model_config.update(
                     {
                         "model_weights": torch.load(
                             weights_path, map_location=self.device
@@ -842,7 +842,7 @@ class Trainer(BaseModel):
             dataset_to_csv(self.ds_test, self.output_dir / "ds_test.csv")
 
         # Build the Model
-        self.model = self.model_config.build().to(self.device)
+        self.model = self.mtenn_model_config.build().to(self.device)
 
         # Build the Optimizer
         self.optimizer = self.optimizer_config.build(self.model.parameters())
@@ -959,7 +959,7 @@ class Trainer(BaseModel):
                 )
 
                 # Get input poses for GroupedModel
-                if self.model_config.grouped:
+                if self.mtenn_model_config.grouped:
                     model_inp = []
                     for single_pose in pose["poses"]:
                         # Apply all data augmentations
@@ -1138,7 +1138,7 @@ class Trainer(BaseModel):
                 )
 
                 # Get input poses for GroupedModel
-                if self.model_config.grouped:
+                if self.mtenn_model_config.grouped:
                     model_inp = pose["poses"]
                 else:
                     model_inp = pose
@@ -1230,7 +1230,7 @@ class Trainer(BaseModel):
                 )
 
                 # Get input poses for GroupedModel
-                if self.model_config.grouped:
+                if self.mtenn_model_config.grouped:
                     model_inp = pose["poses"]
                 else:
                     model_inp = pose
@@ -1397,7 +1397,7 @@ class Trainer(BaseModel):
 
         # write to json
         model_config_path = self.output_dir / "model_config.json"
-        model_config_path.write_text(self.model_config.json())
+        model_config_path.write_text(self.mtenn_model_config.json())
 
         # copy over the final to tagged model if present
         import shutil
@@ -1440,7 +1440,7 @@ class Trainer(BaseModel):
                 wandb.log_artifact(model_artifact)
 
                 config_artifact = wandb.Artifact(
-                    "model_config",
+                    "mtenn_model_config",
                     type="model_config",
                     description="model configuration",
                 )
