@@ -210,7 +210,7 @@ class Trainer(BaseModel):
         None, description="Actual loss function objects.", exclude=True
     )
 
-    _model_config = {"arbitrary_types_allowed": True, "extra": "allow"}
+    model_config = {"arbitrary_types_allowed": True, "extra": "allow"}
 
     @field_serializer("device", when_used="json")
     def serialize_torch_device(self, device: torch.device):
