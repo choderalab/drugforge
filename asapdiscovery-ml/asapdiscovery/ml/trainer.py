@@ -66,7 +66,7 @@ class Trainer(BaseModel):
             "test splits."
         ),
     )
-    loss_configs: conlist(item_type=LossFunctionConfig, min_items=1) = Field(
+    loss_configs: conlist(item_type=LossFunctionConfig, min_length=1) = Field(
         ...,
         description="Config describing the loss function for training.",
     )
