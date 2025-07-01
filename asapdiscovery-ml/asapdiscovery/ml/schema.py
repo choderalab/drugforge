@@ -8,7 +8,7 @@ import numpy as np
 import pandas
 import torch
 from asapdiscovery.ml.config import LossFunctionConfig
-from pydantic.v1 import BaseModel, Extra, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from scipy.stats import bootstrap, kendalltau, spearmanr
 
 
@@ -53,19 +53,12 @@ class TrainingPrediction(BaseModel):
         1.0, description="Contribution of this loss function to the full loss."
     )
 
-    class Config:
-        # Allow things to be added to the object after initialization/validation
-        extra = Extra.allow
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "validate_assignment": True,
+    }
 
-        # Allow torch types
-        arbitrary_types_allowed = True
-
-        # Custom encoder to cast device to str before trying to serialize
-        json_encoders = {
-            torch.Tensor: lambda t: t.tolist(),
-        }
-
-    @validator("target_val", pre=True, always=True)
+    @field_validator("target_val", mode="before")
     def cast_target_val(cls, v):
         if isinstance(v, float):
             return v
@@ -74,6 +67,18 @@ class TrainingPrediction(BaseModel):
             return v.clone().detach()
 
         return torch.tensor(v)
+
+    @field_validator("predictions", "loss_vals", mode="before")
+    def handle_nones(cls, val_list):
+        # Make sure there aren't any Nones being passed in
+        val_list = [v if v is not None else np.nan for v in val_list]
+        return val_list
+
+    @field_validator("pose_predictions", mode="before")
+    def handle_nones_nested_lists(cls, val_list):
+        # Make sure there aren't any Nones being passed in
+        val_list = [[v if v is not None else np.nan for v in vals] for vals in val_list]
+        return val_list
 
     def to_empty(self):
         """
@@ -105,21 +110,45 @@ class TrainingPredictionTracker(BaseModel):
         None, description="Internal dict storing all TrainingPredictions."
     )
 
-    class Config:
-        # Allow things to be added to the object after initialization/validation
-        extra = Extra.allow
+    model_config = {
+        "validate_assignment": True,
+        "validate_default": True,
+    }
 
-        # Custom encoder to cast device to str before trying to serialize
-        json_encoders = {
-            torch.Tensor: lambda t: t.tolist(),
-        }
-
-    @validator("split_dict", always=True)
+    @field_validator("split_dict", mode="before")
     def init_split_dict(cls, split_dict):
         # If nothing was passed, just init an empty dict
         if not split_dict:
             return {"train": [], "val": [], "test": []}
 
+        # Make sure that the format is correct
+        if split_dict.keys() != {"train", "val", "test"}:
+            raise ValueError(f"Received unexpected dict keys: {split_dict.keys()}")
+
+        # Make sure that each split has a list
+        if not all([isinstance(sp_list, list) for sp_list in split_dict.values()]):
+            raise ValueError(
+                "All dict values must be lists, got "
+                f"{[type(v) for v in split_dict.values()]}"
+            )
+
+        # Make sure all the lists have the right types in them
+        if not all(
+            [
+                (len(sp_list) == 0)
+                or ({type(v) for v in sp_list} == {TrainingPrediction})
+                for sp_list in split_dict.values()
+            ]
+        ):
+            raise ValueError(
+                "All dict values must only contain TrainingPredictions, got "
+                f"{[{type(v) for v in sp_list} for sp_list in split_dict.values()]}"
+            )
+
+        return split_dict
+
+    @field_validator("split_dict", mode="after")
+    def check_split_dict_values(cls, split_dict):
         # Make sure that the format is correct
         if split_dict.keys() != {"train", "val", "test"}:
             raise ValueError(f"Received unexpected dict keys: {split_dict.keys()}")

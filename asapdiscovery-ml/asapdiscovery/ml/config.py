@@ -21,7 +21,14 @@ from asapdiscovery.ml.es import (
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,
 )
-from pydantic.v1 import BaseModel, Field, confloat, root_validator, validator
+from pydantic import (
+    BaseModel,
+    Field,
+    confloat,
+    field_serializer,
+    field_validator,
+    model_validator,
+)
 
 
 class ConfigBase(BaseModel):
@@ -202,27 +209,27 @@ class EarlyStoppingConfig(ConfigBase):
         ),
     )
 
-    @root_validator(pre=False)
-    def check_args(cls, values):
-        match values["es_type"]:
+    @model_validator(mode="after")
+    def check_args(self):
+        match self.es_type:
             case EarlyStoppingType.none:
                 pass
             case EarlyStoppingType.best:
-                if values["patience"] is None:
+                if self.patience is None:
                     raise ValueError(
                         "Value required for patience when using BestEarlyStopping."
                     )
             case EarlyStoppingType.converged:
-                if (values["n_check"] is None) or (values["divergence"] is None):
+                if (self.n_check is None) or (self.divergence is None):
                     raise ValueError(
                         "Values required for n_check and divergence when using "
                         "ConvergedEarlyStopping."
                     )
             case EarlyStoppingType.patient_converged:
                 if (
-                    (values["n_check"] is None)
-                    or (values["divergence"] is None)
-                    or (values["patience"] is None)
+                    (self.n_check is None)
+                    or (self.divergence is None)
+                    or (self.patience is None)
                 ):
                     raise ValueError(
                         "Values required for n_check, divergence, and patience when "
@@ -231,7 +238,7 @@ class EarlyStoppingConfig(ConfigBase):
             case other:
                 raise ValueError(f"Unknown EarlyStoppingType: {other}")
 
-        return values
+        return self
 
     def build(
         self,
@@ -315,17 +322,16 @@ class DatasetConfig(ConfigBase):
     # Torch device to send loaded dataset to
     device: torch.device = Field("cpu", description="Device to send loaded dataset to.")
 
-    class Config:
-        # Allow torch.device Fields
-        arbitrary_types_allowed = True
+    model_config = {"arbitrary_types_allowed": True}
 
-        # Custom encoder to cast device to str before trying to serialize
-        json_encoders = {torch.device: lambda d: str(d)}
+    @field_serializer("device", when_used="always")
+    def serialize_torch_device(self, device: torch.device):
+        return str(device)
 
-    @root_validator(pre=False)
-    def check_data_type(cls, values):
-        inp = values["input_data"][0]
-        match values["ds_type"]:
+    @model_validator(mode="after")
+    def check_data_type(self):
+        inp = self.input_data[0]
+        match self.ds_type:
             case DatasetType.graph:
                 if not isinstance(inp, Ligand):
                     raise ValueError(
@@ -343,9 +349,9 @@ class DatasetConfig(ConfigBase):
             case other:
                 raise ValueError(f"Unknown dataset type {other}.")
 
-        return values
+        return self
 
-    @validator("device", pre=True)
+    @field_validator("device", mode="before")
     def fix_device(cls, v):
         """
         The torch device gets serialized as a string and the Trainer class doesn't
@@ -641,19 +647,19 @@ class DatasetSplitterConfig(ConfigBase):
         ),
     )
 
-    @root_validator(pre=False)
-    def check_frac_sum(cls, values):
+    @model_validator(mode="after")
+    def check_frac_sum(self):
         # Don't need to check if we're doing manual split mode
-        if values["split_type"] is DatasetSplitterType.manual:
-            return values
+        if self.split_type is DatasetSplitterType.manual:
+            return self
 
-        frac_sum = sum([values["train_frac"], values["val_frac"], values["test_frac"]])
+        frac_sum = sum([self.train_frac, self.val_frac, self.test_frac])
         if frac_sum < 0:
             raise ValueError("Can't have negative split fractions.")
 
         if not np.isclose(frac_sum, 1):
             warn_msg = f"Split fractions add to {frac_sum:0.2f}, not 1."
-            if values["enforce_one"]:
+            if self.enforce_one:
                 raise ValueError(warn_msg)
             else:
                 from warnings import warn
@@ -663,36 +669,36 @@ class DatasetSplitterConfig(ConfigBase):
             if frac_sum > 1:
                 raise ValueError("Can't have split fractions adding to > 1.")
 
-        return values
+        return self
 
-    @root_validator(pre=False)
-    def check_split_dict(cls, values):
-        if values["split_type"] is DatasetSplitterType.manual:
-            if values["split_dict"] is None:
+    @model_validator(mode="after")
+    def check_split_dict(self):
+        if self.split_type is DatasetSplitterType.manual:
+            if self.split_dict is None:
                 raise ValueError(
                     "Must pass value for split_dict if using manual splitting."
                 )
 
-            if isinstance(values["split_dict"], Path):
+            if isinstance(self.split_dict, Path):
                 try:
-                    values["split_dict"] = json.loads(values["split_dict"].read_text())
+                    self.split_dict = json.loads(self.split_dict.read_text())
                 except json.decoder.JSONDecodeError:
                     raise ValueError(
                         "Path given by split_dict must be a JSON file storing a dict."
                     )
 
-            if set(values["split_dict"].keys()) != {"train", "val", "test"}:
+            if set(self.split_dict.keys()) != {"train", "val", "test"}:
                 raise ValueError(
                     "Keys in split_dict must be exactly [train, val, test]."
                 )
 
             # Cast to tuples to match compounds in the datasets
-            values["split_dict"] = {
+            self.split_dict = {
                 split: list(map(tuple, compound_list))
-                for split, compound_list in values["split_dict"].items()
+                for split, compound_list in self.split_dict.items()
             }
 
-        return values
+        return self
 
     def split(self, ds: DockedDataset | GraphDataset | GroupedDockedDataset):
         """
@@ -1004,22 +1010,22 @@ class LossFunctionConfig(ConfigBase):
         None, description="Upper range of acceptable prediction values."
     )
 
-    @root_validator(pre=False)
-    def check_range_lims(cls, values):
-        if values["loss_type"] is not LossFunctionType.range_penalty:
-            return values
+    @model_validator(mode="after")
+    def check_range_lims(self):
+        if self.loss_type is not LossFunctionType.range_penalty:
+            return self
 
-        if (values["range_lower_lim"] is None) or (values["range_upper_lim"] is None):
+        if (self.range_lower_lim is None) or (self.range_upper_lim is None):
             raise ValueError(
                 "Values must be passed for range_lower_lim and range_upper_lim."
             )
 
-        if values["range_lower_lim"] >= values["range_upper_lim"]:
+        if self.range_lower_lim >= self.range_upper_lim:
             raise ValueError(
                 "Value given for range_lower_lim >= value given for range_upper_lim."
             )
 
-        return values
+        return self
 
     def build(self):
         from asapdiscovery.ml.loss import (
