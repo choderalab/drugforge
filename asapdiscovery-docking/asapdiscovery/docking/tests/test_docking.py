@@ -116,6 +116,36 @@ class TestDocking:
         )
         assert len(list(tmp_path.glob("docking_results/*/*.sdf"))) == num_poses_expected
 
+    @pytest.mark.parametrize("num_poses", [1, 5, 10, 20, 50])
+    @pytest.mark.parametrize("use_omega", [True, False])
+    def test_multipose_docking_speed(
+        self, docking_input_pair, tmp_path, num_poses, use_omega
+    ):
+        """Test how docking time scales with number of poses requested."""
+        import time
+
+        # Initialize docker with specific number of poses
+        docker = POSITDocker(use_omega=use_omega, num_poses=num_poses)
+
+        # Time the docking
+        start_time = time.time()
+        results = docker.dock(
+            [docking_input_pair], output_dir=tmp_path / f"docking_results_{num_poses}"
+        )
+        end_time = time.time()
+
+        # Basic assertions
+        assert len(results) > 0
+        assert results[0].probability > 0.0
+
+        # Store timing info in the test report
+        timing = end_time - start_time
+        poses_generated = len(results)
+        print(
+            f"Docking with {num_poses} poses took {timing:.2f}s "
+            f"and generated {poses_generated} poses"
+        )
+
     def test_results_to_df(self, results_simple):
         df = results_simple[0].to_df()
         assert DockingResultCols.SMILES in df.columns
