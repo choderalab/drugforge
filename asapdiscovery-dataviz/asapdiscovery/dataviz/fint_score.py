@@ -14,8 +14,8 @@ from asapdiscovery.docking.scorer import (
     _get_disk_path_from_docking_result,
 )
 from asapdiscovery.spectrum.fitness import target_has_fitness_data
-from schema.complex import Complex
-from services.postera.manifold_data_validation import TargetTags
+from asapdiscovery.data.schema.complex import Complex
+from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from util.dask_utils import dask_vmap, backend_wrapper
 
 

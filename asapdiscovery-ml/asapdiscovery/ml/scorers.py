@@ -17,10 +17,15 @@ from asapdiscovery.docking.scorer import (
 )
 from asapdiscovery.ml.inference import InferenceBase, get_inference_cls_from_model_type
 from asapdiscovery.ml.models import MLModelSpecBase
-from schema.complex import Complex
-from schema.ligand import Ligand
-from services.postera.manifold_data_validation import TargetTags
-from util.dask_utils import dask_vmap, backend_wrapper, FailureMode, BackendType
+from asapdiscovery.data.schema.complex import Complex
+from asapdiscovery.data.schema.ligand import Ligand
+from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
+from asapdiscovery.data.util.dask_utils import (
+    dask_vmap,
+    backend_wrapper,
+    FailureMode,
+    BackendType,
+)
 
 _ml_scorer_classes_meta = []
 
