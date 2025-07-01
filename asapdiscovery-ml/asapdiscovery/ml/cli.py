@@ -272,7 +272,7 @@ def build_gat(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
@@ -500,7 +500,7 @@ def build_schnet(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
@@ -730,7 +730,7 @@ def build_e3nn(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
@@ -970,7 +970,7 @@ def build_visnet(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
@@ -1191,7 +1191,7 @@ def build_and_train_gat(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
@@ -1424,7 +1424,7 @@ def build_and_train_schnet(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
@@ -1659,7 +1659,7 @@ def build_and_train_e3nn(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
@@ -1901,7 +1901,7 @@ def build_and_train_visnet(
     # Gather all the configs
     trainer_kwargs = {
         "optimizer_config": optim_config,
-        "model_config": model_config,
+        "mtenn_model_config": model_config,
         "es_config": es_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
