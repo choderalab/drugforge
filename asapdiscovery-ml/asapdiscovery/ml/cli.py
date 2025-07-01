@@ -43,7 +43,7 @@ from asapdiscovery.ml.config import (
 )
 from asapdiscovery.ml.trainer import Trainer
 from mtenn.config import CombinationConfig, ModelType, ReadoutConfig, StrategyConfig
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 
 @click.group()

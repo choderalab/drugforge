@@ -218,9 +218,6 @@ def test_build_trainer_graph(exp_file, tmp_path):
             "False",
         ],
     )
-    if result.exit_code != 0:
-        raise result.exception
-
     assert result.exit_code == 0
 
     # Make sure the right files exist
