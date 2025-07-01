@@ -34,9 +34,8 @@ from asapdiscovery.docking.openeye import POSITDocker
 from asapdiscovery.docking.scorer import (
     ChemGauss4Scorer,
     FINTScorer,
-    MetaScorer,
-    MLModelScorer,
 )
+from asapdiscovery.ml.scorers import MLModelScorer, MetaScorer
 from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import ProteinPrepper
 from asapdiscovery.spectrum.fitness import target_has_fitness_data

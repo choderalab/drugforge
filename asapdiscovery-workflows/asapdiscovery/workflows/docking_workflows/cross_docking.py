@@ -20,7 +20,8 @@ from asapdiscovery.docking.docking import (
 )
 from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
-from asapdiscovery.docking.scorer import ChemGauss4Scorer, MetaScorer
+from asapdiscovery.docking.scorer import ChemGauss4Scorer
+from asapdiscovery.ml.scorers import MetaScorer
 from asapdiscovery.modeling.protein_prep import ProteinPrepper
 from asapdiscovery.workflows.docking_workflows.workflows import (
     DockingWorkflowInputsBase,

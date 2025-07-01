@@ -1,12 +1,9 @@
 import pytest
 from asapdiscovery.docking.scorer import (
     ChemGauss4Scorer,
-    E3NNScorer,
     FINTScorer,
-    GATScorer,
-    MetaScorer,
-    SchnetScorer,
 )
+from asapdiscovery.ml.scorers import GATScorer, SchnetScorer, E3NNScorer, MetaScorer
 
 
 # parametrize over fixtures
