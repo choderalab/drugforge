@@ -3,7 +3,8 @@ from typing import Optional
 
 import click
 import pandas as pd
-from asapdiscovery.cli.cli_args import output_dir, pdb_file
+from asapdiscovery.cli.cli_args import output_dir, pdb_file, target, input_json
+from asapdiscovery.simulation.simulate import OpenMMPlatform
 from asapdiscovery.spectrum.align_seq_match import (
     fasta_alignment,
     pairwise_alignment,
@@ -26,6 +27,10 @@ from asapdiscovery.spectrum.cli_args import (
     seq_type,
 )
 from asapdiscovery.spectrum.seq_alignment import Alignment, do_MSA
+
+from asapdiscovery.spectrum.score_complex import ScoreInputs, score_complex_workflow
+
+import logging
 
 
 @click.group()
@@ -424,6 +429,209 @@ def fitness_alignment(
         pdb_align, pdb_labels, pdb_file, [colorsA, colorsB], session_save
     )
 
+
+@spectrum.command()
+@click.option(
+    "-d", 
+    "--docking-dir", 
+    type=click.Path(exists=True), 
+    help="Path to directory where docked structures are stored."
+)
+@click.option(
+    "-f",
+    "--pdb_ref",
+    type=click.Path(exists=True),
+    help="Path to directory/file where crystal structures are stored.",
+)
+@click.option(
+    "-o",
+    "--out-csv",
+    type=str,
+    default="scores.csv",
+    help="Path to file where scoring results will be stored.",
+)
+@click.option(
+    "--docking-csv", 
+    type=click.Path(), 
+    default="", 
+    help="Path to csv files with docking results."
+)
+@target
+@click.option(
+    "--vina-score",
+    is_flag=True,
+    default=False,
+    help="Whether to run vina scoring.",
+)
+@click.option(
+    "--vina-box-x",
+    type=float,
+    help="coordinate x of vina box.",
+)
+@click.option(
+    "--vina-box-y",
+    type=float,
+    help="coordinate y of vina box.",
+)
+@click.option(
+    "--vina-box-z",
+    type=float,
+    help="coordinate z of vina box.",
+)
+@click.option(
+    "--path-to-grid-prep", 
+    type=click.Path(), 
+    default="./", 
+    help="Path to .py file that calculates grid for Vina.")
+@click.option(
+    "--docking-vina",
+    is_flag=True,
+    default=False,
+    help="Whether to run docking on vina.",
+)
+@click.option(
+    "--ligand-regex",
+    type=str,
+    default="ASAP-[0-9]+",
+    help="Pattern for extracting ligand ID from file name.",
+)
+@click.option(
+    "--protein-regex",
+    type=str,
+    default="YP_[0-9]+_[0-9]+|NP_[0-9]+_[0-9]+",
+    help="Pattern for extracting protein ID from file name.",
+)
+@click.option(
+    "--minimize",
+    is_flag=True,
+    default=False,
+    help="Whether to minimize the pdb structures before running scoring.",
+)
+@click.option(
+    "--md-openmm-platform",
+    type=str,
+    default="Fastest",
+    help="The OpenMM platform to use for MD minimization. [CPU|CUDA|OpenCL|Reference|Fastest]", 
+)
+@click.option(
+    "--ml-score",
+    is_flag=True,
+    default=False,
+    help="Whether to employ asap-implemented ML models to score poses.",
+)
+@click.option(
+    "--bsite-rmsd",
+    is_flag=True,
+    default=False,
+    help="Whether to calculate binding site RMSD (only relevant when the ref pdb is the same target as the docked complex).",
+)
+@click.option(
+    "--dock-chain",
+    type=str,
+    default="1",
+    help="Chain ID of main chain in docked complex pdb(s).",
+)
+@click.option(
+    "--ref-chain",
+    type=str,
+    default="A",
+    help="Chain ID of main chain in reference pdb(s).",
+)
+@click.option(
+    "--lig-resname",
+    type=str,
+    default="LIG",
+    help="Residue name of ligand in reference pdb(s).",
+)
+@click.option(
+    "--gnina-score",
+    is_flag=True,
+    default=False,
+    help="Whether to run gnina scoring.",
+)
+@click.option(
+    "--gnina-script",
+    type=str,
+    default="gnina_script.sh",
+    help="Path to bash script that runs Gnina CLI.",
+)
+@click.option(
+    "--gnina-out-dir",
+    type=click.Path(), 
+    default="./", 
+    help="Directory for gnina output."
+)
+@click.option(
+    "--log-level", 
+    type=str, 
+    default="INFO", 
+    help="Logging level."
+)
+@input_json
+
+def score(
+    docking_dir: str,
+    pdb_ref: str,
+    docking_csv: str,
+    out_csv: str,
+    target: str,
+    ligand_regex: str,
+    protein_regex: str,
+    dock_chain: str,
+    ref_chain: str,
+    lig_resname: str,
+    vina_score: bool = False,
+    vina_box_x: Optional[float] = None,
+    vina_box_y: Optional[float] = None,
+    vina_box_z: Optional[float] = None,
+    docking_vina: bool = False,
+    path_to_grid_prep: str = "./",
+    minimize: bool = False,
+    md_openmm_platform:OpenMMPlatform = OpenMMPlatform.Fastest,
+    ml_score: bool = False,
+    bsite_rmsd: bool = False,
+    gnina_score: bool = False,
+    gnina_script: Optional[str] = None,
+    gnina_out_dir: Optional[str] = None,
+    log_level: str = "info",
+    input_json: Optional[str] = None,
+) ->None:
+    """Run scoring workflow on docked and minimized poses"""
+
+    loglevel = getattr(logging, log_level.upper(), logging.INFO)
+
+    if input_json is not None:
+        print("Loading inputs from json file... Will override all other inputs.")
+        inputs = ScoreInputs.from_json_file(input_json)
+    else:
+        inputs = ScoreInputs(
+            docking_dir=docking_dir,
+            pdb_ref=pdb_ref,
+            output_csv=out_csv,
+            docking_csv=docking_csv,
+            target=target,
+            run_vina=vina_score,
+            vina_box_x=vina_box_x,
+            vina_box_y=vina_box_y,
+            vina_box_z=vina_box_z,
+            path_to_grid_prep=path_to_grid_prep,
+            dock_vina=docking_vina,
+            ligand_regex=ligand_regex,
+            protein_regex=protein_regex,
+            minimize=minimize,
+            md_openmm_platform=md_openmm_platform,
+            ml_score=ml_score,
+            bsite_rmsd=bsite_rmsd,
+            dock_chain=dock_chain,
+            ref_chain=ref_chain,
+            lig_resname=lig_resname,
+            gnina_score=gnina_score,
+            gnina_script=gnina_script,
+            gnina_out_dir=gnina_out_dir,
+            loglevel=loglevel,
+        )
+
+    score_complex_workflow(inputs)
 
 if __name__ == "__main__":
     spectrum()
