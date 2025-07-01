@@ -16,7 +16,7 @@ from asapdiscovery.docking.scorer import (
 from asapdiscovery.spectrum.fitness import target_has_fitness_data
 from asapdiscovery.data.schema.complex import Complex
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from util.dask_utils import dask_vmap, backend_wrapper
+from asapdiscovery.data.util.dask_utils import dask_vmap, backend_wrapper
 
 
 class FINTScorer(ScorerBase):
