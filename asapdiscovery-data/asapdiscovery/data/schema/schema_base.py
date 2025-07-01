@@ -4,7 +4,7 @@ import json
 from enum import Enum
 from pathlib import Path
 
-from pydantic.v1 import BaseModel, ByteSize, Field
+from pydantic import BaseModel, ByteSize, Field
 
 _SCHEMA_VERSION = "0.1.0"
 
