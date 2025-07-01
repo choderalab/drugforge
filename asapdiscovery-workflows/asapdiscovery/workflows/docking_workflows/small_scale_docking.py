@@ -39,8 +39,8 @@ from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSITDocker
 from asapdiscovery.docking.scorer import (
     ChemGauss4Scorer,
-    FINTScorer,
 )
+from asapdiscovery.dataviz.fint_score import FINTScorer
 from asapdiscovery.ml.scorers import MLModelScorer, MetaScorer
 from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import ProteinPrepper

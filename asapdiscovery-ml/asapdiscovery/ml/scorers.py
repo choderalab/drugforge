@@ -12,7 +12,6 @@ from asapdiscovery.docking.scorer import (
     ScoreType,
     ScoreUnits,
     logger,
-    endpoint_and_model_type_to_score_type,
     Score,
     _get_disk_path_from_docking_result,
 )
@@ -363,3 +362,38 @@ class MetaScorer(BaseModel):
             return Score._combine_and_pivot_scores_df(results)
 
         return np.ravel(results).tolist()
+
+
+def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> ScoreType:
+    """
+    Convert an endpoint to a score type.
+
+    Parameters
+    ----------
+    endpoint : str
+        Endpoint to convert
+
+    Returns
+    -------
+    ScoreType
+        Score type
+    """
+    if model_type == ModelType.GAT:
+        if endpoint == "pIC50":  # TODO: make this an enum
+            return ScoreType.GAT_pIC50
+        elif endpoint == "LogD":
+            return ScoreType.GAT_LogD
+        else:
+            raise ValueError(f"Endpoint {endpoint} not recognized, for GAT")
+    elif model_type == ModelType.schnet:
+        if endpoint == "pIC50":
+            return ScoreType.schnet_pIC50
+        else:
+            raise ValueError(f"Endpoint {endpoint} not recognized, for Schnet")
+    elif model_type == ModelType.e3nn:
+        if endpoint == "pIC50":
+            return ScoreType.e3nn_pIC50
+        else:
+            raise ValueError(f"Endpoint {endpoint} not recognized for E3NN")
+    else:
+        raise ValueError(f"Model type {model_type} not recognized")

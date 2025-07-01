@@ -1,8 +1,8 @@
 import pytest
 from asapdiscovery.docking.scorer import (
     ChemGauss4Scorer,
-    FINTScorer,
 )
+from asapdiscovery.dataviz.fint_score import FINTScorer
 from asapdiscovery.ml.scorers import GATScorer, SchnetScorer, E3NNScorer, MetaScorer
 
 

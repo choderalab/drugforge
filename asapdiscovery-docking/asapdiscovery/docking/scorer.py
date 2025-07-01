@@ -10,11 +10,9 @@ import MDAnalysis as mda
 import numpy as np
 import pandas as pd
 from asapdiscovery.data.backend.openeye import oedocking, oemol_to_pdb_string
-from asapdiscovery.dataviz.plip import compute_fint_score
 from asapdiscovery.data.schema.complex import Complex
 from asapdiscovery.data.schema.ligand import Ligand, LigandIdentifiers
 from asapdiscovery.data.schema.target import TargetIdentifiers
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.data.util.dask_utils import (
     BackendType,
     FailureMode,
@@ -23,10 +21,8 @@ from asapdiscovery.data.util.dask_utils import (
 )
 from asapdiscovery.docking.docking import DockingResult
 from asapdiscovery.docking.docking_data_validation import DockingResultCols
-from asapdiscovery.spectrum.fitness import target_has_fitness_data
-from mtenn.config import ModelType
 from multimethod import multimethod
-from pydantic.v1 import BaseModel, Field, validator
+from pydantic.v1 import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
@@ -55,42 +51,6 @@ class ScoreUnits(str, Enum):
     kcal_mol = "kcal/mol"
     pIC50 = "pIC50"
     INVALID = "INVALID"
-
-
-# TODO: this is a massive kludge, need to refactor
-def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> ScoreType:
-    """
-    Convert an endpoint to a score type.
-
-    Parameters
-    ----------
-    endpoint : str
-        Endpoint to convert
-
-    Returns
-    -------
-    ScoreType
-        Score type
-    """
-    if model_type == ModelType.GAT:
-        if endpoint == "pIC50":  # TODO: make this an enum
-            return ScoreType.GAT_pIC50
-        elif endpoint == "LogD":
-            return ScoreType.GAT_LogD
-        else:
-            raise ValueError(f"Endpoint {endpoint} not recognized, for GAT")
-    elif model_type == ModelType.schnet:
-        if endpoint == "pIC50":
-            return ScoreType.schnet_pIC50
-        else:
-            raise ValueError(f"Endpoint {endpoint} not recognized, for Schnet")
-    elif model_type == ModelType.e3nn:
-        if endpoint == "pIC50":
-            return ScoreType.e3nn_pIC50
-        else:
-            raise ValueError(f"Endpoint {endpoint} not recognized for E3NN")
-    else:
-        raise ValueError(f"Model type {model_type} not recognized")
 
 
 _SCORE_MANIFOLD_ALIAS = {
@@ -448,109 +408,6 @@ class ChemGauss4Scorer(ScorerBase):
             for p in inputs
         ]
         return self._dispatch(complexes)
-
-
-class FINTScorer(ScorerBase):
-    """
-    Score using Fitness Interaction Score
-
-    Overloaded to accept DockingResults, Complexes, or Paths to PDB files.
-    """
-
-    score_type: ScoreType = Field(ScoreType.FINT, description="Type of score")
-    units: ClassVar[ScoreUnits.arbitrary] = ScoreUnits.arbitrary
-    target: TargetTags = Field(..., description="Which target to use for scoring")
-
-    @validator("target")
-    @classmethod
-    def validate_target(cls, v):
-        if not target_has_fitness_data(v):
-            raise ValueError(
-                "target does not have fitness data so cannot use FINTScorer"
-            )
-        return v
-
-    @dask_vmap(["inputs"])
-    @backend_wrapper("inputs")
-    def _score(
-        self,
-        inputs: Union[list[DockingResult], list[Complex], list[Path]],
-        return_for_disk_backend: bool = False,
-        **kwargs,
-    ) -> list[Score]:
-        """
-        Score the inputs, dispatching based on type.
-        """
-        return self._dispatch(
-            inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
-        )
-
-    @multimethod
-    def _dispatch(
-        self,
-        inputs: list[DockingResult],
-        return_for_disk_backend: bool = False,
-        **kwargs,
-    ) -> list[Score]:
-        """
-        Dispatch for DockingResults
-        """
-        results = []
-        for inp in inputs:
-            _, fint_score = compute_fint_score(
-                inp.to_protein(), inp.posed_ligand.to_oemol(), self.target
-            )
-
-            sc = Score.from_score_and_docking_result(
-                fint_score, self.score_type, self.units, inp
-            )
-            # overwrite the input with the path to the file
-            if return_for_disk_backend:
-                sc.input = _get_disk_path_from_docking_result(inp)
-
-            results.append(sc)
-
-        return results
-
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Complex], **kwargs):
-        """
-        Dispatch for Complexes
-        """
-        results = []
-        for inp in inputs:
-            _, fint_score = compute_fint_score(
-                inp.target.to_oemol(), inp.ligand.to_oemol(), self.target
-            )
-            results.append(
-                Score.from_score_and_complex(
-                    fint_score, self.score_type, self.units, inp
-                )
-            )
-        return results
-
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Path], **kwargs):
-        """
-        Dispatch for PDB files from disk
-        """
-        # assuming reading PDB files from disk
-        complexes = [
-            Complex.from_pdb(
-                p,
-                ligand_kwargs={"compound_name": f"{p.stem}_ligand"},
-                target_kwargs={"target_name": f"{p.stem}_target"},
-            )
-            for p in inputs
-        ]
-
-        return self._dispatch(complexes, **kwargs)
-
-
-# keep track of all the ml scorers
-
-
-# decorator to register all the ml scorers
 
 
 class SymClashScorer(ScorerBase):
