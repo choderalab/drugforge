@@ -1,6 +1,7 @@
-from asapdiscovery.data.schema.complex import Complex, PreppedComplex
+from asapdiscovery.data.schema.complex import Complex
+from asapdiscovery.modeling.schema import PreppedComplex
 from asapdiscovery.docking.docking import DockingInputPair
-from asapdiscovery.docking.scorer import MetaScorer
+from asapdiscovery.docking.meta_scorer import MetaScorer
 
 from asapdiscovery.docking.openeye import POSITDocker
 
@@ -8,8 +9,7 @@ from asapdiscovery.data.backend.openeye import (
     load_openeye_pdb,
     save_openeye_sdf,
 )
-from asapdiscovery.modeling.modeling import split_openeye_mol
-from asapdiscovery.data.backend.openeye import oechem
+from asapdiscovery.data.backend.openeye import oechem, split_openeye_mol
 from asapdiscovery.spectrum.calculate_rmsd import rmsd_alignment
 from asapdiscovery.simulation.simulate import VanillaMDSimulator
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
