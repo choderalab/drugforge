@@ -28,7 +28,8 @@ from asapdiscovery.dataviz.html_viz import ColorMethod, HTMLVisualizer
 from asapdiscovery.docking.docking import write_results_to_multi_sdf
 from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
-from asapdiscovery.docking.scorer import ChemGauss4Scorer, MetaScorer, MLModelScorer
+from asapdiscovery.docking.scorer import ChemGauss4Scorer
+from asapdiscovery.ml.scorers import MLModelScorer, MetaScorer
 from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import LigandTransferProteinPrepper
 from asapdiscovery.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
