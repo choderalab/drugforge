@@ -21,10 +21,10 @@ def click_success(result):
     os.getenv("RUNNER_OS") == "macOS", reason="Docking tests slow on GHA on macOS"
 )
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
-@pytest.mark.parametrize("subcommand, ml_score", [["large-scale", "small-scale"],
-                                                  [pytest.param(True, marks=pytest.mark.xfail(
+@pytest.mark.parametrize("subcommand", ["large-scale", "small-scale"])
+@pytest.mark.parametrize("ml_score", [pytest.param(True, marks=pytest.mark.xfail(
                                                       reason="ML not working at the moment.")),
-                                                   False]])
+                                                   False])
 def test_project_support_docking_cli_fragalysis(
     ligand_file, mpro_frag_dir, tmp_path, subcommand, ml_score
 ):
