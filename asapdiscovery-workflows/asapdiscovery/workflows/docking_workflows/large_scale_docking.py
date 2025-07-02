@@ -37,7 +37,7 @@ from asapdiscovery.docking.scorer import (
     MetaScorer,
     MLModelScorer,
 )
-from asapdiscovery.ml.models import ASAPMLModelRegistry
+# from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import ProteinPrepper
 from asapdiscovery.spectrum.fitness import target_has_fitness_data
 from asapdiscovery.workflows.docking_workflows.workflows import (
@@ -290,14 +290,15 @@ def large_scale_docking_workflow(inputs: LargeScaleDockingInputs):
 
     # load ml scorers
     if inputs.ml_score:
+        logger.warning("The ML score is experimental. It can't be implemented with the docking workflows.")
         # check which endpoints are availabe for the target
-        models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
-        for model in models:
-            logger.info(
-                f"Adding ML scorer for target {inputs.target} with model {model.name}"
-            )
-        ml_scorers = MLModelScorer.load_model_specs(models=models)
-        scorers.extend(ml_scorers)
+        #models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
+        #for model in models:
+        #    logger.info(
+        #        f"Adding ML scorer for target {inputs.target} with model {model.name}"
+        #    )
+        #ml_scorers = MLModelScorer.load_model_specs(models=models)
+        #scorers.extend(ml_scorers)
 
     # score results using multiple scoring functions
     logger.info("Scoring docking results")

@@ -29,7 +29,7 @@ from asapdiscovery.docking.docking import write_results_to_multi_sdf
 from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
 from asapdiscovery.docking.scorer import ChemGauss4Scorer, MetaScorer, MLModelScorer
-from asapdiscovery.ml.models import ASAPMLModelRegistry
+#from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import LigandTransferProteinPrepper
 from asapdiscovery.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
 from asapdiscovery.workflows.docking_workflows.workflows import (
@@ -338,10 +338,11 @@ def ligand_transfer_docking_workflow(inputs: LigandTransferDockingWorkflowInputs
     # load ml scorers
     # load ml scorers
     if inputs.ml_score:
+        logger.warning("The ML score is experimental. It can't be implemented with the docking workflows.")
         # check which endpoints are availabe for the target
-        models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
-        ml_scorers = MLModelScorer.load_model_specs(models=models)
-        scorers.extend(ml_scorers)
+        #models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
+        #ml_scorers = MLModelScorer.load_model_specs(models=models)
+        #scorers.extend(ml_scorers)
 
     if inputs.write_final_sdf:
         logger.info("Writing final docked poses to SDF file")
