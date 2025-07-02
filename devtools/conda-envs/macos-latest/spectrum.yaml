@@ -1,4 +1,4 @@
-name: data
+name: spectrum
 channels:
   - openeye
   - conda-forge
@@ -57,3 +57,4 @@ dependencies:
   - requests
   - moto
   - boto3
+  - multimethod

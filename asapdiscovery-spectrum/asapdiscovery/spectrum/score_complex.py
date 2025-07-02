@@ -184,14 +184,15 @@ def score_complex_workflow(inputs: ScoreInputs):
 
         scorers = [ChemGauss4Scorer()]
         # load addtional ml scorers
-        if inputs.ml_score:
-            from asapdiscovery.ml.models import ASAPMLModelRegistry
-            from asapdiscovery.docking.scorer import MLModelScorer
-            logging.info("Loading additional ML scorers")
-            # check which endpoints are availabe for the target
-            models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
-            ml_scorers = MLModelScorer.load_model_specs(models=models)
-            scorers.extend(ml_scorers)
+        #if inputs.ml_score:
+        #    from asapdiscovery.ml.models import ASAPMLModelRegistry
+        #    from asapdiscovery.docking.scorer import MLModelScorer
+        #    logging.info("Loading additional ML scorers")
+        #    # check which endpoints are availabe for the target
+        #    models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
+        #    ml_scorers = MLModelScorer.load_model_specs(models=models)
+        #    scorers.extend(ml_scorers)
+        
         # Prepare complex, re-dock and score
         logging.info("Running protein prep, docking and scoring of %s", min_out)
         scores_df, prepped_cmp, ligand_pose, aligned = dock_and_score(
