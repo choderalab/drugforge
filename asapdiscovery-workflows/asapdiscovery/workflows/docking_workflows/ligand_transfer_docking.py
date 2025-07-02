@@ -29,7 +29,6 @@ from asapdiscovery.docking.docking import write_results_to_multi_sdf
 from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
 from asapdiscovery.docking.scorer import ChemGauss4Scorer
-from asapdiscovery.docking.ml_scorer import MLModelScorer
 from asapdiscovery.docking.meta_scorer import MetaScorer
 from asapdiscovery.ml.models import ASAPMLModelRegistry
 from asapdiscovery.modeling.protein_prep import LigandTransferProteinPrepper
@@ -340,6 +339,8 @@ def ligand_transfer_docking_workflow(inputs: LigandTransferDockingWorkflowInputs
     # load ml scorers
     # load ml scorers
     if inputs.ml_score:
+        # TODO: We should probably have this in a different function/callable
+        from asapdiscovery.docking.ml_scorer import MLModelScorer  # Lazy import
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         ml_scorers = MLModelScorer.load_model_specs(models=models)
