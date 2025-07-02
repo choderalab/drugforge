@@ -125,7 +125,7 @@ def large_scale(
     dask_type: DaskType = DaskType.LOCAL,
     dask_n_workers: Optional[int] = None,
     failure_mode: FailureMode = FailureMode.SKIP,
-    ml_score: Optional[bool] = True,
+    ml_score: Optional[bool] = False,
     loglevel: Union[int, str] = logging.INFO,
     ref_chain: Optional[str] = None,
     active_site_chain: Optional[str] = None,
