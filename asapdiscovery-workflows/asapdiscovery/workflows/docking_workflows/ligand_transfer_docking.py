@@ -341,6 +341,7 @@ def ligand_transfer_docking_workflow(inputs: LigandTransferDockingWorkflowInputs
     if inputs.ml_score:
         # TODO: We should probably have this in a different function/callable
         from asapdiscovery.docking.ml_scorer import MLModelScorer  # Lazy import
+        logger.warning("Using ML scorer is still experimental. Fails are expected.")
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         ml_scorers = MLModelScorer.load_model_specs(models=models)

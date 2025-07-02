@@ -301,6 +301,7 @@ def small_scale_docking_workflow(inputs: SmallScaleDockingInputs):
     if inputs.ml_score:
         # TODO: We should probably have this in a separate callable/function
         from asapdiscovery.docking.ml_scorer import MLModelScorer  # Lazy import
+        logger.warning("Using ML scorer is still experimental. Fails are expected.")
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         for model in models:
