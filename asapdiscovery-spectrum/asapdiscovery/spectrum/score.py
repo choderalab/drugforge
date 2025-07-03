@@ -393,26 +393,37 @@ def score_autodock_vina(
 
     df_scores = pd.DataFrame(index=[0])
 
-    if Path(receptor_pdb).suffix == ".pdb":
+    receptor_pdb = Path(receptor_pdb)
+    ligand_sdf = Path(ligand_sdf)
+    if receptor_pdb.suffix == ".pdb":
         # Prepare receptor
+        receptor_pdbqt = receptor_pdb.with_suffix("pdbqt")
         subprocess.run(
-            f"prepare_receptor -r {receptor_pdb} -o {receptor_pdb}qt", shell=True
+            f"prepare_receptor -r {receptor_pdb} -o {receptor_pdbqt}", shell=True
         )
-    elif Path(receptor_pdb).suffix == ".pdbqt":
-        receptor_pdb = Path(str(receptor_pdb)[:-2])
+    elif receptor_pdb.suffix == ".pdbqt":
+        receptor_pdbqt = receptor_pdb
+        logger.info(f"Prepped target provided")
     else:
         raise ValueError("Only allowed formats are .pdb and .pdbqt")
     # Prepare ligand
-    subprocess.run(
-        f"mk_prepare_ligand.py -i {ligand_sdf} -o {str(ligand_sdf)[:-3]}pdbqt",
-        shell=True,
-    )
+    if ligand_sdf.suffix == ".sdf":
+        ligand_pdbqt = ligand_sdf.with_suffix("pdbqt")
+        subprocess.run(
+            f"mk_prepare_ligand.py -i {ligand_sdf} -o {ligand_pdbqt}",
+            shell=True,
+        )
+    elif ligand_sdf.suffix == ".pdbqt":
+        ligand_pdbqt = ligand_sdf
+        logger.info(f"Prepped ligand provided")
+    else:
+        raise ValueError("Only allowed formats are .pdb and .pdbqt")
     v = Vina(sf_name="vina")
 
     # First check if prep was successful
     if (
-        not Path(f"{receptor_pdb}qt").is_file()
-        or not Path(f"{str(ligand_sdf)[:-3]}pdbqt").is_file()
+        not receptor_pdbqt.is_file()
+        or not ligand_pdbqt.is_file()
     ):
         df_scores["Vina-score-premin"] = None
         df_scores["Vina-score-min"] = None
@@ -424,7 +435,7 @@ def score_autodock_vina(
     if box_center is None:
         parent_dir = ligand_sdf.resolve().parents[0]
         p = subprocess.Popen(
-            f"pythonsh {path_to_prepare_file}/prepare_gpf.py -l {ligand_sdf.stem}.pdbqt -r {receptor_pdb.stem}.pdbqt -y",
+            f"pythonsh {path_to_prepare_file}/prepare_gpf.py -l {ligand_pdbqt} -r {receptor_pdbqt} -y",
             cwd=parent_dir,
             shell=True,
             stdout=subprocess.PIPE,
@@ -447,9 +458,9 @@ def score_autodock_vina(
 
             )
         box_center = [x, y, z]
-    v.set_receptor(f"{receptor_pdb}qt")
+    v.set_receptor(str(receptor_pdbqt))
 
-    v.set_ligand_from_file(f"{str(ligand_sdf)[:-3]}pdbqt")
+    v.set_ligand_from_file(str(ligand_pdbqt))
     v.compute_vina_maps(center=box_center, box_size=box_size)
 
     # Score the current pose
@@ -465,20 +476,21 @@ def score_autodock_vina(
         f"Score after minimization: {energy_minimized[0]} (kcal/mol)"
     )
     df_scores["Vina-score-min"] = energy_minimized[0]
-    v.write_pose(f"{str(receptor_pdb)[:-4]}_minimized.pdbqt", overwrite=True)
+    parent_dir = receptor_pdb.resolve().parents[0]
+    v.write_pose(f"{parent_dir/receptor_pdb.stem}_minimized.pdbqt", overwrite=True)
     out_pose = None
 
     if dock:
         # Dock the ligand
         v.dock(exhaustiveness=32, n_poses=20)
         v.write_poses(
-            f"{str(receptor_pdb)[:-4]}_vina_out.pdbqt", n_poses=1, overwrite=True
+            f"{receptor_pdb.stem}_vina_out.pdbqt", n_poses=1, overwrite=True
         )
         df_scores["Vina-dock-score"] = v.score()[0]
         # Convert pose in pdbqt to calculate rmsd
-        out_pose = f"{str(receptor_pdb)[:-4]}_vina_out.pdb"
+        out_pose = f"{parent_dir/receptor_pdb.stem}_vina_out.pdb"
         subprocess.run(
-            f"babel -ipdbqt '{str(receptor_pdb)[:-4]}_vina_out.pdbqt' -opdb '{out_pose}'",
+            f"babel -ipdbqt '{parent_dir/receptor_pdb.stem}_vina_out.pdbqt' -opdb '{out_pose}'",
             shell=True,
         )
     return df_scores, out_pose

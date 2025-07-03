@@ -43,7 +43,6 @@ dependencies:
 
   # Vina
   - vina
-  - adfr-suite
 
   # Math
   - numpy
@@ -66,6 +65,3 @@ dependencies:
   - boto3
   - multimethod
 
-  # pip installs
-  - pip:
-      - meeko

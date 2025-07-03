@@ -69,7 +69,7 @@ def test_dock_score(protein_path):
     assert Path(aligned).exists()
     
 
-def test_lig_rmsd_oechem(protein_path): # Add files to aws
+def test_lig_rmsd_oechem(protein_path): 
     lig_rmsd = get_ligand_rmsd(
         ref_pdb=str(protein_path), 
         target_pdb=str(protein_path), 
@@ -93,13 +93,11 @@ def test_lig_rmsd_rdkit(protein_path, tmp_path):
     assert lig_rmsd == 0
 
 
-
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Vina doesn't run in latest macOS")
-def test_vina_score(prepped_target_path, prepped_ligand_path):
+def test_vina_score(target_prepped_vina, ligand_prepped_vina):
     df_vina, out_pose = score_autodock_vina(
-        receptor_pdb=prepped_target_path,
-        ligand_sdf=prepped_ligand_path,
-        box_center=[22,5,25],
+        receptor_pdb=target_prepped_vina,
+        ligand_sdf=ligand_prepped_vina,
+        box_center=[-22,5,25],
         box_size=[20, 20, 20],
         dock=False,
     )
@@ -111,7 +109,7 @@ def test_minimize():
 
 
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
-def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_csv_path):  ### Add docking csv file
+def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_csv_path):  
     runner = CliRunner()
     struct_dir, _ = structure_dir
     csv_save = tmp_path / "scores.csv"
@@ -130,7 +128,7 @@ def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_c
             "--target",
             "SARS-CoV-2-Mpro",
             "--dock-chain",
-            "1",
+            "A",
             "--ref-chain",
             "A"
         ],
@@ -139,8 +137,7 @@ def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_c
     assert click_success(result)
 
 
-@pytest.mark.skipif(os.getenv("RUNNER_OS") == "macOS", reason="Vina doesn't run in latest macOS")
-@pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
+@pytest.mark.xfail(reason="Vina CLI won't run without all the software requirements installed")
 def test_score_vina(structure_dir, pdb_file, tmp_path, docking_results_csv_path):
     runner = CliRunner()
     struct_dir, _ = structure_dir
