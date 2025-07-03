@@ -6,6 +6,13 @@ from asapdiscovery.data.testing.test_resources import fetch_test_file
 def protein_path():
     return fetch_test_file("Mpro-P2660_0A_bound.pdb")
 
+@pytest.fixture(scope="session")
+def prepped_target_path():
+    return fetch_test_file("Mpro-P2660_0A_bound-prepped_protein.pdb")
+
+@pytest.fixture(scope="session")
+def prepped_ligand_path():
+    return fetch_test_file("Mpro-P2660_0A_bound-prepped_ligand.sdf")
 
 @pytest.fixture(scope="session")
 def blast_xml_path():
@@ -20,6 +27,16 @@ def blast_csv_path():
 @pytest.fixture(scope="session")
 def fasta_alignment_path():
     return fetch_test_file("sars_alignment.fasta")
+
+
+@pytest.fixture
+def pdb_file():
+    return fetch_test_file("Mpro-P2660_0A_bound_oe_processed.pdb")
+
+
+@pytest.fixture(scope="session")
+def docking_results_csv_path():
+    return fetch_test_file("lt_docking_scores.csv")
 
 
 @pytest.fixture()

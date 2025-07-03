@@ -40,7 +40,7 @@ class ScoreInputs(ScoreSpectrumInputsBase):
     )
 
     ml_score: bool = Field(
-        True, description="Whether to employ asap-implemented ML models to score poses."
+        False, description="Whether to employ asap-implemented ML models to score poses."
     )
 
     minimize: bool = Field(
@@ -184,15 +184,15 @@ def score_complex_workflow(inputs: ScoreInputs):
 
         scorers = [ChemGauss4Scorer()]
         # load addtional ml scorers
-        #if inputs.ml_score:
-        #    from asapdiscovery.ml.models import ASAPMLModelRegistry
-        #    from asapdiscovery.docking.scorer import MLModelScorer
-        #    logging.info("Loading additional ML scorers")
-        #    # check which endpoints are availabe for the target
-        #    models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
-        #    ml_scorers = MLModelScorer.load_model_specs(models=models)
-        #    scorers.extend(ml_scorers)
-        
+        if inputs.ml_score:
+            from asapdiscovery.ml.models import ASAPMLModelRegistry
+            from asapdiscovery.docking.scorer import MLModelScorer
+            logging.info("Loading additional ML scorers")
+            # check which endpoints are availabe for the target
+            models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
+            ml_scorers = MLModelScorer.load_model_specs(models=models)
+            scorers.extend(ml_scorers)
+
         # Prepare complex, re-dock and score
         logging.info("Running protein prep, docking and scoring of %s", min_out)
         scores_df, prepped_cmp, ligand_pose, aligned = dock_and_score(
@@ -305,7 +305,7 @@ def score_complex_workflow(inputs: ScoreInputs):
             pout += f" and {bsite_rmsd} for binding site"
         logging.info(pout)
 
-        if inputs.vina_score:
+        if inputs.run_vina:
             logging.info("Calculating the affinity score with AutoDock Vina")
             if inputs.vina_box_x is None:
                 vina_box = None

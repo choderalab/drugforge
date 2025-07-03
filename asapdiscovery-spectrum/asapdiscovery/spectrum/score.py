@@ -356,7 +356,7 @@ def get_ligand_rmsd(
 
 def score_autodock_vina(
     receptor_pdb: Union[str, Path],
-    ligand_pdb: Path,
+    ligand_sdf: Path,
     box_center = None,
     box_size = [20, 20, 20],
     dock = False,
@@ -368,7 +368,7 @@ def score_autodock_vina(
     ----------
     receptor_pdb : Path
         Path to pdb of target (no ligand).
-    ligand_pdb : Path
+    ligand_sdf : Path
         Path to sdf of ligand.
     box_center : List, optional
         Center of ligand box as [x, y, z], by default None and the box will be calculated.
@@ -404,7 +404,7 @@ def score_autodock_vina(
         raise ValueError("Only allowed formats are .pdb and .pdbqt")
     # Prepare ligand
     subprocess.run(
-        f"mk_prepare_ligand.py -i {ligand_pdb} -o {str(ligand_pdb)[:-3]}pdbqt",
+        f"mk_prepare_ligand.py -i {ligand_sdf} -o {str(ligand_sdf)[:-3]}pdbqt",
         shell=True,
     )
     v = Vina(sf_name="vina")
@@ -412,7 +412,7 @@ def score_autodock_vina(
     # First check if prep was successful
     if (
         not Path(f"{receptor_pdb}qt").is_file()
-        or not Path(f"{str(ligand_pdb)[:-3]}pdbqt").is_file()
+        or not Path(f"{str(ligand_sdf)[:-3]}pdbqt").is_file()
     ):
         df_scores["Vina-score-premin"] = None
         df_scores["Vina-score-min"] = None
@@ -422,9 +422,9 @@ def score_autodock_vina(
 
     # get coordinates of box
     if box_center is None:
-        parent_dir = ligand_pdb.resolve().parents[0]
+        parent_dir = ligand_sdf.resolve().parents[0]
         p = subprocess.Popen(
-            f"pythonsh {path_to_prepare_file}/prepare_gpf.py -l {ligand_pdb.stem}.pdbqt -r {receptor_pdb.stem}.pdbqt -y",
+            f"pythonsh {path_to_prepare_file}/prepare_gpf.py -l {ligand_sdf.stem}.pdbqt -r {receptor_pdb.stem}.pdbqt -y",
             cwd=parent_dir,
             shell=True,
             stdout=subprocess.PIPE,
@@ -449,7 +449,7 @@ def score_autodock_vina(
         box_center = [x, y, z]
     v.set_receptor(f"{receptor_pdb}qt")
 
-    v.set_ligand_from_file(f"{str(ligand_pdb)[:-3]}pdbqt")
+    v.set_ligand_from_file(f"{str(ligand_sdf)[:-3]}pdbqt")
     v.compute_vina_maps(center=box_center, box_size=box_size)
 
     # Score the current pose
