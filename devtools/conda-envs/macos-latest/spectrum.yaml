@@ -5,6 +5,7 @@ channels:
 dependencies:
   # Base depends
   - pip
+  - python >=3.10,<3.12
   - pydantic >=2.0.0a0
   - typing-extensions
 
@@ -38,6 +39,9 @@ dependencies:
   - rdkit
   - plip
   - mafft
+
+  # Vina
+  - vina
 
   # Math
   - numpy

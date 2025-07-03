@@ -2,6 +2,7 @@ name: spectrum
 channels:
   - openeye
   - conda-forge
+  - hcc
 dependencies:
   # Base depends
   - pip
@@ -40,6 +41,10 @@ dependencies:
   - plip
   - mafft
 
+  # Vina
+  - vina
+  - adfr-suite
+
   # Math
   - numpy
   - pandas
@@ -60,3 +65,7 @@ dependencies:
   - moto
   - boto3
   - multimethod
+
+  # pip installs
+  - pip:
+      - meeko
