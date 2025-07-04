@@ -358,7 +358,7 @@ def small_scale(
     dask_type: DaskType = DaskType.LOCAL,
     dask_n_workers: Optional[int] = None,
     failure_mode: FailureMode = FailureMode.SKIP,
-    ml_score: Optional[bool] = True,
+    ml_score: Optional[bool] = False,
     md: bool = False,
     md_steps: int = 2500000,  # 10 ns @ 4.0 fs timestep
     md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
@@ -590,7 +590,7 @@ def ligand_transfer_docking(
     dask_n_workers: Optional[int] = None,
     failure_mode: FailureMode = FailureMode.SKIP,
     loglevel: Union[int, str] = logging.INFO,
-    ml_score: Optional[bool] = True,
+    ml_score: Optional[bool] = False,
     md: bool = False,
     md_steps: int = 2500000,  # 10 ns @ 4.0 fs timestep
     md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
