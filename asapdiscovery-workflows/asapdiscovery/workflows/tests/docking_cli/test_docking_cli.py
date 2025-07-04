@@ -23,7 +23,7 @@ def click_success(result):
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 @pytest.mark.parametrize("subcommand", ["large-scale", "small-scale"])
 def test_project_support_docking_cli_fragalysis(
-    ligand_file, mpro_frag_dir, tmp_path, subcommand, ml_score
+    ligand_file, mpro_frag_dir, tmp_path, subcommand
 ):
     runner = CliRunner()
     frag_parent_dir, _ = mpro_frag_dir
