@@ -21,10 +21,17 @@ from asapdiscovery.alchemy.cli.cli import alchemy  # noqa: F401, E402, F811
 
 cli.add_command(alchemy)
 
+try:
+    from asapdiscovery.ml.cli import ml  # noqa: F401, E402, F811
 
-from asapdiscovery.ml.cli import ml  # noqa: F401, E402, F811
+    cli.add_command(ml)
+except ModuleNotFoundError or ImportError:
+    from warnings import warn
 
-cli.add_command(ml)
+    warn(
+        "ML CLI not available. Please install asapdiscovery[ml] to use the ML CLI commands.",
+        ImportWarning,
+    )
 
 from asapdiscovery.spectrum.cli import spectrum  # noqa: F401, E402, F811
 
