@@ -104,8 +104,18 @@ def test_vina_score(target_prepped_vina, ligand_prepped_vina):
     assert df_vina["Vina-score-premin"].values[0] < 0
 
 
-def test_minimize():
-    return
+@pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
+def test_minimize(protein_path, tmp_path):
+    min_out = f"{tmp_path}/min_out.pdb"
+    minimize_structure(
+    pdb_complex = protein_path,
+    min_out = min_out,
+    out_dir = tmp_path,
+    md_platform = 'CPU',
+    comp_name = 'Mol',
+    target_name = 'SARS-CoV-2',)
+
+    assert Path(min_out).exists()
 
 
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
