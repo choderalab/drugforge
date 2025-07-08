@@ -34,6 +34,10 @@ def test_toplevel_runnable():
     ],
 )
 def test_subcommand_runnable(subcommand):
+
+    # xfail ml tests for now
+    if subcommand == "ml":
+        pytest.xfail("ML package is not currently available.")
     runner = CliRunner()
     args = [subcommand, "--help"]
     result = runner.invoke(cli, args)
