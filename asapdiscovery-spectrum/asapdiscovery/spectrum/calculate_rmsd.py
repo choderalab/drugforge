@@ -9,6 +9,7 @@ from asapdiscovery.modeling.modeling import superpose_molecule
 from asapdiscovery.spectrum.blast import pdb_to_seq
 
 from typing import Union
+import logging
 
 
 def rmsd_alignment(
@@ -35,7 +36,7 @@ def rmsd_alignment(
 
     Returns
     -------
-    float, Path
+    float, str
        RMSD after alignment, Path to saved PDB
     """
     protein = load_openeye_pdb(target_pdb)
@@ -56,7 +57,7 @@ def select_best_colabfold(
     chain="A",
     final_pdb="aligned_protein.pdb",
     fold_model="alphafold2_ptm",
-) -> tuple[float, Path]:
+) -> tuple[float, str]:
     """Select the best seed output (repetition) from a ColabFold run based on its RMSD wrt the reference.
 
     Parameters
@@ -76,7 +77,7 @@ def select_best_colabfold(
 
     Returns
     -------
-    Tuple[float, Path]
+    Tuple[float, str]
         RMSD after alignment, Path to saved PDB
 
     Raises
@@ -102,14 +103,14 @@ def select_best_colabfold(
         rmsds.append(rmsd)
         seeds.append(seed)
         file_seed.append(file_path)
-        print(f"RMSD for seed {seed} is {rmsd} A")
+        logging.info(f"RMSD for seed {seed} is {rmsd} A")
 
     if len(rmsds) == 0:
-        print(f"No ColabFold entry for {seq_name} and model {fold_model} found.")
+        logging.warning(f"No ColabFold entry for {seq_name} and model {fold_model} found.")
         return 0, ""
     min_rmsd = np.argmin(rmsds)
     min_rmsd_file = file_seed[min_rmsd]
-    print(
+    logging.info(
         f"{seq_name} seed with least RMSD is {seeds[min_rmsd]} with RMSD {rmsds[min_rmsd]} A"
     )
 
@@ -205,8 +206,19 @@ def save_alignment_pymol(
     p.cmd.save(session_save)
     return
 
-def convert_chain_id(chain):
-    """Convert a chain identifier between letter and number representations."""
+def convert_chain_id(chain: str) -> str:
+    """Convert a chain identifier between letter and number representations.
+
+    Parameters
+    ----------
+    chain : str
+        1 or 3-letter chain identifier.
+
+    Returns
+    -------
+    str
+        Converted chain identifier.
+    """
     if chain.isalpha():
         return ord(chain.lower()) - 96
     elif chain.isdigit():
@@ -274,9 +286,9 @@ def colorbyrmsd(
         p.cmd.ramp_new("colorbar", "none", [minimum, maximum], ["red", "blue"])
 
     if not quiet:
-        print("ColorByRMSD: Minimum Distance: %.2f" % (min(b_dict.values())))
-        print("ColorByRMSD: Maximum Distance: %.2f" % (max(b_dict.values())))
-        print(
+        logging.info("ColorByRMSD: Minimum Distance: %.2f" % (min(b_dict.values())))
+        logging.info("ColorByRMSD: Maximum Distance: %.2f" % (max(b_dict.values())))
+        logging.info(
             "ColorByRMSD: Average Distance: %.2f" % (sum(b_dict.values()) / len(b_dict))
         )
 
@@ -285,9 +297,22 @@ def colorbyrmsd(
 
     return
 
-def get_residue_mapping(seq_ref, seq_mob):
+def get_residue_mapping(seq_ref: str, seq_mob:str) -> tuple[int, int]:
     """Aligns two sequences and returns the correct start and end residue indices,
-    ignoring gaps."""
+    ignoring gaps
+
+    Parameters
+    ----------
+    seq_ref : str
+        string of reference sequence
+    seq_mob : str
+        string of mobile sequence
+
+    Returns
+    -------
+    tuple[int, int]
+        start and end residue indices (1-based indexing)
+    """
     alignments = pairwise2.align.globalxx(seq_ref, seq_mob)
     aligned_ref, aligned_mob = alignments[0][:2]  # Extract first alignment
 
@@ -315,17 +340,46 @@ def get_residue_mapping(seq_ref, seq_mob):
     return start_idx + 1, end_idx + 1  # 1-based indexing
 
 def find_bsite_resids(
-    pdb,
-    pdb_ref,
-    aligned_temp,
-    ligres="UNK",
-    chain_m="A",
-    chain_r="A",
-    bsite_dist=4.5,
-    mode="ligand",
-    res_threshold=5,
+    pdb:str,
+    pdb_ref:str,
+    aligned_temp:str,
+    ligres:str = "UNK",
+    chain_m:str ="A",
+    chain_r:str ="A",
+    bsite_dist:float = 4.5,
+    res_threshold: int = 5,
 ):
-    """Find binding site residues in a protein-ligand complex based on ligand proximity."""
+    """Find binding site residues in a protein-ligand complex based on ligand proximity.
+
+    Parameters
+    ----------
+    pdb : str
+        Path to PDB of protein to align.
+    pdb_ref : str
+        Path to reference PDB to align target against.
+    aligned_temp : str
+        Path to save aligned PDB.
+    ligres : str, optional
+        Residue name of ligand, by default "UNK"
+    chain_m : str, optional
+        Chain ID of mobile, by default "A"
+    chain_r : str, optional
+        Chain ID of ref, by default "A"
+    bsite_dist : float, optional
+        Distance to ligand in angstroms defining binding site, by default 4.5
+    res_threshold : int, optional
+        Threshold of residue IDs that can be assigned to binding site. Avoids asigning terminal atoms. By default 5
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        Arrays of binding site residue IDs in mobile and reference structures.
+
+    Raises
+    ------
+    ValueError
+        No binding site residues have an idx above res_threshold
+    """
     from scipy.spatial.distance import cdist
     rmsd, pdb_aln = rmsd_alignment(pdb, pdb_ref, aligned_temp, chain_m, chain_r)
     u = mda.Universe(pdb_aln)
@@ -340,25 +394,19 @@ def find_bsite_resids(
 
     # Handle incorrect chain selections
     if len(ca_mob) == 0:
-        print("The mobile chain is incorrect, attempting to fix")
+        logging.warning("The mobile chain is incorrect, attempting to fix")
         chain_m = convert_chain_id(chain_m)
         ca_mob = u.select_atoms(f"protein and chainid {chain_m} and name CA").atoms
 
     if len(bs_atoms) == 0:
-        print("The reference chain is incorrect, attempting to fix")
+        logging.warning("The reference chain is incorrect, attempting to fix")
         chain_r = convert_chain_id(chain_r)
         bs_atoms = u_ref.select_atoms(
             f"protein and chainid {chain_r} and around {bsite_dist} resname {ligres}"
         )
         lig_atoms = u_ref.select_atoms(f"chainid {chain_r} and resname {ligres}")
 
-    # Define reference positions based on mode
-    if mode == "bsite":
-        ref_pos = bs_atoms.select_atoms("name CA").positions
-    elif mode == "ligand":
-        ref_pos = lig_atoms.positions
-    else:
-        raise NotImplementedError("Only 'bsite' and 'ligand' modes are allowed.")
+    ref_pos = lig_atoms.positions
 
     bs_ref = np.unique(bs_atoms.resids)
     bs_ref = bs_ref[
@@ -386,16 +434,18 @@ def find_bsite_resids(
 def get_binding_site_rmsd(
     file_mob: Union[Path, str],
     file_ref: Union[Path, str],
-    bsite_dist=4.5,
-    rmsd_mode="CA",
-    chain_mob="A",
-    chain_ref="A",
-    ligres="LIG",
-    lig_ref_pdb=None,
-    chain_ref2="A",
-    aligned_temp=None,
+    bsite_dist:float = 4.5,
+    rmsd_mode:str = "CA",
+    chain_mob:str = "A",
+    chain_ref:str = "A",
+    ligres:str = "LIG",
+    lig_ref_pdb:str = None,
+    chain_ref2:str = "A",
+    aligned_temp:str = None,
 ) -> float:
-    """Calculate RMSD for the Binding Site residues bewteen file_mob and file_ref
+    """Calculate RMSD for the Binding Site residues between file_mob and file_ref
+    The binding site is defined as all residues protein within bsite_dist Angs of the ligand in the reference protein.
+    If the ligand is missing in the reference, an auxiliary reference (`lig_ref_pdb`) may be provided to define the binding site.
 
     Parameters
     ----------
@@ -404,9 +454,9 @@ def get_binding_site_rmsd(
     file_ref : Union[Path, str]
         Path to reference file
     bsite_dist : float, optional
-        Cutoff distance to ligand, by default 4.5
+        Cutoff distance to ligand in Angs, by default 4.5
     rmsd_mode : str, optional
-        Type of RMSD [CA, heavy]: CA atoms and heavy atoms, by default "CA"
+        Type of RMSD to compute: 'CA' for alpha carbons or 'heavy' for all heavy atoms, by default "CA".
     chain_mob : str, optional
         Chain ID of target to compare, by default "1"
     chain_ref : str, optional
@@ -423,12 +473,15 @@ def get_binding_site_rmsd(
     Returns
     -------
     float
-        RMSD of binding site
+        RMSD of binding site, or -1 if RMSD could not be calculated.
     Raises
     ------
     ValueError
         No ligand found in reference, and not second reference provided.
     """
+    file_mob = str(file_mob)
+    file_ref = str(file_ref)
+
     u = mda.Universe(file_mob).select_atoms(
         f"protein and segid {chain_mob} and not resname ACE and not resname NME"
     )
@@ -453,7 +506,6 @@ def get_binding_site_rmsd(
                 chain_mob,
                 chain_ref2,
                 bsite_dist,
-                mode="ligand",
                 res_threshold=5,
             )
             bs_atoms = u_ref_l.select_atoms(" or ".join([f"resid {r}" for r in bs_ids]))
@@ -467,10 +519,7 @@ def get_binding_site_rmsd(
     seq_ref = pdb_to_seq(file_ref, chain=str(chain_ref)).seq.replace("X", "")
 
     start_resid, end_resid = get_residue_mapping(seq_ref, seq_mob)
-    u_ref = u_ref.select_atoms(f"resid {start_resid}:{end_resid}")
-    u_ref_l = u_ref_l.select_atoms(
-        f"resid {start_resid}:{end_resid} or resname {ligres}"
-    )
+    u_ref_filter = u_ref.select_atoms(f"resid {start_resid}:{end_resid}")
     u = u.select_atoms(f"resid {start_resid}:{end_resid}")
 
     # Select binding site residues
@@ -489,7 +538,7 @@ def get_binding_site_rmsd(
             binding_site_m.append(res.resid)
             binding_site_r.append(r)
         else:
-            print(f"{binding_site_n[i]} != {res.resname}")
+            logging.warning(f"Missmatch in residue with index {i} {binding_site_n[i]} != {res.resname}")
 
     sel_bs = " or ".join(f"resid {r}" for r in binding_site_r)
     sel_bs_m = " or ".join(f"resid {r}" for r in binding_site_m)
@@ -498,12 +547,12 @@ def get_binding_site_rmsd(
         u_bs_m = u.select_atoms(sel_bs_m)
     else:
         alignment = pairwise2.align.globalms(seq_mob, seq_ref, 2, -1, -0.8, -0.5)[0]
-        print(
+        logging.warning(
             "The sequences may be different! \n", pairwise2.format_alignment(*alignment)
         )
         return -1
 
-    u_bs_ref = u_ref.select_atoms(sel_bs)
+    u_bs_ref = u_ref_filter.select_atoms(sel_bs)
 
     rmsd_sel = "name CA" if rmsd_mode == "CA" else "not name H*"
     m_pos, ref_pos = u_bs_m.select_atoms(rmsd_sel), u_bs_ref.select_atoms(rmsd_sel)
@@ -511,7 +560,7 @@ def get_binding_site_rmsd(
     # Match common atoms per residue
     mpos_list, refpos_list = [], []
     for mob_res, ref_res in zip(m_pos.residues, ref_pos.residues):
-        common_atoms = set(mob_res.atoms.names) & set(ref_res.atoms.names)
+        common_atoms = set(mob_res.atoms.names).intersection(ref_res.atoms.names)
         mob_common, ref_common = mob_res.atoms.select_atoms(
             f"name {' or name '.join(common_atoms)}"
         ), ref_res.atoms.select_atoms(f"name {' or name '.join(common_atoms)}")
@@ -524,7 +573,7 @@ def get_binding_site_rmsd(
             ((np.vstack(mpos_list) - np.vstack(refpos_list)) ** 2).sum(-1).mean()
         )
     except ValueError:
-        print(f"Error: Mismatched lengths ({len(m_pos)} vs {len(ref_pos)})")
+        logging.error(f"Error: Mismatched lengths ({len(m_pos)} vs {len(ref_pos)})")
         rmsd = -1
 
     return rmsd
