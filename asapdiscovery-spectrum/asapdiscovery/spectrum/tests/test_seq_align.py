@@ -4,9 +4,7 @@ import traceback
 import pandas as pd
 import pytest
 from asapdiscovery.spectrum.blast import pdb_to_seq
-from asapdiscovery.spectrum.cli import spectrum as cli
 from asapdiscovery.spectrum.seq_alignment import Alignment, do_MSA
-from click.testing import CliRunner
 
 
 def click_success(result):
@@ -91,46 +89,3 @@ def test_MSA_color_match(blast_csv_path, tmp_path):
         custom_order="",
     )
     assert aln_out.sucess
-
-
-@pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
-def test_seq_alignment_pre_calc(blast_xml_path, tmp_path):
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        [
-            "seq-alignment",
-            "-f",
-            blast_xml_path,
-            "-t",
-            "pre-calc",
-            "--sel-key",
-            "",
-            "--output-dir",
-            tmp_path,
-        ],
-    )
-    assert click_success(result)
-
-
-@pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
-def test_seq_alignment_multimer(blast_xml_path, tmp_path):
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        [
-            "seq-alignment",
-            "-f",
-            blast_xml_path,
-            "-t",
-            "pre-calc",
-            "--sel-key",
-            "",
-            "--multimer",
-            "--n-chains",
-            2,
-            "--output-dir",
-            tmp_path,
-        ],
-    )
-    assert click_success(result)

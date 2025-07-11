@@ -21,6 +21,39 @@ from pydantic.v1 import Field
 
 class ScoreInputs(ScoreSpectrumInputsBase):
     """Schema for inputs for scoring complexes
+
+    Parameters
+    ----------
+    docking_csv : Path
+        Path to docking output csv file, from previoud asap-docking step.
+    ligand_regex : str
+        Pattern for extracting ligand ID from file string.
+    protein_regex : str        
+        Pattern for extracting protein ID from file string.
+    bsite_rmsd : bool
+        Whether to calculate binding site RMSD.
+    ml_score : bool
+        Whether to employ asap-ml models to score poses.
+    minimize : bool
+        Whether to minimize the pdb structures before running scoring.
+    md_openmm_platform : OpenMMPlatform
+        OpenMM platform to use for MD minimization
+    run_vina : bool = False
+        Whether to run Autodock Vina on the docked poses.
+    vina_box_x : Optional[float] = None
+        X coordinate of the center of the Vina docking box.
+    vina_box_y : Optional[float] = None
+        Y coordinate of the center of the Vina docking box.
+    vina_box_z : Optional[float] = None
+        Z coordinate of the center of the Vina docking box.
+    dock_vina : bool = False
+        Whether to run extra docking step with autodock vina.
+    gnina_score : bool = False
+        Whether to run Gnina on the docked poses (requires separate installation).
+    gnina_script : Path = Path("gnina_score.sh")
+        Path to bash script to run gnina.
+    gnina_out_dir : Path = Path("gnina_out")
+        Path to directory to save gnina output.
     """
 
     docking_csv: Path = Field(
@@ -36,7 +69,7 @@ class ScoreInputs(ScoreSpectrumInputsBase):
     )
 
     bsite_rmsd: bool = Field(
-        False, description="Whether to calculate binding site RMSD (only relevant when the ref pdb is the same target as the docked complex)."
+        False, description="Whether to calculate binding site RMSD."
     )
 
     ml_score: bool = Field(
@@ -53,12 +86,30 @@ class ScoreInputs(ScoreSpectrumInputsBase):
     )
 
 def score_complex_workflow(inputs: ScoreInputs):
+    """Run scoring workflow for a set of docked complexes according to spectrum.
+    Prepares a csv file with different types of scores, including:
+    - Pre-docking score (if available)
+    - Docking score
+    - ML scores (if requested)
+    - RMSD of the ligand
+    - RMSD of the binding site (if requested)
+    - Affinity score with AutoDock Vina (if requested)
+    - Affinity score with Gnina (if requested)
+
+    Parameters
+    ----------
+    inputs : ScoreInputs
+        Input to spectrum scoring workflow
+
+    Returns
+    -------
+    None
+    """
     path_ref = inputs.pdb_ref
     docking_dir = inputs.docking_dir
 
     comp_name = "MOL"
 
-    all_scores = []
     if inputs.docking_csv.exists():
         try:
             # Match the protein and ligand regex on docking output file

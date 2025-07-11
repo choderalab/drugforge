@@ -10,10 +10,8 @@ from asapdiscovery.spectrum.score import (
     minimize_structure
 )
 from asapdiscovery.spectrum.calculate_rmsd import get_binding_site_rmsd
-from asapdiscovery.spectrum.cli import spectrum as cli
 from asapdiscovery.docking.scorer import ChemGauss4Scorer
 from asapdiscovery.data.schema.ligand import Ligand
-from click.testing import CliRunner
 
 
 def click_success(result):
@@ -116,67 +114,3 @@ def test_minimize(protein_path, tmp_path):
     target_name = 'SARS-CoV-2',)
 
     assert Path(min_out).exists()
-
-
-@pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
-def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_csv_path):  
-    runner = CliRunner()
-    struct_dir, _ = structure_dir
-    csv_save = tmp_path / "scores.csv"
-    result = runner.invoke(
-        cli,
-        [
-            "score",
-            "-d",
-            struct_dir, 
-            "-f",
-            pdb_file,
-            "-o",
-            csv_save,
-            "--docking-csv",
-            docking_results_csv_path,
-            "--target",
-            "SARS-CoV-2-Mpro",
-            "--dock-chain",
-            "A",
-            "--ref-chain",
-            "A"
-        ],
-    )
-    assert csv_save.exists()
-    assert click_success(result)
-
-
-@pytest.mark.xfail(reason="Vina CLI won't run without all the software requirements installed")
-def test_score_vina(structure_dir, pdb_file, tmp_path, docking_results_csv_path):
-    runner = CliRunner()
-    struct_dir, _ = structure_dir
-    csv_save = tmp_path / "scores.csv"
-    result = runner.invoke(
-        cli,
-        [
-            "score",
-            "-d",
-            struct_dir, 
-            "-f",
-            pdb_file,
-            "-o",
-            tmp_path / "scores.csv",
-            "--docking-csv",
-            docking_results_csv_path,
-            "--dock-chain",
-            "1",
-            "--ref-chain",
-            "A"
-            "--vina-score",
-            True,
-            "--vina-box-x",
-            "22",
-            "--vina-box-y",
-            "5",
-            "--vina-box-z",
-            "25",
-        ],
-    )
-    assert csv_save.exists()
-    assert click_success(result)

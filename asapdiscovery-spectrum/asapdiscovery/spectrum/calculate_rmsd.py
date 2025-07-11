@@ -515,8 +515,8 @@ def get_binding_site_rmsd(
             )
 
     # Align sequences to ensure residue numbering is consistent
-    seq_mob = pdb_to_seq(file_mob, chain=str(chain_mob)).seq.replace("X", "")
-    seq_ref = pdb_to_seq(file_ref, chain=str(chain_ref)).seq.replace("X", "")
+    seq_mob = pdb_to_seq(Path(file_mob), chain=str(chain_mob)).seq.replace("X", "")
+    seq_ref = pdb_to_seq(Path(file_ref), chain=str(chain_ref)).seq.replace("X", "")
 
     start_resid, end_resid = get_residue_mapping(seq_ref, seq_mob)
     u_ref_filter = u_ref.select_atoms(f"resid {start_resid}:{end_resid}")

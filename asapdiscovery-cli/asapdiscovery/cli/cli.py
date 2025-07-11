@@ -21,6 +21,12 @@ from asapdiscovery.alchemy.cli.cli import alchemy  # noqa: F401, E402, F811
 
 cli.add_command(alchemy)
 
+from asapdiscovery.workflows.spectrum_workflows.cli import (  # noqa: F401, E402, F811
+    spectrum,
+)
+
+cli.add_command(spectrum)
+
 # TODO: Re-enable ML CLI when ready
 # "ML CLI not available. Please install asapdiscovery[ml] to use the ML CLI commands."
 # The ML subpackage requires a refactor to work with Pydantic 2.
@@ -32,11 +38,6 @@ cli.add_command(alchemy)
 
 # from asapdiscovery.ml.cli import ml  # noqa: F401, E402, F811
 # cli.add_command(ml)
-
-
-from asapdiscovery.spectrum.cli import spectrum  # noqa: F401, E402, F811
-
-cli.add_command(spectrum)
 
 
 from asapdiscovery.dataviz.cli import visualization  # noqa: F401, E402, F811

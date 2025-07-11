@@ -27,6 +27,7 @@ dependencies = []
 [project.scripts]
 asap-docking = "asapdiscovery.workflows.docking_workflows.cli:docking"
 asap-prep = "asapdiscovery.workflows.prep_workflows.cli:protein_prep"
+asap-spectrum = "asapdiscovery.workflows.spectrum_workflows.cli:spectrum"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -3,7 +3,6 @@ from typing import Optional
 
 import click
 import pandas as pd
-from asapdiscovery.cli.cli_args import output_dir, pdb_file, target, input_json
 from asapdiscovery.simulation.simulate import OpenMMPlatform
 from asapdiscovery.spectrum.align_seq_match import (
     fasta_alignment,
@@ -15,7 +14,11 @@ from asapdiscovery.spectrum.calculate_rmsd import (
     save_alignment_pymol,
     select_best_colabfold,
 )
-from asapdiscovery.spectrum.cli_args import (
+from asapdiscovery.cli.cli_args import (
+    output_dir, 
+    pdb_file, 
+    target, 
+    input_json,
     blast_json,
     email,
     gen_ref_pdb,
@@ -28,7 +31,7 @@ from asapdiscovery.spectrum.cli_args import (
 )
 from asapdiscovery.spectrum.seq_alignment import Alignment, do_MSA
 
-from asapdiscovery.spectrum.score_complex import ScoreInputs, score_complex_workflow
+from asapdiscovery.workflows.spectrum_workflows.score_complex import ScoreInputs, score_complex_workflow
 
 import logging
 
