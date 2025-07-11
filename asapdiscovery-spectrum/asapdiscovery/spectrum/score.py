@@ -2,6 +2,7 @@ from asapdiscovery.data.schema.complex import Complex
 from asapdiscovery.modeling.schema import PreppedComplex
 from asapdiscovery.docking.docking import DockingInputPair
 from asapdiscovery.docking.meta_scorer import MetaScorer
+from asapdiscovery.docking.analysis import calculate_rmsd_openeye
 
 from asapdiscovery.docking.openeye import POSITDocker
 
@@ -16,6 +17,7 @@ from asapdiscovery.data.services.postera.manifold_data_validation import TargetT
 from asapdiscovery.data.metadata.resources import active_site_chains
 
 import os
+import shutil
 from rdkit import Chem
 from typing import Union
 import pandas as pd
@@ -29,6 +31,61 @@ from pydantic.v1 import BaseModel, Field, root_validator
 logger = logging.getLogger(__name__)
 
 class ScoreSpectrumInputsBase(BaseModel):
+    """Inputs for scoring workflow
+
+    Parameters
+    ----------
+    docking_dir : Path
+        Path to directory where docked structures are stored.
+    pdb_ref : Path
+        Path to directory or file where crystal structures are stored.
+    target : TargetTags
+        The target to dock against.
+    logname : str
+        Name of the log file.
+    loglevel : Union[int, str]      
+        Logging level
+    output_csv : Path
+        CSV where scoring results will be stored.
+    overwrite : bool    
+        Whether to overwrite existing output.
+    ref_chain : Optional[str]
+        Chain ID to align to in reference structure containing the active site
+    dock_chain : Optional[str]
+        Active site chain ID to align to ref_chain in reference structure
+    lig_resname : Optional[str] 
+        Name of residue with Ligand
+    run_vina : bool
+        Whether to run vina scoring.
+    vina_box_x : Optional[float]    
+        Coordinate x of vina box
+    vina_box_y : Optional[float]
+        Coordinate y of vina box
+    vina_box_z : Optional[float]
+        Coordinate z of vina box
+    path_to_grid_prep : Optional[Path]
+        Path to file for grid prepping
+    dock_vina : bool
+        Optionally run extra docking step with autodock vina
+    gnina_score : bool
+        Whether to run gnina scoring.
+    gnina_script : Optional[Path]
+        Path to bash script that runs Gnina CLI.
+    gnina_out_dir : Optional[Path]      
+        Path to directory to process gnina files. 
+        Gnina has problems with remote directories so location in $HOME is recommended when running in a remote cluster.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        Either especify ALL coordinates of the box, ot the path to grid prepper function
+    ValueError
+        If Gnina scoring is requested, a gnina_script to run the CLI, and a directory to save intermediate files must be provided
+    """
     docking_dir: Path = Field(
         None, description="Path to directory where docked structures are stored."
     )
@@ -115,20 +172,30 @@ class ScoreSpectrumInputsBase(BaseModel):
 
     @root_validator
     @classmethod
-    def check_inputs(cls, values):
+    def check_inputs_vina(cls, values):
         """
-        Validate inputs
+        Validate Vina inputs. If vina scoring is requested, either all box coordinates or a path to a grid prepper function must be provided.
         """
         vina_box_x = values.get("vina_box_x")
         vina_box_y = values.get("vina_box_y")
         vina_box_z = values.get("vina_box_z")
         path_to_grid_prep = values.get("path_to_grid_prep")
-        gnina_score = values.get("gnina_score")
-        gnina_script = values.get("gnina_script")
-        gnina_out_dir = values.get("gnina_out_dir")
 
         if (not vina_box_x or not vina_box_y or not vina_box_z) and not path_to_grid_prep:
             raise ValueError("Either especify ALL coordinates of the box, ot the path to grid prepper function")
+    
+
+        return values
+    
+    @root_validator
+    @classmethod
+    def check_inputs_gnina(cls, values):
+        """
+        Validate gnina inputs. A bash script to run the gnina CLI is required, as well as a directory to store gnina outputs.
+        """
+        gnina_score = values.get("gnina_score")
+        gnina_script = values.get("gnina_script")
+        gnina_out_dir = values.get("gnina_out_dir")
         
         if gnina_score and (not gnina_script or not gnina_out_dir):
             raise ValueError("If Gnina scoring is requested, a gnina_script to run the CLI, and a directory to save intermediate files must be provided")
@@ -151,18 +218,19 @@ class ScoreSpectrumInputsBase(BaseModel):
         return values
 
 def dock_and_score(
-    pdb_complex,
-    comp_name,
-    target_name,
-    scorers,
-    label,
-    pdb_ref=None,
-    aligned_folder=None,
-    allow_clashes=True,
-    align_chain="A",
-    align_chain_ref="A",
+    pdb_complex: Union[Path, str],
+    comp_name: str,
+    target_name: str,
+    scorers: list,
+    label: str,
+    pdb_ref: Union[Path, str] = None,
+    aligned_folder: Path = None,
+    allow_clashes: bool = True,
+    align_chain: str = "A",
+    align_chain_ref: str = "A",
 ):
-    """Re-dock ligand in a complex and return pose scores
+    """Re-dock ligand in a complex and return pose scores, using the POSITDocker and given 'scorers'. 
+    Optionally aligns complex to a reference structure before docking.
 
     Parameters
     ----------
@@ -195,9 +263,9 @@ def dock_and_score(
     if pdb_ref:
         if aligned_folder is not None:
             pdb_complex, aligned = rmsd_alignment(
-                pdb_complex,
-                pdb_ref,
-                aligned_folder / f"{label}_a.pdb",
+                str(pdb_complex),
+                str(pdb_ref),
+                str(aligned_folder / f"{label}_a.pdb"),
                 align_chain,
                 align_chain_ref,
             )
@@ -222,13 +290,11 @@ def dock_and_score(
 
         metascorer = MetaScorer(scorers=scorers)
         scores_df = metascorer.score(results, return_df=True)
-    except Exception as e:
+    except (ValueError, RuntimeError, AttributeError, IndexError) as e:
+        logger.warning(f"Prep and dock unsuccessful: {e}")
         scores_df = pd.DataFrame([None], columns=["docking-score-POSIT"])
         prepped_cmp = cmp
         ligand_pose = cmp.ligand
-        logger.warning(
-            f"Prep and dock unsuccessful: {e}"
-        )
     return scores_df, prepped_cmp, ligand_pose, aligned
 
 
@@ -341,7 +407,7 @@ def get_ligand_rmsd(
             "for rdkit mode. a path to save/load sdf mols must be provided"
         )
 
-    rmsd_oechem = ligand_rmsd_oechem(ref_lig, target_lig, overlay)
+    rmsd_oechem = calculate_rmsd_openeye(ref_lig, target_lig) # ligand_rmsd_oechem(ref_lig, target_lig, overlay)
     if rmsd_mode == "oechem":
         return rmsd_oechem
     elif rmsd_mode == "rdkit":
@@ -362,7 +428,11 @@ def score_autodock_vina(
     dock = False,
     path_to_prepare_file = "./",
 ):
-    """Score ligand pose with AutoDock Vina
+    """ Score ligand pose with AutoDock Vina. 
+    This function will take a receptor PDB and a ligand SDF, and prepare them to pdbqt files with the MGLTools, which are needed for Vina.
+    If the receptor and/or ligand is already in pdbqt format, it will be used as is. 
+    The dimensions of the grid box for Vina can be specified or calculated, provided a path to a grid file (which can be downloaded from Vina).
+    A dataframe with the scores will be returned, including the scores before and after minimization, as well as the path to a Vina docked pose if dock=True.
 
     Parameters
     ----------
@@ -388,6 +458,8 @@ def score_autodock_vina(
     ------
     ValueError
         Path to target file is neither of pdb or pdbqt allowed formats
+    ValueError
+        Path to ligand file is neither of sdf or pdbqt allowed formats
     """
     from vina import Vina
 
@@ -457,6 +529,11 @@ def score_autodock_vina(
             logger.warning(f"Could not generate grid box for Vina calculation because .gpf file was incorrect."
 
             )
+            df_scores["Vina-score-premin"] = None
+            df_scores["Vina-score-min"] = None
+            if dock:
+                df_scores["Vina-dock-score"] = None
+            return df_scores, None
         box_center = [x, y, z]
     v.set_receptor(str(receptor_pdbqt))
 
@@ -496,7 +573,39 @@ def score_autodock_vina(
     return df_scores, out_pose
 
 
-def score_gnina(pdb_target, sdf_ligand, pdb_dir, home_dir, gnina_script):
+def score_gnina(pdb_target:str, 
+                sdf_ligand:str, 
+                pdb_dir:str, 
+                home_dir:str,
+                gnina_script:str,
+) -> pd.DataFrame:
+    """Score a ligand pose with Gnina CNN scoring function.
+
+    Parameters
+    ----------
+    pdb_target : str
+        Path to PDB of target
+    sdf_ligand : str
+        Path to SDF of ligand
+    pdb_dir : str
+        Directory where prepped pdbs are located.
+    home_dir : str
+        Directory where gnina will be run. This directory should be in $HOME, as gnina has problems with remote directories.
+    gnina_script : str
+        Path to bash script that runs Gnina CLI. 
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with gnina scores. Columns are:
+        - gnina-RMSD: RMSD of the ligand pose to the crystal structure.
+        - gnina-Affinity: Gnina affinity score.
+        - gnina-Affinity-var: Gnina affinity score variance.
+        - CNNscore: Gnina CNN score.
+        - CNNaffinity: Gnina CNN affinity score.
+        - CNNvariance: Gnina CNN affinity score variance.
+    
+    """
     logfile = f"out_{pdb_target[:-4]}.log"
     env = os.environ.copy()
     env["SDF"] = sdf_ligand
@@ -551,7 +660,8 @@ def minimize_structure(
     comp_name: str,
     target_name: str,
 ) -> Union[Path, str]:
-    """MD energy minimization a protein ligand complex
+    """MD energy minimization a protein ligand complex. 
+    Energy minimization is performed with OpenMM (no equilibration or production MD is performed).
 
     Parameters
     ----------
@@ -593,8 +703,6 @@ def minimize_structure(
         output_dir=out_dir,
         openmm_platform=md_platform,
         minimize_only=True,
-        reporting_interval=1250,
-        equilibration_steps=5000,
         num_steps=1,
     )
     simulation_results = md_simulator.simulate(
@@ -603,8 +711,12 @@ def minimize_structure(
         failure_mode="skip",
     )
     min_path = simulation_results[0].minimized_pdb_path
-    subprocess.run(f"mv {min_path} {min_out}", shell=True)
-    subprocess.run(f"rm -r {out_dir}/target_ligand", shell=True)
-    subprocess.run(f"rm {out_dir}/target.pdb", shell=True)
-    subprocess.run(f"rm {out_dir}/ligand.sdf", shell=True)
+    shutil.move(min_path, min_out)
+    shutil.rmtree(f"{out_dir}/target_ligand", ignore_errors=True)
+    for file_path in [f"{out_dir}/target.pdb", f"{out_dir}/ligand.sdf"]:
+        try:
+            os.remove(file_path)
+        except FileNotFoundError:
+            pass
+
     return min_out
