@@ -45,8 +45,8 @@ class ScoreSpectrumInputsBase(BaseModel):
         Name of the log file.
     loglevel : Union[int, str]      
         Logging level
-    output_csv : Path
-        CSV where scoring results will be stored.
+    output_dir : Path
+        Output directory where results will be stored.
     overwrite : bool    
         Whether to overwrite existing output.
     ref_chain : Optional[str]
@@ -102,7 +102,7 @@ class ScoreSpectrumInputsBase(BaseModel):
 
     loglevel: Union[int, str] = Field(logging.INFO, description="Logging level")
 
-    output_csv: Path = Field(Path("scores.csv"), description="CSV where scoring results will be stored.")
+    output_dir: Path = Field(Path("score_output"), description="Output directory")
 
     overwrite: bool = Field(
         False, description="Whether to overwrite existing output."
@@ -298,25 +298,6 @@ def dock_and_score(
     return scores_df, prepped_cmp, ligand_pose, aligned
 
 
-def ligand_rmsd_oechem(
-    refmol: oechem.OEGraphMol, fitmol: oechem.OEGraphMol, overlay=False
-):
-    """Helper function to calculate ligand RMSD with OEChem"""
-    nConfs = 1
-    _ = oechem.OEDoubleArray(nConfs)
-    automorf = True
-    heavyOnly = True
-    rotmat = oechem.OEDoubleArray(9 * nConfs)
-    transvec = oechem.OEDoubleArray(3 * nConfs)
-
-    success = oechem.OERMSD(
-        refmol, fitmol, automorf, heavyOnly, overlay, rotmat, transvec
-    )
-    if not success:
-        logger.warning(f"RMSD calculation failed")
-    return success
-
-
 def ligand_rmsd_rdkit(target_sdf, ref_sdf):
     """Helper function to calculate ligand RMSD with RDKit"""
     target_sdf = str(target_sdf)
@@ -343,7 +324,6 @@ def get_ligand_rmsd(
     pathT="",
     pathR="",
     rmsd_mode="oechem",
-    overlay=False,
 ) -> float:
     """Calculate RMSD of a molecule against a reference
 
@@ -361,8 +341,6 @@ def get_ligand_rmsd(
         Temporary path to save the ligand sdf, as needed for rdkit rmsd mode, by default ""
     rmsd_mode : str, optional
         Tool to use for RMSD calculation between ["oechem", "rdkit"], by default "oechem"
-    overlay : bool, optional
-        Whether to overlay pose for RMSD, by default False
 
     Returns
     -------
@@ -407,7 +385,7 @@ def get_ligand_rmsd(
             "for rdkit mode. a path to save/load sdf mols must be provided"
         )
 
-    rmsd_oechem = calculate_rmsd_openeye(ref_lig, target_lig) # ligand_rmsd_oechem(ref_lig, target_lig, overlay)
+    rmsd_oechem = calculate_rmsd_openeye(ref_lig, target_lig) 
     if rmsd_mode == "oechem":
         return rmsd_oechem
     elif rmsd_mode == "rdkit":
@@ -469,10 +447,13 @@ def score_autodock_vina(
     ligand_sdf = Path(ligand_sdf)
     if receptor_pdb.suffix == ".pdb":
         # Prepare receptor
-        receptor_pdbqt = receptor_pdb.with_suffix("pdbqt")
-        subprocess.run(
+        receptor_pdbqt = receptor_pdb.with_suffix(".pdbqt")
+        result = subprocess.run(
             f"prepare_receptor -r {receptor_pdb} -o {receptor_pdbqt}", shell=True
         )
+        if result.returncode != 0:
+            logger.warning(f"Receptor prep failed on {receptor_pdb}")
+
     elif receptor_pdb.suffix == ".pdbqt":
         receptor_pdbqt = receptor_pdb
         logger.info(f"Prepped target provided")
@@ -480,11 +461,13 @@ def score_autodock_vina(
         raise ValueError("Only allowed formats are .pdb and .pdbqt")
     # Prepare ligand
     if ligand_sdf.suffix == ".sdf":
-        ligand_pdbqt = ligand_sdf.with_suffix("pdbqt")
-        subprocess.run(
+        ligand_pdbqt = ligand_sdf.with_suffix(".pdbqt")
+        result = subprocess.run(
             f"mk_prepare_ligand.py -i {ligand_sdf} -o {ligand_pdbqt}",
             shell=True,
         )
+        if result.returncode != 0:
+            logger.warning(f"Ligand prep failed on {ligand_sdf}")
     elif ligand_sdf.suffix == ".pdbqt":
         ligand_pdbqt = ligand_sdf
         logger.info(f"Prepped ligand provided")
@@ -515,17 +498,25 @@ def score_autodock_vina(
         (output, err) = p.communicate()
         # The grid needs some time to compute
         p.wait()
-        x, y, z = -1, -1, -1
-        with open(f"{parent_dir/receptor_pdb.stem}.gpf", "r") as f:
-            for line in f:
-                if line.startswith("gridcenter"):
-                    # Split the line into columns
-                    comps = line.split()
-                    x = float(comps[1])
-                    y = float(comps[2])
-                    z = float(comps[3])
-                    break
-        if x<0 and y<0 and z<0:
+        gpf_file = parent_dir / f"{receptor_pdb.stem}.gpf"
+        if not gpf_file.exists():
+            logger.warning(f".gpf file was not generated.")
+        else:
+            with gpf_file.open("r") as f:
+                for line in f:
+                    if line.startswith("gridcenter"):
+                        # Split the line into columns
+                        comps = line.split()
+                        try:
+                            x = float(comps[1])
+                            y = float(comps[2])
+                            z = float(comps[3])
+                            box_center = [x, y, z]
+                        except (IndexError, ValueError):
+                            logger.warning(f"Malformed 'gridcenter' line in {gpf_file}")
+                        break
+        # Check if box_center was set sucessfully
+        if box_center is None:
             logger.warning(f"Could not generate grid box for Vina calculation because .gpf file was incorrect."
 
             )
@@ -534,7 +525,6 @@ def score_autodock_vina(
             if dock:
                 df_scores["Vina-dock-score"] = None
             return df_scores, None
-        box_center = [x, y, z]
     v.set_receptor(str(receptor_pdbqt))
 
     v.set_ligand_from_file(str(ligand_pdbqt))

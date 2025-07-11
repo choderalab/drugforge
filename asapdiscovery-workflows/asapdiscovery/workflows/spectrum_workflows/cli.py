@@ -3,6 +3,7 @@ from typing import Optional
 
 import click
 import pandas as pd
+from asapdiscovery.data.util.logging import FileLogger
 from asapdiscovery.simulation.simulate import OpenMMPlatform
 from asapdiscovery.spectrum.align_seq_match import (
     fasta_alignment,
@@ -28,6 +29,7 @@ from asapdiscovery.cli.cli_args import (
     pymol_save,
     seq_file,
     seq_type,
+    loglevel,
 )
 from asapdiscovery.spectrum.seq_alignment import Alignment, do_MSA
 
@@ -98,6 +100,7 @@ def spectrum():
     default="",
     help="Custom order of aligned sequences (not including ref) can be provided as a string with comma-sep indexes.",
 )
+@loglevel
 def seq_alignment(
     seq_file: str,
     seq_type: Optional[str] = None,
@@ -116,13 +119,26 @@ def seq_alignment(
     align_start_idx: int = 0,
     max_mismatches: int = 2,
     custom_order: str = "",
+    loglevel: str = "INFO",
 ):
     """
     Find similarities between reference protein and its related proteins by sequence.
     """
+    # Log level
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    elif loglevel.lower() == "debug":
+        level = logging.DEBUG
+    elif loglevel.lower() == "warning":
+        level = logging.WARNING
+    elif loglevel.lower() == "error":
+        level = logging.ERROR
+    else:
+        level = logging.CRITICAL
+    logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
 
     if blast_json is not None:
-        print("Loading inputs from json file... Will override all other inputs.")
+        logging.info("Loading inputs from json file... Will override all other inputs.")
         raise NotImplementedError("Haven't implement the json option yet")
     else:
         pass
@@ -189,7 +205,7 @@ def seq_alignment(
             )
 
             record = pdb_file_record[0]
-            print(f"A PDB template for {record.label} was saved as {record.pdb_file}")
+            logger.info(f"A PDB template for {record.label} was saved as {record.pdb_file}")
 
 
 @spectrum.command()
@@ -235,6 +251,7 @@ def seq_alignment(
     default="alphafold2_ptm",
     help="Model used with ColabFold. Either 'alphafold2_ptm' or 'alphafold2_multimer_v3'",
 )
+@loglevel
 def struct_alignment(
     seq_file: str,
     pdb_file: str,
@@ -246,10 +263,23 @@ def struct_alignment(
     chain: Optional[str] = "A",
     cf_format: Optional[str] = "alphafold2_ptm",
     output_dir: str = "output",
+    loglevel: str = "INFO",
 ):
     """
     Align PDB structures generated from ColabFold with respect to a reference pdb_file, as listed in the csv seq_file used for the folding.
     """
+    # Log level
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    elif loglevel.lower() == "debug":
+        level = logging.DEBUG
+    elif loglevel.lower() == "warning":
+        level = logging.WARNING
+    elif loglevel.lower() == "error":
+        level = logging.ERROR
+    else:
+        level = logging.CRITICAL
+    logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
 
     ref_pdb = Path(pdb_file)
     if not ref_pdb.exists():
@@ -275,7 +305,7 @@ def struct_alignment(
             aligned_pdbs = []
             seq_labels = []
             for file_path in results_dir.glob("*.pdb"):
-                print(f"Reading structure {file_path.stem}")
+                logging.info(f"Reading structure {file_path.stem}")
                 aligned_pdbs.append(str(file_path))
                 seq_labels.append(file_path.stem)
         if not results_dir.exists():
@@ -381,6 +411,7 @@ def struct_alignment(
     help="Start index for chain B. In multi-sequence alignment mode, all proteins to align must have the same start idx",
 )
 @max_mismatches
+@loglevel
 def fitness_alignment(
     pdb_file: str,
     pdb_label: str,
@@ -394,10 +425,23 @@ def fitness_alignment(
     fasta_a=None,
     fasta_b=None,
     max_mismatches=0,
+    loglevel: str = "INFO",
 ) -> None:
     """
     Align PDB structures and color by parwise or multi-sequence alignment match
     """
+    # Log level
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    elif loglevel.lower() == "debug":
+        level = logging.DEBUG
+    elif loglevel.lower() == "warning":
+        level = logging.WARNING
+    elif loglevel.lower() == "error":
+        level = logging.ERROR
+    else:
+        level = logging.CRITICAL
+    logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
 
     start_idxA = start_a
     start_idxB = start_b
@@ -448,10 +492,10 @@ def fitness_alignment(
 )
 @click.option(
     "-o",
-    "--out-csv",
+    "--out-dir",
     type=str,
-    default="scores.csv",
-    help="Path to file where scoring results will be stored.",
+    default="scores_output",
+    help="Path to directory where scoring results will be stored.",
 )
 @click.option(
     "--docking-csv", 
@@ -576,7 +620,7 @@ def score(
     docking_dir: str,
     pdb_ref: str,
     docking_csv: str,
-    out_csv: str,
+    out_dir:str,
     target: str,
     ligand_regex: str,
     protein_regex: str,
@@ -604,13 +648,13 @@ def score(
     loglevel = getattr(logging, log_level.upper(), logging.INFO)
 
     if input_json is not None:
-        print("Loading inputs from json file... Will override all other inputs.")
+        logging.info("Loading inputs from json file... Will override all other inputs.")
         inputs = ScoreInputs.from_json_file(input_json)
     else:
         inputs = ScoreInputs(
             docking_dir=docking_dir,
             pdb_ref=pdb_ref,
-            output_csv=out_csv,
+            output_dir=out_dir,
             docking_csv=docking_csv,
             target=target,
             run_vina=vina_score,

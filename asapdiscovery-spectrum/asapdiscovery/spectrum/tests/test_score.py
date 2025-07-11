@@ -78,7 +78,6 @@ def test_lig_rmsd_oechem(protein_path):
         target_pdb=str(protein_path), 
         addHs=True, 
         rmsd_mode="oechem", 
-        overlay=False
     )
     assert lig_rmsd == 0
 
@@ -89,8 +88,7 @@ def test_lig_rmsd_rdkit(protein_path, tmp_path):
         ref_pdb=str(protein_path), 
         target_pdb=str(protein_path), 
         addHs=True, 
-        rmsd_mode="oechem", 
-        overlay=False,
+        rmsd_mode="rdkit", 
         pathT=str(tmp_path/"target.sdf"),
         pathR=str(tmp_path/"ref.sdf"),
     )

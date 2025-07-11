@@ -1,4 +1,5 @@
 from asapdiscovery.data.schema.complex import Complex
+from asapdiscovery.data.util.logging import FileLogger
 from asapdiscovery.simulation.simulate import OpenMMPlatform
 from asapdiscovery.docking.scorer import ChemGauss4Scorer
 from asapdiscovery.spectrum.score import (
@@ -15,8 +16,8 @@ import pandas as pd
 from pathlib import Path
 import re
 
-import logging
-from typing import Optional
+from shutil import rmtree
+import os
 from pydantic.v1 import Field
 
 class ScoreInputs(ScoreSpectrumInputsBase):
@@ -105,6 +106,34 @@ def score_complex_workflow(inputs: ScoreInputs):
     -------
     None
     """
+    output_dir = inputs.output_dir
+    new_directory = True
+    if output_dir.exists():
+        if inputs.overwrite:
+            rmtree(output_dir)
+        else:
+            new_directory = False
+
+    output_dir.mkdir(exist_ok=True, parents=True)
+    output_csv = output_dir/"scores.csv"
+    if output_csv.exists(): # Delete existing csv file because we are appending to it
+        os.remove(output_csv)
+
+    logger = FileLogger(
+        inputs.logname,  # default root logger so that dask logging is forwarded
+        path=output_dir,
+        logfile="scorer.log",
+        stdout=True,
+        level=inputs.loglevel,
+    ).getLogger()
+
+    if new_directory:
+        logger.info(f"Writing to / overwriting output directory: {output_dir}")
+    else:
+        logger.info(f"Writing to existing output directory: {output_dir}")
+
+    logger.info(f"Running scorer with inputs: {inputs}")
+
     path_ref = inputs.pdb_ref
     docking_dir = inputs.docking_dir
 
@@ -115,7 +144,7 @@ def score_complex_workflow(inputs: ScoreInputs):
         
         if "input" in df_dock.columns:
             # Match the protein and ligand regex on docking output file
-            logging.info("Reading docking CSV file: %s", inputs.docking_csv)
+            logger.info("Reading docking CSV file: %s", inputs.docking_csv)
 
             df_dock["lig-ID"] = df_dock["input"].apply(
                 lambda s: (
@@ -133,18 +162,18 @@ def score_complex_workflow(inputs: ScoreInputs):
             )
             if "docking-score-POSIT" in df_dock.columns:
                 df_dock = df_dock[["lig-ID", "prot-ID", "docking-score-POSIT"]]
-                logging.debug("Docking CSV file processed successfully.")
+                logger.debug("Docking CSV file processed successfully.")
             else:
-                logging.warning("No 'docking-score-POSIT' column found.")
+                logger.warning("No 'docking-score-POSIT' column found.")
                 df_dock = pd.DataFrame({})
         else:
-            logging.warning("'input' column not found in docking CSV.")
+            logger.warning("'input' column not found in docking CSV.")
             df_dock = pd.DataFrame({})
 
     else:
         df_dock = pd.DataFrame({})
 
-    logging.info("Starting scoring for docking directory %s", docking_dir.name)
+    logger.info("Starting scoring for docking directory %s", docking_dir.name)
 
     first_write = True
     for file_min in docking_dir.glob("*.pdb"):
@@ -165,7 +194,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                     df_dock["prot-ID"] == prot_id, "docking-score-POSIT"
                 ].iloc[0]
             except (IndexError, KeyError):
-                logging.warning("No pre-docking score found for protein %s", prot_id)
+                logger.warning("No pre-docking score found for protein %s", prot_id)
             tag = prot_id
         else:
             tag = ""
@@ -177,7 +206,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                     df_dock["lig-ID"] == ligand, "docking-score-POSIT"
                 ].iloc[0]
             except (IndexError, KeyError):
-                logging.warning("No pre-docking score found for ligand %s", ligand)
+                logger.warning("No pre-docking score found for ligand %s", ligand)
 
             if prot_id is not None:
                 # multiple targets, multiple ligands
@@ -187,7 +216,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                         "docking-score-POSIT",
                     ].iloc[0]
                 except (IndexError, KeyError):
-                    logging.warning(
+                    logger.warning(
                         "No pre-docking score found for ligand %s and protein %s",
                         ligand,
                         prot_id,
@@ -196,7 +225,7 @@ def score_complex_workflow(inputs: ScoreInputs):
 
             tag += f"{ligand}"
 
-        logging.info(
+        logger.info(
             "Scoring protein %s and ligand %s from file %s", prot_id, ligand, file_min
         )
         # Reference structure
@@ -204,22 +233,21 @@ def score_complex_workflow(inputs: ScoreInputs):
             files_in_dir = list(path_ref.glob(f"*{ligand}*.pdb"))
             if len(files_in_dir) > 0:
                 file_ref = files_in_dir[0]  # return first find
-                logging.info("The ref %s was found for %s", file_ref, tag)
+                logger.info("The ref %s was found for %s", file_ref, tag)
             else:
-                logging.error("A reference was not found for %s", tag)
+                logger.error("A reference was not found for %s", tag)
                 continue
         else:
             file_ref = path_ref
 
         # Run minimization if requested
         if inputs.minimize:
-            min_folder = docking_dir / "minimized"
+            min_folder = output_dir / "minimized"
             min_folder.mkdir(parents=True, exist_ok=True)
-            new_docking_dir = min_folder
             md_openmm_platform = inputs.md_openmm_platform
             try:
                 min_out = f"{min_folder}/{tag}_min.pdb"
-                logging.info("Running MD minimization of %s", tag)
+                logger.info("Running MD minimization of %s", tag)
                 minimize_structure(
                     file_min,
                     min_out,
@@ -230,19 +258,18 @@ def score_complex_workflow(inputs: ScoreInputs):
                 )
                 chain_dock = "1"  # Standard in OpenMM output file
             except FileNotFoundError as error:
-                logging.error(f"File not found during minimization of {file_min}: {error}")
+                logger.error(f"File not found during minimization of {file_min}: {error}")
                 continue
             except ValueError as error:
-                logging.error(f"Value error during minimization of {file_min}: {error}")
+                logger.error(f"Value error during minimization of {file_min}: {error}")
                 continue
             except Exception as error:
-                logging.exception(f"Unexpected error minimizing {file_min}")
+                logger.exception(f"Unexpected error minimizing {file_min}")
                 continue
             file_min = min_out
-        else:
-            new_docking_dir = docking_dir
+
         # Directory to save aligned complexes
-        docked_aligned = new_docking_dir / "aligned"
+        docked_aligned = output_dir / "aligned"
         docked_aligned.mkdir(parents=True, exist_ok=True)
 
         scorers = [ChemGauss4Scorer()]
@@ -250,14 +277,14 @@ def score_complex_workflow(inputs: ScoreInputs):
         if inputs.ml_score:
             from asapdiscovery.ml.models import ASAPMLModelRegistry
             from asapdiscovery.docking.scorer import MLModelScorer
-            logging.info("Loading additional ML scorers")
+            logger.info("Loading additional ML scorers")
             # check which endpoints are availabe for the target
             models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
             ml_scorers = MLModelScorer.load_model_specs(models=models)
             scorers.extend(ml_scorers)
 
         # Prepare complex, re-dock and score
-        logging.info("Running protein prep, docking and scoring of %s", file_min)
+        logger.info("Running protein prep, docking and scoring of %s", file_min)
         scores_df, prepped_cmp, ligand_pose, aligned = dock_and_score(
             file_min,
             comp_name,
@@ -270,7 +297,7 @@ def score_complex_workflow(inputs: ScoreInputs):
             align_chain=inputs.dock_chain,
             align_chain_ref=inputs.ref_chain,
         )
-        logging.debug(
+        logger.debug(
             "Columns of scoring dataset from asapdiscovery: %s", scores_df.columns
         )
         scores_df["premin-score-POSIT"] = pre_min_score
@@ -301,10 +328,10 @@ def score_complex_workflow(inputs: ScoreInputs):
             df_save.insert(loc=0, column="lig-ID", value=ligand)
         if prot_id is not None:
             df_save.insert(loc=0, column="prot-ID", value=prot_id)
-        logging.debug("The DataFrame after docking is %s", df_save)
+        logger.debug("The DataFrame after docking is %s", df_save)
 
         # Now save files for later scoring steps
-        docked_prepped = new_docking_dir / "prepped"
+        docked_prepped = output_dir / "prepped"
         docked_prepped.mkdir(parents=True, exist_ok=True)
         pdb_prep = docked_prepped / (aligned.stem + "_target.pdb")
         sdf_ligand = docked_prepped / (aligned.stem + "_ligand.sdf")
@@ -314,24 +341,24 @@ def score_complex_workflow(inputs: ScoreInputs):
         else:
             prepped_cmp.target.to_pdb_file(pdb_prep)
         ligand_pose.to_sdf(sdf_ligand)
-        logging.info(
+        logger.info(
             "Saved prepped target as %s and ligand as %s",
             pdb_prep.stem,
             sdf_ligand.stem,
         )
 
         # RMSD score
-        logging.debug("The aligned file was saved in %s", aligned)
-        logging.info("Calculating RMSD of the ligand")
+        logger.debug("The aligned file was saved in %s", aligned)
+        logger.info("Calculating RMSD of the ligand")
         lig_rmsd = get_ligand_rmsd(
-            str(aligned), str(file_ref), True, rmsd_mode="oechem", overlay=False
+            str(aligned), str(file_ref), True, rmsd_mode="oechem",
         )
         df_save.insert(loc=len(df_save.columns), column="Lig-RMSD", value=lig_rmsd)
         pout = f"Calculated RMSD of POSIT ligand pose = {lig_rmsd} with ref {file_ref.stem}"
 
         if lig_rmsd < 0:
             # Retry ligand rmsd with RDKit
-            logging.info("Trying Ligand RMSD on a different method")
+            logger.info("Trying Ligand RMSD on a different method")
             sdf_ref = docked_prepped / (file_ref.stem + "_ligand.sdf")
             lig_rmsd = get_ligand_rmsd(
                 str(aligned),
@@ -344,10 +371,10 @@ def score_complex_workflow(inputs: ScoreInputs):
             )
 
             if lig_rmsd < 0:
-                logging.warning("Retry ligand RMSD calculation failed.")
+                logger.warning("Retry ligand RMSD calculation failed.")
 
         if inputs.bsite_rmsd:
-            logging.info("Calculating RMSD of the binding site")
+            logger.info("Calculating RMSD of the binding site")
             try:
                 bsite_rmsd = get_binding_site_rmsd(
                     aligned,
@@ -360,26 +387,26 @@ def score_complex_workflow(inputs: ScoreInputs):
                     aligned_temp=aligned,
                 )
             except FileNotFoundError as e:
-                logging.error(f"Reference or aligned file not found for RMSD calculation: {e}")
+                logger.error(f"Reference or aligned file not found for RMSD calculation: {e}")
                 bsite_rmsd = -1
             except ValueError as e:
-                logging.error(f"Value error during binding site RMSD calculation: {e}")
+                logger.error(f"Value error during binding site RMSD calculation: {e}")
                 bsite_rmsd = -1
             except Exception as e:
-                logging.exception(f"Unexpected error while computing binding site RMSD: {e}")
+                logger.exception(f"Unexpected error while computing binding site RMSD: {e}")
                 bsite_rmsd = -1
 
             df_save.insert(
                 loc=len(df_save.columns), column="Bsite-RMSD", value=bsite_rmsd
             )
             pout += f" and {bsite_rmsd} for binding site"
-        logging.info(pout)
+        logger.info(pout)
 
         if inputs.run_vina:
-            logging.info("Calculating the affinity score with AutoDock Vina")
+            logger.info("Calculating the affinity score with AutoDock Vina")
             if inputs.vina_box_x is None:
                 vina_box = None
-                logging.info("The grid box will be calculated for the complex")
+                logger.info("The grid box will be calculated for the complex")
             else:
                 vina_box = [inputs.vina_box_x, inputs.vina_box_y, inputs.vina_box_z]
 
@@ -392,7 +419,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                 path_to_prepare_file=str(inputs.path_to_grid_prep),
             )
             if out_pose is not None:
-                logging.info("Vina docking pose was successfully generated")
+                logger.info("Vina docking pose was successfully generated")
                 try:
                     lig_rmsd = get_ligand_rmsd(
                         out_pose,
@@ -401,15 +428,15 @@ def score_complex_workflow(inputs: ScoreInputs):
                         rmsd_mode="oechem",
                         overlay=False,
                     )
-                    logging.info(f"The RMSD of the vina pose was: {lig_rmsd}",)
+                    logger.info(f"The RMSD of the vina pose was: {lig_rmsd}",)
                 except FileNotFoundError as e:
-                    logging.error(f"Reference or pose file not found for RMSD calculation: {e}")
+                    logger.error(f"Reference or pose file not found for RMSD calculation: {e}")
                     lig_rmsd = -1
                 except ValueError as e:
-                    logging.error(f"Value error during ligand RMSD calculation: {e}")
+                    logger.error(f"Value error during ligand RMSD calculation: {e}")
                     lig_rmsd = -1
                 except Exception as e:
-                    logging.exception(f"Unexpected error while computing Vina ligand RMSD: {e}")
+                    logger.exception(f"Unexpected error while computing Vina ligand RMSD: {e}")
                     lig_rmsd = -1        
 
                 df_vina["Vina-pose-RMSD"] = lig_rmsd
@@ -417,7 +444,7 @@ def score_complex_workflow(inputs: ScoreInputs):
 
         if inputs.gnina_score:
             if inputs.gnina_script.exists():
-                logging.info("Calculating the affnity with Gnina")
+                logger.info("Calculating the affnity with Gnina")
                 try:
                     df_gnina = score_gnina(
                         f"{pdb_prep.stem}.pdb",
@@ -426,13 +453,13 @@ def score_complex_workflow(inputs: ScoreInputs):
                         inputs.gnina_out_dir,
                         inputs.gnina_script,
                     )
-                    logging.debug("Gnina df output is: %s", df_gnina)
+                    logger.debug("Gnina df output is: %s", df_gnina)
                     df_save = pd.concat([df_save, df_gnina], axis=1, join="inner")
                 except Exception as e:
-                    logging.error("The Gnina calculation failed: %s", e)
+                    logger.error("The Gnina calculation failed: %s", e)
             else:
-                logging.error(
+                logger.error(
                     "A gnina bash script must be provided to calculate gnina scores. Won't calculate."
                 )
-        df_save.to_csv(inputs.output_csv, mode='a', index=False, header=first_write)
+        df_save.to_csv(output_csv, mode='a', index=False, header=first_write)
         first_write = False
