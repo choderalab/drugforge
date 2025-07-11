@@ -38,7 +38,6 @@ def pdb_file():
 def docking_results_csv_path():
     return fetch_test_file("lt_docking_scores.csv")
 
-
 @pytest.fixture(scope="session")
 def ligand_prepped_vina():
     return fetch_test_file("SARS_model_ligand_prepped.pdbqt")
@@ -46,7 +45,6 @@ def ligand_prepped_vina():
 @pytest.fixture(scope="session")
 def target_prepped_vina():
     return fetch_test_file("SARS_model_target_prepped.pdbqt")
-
 
 @pytest.fixture()
 def protein_apo_path():
