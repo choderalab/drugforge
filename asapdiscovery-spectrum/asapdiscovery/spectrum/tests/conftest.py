@@ -33,7 +33,6 @@ def fasta_alignment_path():
 def pdb_file():
     return fetch_test_file("Mpro-P2660_0A_bound_oe_processed.pdb")
 
-
 @pytest.fixture(scope="session")
 def docking_results_csv_path():
     return fetch_test_file("lt_docking_scores.csv")
