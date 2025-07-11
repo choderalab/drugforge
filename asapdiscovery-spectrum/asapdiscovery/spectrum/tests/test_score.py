@@ -23,6 +23,8 @@ def click_success(result):
 
 
 def test_bsite_rmsd_CA(protein_apo_path, protein_path):
+    """Test binding site RMSD calculation based on C-alpha atoms.
+    """
     rmsd = get_binding_site_rmsd(
         file_ref=protein_path, 
         file_mob=protein_apo_path,
@@ -36,6 +38,7 @@ def test_bsite_rmsd_CA(protein_apo_path, protein_path):
 
 
 def test_bsite_rmsd_heavy(protein_apo_path, protein_path):
+    """Test binding site RMSD calculation based on heavy atoms."""
     rmsd = get_binding_site_rmsd(
         file_ref=protein_path, 
         file_mob=protein_apo_path,
@@ -49,6 +52,7 @@ def test_bsite_rmsd_heavy(protein_apo_path, protein_path):
 
 
 def test_dock_score(protein_path):
+    """Test docking and scoring of a protein-ligand complex using ChemGauss4Scorer."""
     scorers = [ChemGauss4Scorer()]
     scores_df, prepped_cmp, ligand_pose, aligned = dock_and_score(
         pdb_complex=protein_path,
@@ -68,6 +72,7 @@ def test_dock_score(protein_path):
     
 
 def test_lig_rmsd_oechem(protein_path): 
+    """Test ligand RMSD calculation using OpenEye toolkit method."""
     lig_rmsd = get_ligand_rmsd(
         ref_pdb=str(protein_path), 
         target_pdb=str(protein_path), 
@@ -79,6 +84,7 @@ def test_lig_rmsd_oechem(protein_path):
 
 
 def test_lig_rmsd_rdkit(protein_path, tmp_path):
+    """Test ligand RMSD calculation using RDKit toolkit method."""
     lig_rmsd = get_ligand_rmsd(
         ref_pdb=str(protein_path), 
         target_pdb=str(protein_path), 
@@ -92,6 +98,7 @@ def test_lig_rmsd_rdkit(protein_path, tmp_path):
 
 
 def test_vina_score(target_prepped_vina, ligand_prepped_vina):
+    """Test AutoDock Vina scoring workflow of a protein-ligand complex."""
     df_vina, out_pose = score_autodock_vina(
         receptor_pdb=target_prepped_vina,
         ligand_sdf=ligand_prepped_vina,
@@ -104,6 +111,7 @@ def test_vina_score(target_prepped_vina, ligand_prepped_vina):
 
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_minimize(protein_path, tmp_path):
+    """Test minimization of protein PDB using OpenMM."""
     min_out = f"{tmp_path}/min_out.pdb"
     minimize_structure(
     pdb_complex = protein_path,

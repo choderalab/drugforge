@@ -111,11 +111,12 @@ def score_complex_workflow(inputs: ScoreInputs):
     comp_name = "MOL"
 
     if inputs.docking_csv.exists():
-        try:
+        df_dock = pd.read_csv(inputs.docking_csv)
+        
+        if "input" in df_dock.columns:
             # Match the protein and ligand regex on docking output file
             logging.info("Reading docking CSV file: %s", inputs.docking_csv)
 
-            df_dock = pd.read_csv(inputs.docking_csv)
             df_dock["lig-ID"] = df_dock["input"].apply(
                 lambda s: (
                     re.search(inputs.ligand_regex, s).group(0)
@@ -130,11 +131,16 @@ def score_complex_workflow(inputs: ScoreInputs):
                     else None
                 )
             )
-            df_dock = df_dock[["lig-ID", "prot-ID", "docking-score-POSIT"]]
-            logging.debug("Docking CSV file processed successfully.")
-        except Exception as e:
-            print("Error %e", e)
+            if "docking-score-POSIT" in df_dock.columns:
+                df_dock = df_dock[["lig-ID", "prot-ID", "docking-score-POSIT"]]
+                logging.debug("Docking CSV file processed successfully.")
+            else:
+                logging.warning("No 'docking-score-POSIT' column found.")
+                df_dock = pd.DataFrame({})
+        else:
+            logging.warning("'input' column not found in docking CSV.")
             df_dock = pd.DataFrame({})
+
     else:
         df_dock = pd.DataFrame({})
 
@@ -206,7 +212,6 @@ def score_complex_workflow(inputs: ScoreInputs):
             file_ref = path_ref
 
         # Run minimization if requested
-        min_out = file_min
         if inputs.minimize:
             min_folder = docking_dir / "minimized"
             min_folder.mkdir(parents=True, exist_ok=True)
@@ -224,9 +229,16 @@ def score_complex_workflow(inputs: ScoreInputs):
                     comp_name,
                 )
                 chain_dock = "1"  # Standard in OpenMM output file
-            except Exception as error:
-                logging.error("Couldn't minimize %s: %s", file_min, error)
+            except FileNotFoundError as error:
+                logging.error(f"File not found during minimization of {file_min}: {error}")
                 continue
+            except ValueError as error:
+                logging.error(f"Value error during minimization of {file_min}: {error}")
+                continue
+            except Exception as error:
+                logging.exception(f"Unexpected error minimizing {file_min}")
+                continue
+            file_min = min_out
         else:
             new_docking_dir = docking_dir
         # Directory to save aligned complexes
@@ -245,9 +257,9 @@ def score_complex_workflow(inputs: ScoreInputs):
             scorers.extend(ml_scorers)
 
         # Prepare complex, re-dock and score
-        logging.info("Running protein prep, docking and scoring of %s", min_out)
+        logging.info("Running protein prep, docking and scoring of %s", file_min)
         scores_df, prepped_cmp, ligand_pose, aligned = dock_and_score(
-            min_out,
+            file_min,
             comp_name,
             inputs.target,
             scorers,
@@ -347,9 +359,16 @@ def score_complex_workflow(inputs: ScoreInputs):
                     rmsd_mode="heavy",
                     aligned_temp=aligned,
                 )
-            except Exception as e:
+            except FileNotFoundError as e:
+                logging.error(f"Reference or aligned file not found for RMSD calculation: {e}")
                 bsite_rmsd = -1
-                logging.warning("Binding site RMSD couldn't be calculated: %s", e)
+            except ValueError as e:
+                logging.error(f"Value error during binding site RMSD calculation: {e}")
+                bsite_rmsd = -1
+            except Exception as e:
+                logging.exception(f"Unexpected error while computing binding site RMSD: {e}")
+                bsite_rmsd = -1
+
             df_save.insert(
                 loc=len(df_save.columns), column="Bsite-RMSD", value=bsite_rmsd
             )
@@ -382,10 +401,17 @@ def score_complex_workflow(inputs: ScoreInputs):
                         rmsd_mode="oechem",
                         overlay=False,
                     )
-                    logging.info("The RMSD of the vina pose was: %s", lig_rmsd)
-                except Exception as e:
+                    logging.info(f"The RMSD of the vina pose was: {lig_rmsd}",)
+                except FileNotFoundError as e:
+                    logging.error(f"Reference or pose file not found for RMSD calculation: {e}")
                     lig_rmsd = -1
-                    logging.warning("The vina RMSD couldn't be calculated: %s", e)
+                except ValueError as e:
+                    logging.error(f"Value error during ligand RMSD calculation: {e}")
+                    lig_rmsd = -1
+                except Exception as e:
+                    logging.exception(f"Unexpected error while computing Vina ligand RMSD: {e}")
+                    lig_rmsd = -1        
+
                 df_vina["Vina-pose-RMSD"] = lig_rmsd
             df_save = pd.concat([df_save, df_vina], axis=1, join="inner")
 
@@ -410,5 +436,3 @@ def score_complex_workflow(inputs: ScoreInputs):
                 )
         df_save.to_csv(inputs.output_csv, mode='a', index=False, header=first_write)
         first_write = False
-
-    return
