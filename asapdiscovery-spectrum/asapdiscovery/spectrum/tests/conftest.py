@@ -33,11 +33,9 @@ def fasta_alignment_path():
 def pdb_file():
     return fetch_test_file("Mpro-P2660_0A_bound_oe_processed.pdb")
 
-
 @pytest.fixture(scope="session")
 def docking_results_csv_path():
     return fetch_test_file("lt_docking_scores.csv")
-
 
 @pytest.fixture(scope="session")
 def ligand_prepped_vina():
@@ -46,7 +44,6 @@ def ligand_prepped_vina():
 @pytest.fixture(scope="session")
 def target_prepped_vina():
     return fetch_test_file("SARS_model_target_prepped.pdbqt")
-
 
 @pytest.fixture()
 def protein_apo_path():
