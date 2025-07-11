@@ -518,7 +518,6 @@ def score_autodock_vina(
         # Check if box_center was set sucessfully
         if box_center is None:
             logger.warning(f"Could not generate grid box for Vina calculation because .gpf file was incorrect."
-
             )
             df_scores["Vina-score-premin"] = None
             df_scores["Vina-score-min"] = None
