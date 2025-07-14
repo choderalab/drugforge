@@ -1,5 +1,6 @@
 import subprocess
 from pathlib import Path
+import logging
 
 import numpy as np
 import pandas as pd
@@ -80,7 +81,7 @@ class Alignment:
                 filtered_descp = [unique_descp[0]] + filtered_descp
                 filtered_ids = [unique_ids[0]] + filtered_ids
         else:
-            print("The keyword provided didn't return any matches")
+            logging.warning("The keyword provided didn't return any matches")
             filtered_seqs = [unique_seqs[0]]
             filtered_descp = [unique_descp[0]]
             filtered_ids = [unique_ids[0]]
@@ -137,7 +138,7 @@ class Alignment:
                 filtered_descp = [self.descripts[0]] + filtered_descp
                 filtered_ids = [self.ids[0]] + filtered_ids
         else:
-            print("The keyword provided didn't return any matches")
+            logging.warning("The keyword provided didn't return any matches")
             filtered_seqs = [self.seqs[0]]
             filtered_descp = [self.descripts[0]]
             filtered_ids = [self.ids[0]]
@@ -253,11 +254,11 @@ class Alignment:
             # get a dictionary with counts for a printed report
             from collections import Counter
 
-            print(
+            logging.info(
                 "The multi-sequence alignment returns the following matches:",
             )
             for key, value in Counter(match_keys).items():
-                print(f"{key}: {value}/{N}")
+                logging.info(f"{key}: {value}/{N}")
         else:
             colors = get_colors_protein(seqs)
             font_colors = ["black"] * len(colors)
@@ -285,7 +286,7 @@ class Alignment:
         # use recty for rect coords with an offset
         recty = gy + 0.5
         # now we can create the ColumnDataSource with all the arrays
-        print(f"Aligning {S} sequences of lenght {N}")
+        logging.info(f"Aligning {S} sequences of lenght {N}")
         # ColumnDataSource is a JSON dict that maps names to arrays of values
         source = ColumnDataSource(
             dict(x=gx, y=gy, recty=recty, text=text, colors=colors)
@@ -470,14 +471,14 @@ def do_MSA(
         select_file = alignment.select_keyword(select_mode, f"{save_file}.fasta")
 
     alignment.select_file = select_file
-    print(
+    logging.info(
         f"A fasta file {alignment.select_file} have been generated with the selected sequences"
     )
 
     # Do multisequence alignment
     align_fasta = alignment.multi_seq_alignment(f"{save_file}_alignment.fasta")
     alignment.align_file = align_fasta
-    print(
+    logging.info(
         f"A fasta file {alignment.align_file} have been generated with the multi-seq alignment"
     )
 
@@ -485,7 +486,7 @@ def do_MSA(
     clean_csv = alignment.csv_align_data(
         alignment.select_file, f"{save_file}.csv", n_chains
     )
-    print(f"A csv file {clean_csv} have been generated with the selected sequences")
+    logging.info(f"A csv file {clean_csv} have been generated with the selected sequences")
 
     p, align_html = alignment.view_alignment(
         plot_width=plot_width,
@@ -495,7 +496,7 @@ def do_MSA(
         max_mismatch=max_mismatch,
         reorder=custom_order.split(","),
     )
-    print(f"A html file {align_html} have been generated with the aligned sequences")
+    logging.info(f"A html file {align_html} have been generated with the aligned sequences")
 
     alignment.sucess = True
     return alignment

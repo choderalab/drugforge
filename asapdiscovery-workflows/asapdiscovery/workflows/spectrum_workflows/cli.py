@@ -3,7 +3,8 @@ from typing import Optional
 
 import click
 import pandas as pd
-from asapdiscovery.cli.cli_args import output_dir, pdb_file
+from asapdiscovery.data.util.logging import FileLogger
+from asapdiscovery.simulation.simulate import OpenMMPlatform
 from asapdiscovery.spectrum.align_seq_match import (
     fasta_alignment,
     pairwise_alignment,
@@ -14,7 +15,11 @@ from asapdiscovery.spectrum.calculate_rmsd import (
     save_alignment_pymol,
     select_best_colabfold,
 )
-from asapdiscovery.spectrum.cli_args import (
+from asapdiscovery.cli.cli_args import (
+    output_dir, 
+    pdb_file, 
+    target, 
+    input_json,
     blast_json,
     email,
     gen_ref_pdb,
@@ -24,8 +29,13 @@ from asapdiscovery.spectrum.cli_args import (
     pymol_save,
     seq_file,
     seq_type,
+    loglevel,
 )
 from asapdiscovery.spectrum.seq_alignment import Alignment, do_MSA
+
+from asapdiscovery.workflows.spectrum_workflows.score_complex import ScoreInputs, score_complex_workflow
+
+import logging
 
 
 @click.group()
@@ -90,6 +100,7 @@ def spectrum():
     default="",
     help="Custom order of aligned sequences (not including ref) can be provided as a string with comma-sep indexes.",
 )
+@loglevel
 def seq_alignment(
     seq_file: str,
     seq_type: Optional[str] = None,
@@ -108,13 +119,26 @@ def seq_alignment(
     align_start_idx: int = 0,
     max_mismatches: int = 2,
     custom_order: str = "",
+    loglevel: str = "INFO",
 ):
     """
     Find similarities between reference protein and its related proteins by sequence.
     """
+    # Log level
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    elif loglevel.lower() == "debug":
+        level = logging.DEBUG
+    elif loglevel.lower() == "warning":
+        level = logging.WARNING
+    elif loglevel.lower() == "error":
+        level = logging.ERROR
+    else:
+        level = logging.CRITICAL
+    logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
 
     if blast_json is not None:
-        print("Loading inputs from json file... Will override all other inputs.")
+        logging.info("Loading inputs from json file... Will override all other inputs.")
         raise NotImplementedError("Haven't implement the json option yet")
     else:
         pass
@@ -181,7 +205,7 @@ def seq_alignment(
             )
 
             record = pdb_file_record[0]
-            print(f"A PDB template for {record.label} was saved as {record.pdb_file}")
+            logger.info(f"A PDB template for {record.label} was saved as {record.pdb_file}")
 
 
 @spectrum.command()
@@ -227,6 +251,7 @@ def seq_alignment(
     default="alphafold2_ptm",
     help="Model used with ColabFold. Either 'alphafold2_ptm' or 'alphafold2_multimer_v3'",
 )
+@loglevel
 def struct_alignment(
     seq_file: str,
     pdb_file: str,
@@ -238,10 +263,23 @@ def struct_alignment(
     chain: Optional[str] = "A",
     cf_format: Optional[str] = "alphafold2_ptm",
     output_dir: str = "output",
+    loglevel: str = "INFO",
 ):
     """
     Align PDB structures generated from ColabFold with respect to a reference pdb_file, as listed in the csv seq_file used for the folding.
     """
+    # Log level
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    elif loglevel.lower() == "debug":
+        level = logging.DEBUG
+    elif loglevel.lower() == "warning":
+        level = logging.WARNING
+    elif loglevel.lower() == "error":
+        level = logging.ERROR
+    else:
+        level = logging.CRITICAL
+    logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
 
     ref_pdb = Path(pdb_file)
     if not ref_pdb.exists():
@@ -267,7 +305,7 @@ def struct_alignment(
             aligned_pdbs = []
             seq_labels = []
             for file_path in results_dir.glob("*.pdb"):
-                print(f"Reading structure {file_path.stem}")
+                logging.info(f"Reading structure {file_path.stem}")
                 aligned_pdbs.append(str(file_path))
                 seq_labels.append(file_path.stem)
         if not results_dir.exists():
@@ -373,6 +411,7 @@ def struct_alignment(
     help="Start index for chain B. In multi-sequence alignment mode, all proteins to align must have the same start idx",
 )
 @max_mismatches
+@loglevel
 def fitness_alignment(
     pdb_file: str,
     pdb_label: str,
@@ -386,10 +425,23 @@ def fitness_alignment(
     fasta_a=None,
     fasta_b=None,
     max_mismatches=0,
+    loglevel: str = "INFO",
 ) -> None:
     """
     Align PDB structures and color by parwise or multi-sequence alignment match
     """
+    # Log level
+    if loglevel.lower() == "info":
+        level = logging.INFO
+    elif loglevel.lower() == "debug":
+        level = logging.DEBUG
+    elif loglevel.lower() == "warning":
+        level = logging.WARNING
+    elif loglevel.lower() == "error":
+        level = logging.ERROR
+    else:
+        level = logging.CRITICAL
+    logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
 
     start_idxA = start_a
     start_idxB = start_b
@@ -424,6 +476,209 @@ def fitness_alignment(
         pdb_align, pdb_labels, pdb_file, [colorsA, colorsB], session_save
     )
 
+
+@spectrum.command()
+@click.option(
+    "-d", 
+    "--docking-dir", 
+    type=click.Path(exists=True), 
+    help="Path to directory where docked structures are stored."
+)
+@click.option(
+    "-f",
+    "--pdb_ref",
+    type=click.Path(exists=True),
+    help="Path to directory/file where crystal structures are stored.",
+)
+@click.option(
+    "-o",
+    "--out-dir",
+    type=str,
+    default="scores_output",
+    help="Path to directory where scoring results will be stored.",
+)
+@click.option(
+    "--docking-csv", 
+    type=click.Path(), 
+    default="", 
+    help="Path to csv files with docking results."
+)
+@target
+@click.option(
+    "--vina-score",
+    is_flag=True,
+    default=False,
+    help="Whether to run vina scoring.",
+)
+@click.option(
+    "--vina-box-x",
+    type=float,
+    help="coordinate x of vina box.",
+)
+@click.option(
+    "--vina-box-y",
+    type=float,
+    help="coordinate y of vina box.",
+)
+@click.option(
+    "--vina-box-z",
+    type=float,
+    help="coordinate z of vina box.",
+)
+@click.option(
+    "--path-to-grid-prep", 
+    type=click.Path(), 
+    default="./", 
+    help="Path to .py file that calculates grid for Vina.")
+@click.option(
+    "--docking-vina",
+    is_flag=True,
+    default=False,
+    help="Whether to run docking on vina.",
+)
+@click.option(
+    "--ligand-regex",
+    type=str,
+    default="ASAP-[0-9]+",
+    help="Pattern for extracting ligand ID from file name.",
+)
+@click.option(
+    "--protein-regex",
+    type=str,
+    default="YP_[0-9]+_[0-9]+|NP_[0-9]+_[0-9]+",
+    help="Pattern for extracting protein ID from file name.",
+)
+@click.option(
+    "--minimize",
+    is_flag=True,
+    default=False,
+    help="Whether to minimize the pdb structures before running scoring.",
+)
+@click.option(
+    "--md-openmm-platform",
+    type=str,
+    default="Fastest",
+    help="The OpenMM platform to use for MD minimization. [CPU|CUDA|OpenCL|Reference|Fastest]", 
+)
+@click.option(
+    "--ml-score",
+    is_flag=True,
+    default=False,
+    help="Whether to employ asap-implemented ML models to score poses.",
+)
+@click.option(
+    "--bsite-rmsd",
+    is_flag=True,
+    default=False,
+    help="Whether to calculate binding site RMSD (only relevant when the ref pdb is the same target as the docked complex).",
+)
+@click.option(
+    "--dock-chain",
+    type=str,
+    default="1",
+    help="Chain ID of main chain in docked complex pdb(s).",
+)
+@click.option(
+    "--ref-chain",
+    type=str,
+    default="A",
+    help="Chain ID of main chain in reference pdb(s).",
+)
+@click.option(
+    "--lig-resname",
+    type=str,
+    default="LIG",
+    help="Residue name of ligand in reference pdb(s).",
+)
+@click.option(
+    "--gnina-score",
+    is_flag=True,
+    default=False,
+    help="Whether to run gnina scoring.",
+)
+@click.option(
+    "--gnina-script",
+    type=str,
+    default="gnina_script.sh",
+    help="Path to bash script that runs Gnina CLI.",
+)
+@click.option(
+    "--gnina-out-dir",
+    type=click.Path(), 
+    default="./", 
+    help="Directory for gnina output."
+)
+@click.option(
+    "--log-level", 
+    type=str, 
+    default="INFO", 
+    help="Logging level."
+)
+@input_json
+
+def score(
+    docking_dir: str,
+    pdb_ref: str,
+    docking_csv: str,
+    out_dir:str,
+    target: str,
+    ligand_regex: str,
+    protein_regex: str,
+    dock_chain: str,
+    ref_chain: str,
+    lig_resname: str,
+    vina_score: bool = False,
+    vina_box_x: Optional[float] = None,
+    vina_box_y: Optional[float] = None,
+    vina_box_z: Optional[float] = None,
+    docking_vina: bool = False,
+    path_to_grid_prep: str = "./",
+    minimize: bool = False,
+    md_openmm_platform:OpenMMPlatform = OpenMMPlatform.Fastest,
+    ml_score: bool = False,
+    bsite_rmsd: bool = False,
+    gnina_score: bool = False,
+    gnina_script: Optional[str] = None,
+    gnina_out_dir: Optional[str] = None,
+    log_level: str = "info",
+    input_json: Optional[str] = None,
+) ->None:
+    """Run scoring workflow on docked and minimized poses"""
+
+    loglevel = getattr(logging, log_level.upper(), logging.INFO)
+
+    if input_json is not None:
+        logging.info("Loading inputs from json file... Will override all other inputs.")
+        inputs = ScoreInputs.from_json_file(input_json)
+    else:
+        inputs = ScoreInputs(
+            docking_dir=docking_dir,
+            pdb_ref=pdb_ref,
+            output_dir=out_dir,
+            docking_csv=docking_csv,
+            target=target,
+            run_vina=vina_score,
+            vina_box_x=vina_box_x,
+            vina_box_y=vina_box_y,
+            vina_box_z=vina_box_z,
+            path_to_grid_prep=path_to_grid_prep,
+            dock_vina=docking_vina,
+            ligand_regex=ligand_regex,
+            protein_regex=protein_regex,
+            minimize=minimize,
+            md_openmm_platform=md_openmm_platform,
+            ml_score=ml_score,
+            bsite_rmsd=bsite_rmsd,
+            dock_chain=dock_chain,
+            ref_chain=ref_chain,
+            lig_resname=lig_resname,
+            gnina_score=gnina_score,
+            gnina_script=gnina_script,
+            gnina_out_dir=gnina_out_dir,
+            loglevel=loglevel,
+        )
+
+    score_complex_workflow(inputs)
 
 if __name__ == "__main__":
     spectrum()

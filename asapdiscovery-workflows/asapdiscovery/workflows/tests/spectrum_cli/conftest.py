@@ -3,21 +3,8 @@ from asapdiscovery.data.testing.test_resources import fetch_test_file
 
 
 @pytest.fixture(scope="session")
-def protein_path():
-    return fetch_test_file("Mpro-P2660_0A_bound.pdb")
-
-@pytest.fixture(scope="session")
-def prepped_target_path():
-    return fetch_test_file("Mpro-P2660_0A_bound-prepped_protein.pdb")
-
-@pytest.fixture(scope="session")
-def prepped_ligand_path():
-    return fetch_test_file("Mpro-P2660_0A_bound-prepped_ligand.sdf")
-
-@pytest.fixture(scope="session")
 def blast_xml_path():
     return fetch_test_file("SARS_blast_results.xml")
-
 
 @pytest.fixture(scope="session")
 def blast_csv_path():
@@ -25,25 +12,9 @@ def blast_csv_path():
 
 
 @pytest.fixture(scope="session")
-def fasta_alignment_path():
-    return fetch_test_file("sars_alignment.fasta")
+def protein_path():
+    return fetch_test_file("Mpro-P2660_0A_bound.pdb")
 
-
-@pytest.fixture
-def pdb_file():
-    return fetch_test_file("Mpro-P2660_0A_bound_oe_processed.pdb")
-
-@pytest.fixture(scope="session")
-def docking_results_csv_path():
-    return fetch_test_file("lt_docking_scores.csv")
-
-@pytest.fixture(scope="session")
-def ligand_prepped_vina():
-    return fetch_test_file("SARS_model_ligand_prepped.pdbqt")
-
-@pytest.fixture(scope="session")
-def target_prepped_vina():
-    return fetch_test_file("SARS_model_target_prepped.pdbqt")
 
 @pytest.fixture()
 def protein_apo_path():
@@ -53,6 +24,11 @@ def protein_apo_path():
 @pytest.fixture()
 def protein_mers_path():
     return fetch_test_file("mers_8hut.pdb")
+
+
+@pytest.fixture
+def pdb_file():
+    return fetch_test_file("Mpro-P2660_0A_bound_oe_processed.pdb")
 
 
 @pytest.fixture()
@@ -81,3 +57,13 @@ def all_cfold_dir_fns():
 def cfold_dir(all_cfold_dir_fns):
     all_paths = [fetch_test_file(f) for f in all_cfold_dir_fns]
     return all_paths[0].parent, all_paths
+
+
+@pytest.fixture(scope="session")
+def fasta_alignment_path():
+    return fetch_test_file("sars_alignment.fasta")
+
+
+@pytest.fixture(scope="session")
+def docking_results_csv_path():
+    return fetch_test_file("lt_docking_scores.csv")

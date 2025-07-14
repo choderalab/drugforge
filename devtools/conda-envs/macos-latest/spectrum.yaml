@@ -1,10 +1,11 @@
-name: data
+name: spectrum
 channels:
   - openeye
   - conda-forge
 dependencies:
   # Base depends
   - pip
+  - python >=3.10,<3.12
   - pydantic >=2.0.0a0
   - typing-extensions
 
@@ -39,6 +40,9 @@ dependencies:
   - plip
   - mafft
 
+  # Vina
+  - vina
+
   # Math
   - numpy
   - pandas
@@ -57,3 +61,4 @@ dependencies:
   - requests
   - moto
   - boto3
+  - multimethod

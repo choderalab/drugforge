@@ -1,4 +1,4 @@
-name: data
+name: spectrum
 channels:
   - openeye
   - conda-forge
@@ -40,6 +40,9 @@ dependencies:
   - plip
   - mafft
 
+  # Vina
+  - vina
+
   # Math
   - numpy
   - pandas
@@ -59,3 +62,5 @@ dependencies:
   - requests
   - moto
   - boto3
+  - multimethod
+
