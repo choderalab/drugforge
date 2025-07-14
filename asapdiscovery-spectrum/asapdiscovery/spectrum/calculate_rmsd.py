@@ -208,6 +208,7 @@ def save_alignment_pymol(
 
 def convert_chain_id(chain: str) -> str:
     """Convert a chain identifier between letter and number representations.
+    The ASCII values for lowercase letters start from a=97, so we subtract/add 96 to convert.
 
     Parameters
     ----------
@@ -223,7 +224,9 @@ def convert_chain_id(chain: str) -> str:
         return ord(chain.lower()) - 96
     elif chain.isdigit():
         return chr(int(chain) + 96)
-    return chain  
+    else:
+        logging.warning(f"Chain identifier {chain} is not valid.")
+        return chain
 
 def colorbyrmsd(
     p: pymol2.PyMOL,

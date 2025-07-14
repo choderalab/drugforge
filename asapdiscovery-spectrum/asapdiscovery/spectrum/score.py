@@ -309,9 +309,11 @@ def ligand_rmsd_rdkit(target_sdf, ref_sdf):
     try:
         rmsd = Chem.rdMolAlign.CalcRMS(mol_target, mol_ref)
     except Exception:
+        # TODO: Specify exception type
         try:
             rmsd = Chem.AllChem.AlignMol(mol_target, mol_ref)
         except Exception:
+            # TODO: Specify exception type
             rmsd = -1
             logger.warning(f"RMSD calculation failed")
     return rmsd
