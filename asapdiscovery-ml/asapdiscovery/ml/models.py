@@ -13,7 +13,7 @@ import yaml
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.ml.pretrained_models import asap_models_yaml
 from mtenn.config import ModelType
-from pydantic import BaseModel, Field, HttpUrl, validator
+from pydantic.v1 import BaseModel, Field, HttpUrl, validator
 from semver import Version
 
 
@@ -342,7 +342,7 @@ class RemoteEnsembleHelper(BaseModel):
 
     asapdiscovery-GAT-ensemble-test:
     type: GAT
-    base_url: https://asap-discovery-ml-weights.asapdata.org/production/GAT/
+    base_url: https://d2slxrwfphomy2.cloudfront.net/production/GAT/
     ensemble: True
 
     weights:

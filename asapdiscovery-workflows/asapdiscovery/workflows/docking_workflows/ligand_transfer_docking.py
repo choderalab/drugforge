@@ -14,7 +14,7 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Optional
 
-from asapdiscovery.data.operators.selectors.selector_list import StructureSelector
+from asapdiscovery.docking.selectors.selector_list import StructureSelector
 from asapdiscovery.data.readers.meta_structure_factory import MetaStructureFactory
 from asapdiscovery.data.util.dask_utils import (
     BackendType,
@@ -28,14 +28,14 @@ from asapdiscovery.dataviz.html_viz import ColorMethod, HTMLVisualizer
 from asapdiscovery.docking.docking import write_results_to_multi_sdf
 from asapdiscovery.docking.docking_data_validation import DockingResultCols
 from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
-from asapdiscovery.docking.scorer import ChemGauss4Scorer, MetaScorer, MLModelScorer
-from asapdiscovery.ml.models import ASAPMLModelRegistry
+from asapdiscovery.docking.scorer import ChemGauss4Scorer
+from asapdiscovery.docking.meta_scorer import MetaScorer
 from asapdiscovery.modeling.protein_prep import LigandTransferProteinPrepper
 from asapdiscovery.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
 from asapdiscovery.workflows.docking_workflows.workflows import (
     DockingWorkflowInputsBase,
 )
-from pydantic import Field, PositiveInt, root_validator
+from pydantic.v1 import Field, PositiveInt, root_validator
 
 
 class LigandTransferDockingWorkflowInputs(DockingWorkflowInputsBase):
@@ -338,6 +338,10 @@ def ligand_transfer_docking_workflow(inputs: LigandTransferDockingWorkflowInputs
     # load ml scorers
     # load ml scorers
     if inputs.ml_score:
+        # TODO: We should probably have this in a different function/callable
+        logger.warning("Using ML scorer is still experimental. Fails are expected.")
+        from asapdiscovery.docking.ml_scorer import MLModelScorer  # Lazy import
+        from asapdiscovery.ml.models import ASAPMLModelRegistry
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         ml_scorers = MLModelScorer.load_model_specs(models=models)

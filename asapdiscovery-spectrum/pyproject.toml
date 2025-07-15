@@ -25,7 +25,6 @@ dependencies = []
 "Bug Tracker" = "https://github.com/choderalab/asapdiscovery/issues"
 
 [project.scripts]
-asap-spectrum = "asapdiscovery.spectrum.cli:spectrum"
 
 [tool.setuptools.packages.find]
 where = ["."]

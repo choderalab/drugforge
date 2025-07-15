@@ -27,13 +27,17 @@ def test_toplevel_runnable():
         "docking",
         "alchemy",
         "spectrum",
-        "ml",
+        pytest.param(
+            "ml",
+            marks=pytest.mark.xfail(reason="ML package is not currently available."),
+        ),
         "visualization",
         "simulation",
         "data",
     ],
 )
 def test_subcommand_runnable(subcommand):
+
     runner = CliRunner()
     args = [subcommand, "--help"]
     result = runner.invoke(cli, args)

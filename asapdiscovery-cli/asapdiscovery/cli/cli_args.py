@@ -1,8 +1,4 @@
 import click
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.util.dask_utils import DaskType, FailureMode
-from asapdiscovery.ml.models import ASAPMLModelRegistry
-from asapdiscovery.simulation.simulate import OpenMMPlatform
 
 
 def postera(func):
@@ -46,6 +42,8 @@ def use_dask(func):
 
 
 def dask_type(func):
+    from asapdiscovery.data.util.dask_utils import DaskType
+
     return click.option(
         "--dask-type",
         type=click.Choice(DaskType.get_values(), case_sensitive=False),
@@ -55,6 +53,8 @@ def dask_type(func):
 
 
 def failure_mode(func):
+    from asapdiscovery.data.util.dask_utils import FailureMode
+
     return click.option(
         "--failure-mode",
         type=click.Choice(FailureMode.get_values(), case_sensitive=False),
@@ -78,6 +78,8 @@ def dask_args(func):
 
 
 def target(func):
+    from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
+
     return click.option(
         "--target",
         type=click.Choice(TargetTags.get_values(), case_sensitive=True),
@@ -123,6 +125,8 @@ def input_json(func):
 
 
 def ml_scorers(func):
+    from asapdiscovery.ml.models import ASAPMLModelRegistry
+
     return click.option(
         "--ml-scorer",
         type=click.Choice(
@@ -138,7 +142,7 @@ def ml_score(func):
     return click.option(
         "--ml-score",
         is_flag=True,
-        default=True,
+        default=False,
         help="Whether to run all ml scorers",
     )(func)
 
@@ -216,6 +220,8 @@ def md_steps(func):
 
 
 def md_openmm_platform(func):
+    from asapdiscovery.simulation.simulate import OpenMMPlatform
+
     return click.option(
         "--md-openmm-platform",
         type=click.Choice(OpenMMPlatform.get_values(), case_sensitive=False),
@@ -270,4 +276,87 @@ def active_site_chain(func):
         type=str,
         default=None,
         help="Active site chain ID to align to ref_chain in reference structure",
+    )(func)
+
+
+def seq_file(func):
+    return click.option(
+        "-f",
+        "--seq-file",
+        type=click.Path(resolve_path=True, exists=True, file_okay=True, dir_okay=False),
+        help="File containing reference sequences",
+    )(func)
+
+
+def seq_type(func):
+    return click.option(
+        "-t",
+        "--seq_type",
+        type=click.Choice(["fasta", "pdb", "pre-calc"]),
+        help="Type of input from which the sequence will be read.",
+        default="fasta",
+        show_default=True,
+    )(func)
+
+
+def blast_json(func):
+    return click.option(
+        "--blast-json",
+        type=click.Path(resolve_path=True, exists=True, file_okay=True, dir_okay=False),
+        help="Path to a json file containing parameters for the blast search.",
+    )(func)
+
+
+def email(func):
+    return click.option(
+        "--email",
+        type=str,
+        default="",
+        help="Email for Entrez search.",
+    )(func)
+
+
+def max_mismatches(func):
+    return click.option(
+        "--max-mismatches",
+        default=0,
+        help="Maximum number of aminoacid group missmatches to be allowed in color-seq-match mode.",
+    )(func)
+
+
+def gen_ref_pdb(func):
+    return click.option(
+        "--gen-ref-pdb",
+        is_flag=True,
+        default=False,
+        help="Whether to retrieve a pdb file for the query structure.",
+    )(func)
+
+
+def multimer(func):
+    return click.option(
+        "--multimer",
+        is_flag=True,
+        default=False,
+        help="Store the output sequences for a multimer ColabFold run (from identical chains)."
+        ' If not set, "--n-chains" will not be used. ',
+    )(func)
+
+
+def n_chains(func):
+    return click.option(
+        "--n-chains",
+        type=int,
+        default=None,
+        help="Number of repeated chains that will be saved in csv file."
+        ' Requires calling the "--multimer" flag',
+    )(func)
+
+
+def pymol_save(func):
+    return click.option(
+        "--pymol-save",
+        type=str,
+        default="session.pse",
+        help="Path to file where session will be saved.",
     )(func)

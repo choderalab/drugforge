@@ -22,7 +22,7 @@ from asapdiscovery.cli.cli_args import (
     target,
     use_only_cache,
 )
-from asapdiscovery.data.operators.selectors.selector_list import StructureSelector
+from asapdiscovery.docking.selectors.selector_list import StructureSelector
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.data.util.dask_utils import DaskType, FailureMode
 from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE
@@ -125,7 +125,7 @@ def large_scale(
     dask_type: DaskType = DaskType.LOCAL,
     dask_n_workers: Optional[int] = None,
     failure_mode: FailureMode = FailureMode.SKIP,
-    ml_score: Optional[bool] = True,
+    ml_score: Optional[bool] = False,
     loglevel: Union[int, str] = logging.INFO,
     ref_chain: Optional[str] = None,
     active_site_chain: Optional[str] = None,
@@ -217,7 +217,7 @@ def large_scale(
 @click.option(
     "--structure-selector",
     type=click.Choice(StructureSelector.get_values(), case_sensitive=False),
-    default=StructureSelector.LEAVE_SIMILAR_OUT,
+    default=StructureSelector.LEAVE_SIMILAR_OUT.value,
     help="The type of structure selector to use.",
 )
 @click.option("--num-poses", type=int, default=1, help="Number of poses to generate")
@@ -358,7 +358,7 @@ def small_scale(
     dask_type: DaskType = DaskType.LOCAL,
     dask_n_workers: Optional[int] = None,
     failure_mode: FailureMode = FailureMode.SKIP,
-    ml_score: Optional[bool] = True,
+    ml_score: Optional[bool] = False,
     md: bool = False,
     md_steps: int = 2500000,  # 10 ns @ 4.0 fs timestep
     md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
@@ -590,7 +590,7 @@ def ligand_transfer_docking(
     dask_n_workers: Optional[int] = None,
     failure_mode: FailureMode = FailureMode.SKIP,
     loglevel: Union[int, str] = logging.INFO,
-    ml_score: Optional[bool] = True,
+    ml_score: Optional[bool] = False,
     md: bool = False,
     md_steps: int = 2500000,  # 10 ns @ 4.0 fs timestep
     md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
