@@ -1,4 +1,4 @@
-asapdiscovery
+drugforge
 =============
 [//]: # (Badges)
 [![codecov](https://codecov.io/gh/choderalab/asapdiscovery/branch/main/graph/badge.svg)](https://codecov.io/gh/choderalab/asapdiscovery/branch/main)
@@ -20,11 +20,11 @@ The toolkit in this repo is a batteries-included drug discovery pipeline being a
 
 ## Getting Started
 
-Install the `asapdiscovery` subpackages and begin to explore! Our [docs can be found here](https://asapdiscovery.readthedocs.io/en/latest).
+Install the `drugforge` subpackages and begin to explore! Our [docs can be found here](https://drugforge.readthedocs.io/en/latest).
 
 There are a range of workflows and tooling to use split into several namespace subpackages by theme.
 
-`asapdiscovery-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://docs.alchemiscale.org/en/latest/). See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/running_alchemical_free_energy_calculations.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_asap_alchemy_cli.html)
+`drugforge-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://docs.alchemiscale.org/en/latest/). See [tutorial](https://drugforge.readthedocs.io/en/latest/tutorials/running_alchemical_free_energy_calculations.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_asap_alchemy_cli.html)
 
 `asapdiscovery-cli`: Command line tools uniting the whole repo.
 

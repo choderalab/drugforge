@@ -1,25 +1,25 @@
 Installation
 ===============
 
-This page details how to get started with `asapdiscovery` and how to install it on your system.
+This page details how to get started with `drugforge` and how to install it on your system.
 
-There are three ways to install `asapdiscovery`:
+There are three ways to install `drugforge`:
 
 1. From conda-forge (recommended)
 2. Use the provided Docker image
 3. Developer installation from source
 
-Installation from conda-forge
-----------------------------
+Installation from conda-forge (WIP)
+-----------------------------------
 
 The easiest way to install `asapdiscovery` is to use the mamba (or conda) package manager. You can install `asapdiscovery` from the `conda-forge` channel using the following command:
 The openeye package is not available in the conda-forge channel, so you need to install it from the openeye channel. You will need to have an OpenEye license to use some functionality in the package.
 You can request a free academic license from the [OpenEye website](https://docs.eyesopen.com/toolkits/python/index.html).
 
 ```bash
-mamba create -n asapdiscovery python=3.10
-mamba activate asapdiscovery
-mamba install -c conda-forge asapdiscovery
+mamba create -n drugforge python=3.10
+mamba activate drugforge
+mamba install -c conda-forge drugforge
 mamba install -c openeye openeye-toolkits
 
 ```

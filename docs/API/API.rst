@@ -6,4 +6,4 @@ API
    :template: custom-module-template.rst
    :recursive:
 
-   asapdiscovery
+   drugforge

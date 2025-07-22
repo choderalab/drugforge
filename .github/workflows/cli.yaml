@@ -75,16 +75,16 @@ jobs:
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
-        python -m pip install -e ./asapdiscovery-data --no-deps
-        python -m pip install -e ./asapdiscovery-docking --no-deps
-        python -m pip install -e ./asapdiscovery-ml --no-deps
-        python -m pip install -e ./asapdiscovery-modeling --no-deps
-        python -m pip install -e ./asapdiscovery-alchemy --no-deps
-        python -m pip install -e ./asapdiscovery-workflows --no-deps
-        python -m pip install -e ./asapdiscovery-cli --no-deps
-        python -m pip install -e ./asapdiscovery-simulation --no-deps
-        python -m pip install -e ./asapdiscovery-dataviz --no-deps
-        python -m pip install -e ./asapdiscovery-spectrum --no-deps
+        python -m pip install -e ./drugforge-data --no-deps
+        python -m pip install -e ./drugforge-docking --no-deps
+        python -m pip install -e ./drugforge-ml --no-deps
+        python -m pip install -e ./drugforge-modeling --no-deps
+        python -m pip install -e ./drugforge-alchemy --no-deps
+        python -m pip install -e ./drugforge-workflows --no-deps
+        python -m pip install -e ./drugforge-cli --no-deps
+        python -m pip install -e ./drugforge-simulation --no-deps
+        python -m pip install -e ./drugforge-dataviz --no-deps
+        python -m pip install -e ./drugforge-spectrum --no-deps
         micromamba list
 
     - name: Test OE License & Write License to File
@@ -100,13 +100,13 @@ jobs:
         # Exit immediately if a command exits with a non-zero status.
         set -e
         pytest -n auto --durations=10 -v --cov-report=xml --cov-report=term --color=yes \
-                       --cov=asapdiscovery-cli \
-                       asapdiscovery-cli/asapdiscovery/cli/tests
+                       --cov=drugforge-cli \
+                       drugforge-cli/drugforge/cli/tests
 
     - name: Upload Code Coverage to Codecov
       uses: codecov/codecov-action@v3
       # Don't upload coverage scheduled or on fork
-      if: ${{ github.repository == 'choderalab/asapdiscovery'
+      if: ${{ github.repository == 'choderalab/drugforge'
               && github.event != 'schedule' }}
       with:
         file: ./coverage.xml
