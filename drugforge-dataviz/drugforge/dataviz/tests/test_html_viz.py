@@ -1,9 +1,9 @@
 import pytest
-from asapdiscovery.data.readers.molfile import MolFileFactory
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.dataviz.html_viz import HTMLVisualizer
-from asapdiscovery.docking.openeye import POSITDockingResults
+from drugforge.data.readers.molfile import MolFileFactory
+from drugforge.data.schema.complex import Complex
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.dataviz.html_viz import HTMLVisualizer
+from drugforge.docking.openeye import POSITDockingResults
 
 
 @pytest.mark.parametrize("use_dask", [True, False])

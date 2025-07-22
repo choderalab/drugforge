@@ -1,7 +1,7 @@
 import traceback
 
 import pytest
-from asapdiscovery.dataviz.cli import visualization
+from drugforge.dataviz.cli import visualization
 from click.testing import CliRunner
 
 

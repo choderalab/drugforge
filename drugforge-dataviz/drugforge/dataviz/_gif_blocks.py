@@ -1,6 +1,6 @@
 from typing import Union
 
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.data.services.postera.manifold_data_validation import (
     TargetProteinMap,
     TargetTags,
 )

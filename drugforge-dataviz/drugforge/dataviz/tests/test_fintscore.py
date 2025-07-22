@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from asapdiscovery.data.backend.openeye import load_openeye_pdb
-from asapdiscovery.dataviz.plip import compute_fint_score
-from asapdiscovery.data.readers.molfile import MolFileFactory
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.backend.openeye import load_openeye_pdb
+from drugforge.dataviz.plip import compute_fint_score
+from drugforge.data.readers.molfile import MolFileFactory
+from drugforge.data.testing.test_resources import fetch_test_file
 
 
 def test_fint_score():

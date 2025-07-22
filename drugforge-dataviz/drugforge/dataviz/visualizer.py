@@ -1,8 +1,8 @@
 import abc
 
 import pandas as pd
-from asapdiscovery.data.util.dask_utils import BackendType, FailureMode
-from asapdiscovery.docking.docking import DockingResult
+from drugforge.data.util.dask_utils import BackendType, FailureMode
+from drugforge.docking.docking import DockingResult
 from pydantic.v1 import BaseModel
 
 

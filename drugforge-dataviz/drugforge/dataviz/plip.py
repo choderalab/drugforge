@@ -8,15 +8,15 @@ from pathlib import Path
 import numpy as np
 import xmltodict
 import yaml
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     combine_protein_ligand,
     oechem,
     save_openeye_pdb,
 )
-from asapdiscovery.data.metadata.resources import FINTSCORE_PARAMETERS
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.dataviz._gif_blocks import GIFBlockData
-from asapdiscovery.spectrum.fitness import parse_fitness_json, target_has_fitness_data
+from drugforge.data.metadata.resources import FINTSCORE_PARAMETERS
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.dataviz._gif_blocks import GIFBlockData
+from drugforge.spectrum.fitness import parse_fitness_json, target_has_fitness_data
 
 logger = logging.getLogger(__name__)
 

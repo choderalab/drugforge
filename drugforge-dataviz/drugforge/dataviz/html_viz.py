@@ -11,7 +11,7 @@ import logomaker
 import matplotlib.pyplot as plt
 import pandas as pd
 from airium import Airium
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     combine_protein_ligand,
     load_openeye_pdb,
     oechem,
@@ -19,26 +19,26 @@ from asapdiscovery.data.backend.openeye import (
     oemol_to_sdf_string,
     openeye_perceive_residues,
 )
-from asapdiscovery.dataviz.plip import (
+from drugforge.dataviz.plip import (
     get_interactions_plip,
     make_color_res_fitness,
     make_color_res_subpockets,
 )
-from asapdiscovery.data.metadata.resources import active_site_chains, master_structures
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.data.metadata.resources import active_site_chains, master_structures
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.services.postera.manifold_data_validation import (
     TargetTags,
     TargetVirusMap,
 )
-from asapdiscovery.data.util.dask_utils import backend_wrapper, dask_vmap
-from asapdiscovery.data.util.logging import HiddenPrint
-from asapdiscovery.dataviz._html_blocks import HTMLBlockData
-from asapdiscovery.dataviz.visualizer import VisualizerBase
-from asapdiscovery.docking.docking import DockingResult
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
-from asapdiscovery.modeling.modeling import superpose_molecule  # TODO: move to backend
-from asapdiscovery.spectrum.fitness import (
+from drugforge.data.util.dask_utils import backend_wrapper, dask_vmap
+from drugforge.data.util.logging import HiddenPrint
+from drugforge.dataviz._html_blocks import HTMLBlockData
+from drugforge.dataviz.visualizer import VisualizerBase
+from drugforge.docking.docking import DockingResult
+from drugforge.docking.docking_data_validation import DockingResultCols
+from drugforge.modeling.modeling import superpose_molecule  # TODO: move to backend
+from drugforge.spectrum.fitness import (
     _FITNESS_DATA_FIT_THRESHOLD,
     get_fitness_scores_bloom_by_target,
     parse_fitness_json,

@@ -1,5 +1,5 @@
 import pytest
-from asapdiscovery.dataviz.gif_viz import GIFVisualizer
+from drugforge.dataviz.gif_viz import GIFVisualizer
 
 
 @pytest.mark.parametrize("use_dask", [True, False])

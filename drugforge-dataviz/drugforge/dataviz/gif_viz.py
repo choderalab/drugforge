@@ -3,20 +3,20 @@ import shutil
 from pathlib import Path
 from typing import Any, Optional, Union
 
-from asapdiscovery.data.metadata.resources import master_structures
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.pairs import CompoundStructurePair
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.data.metadata.resources import master_structures
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.pairs import CompoundStructurePair
+from drugforge.data.services.postera.manifold_data_validation import (
     TargetProteinMap,
     TargetTags,
 )
-from asapdiscovery.data.util.dask_utils import backend_wrapper, dask_vmap
-from asapdiscovery.dataviz._gif_blocks import GIFBlockData
-from asapdiscovery.dataviz.resources.fonts import opensans_regular
-from asapdiscovery.dataviz.show_contacts import show_contacts
-from asapdiscovery.dataviz.visualizer import VisualizerBase
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
-from asapdiscovery.simulation.simulate import SimulationResult
+from drugforge.data.util.dask_utils import backend_wrapper, dask_vmap
+from drugforge.dataviz._gif_blocks import GIFBlockData
+from drugforge.dataviz.resources.fonts import opensans_regular
+from drugforge.dataviz.show_contacts import show_contacts
+from drugforge.dataviz.visualizer import VisualizerBase
+from drugforge.docking.docking_data_validation import DockingResultCols
+from drugforge.simulation.simulate import SimulationResult
 from multimethod import multimethod
 from pydantic.v1 import Field, PositiveInt
 

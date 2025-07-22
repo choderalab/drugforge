@@ -2,4 +2,4 @@
 
 from importlib.metadata import version
 
-__version__ = version("asapdiscovery-dataviz")
+__version__ = version("drugforge-dataviz")

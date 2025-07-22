@@ -1,7 +1,7 @@
 import pytest
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.docking.openeye import POSITDockingResults
-from asapdiscovery.simulation.simulate import SimulationResult
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.docking.openeye import POSITDockingResults
+from drugforge.simulation.simulate import SimulationResult
 
 
 @pytest.fixture(scope="session")
