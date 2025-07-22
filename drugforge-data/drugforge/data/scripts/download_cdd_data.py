@@ -6,7 +6,7 @@ import argparse
 import logging
 import os
 
-from asapdiscovery.data.services.cdd.cdd_download import (  # noqa: E402
+from drugforge.data.services.cdd.cdd_download import (  # noqa: E402
     download_molecules,
 )
 
@@ -38,7 +38,7 @@ def get_args():
         default="sars_fluorescence_noncovalent_w_dates",
         help=(
             "Either a search id or entry in MOONSHOT_SEARCH_DICT "
-            "(see asapdiscovery.data.cdd for more details). Defaults to search "
+            "(see drugforge.data.cdd for more details). Defaults to search "
             "with all noncovalent molecules in the SARS-CoV-2 dose response assay."
         ),
     )

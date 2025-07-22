@@ -1,7 +1,7 @@
 import pytest
-from asapdiscovery.data.backend.openeye import oechem
-from asapdiscovery.data.schema.target import Target, TargetIdentifiers
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.backend.openeye import oechem
+from drugforge.data.schema.target import Target, TargetIdentifiers
+from drugforge.data.testing.test_resources import fetch_test_file
 
 
 @pytest.fixture(scope="session")

@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pandas
 import pytest
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.services.fragalysis.fragalysis_reader import FragalysisFactory
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.schema.complex import Complex
+from drugforge.data.services.fragalysis.fragalysis_reader import FragalysisFactory
+from drugforge.data.testing.test_resources import fetch_test_file
 from pydantic.v1 import ValidationError
 
 

@@ -1,5 +1,5 @@
 """
-Objects and functions to test the structures handling capabilities of asapdiscovery-data package
+Objects and functions to test the structures handling capabilities of drugforge-data package
 
 That is downloading, processing and storing PDB/CIF or similar structure files.
 """
@@ -8,7 +8,7 @@ import pathlib
 
 import pkg_resources
 import pytest
-from asapdiscovery.data.services.rcsb.rcsb_download import download_pdb_structure
+from drugforge.data.services.rcsb.rcsb_download import download_pdb_structure
 
 
 class TestAsapPDB:
@@ -38,7 +38,7 @@ class TestAsapPDB:
 
     def test_load_save_openeye_pdb(self, tmp_path):
         """Test that a downloaded pdb file can be loaded with the openeye-specific functions"""
-        from asapdiscovery.data.backend.openeye import (
+        from drugforge.data.backend.openeye import (
             load_openeye_pdb,
             save_openeye_pdb,
         )
@@ -58,7 +58,7 @@ class TestLigands:
 
     def test_ligand_filtering(self):
         """Test SMARTS pattern matching ligand filtering"""
-        from asapdiscovery.data.util import utils
+        from drugforge.data.util import utils
 
         # First, parse the fragalysis directory and
         csv_file = "CSV_FILE_NEEDED_HERE.csv"
@@ -73,7 +73,7 @@ class TestLigands:
         }
 
         smarts_queries_csv = pkg_resources.resource_filename(
-            "asapdiscovery.data", "data/smarts_queries.csv"
+            "drugforge.data", "data/smarts_queries.csv"
         )
 
         # Filter based on the smiles using this OpenEye function

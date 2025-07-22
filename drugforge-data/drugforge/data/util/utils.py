@@ -7,9 +7,9 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas
-from asapdiscovery.data.backend.openeye import oechem
-from asapdiscovery.data.schema.experimental import ExperimentalCompoundData
-from asapdiscovery.data.schema.legacy import EnantiomerPair, EnantiomerPairList
+from drugforge.data.backend.openeye import oechem
+from drugforge.data.schema.experimental import ExperimentalCompoundData
+from drugforge.data.schema.legacy import EnantiomerPair, EnantiomerPairList
 from pydantic.v1 import ValidationError
 
 # Not sure if this is the right place for these

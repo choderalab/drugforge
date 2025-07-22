@@ -14,7 +14,7 @@ from typing import (  # noqa: F401
 )
 
 import numpy as np
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     clear_SD_data,
     load_openeye_mol2,
     load_openeye_sdf,
@@ -28,15 +28,15 @@ from asapdiscovery.data.backend.openeye import (
     set_SD_data,
     smiles_to_oemol,
 )
-from asapdiscovery.data.backend.rdkit import rdkit_mol_to_sdf_str
-from asapdiscovery.data.operators.state_expanders.expansion_tag import StateExpansionTag
-from asapdiscovery.data.schema.identifiers import (
+from drugforge.data.backend.rdkit import rdkit_mol_to_sdf_str
+from drugforge.data.operators.state_expanders.expansion_tag import StateExpansionTag
+from drugforge.data.schema.identifiers import (
     BespokeParameters,
     ChargeProvenance,
     LigandIdentifiers,
     LigandProvenance,
 )
-from asapdiscovery.data.schema.schema_base import DataStorageType
+from drugforge.data.schema.schema_base import DataStorageType
 from pydantic.v1 import Field, root_validator, validator
 
 from .experimental import ExperimentalCompoundData
@@ -196,8 +196,8 @@ class Ligand(DataModelAbstractBase):
         """
         Create a Ligand from an OEMol extracting all SD tags into the internal model
         """
-        from asapdiscovery.data.backend.openeye import get_SD_data
-        from asapdiscovery.data.util.data_conversion import (
+        from drugforge.data.backend.openeye import get_SD_data
+        from drugforge.data.util.data_conversion import (
             get_first_value_of_dict_of_lists,
         )
 
@@ -321,7 +321,7 @@ class Ligand(DataModelAbstractBase):
             sd_data.append(conf.tags)
             oemol.NewConf(conf.to_oemol())
 
-        from asapdiscovery.data.util.data_conversion import (
+        from drugforge.data.util.data_conversion import (
             get_dict_of_lists_from_list_of_dicts,
         )
 
@@ -349,7 +349,7 @@ class Ligand(DataModelAbstractBase):
         """
         Convert the current molecule state to an RDKit molecule including all fields as SD tags.
         """
-        from asapdiscovery.data.backend.rdkit import sdf_str_to_rdkit_mol, set_SD_data
+        from drugforge.data.backend.rdkit import sdf_str_to_rdkit_mol, set_SD_data
         from rdkit import Chem
 
         rdkit_mol: Chem.Mol = sdf_str_to_rdkit_mol(self.data)
@@ -568,7 +568,7 @@ class Ligand(DataModelAbstractBase):
                 new_data[k] = v
 
         # update tags and conf_tags!
-        from asapdiscovery.data.util.data_conversion import (
+        from drugforge.data.util.data_conversion import (
             get_first_value_of_dict_of_lists,
         )
 
@@ -853,7 +853,7 @@ class Ligand(DataModelAbstractBase):
             If 'by' tag not found in ligand tags or if unable to sort the conformers
         """
         import numpy as np
-        from asapdiscovery.data.backend.openeye import get_SD_data
+        from drugforge.data.backend.openeye import get_SD_data
 
         if self.num_poses == 1:
             warnings.warn("Only one conformer present, no sorting will be done")

@@ -1,4 +1,4 @@
-from asapdiscovery.data.schema.experimental import ExperimentalCompoundData
+from drugforge.data.schema.experimental import ExperimentalCompoundData
 from pydantic.v1 import BaseModel, Field
 
 

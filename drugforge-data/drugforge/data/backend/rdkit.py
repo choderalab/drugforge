@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union
 
-from asapdiscovery.data.schema.schema_base import read_file_directly
+from drugforge.data.schema.schema_base import read_file_directly
 from rdkit import Chem
 
 
@@ -57,7 +57,7 @@ def set_SD_data(mol: Chem.Mol, data: dict[str, str | list]):
             )
 
     # Set the properties for the highest level to be the data for the first conformer
-    from asapdiscovery.data.util.data_conversion import get_first_value_of_dict_of_lists
+    from drugforge.data.util.data_conversion import get_first_value_of_dict_of_lists
 
     first_conf_data = get_first_value_of_dict_of_lists(data)
     _set_SD_data(mol, first_conf_data)
@@ -97,13 +97,13 @@ def get_SD_data(mol: Chem.Mol) -> dict[str, list]:
         Dictionary of SD data
     """
     if mol.GetNumConformers() == 1:
-        from asapdiscovery.data.util.data_conversion import (
+        from drugforge.data.util.data_conversion import (
             get_dict_of_lists_from_dict_of_str,
         )
 
         return get_dict_of_lists_from_dict_of_str(_get_SD_data(mol))
 
-    from asapdiscovery.data.util.data_conversion import (
+    from drugforge.data.util.data_conversion import (
         get_dict_of_lists_from_list_of_dicts,
     )
 

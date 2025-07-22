@@ -40,7 +40,7 @@ def check_strings_for_equality_with_exclusion(string1, string2, exclusion_string
 
 class DataModelAbstractBase(BaseModel):
     """
-    Base class for asapdiscovery pydantic models that simplify dictionary, JSON
+    Base class for drugforge pydantic models that simplify dictionary, JSON
     and other behaviour
     """
 

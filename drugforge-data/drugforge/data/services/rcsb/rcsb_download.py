@@ -29,7 +29,7 @@ def download_pdb_structure(
     import os
 
     import requests
-    from asapdiscovery.data.util.utils import download_file
+    from drugforge.data.util.utils import download_file
 
     url_base_str = "https://files.rcsb.org/download/"  # base str to use for URLs
     # Dictionary with allowed formats and their upstream basenames

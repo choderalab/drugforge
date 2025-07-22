@@ -1,5 +1,5 @@
 import pytest
-from asapdiscovery.data.backend.rdkit import load_sdf
+from drugforge.data.backend.rdkit import load_sdf
 
 
 def test_ligand_sdf(moonshot_sdf, multipose_ligand, sdf_file):
@@ -15,7 +15,7 @@ def test_ligand_sdf(moonshot_sdf, multipose_ligand, sdf_file):
 
 
 def test_sd_tag_processing(moonshot_sdf, multipose_ligand):
-    from asapdiscovery.data.backend.rdkit import get_SD_data, set_SD_data
+    from drugforge.data.backend.rdkit import get_SD_data, set_SD_data
 
     single_conf = load_sdf(moonshot_sdf)
     assert get_SD_data(single_conf) == {}

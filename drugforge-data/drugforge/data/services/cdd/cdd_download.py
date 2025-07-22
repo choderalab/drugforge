@@ -165,7 +165,7 @@ def download_molecules(
 
     # Remove chiral molecules
     logging.debug("Filtering dataframe...")
-    from asapdiscovery.data.util.utils import (
+    from drugforge.data.util.utils import (
         filter_molecules_dataframe,
         parse_fluorescence_data_cdd,
     )

@@ -1,13 +1,13 @@
 import pytest
-from asapdiscovery.data.backend.openeye import oe_smiles_roundtrip
-from asapdiscovery.data.operators.state_expanders.protomer_expander import (
+from drugforge.data.backend.openeye import oe_smiles_roundtrip
+from drugforge.data.operators.state_expanders.protomer_expander import (
     ProtomerExpander,
 )
-from asapdiscovery.data.operators.state_expanders.state_expander import (
+from drugforge.data.operators.state_expanders.state_expander import (
     StateExpansionSet,
 )
-from asapdiscovery.data.operators.state_expanders.stereo_expander import StereoExpander
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.data.operators.state_expanders.stereo_expander import StereoExpander
+from drugforge.data.schema.ligand import Ligand
 
 
 @pytest.fixture(scope="session")

@@ -1,6 +1,6 @@
 import pydantic
 import pytest
-from asapdiscovery.data.schema.schema_base import MoleculeFilter
+from drugforge.data.schema.schema_base import MoleculeFilter
 
 
 class TestMoleculeFilter:

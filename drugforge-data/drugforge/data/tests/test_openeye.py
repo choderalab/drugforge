@@ -1,14 +1,14 @@
 from pathlib import Path
 
 import pytest
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     load_openeye_pdb,
     load_openeye_sdf,
     load_openeye_sdfs,
     load_openeye_smi,
     oe_smiles_roundtrip,
 )
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.testing.test_resources import fetch_test_file
 
 
 @pytest.fixture
@@ -77,7 +77,7 @@ def test_ligand_sdf(moonshot_sdf, multipose_ligand, sdf_file):
 
 
 def test_sd_tag_processing(moonshot_sdf, multipose_ligand):
-    from asapdiscovery.data.backend.openeye import get_SD_data, set_SD_data
+    from drugforge.data.backend.openeye import get_SD_data, set_SD_data
 
     single_conf = load_openeye_sdf(moonshot_sdf)
     assert get_SD_data(single_conf) == {}

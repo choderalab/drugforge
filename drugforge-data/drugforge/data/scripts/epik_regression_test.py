@@ -1,7 +1,7 @@
 """A regression test for the Epik expander as we can not test this using the github CI"""
 
-from asapdiscovery.data.operators.state_expanders.protomer_expander import EpikExpander
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.data.operators.state_expanders.protomer_expander import EpikExpander
+from drugforge.data.schema.ligand import Ligand
 
 
 def main():

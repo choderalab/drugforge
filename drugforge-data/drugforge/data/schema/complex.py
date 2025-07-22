@@ -4,17 +4,17 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     combine_protein_ligand,
     load_openeye_pdb,
     oechem,
     save_openeye_pdb,
     split_openeye_mol
 )
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.schema.schema_base import DataModelAbstractBase
-from asapdiscovery.data.schema.target import Target
-from asapdiscovery.data.schema.schema_base import MoleculeFilter
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.schema.schema_base import DataModelAbstractBase
+from drugforge.data.schema.target import Target
+from drugforge.data.schema.schema_base import MoleculeFilter
 from pydantic.v1 import Field
 
 logger = logging.getLogger(__name__)

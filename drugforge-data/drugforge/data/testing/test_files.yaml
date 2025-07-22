@@ -1,4 +1,4 @@
-# testing files for asapdiscovery, these are used for testing the models and the asapdiscovery package
+# testing files for drugforge, these are used for testing the models and the drugforge package
 # if you need to make a sha256 hash you can use the following command
 # shasum -a 256 <file_name>
 # or

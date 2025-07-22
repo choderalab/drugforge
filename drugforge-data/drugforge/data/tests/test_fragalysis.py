@@ -6,16 +6,16 @@ import shutil
 import traceback
 
 import pytest
-from asapdiscovery.data.cli.cli import data as cli
-from asapdiscovery.data.schema.legacy import CrystalCompoundData
-from asapdiscovery.data.services.fragalysis.fragalysis_download import (
+from drugforge.data.cli.cli import data as cli
+from drugforge.data.schema.legacy import CrystalCompoundData
+from drugforge.data.services.fragalysis.fragalysis_download import (
     API_CALL_BASE_LEGACY,
     BASE_URL_LEGACY,
     FragalysisTargets,
     download,
     parse_fragalysis,
 )
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.testing.test_resources import fetch_test_file
 from click.testing import CliRunner
 
 

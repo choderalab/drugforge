@@ -2,17 +2,17 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union  # noqa: F401
 
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     load_openeye_pdb,
     oechem,
     oemol_to_pdb_string,
     pdb_string_to_oemol,
     split_openeye_mol,
 )
-from asapdiscovery.data.schema.identifiers import TargetIdentifiers
+from drugforge.data.schema.identifiers import TargetIdentifiers
 from pydantic.v1 import Field, root_validator
 
-from asapdiscovery.data.schema.schema_base import (
+from drugforge.data.schema.schema_base import (
     DataModelAbstractBase,
     DataStorageType,
     check_strings_for_equality_with_exclusion,

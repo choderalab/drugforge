@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, Any, Optional
 
-from asapdiscovery.data.schema.identifiers import LigandIdentifiers
+from drugforge.data.schema.identifiers import LigandIdentifiers
 from pydantic.v1 import BaseModel, Field
 
 if TYPE_CHECKING:
-    from asapdiscovery.data.schema.ligand import Ligand
+    from drugforge.data.schema.ligand import Ligand
 
 
 class StateExpansionTag(BaseModel):

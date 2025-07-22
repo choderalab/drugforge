@@ -2,8 +2,8 @@ import json
 
 import pandas
 import pytest
-from asapdiscovery.data.cli.cli import data as cli
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.cli.cli import data as cli
+from drugforge.data.testing.test_resources import fetch_test_file
 from click.testing import CliRunner
 
 

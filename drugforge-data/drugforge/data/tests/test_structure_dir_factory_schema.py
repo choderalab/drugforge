@@ -1,6 +1,6 @@
 import pytest
-from asapdiscovery.data.readers.structure_dir import StructureDirFactory
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.readers.structure_dir import StructureDirFactory
+from drugforge.data.testing.test_resources import fetch_test_file
 
 
 @pytest.fixture(scope="session")

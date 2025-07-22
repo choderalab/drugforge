@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "versioningit"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "asapdiscovery-data"
+name = "drugforge-data"
 #version = "0.0.1"
 dynamic = ["version"]
 authors = [
@@ -21,14 +21,14 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-"Homepage" = "https://github.com/choderalab/asapdiscovery"
-"Bug Tracker" = "https://github.com/choderalab/asapdiscovery/issues"
+"Homepage" = "https://github.com/choderalab/drugforge"
+"Bug Tracker" = "https://github.com/choderalab/drugforge/issues"
 
 [project.scripts]
-cdd-to-schema = "asapdiscovery.data.scripts.cdd_to_schema:main"
-download-cdd-data = "asapdiscovery.data.scripts.download_cdd_data:main"
-download-pdbs = "asapdiscovery.data.scripts.download_pdbs:main"
-split-fragment-screen = "asapdiscovery.data.scripts.split_fragment_screen:main"
+cdd-to-schema = "drugforge.data.scripts.cdd_to_schema:main"
+download-cdd-data = "drugforge.data.scripts.download_cdd_data:main"
+download-pdbs = "drugforge.data.scripts.download_pdbs:main"
+split-fragment-screen = "drugforge.data.scripts.split_fragment_screen:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

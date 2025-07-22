@@ -1,15 +1,15 @@
 from uuid import uuid4
 
 import pytest
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     get_SD_data,
     load_openeye_sdf,
     set_SD_data,
 )
-from asapdiscovery.data.schema.experimental import ExperimentalCompoundData
-from asapdiscovery.data.schema.identifiers import LigandIdentifiers, LigandProvenance
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.testing.test_resources import fetch_test_file
+from drugforge.data.schema.experimental import ExperimentalCompoundData
+from drugforge.data.schema.identifiers import LigandIdentifiers, LigandProvenance
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.testing.test_resources import fetch_test_file
 
 
 @pytest.fixture(scope="session")

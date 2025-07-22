@@ -3,8 +3,8 @@ from pathlib import Path
 from zipfile import ZipFile
 
 import requests
-from asapdiscovery.data.schema.legacy import CrystalCompoundData
-from asapdiscovery.data.util.stringenum import StringEnum
+from drugforge.data.schema.legacy import CrystalCompoundData
+from drugforge.data.util.stringenum import StringEnum
 
 BASE_URL = "https://fragalysis.diamond.ac.uk/api/download_structures/"
 BASE_URL_LEGACY = (

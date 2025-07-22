@@ -1,7 +1,7 @@
 import abc
 from typing import Literal
 
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.data.schema.ligand import Ligand
 from pydantic.v1 import BaseModel, Field
 
 

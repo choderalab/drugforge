@@ -32,7 +32,7 @@ import shutil
 from pathlib import Path
 
 import networkx as nx
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     combine_protein_ligand,
     load_openeye_pdb,
     load_openeye_sdf,
@@ -40,7 +40,7 @@ from asapdiscovery.data.backend.openeye import (
     save_openeye_sdf,
     save_openeye_sdfs,
 )
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.data.schema.ligand import Ligand
 from pymol import cmd
 
 

@@ -6,7 +6,7 @@ import pooch
 import yaml
 
 """
-This file contains utilities for fetching test files from the asapdiscovery
+This file contains utilities for fetching test files from the drugforge
 test file repository. We instantiate a pooch repository for the test files on import
 that can then be used to fetch test files.
 """
@@ -56,7 +56,7 @@ def make_test_file_pooch_repo(test_files: str) -> pooch.Pooch:
 
     return pooch.create(
         # use os cache to avoid permission issues and in-tree shenanigans
-        path=pooch.os_cache("asapdiscovery_testing"),
+        path=pooch.os_cache("drugforge_testing"),
         base_url=test_files["base_url"],
         registry=reg,
     )

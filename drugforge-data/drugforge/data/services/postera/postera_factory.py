@@ -1,9 +1,9 @@
 import warnings
 from typing import Optional
 
-from asapdiscovery.data.schema.ligand import Ligand, LigandIdentifiers
-from asapdiscovery.data.services.postera.molecule_set import MoleculeSetAPI
-from asapdiscovery.data.services.services_config import PosteraSettings
+from drugforge.data.schema.ligand import Ligand, LigandIdentifiers
+from drugforge.data.services.postera.molecule_set import MoleculeSetAPI
+from drugforge.data.services.services_config import PosteraSettings
 from pydantic.v1 import BaseModel, Field
 
 

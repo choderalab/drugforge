@@ -5,15 +5,15 @@ from pathlib import Path
 from typing import Optional
 
 import click
-from asapdiscovery.data.services.cdd.cdd_download import download_molecules
-from asapdiscovery.data.services.fragalysis.fragalysis_download import (  # noqa: E402
+from drugforge.data.services.cdd.cdd_download import download_molecules
+from drugforge.data.services.fragalysis.fragalysis_download import (  # noqa: E402
     API_CALL_BASE_LEGACY,
     BASE_URL_LEGACY,
     FragalysisTargets,
     download,
 )
-from asapdiscovery.data.services.fragalysis.fragalysis_reader import FragalysisFactory
-from asapdiscovery.data.util.utils import cdd_to_schema, cdd_to_schema_pair
+from drugforge.data.services.fragalysis.fragalysis_reader import FragalysisFactory
+from drugforge.data.util.utils import cdd_to_schema, cdd_to_schema_pair
 
 
 def target(func):
@@ -85,7 +85,7 @@ def download_fragalysis(
     default="sars_fluorescence_noncovalent_w_dates",
     help=(
         "Either a search id or entry in MOONSHOT_SEARCH_DICT "
-        "(see asapdiscovery.data.cdd for more details). Defaults to search "
+        "(see drugforge.data.cdd for more details). Defaults to search "
         "with all noncovalent molecules in the SARS-CoV-2 dose response assay."
     ),
 )
@@ -273,7 +273,7 @@ def run_cdd_to_schema(
 ):
     """
     Script to convert a CSV file downloaded (and filtered) from CDD into Schema
-    objects that can be used with the rest of the asapdiscovery pipeline. At a
+    objects that can be used with the rest of the drugforge pipeline. At a
     minimum, the CSV file must have the following columns:
      * "smiles" or "suspected_SMILES"
      * "Canonical PostEra ID"
