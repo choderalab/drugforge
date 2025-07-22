@@ -1,7 +1,7 @@
 include LICENSE
 include MANIFEST.in
 
-graft asapdiscovery
+graft drugforge
 global-exclude *.py[cod] __pycache__ *.so
 
 include data/*.yaml

@@ -1,7 +1,7 @@
 import traceback
 
 import pytest
-from asapdiscovery.cli.cli import cli
+from drugforge.cli.cli import cli
 from click.testing import CliRunner
 
 

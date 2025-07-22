@@ -42,7 +42,7 @@ def use_dask(func):
 
 
 def dask_type(func):
-    from asapdiscovery.data.util.dask_utils import DaskType
+    from drugforge.data.util.dask_utils import DaskType
 
     return click.option(
         "--dask-type",
@@ -53,7 +53,7 @@ def dask_type(func):
 
 
 def failure_mode(func):
-    from asapdiscovery.data.util.dask_utils import FailureMode
+    from drugforge.data.util.dask_utils import FailureMode
 
     return click.option(
         "--failure-mode",
@@ -78,7 +78,7 @@ def dask_args(func):
 
 
 def target(func):
-    from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
+    from drugforge.data.services.postera.manifold_data_validation import TargetTags
 
     return click.option(
         "--target",
@@ -125,7 +125,7 @@ def input_json(func):
 
 
 def ml_scorers(func):
-    from asapdiscovery.ml.models import ASAPMLModelRegistry
+    from drugforge.ml.models import ASAPMLModelRegistry
 
     return click.option(
         "--ml-scorer",
@@ -220,7 +220,7 @@ def md_steps(func):
 
 
 def md_openmm_platform(func):
-    from asapdiscovery.simulation.simulate import OpenMMPlatform
+    from drugforge.simulation.simulate import OpenMMPlatform
 
     return click.option(
         "--md-openmm-platform",
