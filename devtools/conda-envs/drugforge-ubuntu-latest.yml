@@ -1,4 +1,4 @@
-name: asapdiscovery
+name: drugforge
 channels:
   - openeye
   - conda-forge
