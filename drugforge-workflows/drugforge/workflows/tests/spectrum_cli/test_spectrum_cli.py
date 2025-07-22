@@ -2,7 +2,7 @@ import os
 import traceback
 
 import pytest
-from asapdiscovery.workflows.spectrum_workflows.cli import spectrum as cli
+from drugforge.workflows.spectrum_workflows.cli import spectrum as cli
 from click.testing import CliRunner
 
 

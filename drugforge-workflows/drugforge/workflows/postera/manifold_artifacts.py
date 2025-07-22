@@ -5,19 +5,19 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-from asapdiscovery.data.services.aws.cloudfront import CloudFront
-from asapdiscovery.data.services.aws.s3 import S3
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.data.services.aws.cloudfront import CloudFront
+from drugforge.data.services.aws.s3 import S3
+from drugforge.data.services.postera.manifold_data_validation import (
     TargetTags,
     map_output_col_to_manifold_tag,
 )
-from asapdiscovery.data.services.postera.molecule_set import MoleculeSetAPI
-from asapdiscovery.data.services.services_config import (
+from drugforge.data.services.postera.molecule_set import MoleculeSetAPI
+from drugforge.data.services.services_config import (
     CloudfrontSettings,
     PosteraSettings,
     S3Settings,
 )
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.docking_data_validation import DockingResultCols
 from pydantic.v1 import BaseModel, Field, root_validator
 
 

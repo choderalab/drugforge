@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 
 import click
-from asapdiscovery.cli.cli_args import (
+from drugforge.cli.cli_args import (
     active_site_chain,
     dask_args,
     fragalysis_dir,
@@ -13,10 +13,10 @@ from asapdiscovery.cli.cli_args import (
     structure_dir,
     target,
 )
-from asapdiscovery.data.util.dask_utils import DaskType, FailureMode
+from drugforge.data.util.dask_utils import DaskType, FailureMode
 
 if TYPE_CHECKING:
-    from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
+    from drugforge.data.services.postera.manifold_data_validation import TargetTags
 
 
 @click.group()
@@ -83,7 +83,7 @@ def protein_prep(
     """
     Run protein prep on a set of structures.
     """
-    from asapdiscovery.workflows.prep_workflows.protein_prep import (
+    from drugforge.workflows.prep_workflows.protein_prep import (
         ProteinPrepInputs,
         protein_prep_workflow,
     )

@@ -1,6 +1,6 @@
 import pytest
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.simulation.simulate import SimulationResult
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.simulation.simulate import SimulationResult
 
 
 @pytest.fixture

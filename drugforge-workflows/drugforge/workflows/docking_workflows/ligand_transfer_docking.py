@@ -14,25 +14,25 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Optional
 
-from asapdiscovery.docking.selectors.selector_list import StructureSelector
-from asapdiscovery.data.readers.meta_structure_factory import MetaStructureFactory
-from asapdiscovery.data.util.dask_utils import (
+from drugforge.docking.selectors.selector_list import StructureSelector
+from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
+from drugforge.data.util.dask_utils import (
     BackendType,
     DaskType,
     make_dask_client_meta,
 )
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.data.util.utils import check_empty_dataframe
-from asapdiscovery.dataviz.gif_viz import GIFVisualizer
-from asapdiscovery.dataviz.html_viz import ColorMethod, HTMLVisualizer
-from asapdiscovery.docking.docking import write_results_to_multi_sdf
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
-from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
-from asapdiscovery.docking.scorer import ChemGauss4Scorer
-from asapdiscovery.docking.meta_scorer import MetaScorer
-from asapdiscovery.modeling.protein_prep import LigandTransferProteinPrepper
-from asapdiscovery.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
-from asapdiscovery.workflows.docking_workflows.workflows import (
+from drugforge.data.util.logging import FileLogger
+from drugforge.data.util.utils import check_empty_dataframe
+from drugforge.dataviz.gif_viz import GIFVisualizer
+from drugforge.dataviz.html_viz import ColorMethod, HTMLVisualizer
+from drugforge.docking.docking import write_results_to_multi_sdf
+from drugforge.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
+from drugforge.docking.scorer import ChemGauss4Scorer
+from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.modeling.protein_prep import LigandTransferProteinPrepper
+from drugforge.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
+from drugforge.workflows.docking_workflows.workflows import (
     DockingWorkflowInputsBase,
 )
 from pydantic.v1 import Field, PositiveInt, root_validator
@@ -340,8 +340,8 @@ def ligand_transfer_docking_workflow(inputs: LigandTransferDockingWorkflowInputs
     if inputs.ml_score:
         # TODO: We should probably have this in a different function/callable
         logger.warning("Using ML scorer is still experimental. Fails are expected.")
-        from asapdiscovery.docking.ml_scorer import MLModelScorer  # Lazy import
-        from asapdiscovery.ml.models import ASAPMLModelRegistry
+        from drugforge.docking.ml_scorer import MLModelScorer  # Lazy import
+        from drugforge.ml.models import ASAPMLModelRegistry
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         ml_scorers = MLModelScorer.load_model_specs(models=models)

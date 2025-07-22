@@ -2,9 +2,9 @@ import os
 import traceback
 
 import pytest
-from asapdiscovery.data.metadata.resources import master_structures
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.workflows.prep_workflows.cli import protein_prep as cli
+from drugforge.data.metadata.resources import master_structures
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.workflows.prep_workflows.cli import protein_prep as cli
 from click.testing import CliRunner
 
 

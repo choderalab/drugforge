@@ -6,24 +6,24 @@ Removes all the additional layers in the other workflows and adds some features 
 from pathlib import Path
 from shutil import rmtree
 
-from asapdiscovery.docking.selectors.selector_list import StructureSelector
-from asapdiscovery.data.readers.meta_structure_factory import MetaStructureFactory
-from asapdiscovery.data.readers.molfile import MolFileFactory
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.docking.selectors.selector_list import StructureSelector
+from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
+from drugforge.data.readers.molfile import MolFileFactory
+from drugforge.data.services.postera.manifold_data_validation import (
     rename_output_columns_for_manifold,
 )
-from asapdiscovery.data.util.dask_utils import BackendType, make_dask_client_meta
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.docking.docking import (
+from drugforge.data.util.dask_utils import BackendType, make_dask_client_meta
+from drugforge.data.util.logging import FileLogger
+from drugforge.docking.docking import (
     DockingInputMultiStructure,
     write_results_to_multi_sdf,
 )
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
-from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
-from asapdiscovery.docking.scorer import ChemGauss4Scorer
-from asapdiscovery.docking.meta_scorer import MetaScorer
-from asapdiscovery.modeling.protein_prep import ProteinPrepper
-from asapdiscovery.workflows.docking_workflows.workflows import (
+from drugforge.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
+from drugforge.docking.scorer import ChemGauss4Scorer
+from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.modeling.protein_prep import ProteinPrepper
+from drugforge.workflows.docking_workflows.workflows import (
     DockingWorkflowInputsBase,
 )
 from pydantic.v1 import Field, PositiveInt

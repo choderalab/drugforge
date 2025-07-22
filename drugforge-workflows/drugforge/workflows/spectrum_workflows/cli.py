@@ -3,19 +3,19 @@ from typing import Optional
 
 import click
 import pandas as pd
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.simulation.simulate import OpenMMPlatform
-from asapdiscovery.spectrum.align_seq_match import (
+from drugforge.data.util.logging import FileLogger
+from drugforge.simulation.simulate import OpenMMPlatform
+from drugforge.spectrum.align_seq_match import (
     fasta_alignment,
     pairwise_alignment,
     save_pymol_seq_align,
 )
-from asapdiscovery.spectrum.blast import PDBEntry, get_blast_seqs
-from asapdiscovery.spectrum.calculate_rmsd import (
+from drugforge.spectrum.blast import PDBEntry, get_blast_seqs
+from drugforge.spectrum.calculate_rmsd import (
     save_alignment_pymol,
     select_best_colabfold,
 )
-from asapdiscovery.cli.cli_args import (
+from drugforge.cli.cli_args import (
     output_dir, 
     pdb_file, 
     target, 
@@ -31,9 +31,9 @@ from asapdiscovery.cli.cli_args import (
     seq_type,
     loglevel,
 )
-from asapdiscovery.spectrum.seq_alignment import Alignment, do_MSA
+from drugforge.spectrum.seq_alignment import Alignment, do_MSA
 
-from asapdiscovery.workflows.spectrum_workflows.score_complex import ScoreInputs, score_complex_workflow
+from drugforge.workflows.spectrum_workflows.score_complex import ScoreInputs, score_complex_workflow
 
 import logging
 

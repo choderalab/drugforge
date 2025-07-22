@@ -1,44 +1,44 @@
 from pathlib import Path
 from shutil import rmtree
 
-from asapdiscovery.data.metadata.resources import master_structures
-from asapdiscovery.data.operators.deduplicator import LigandDeDuplicator
-from asapdiscovery.docking.selectors.mcs_selector import RascalMCESSelector
-from asapdiscovery.data.readers.meta_ligand_factory import MetaLigandFactory
-from asapdiscovery.data.readers.meta_structure_factory import MetaStructureFactory
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.services.aws.cloudfront import CloudFront
-from asapdiscovery.data.services.aws.s3 import S3
-from asapdiscovery.workflows.postera.manifold_artifacts import (
+from drugforge.data.metadata.resources import master_structures
+from drugforge.data.operators.deduplicator import LigandDeDuplicator
+from drugforge.docking.selectors.mcs_selector import RascalMCESSelector
+from drugforge.data.readers.meta_ligand_factory import MetaLigandFactory
+from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
+from drugforge.data.schema.complex import Complex
+from drugforge.data.services.aws.cloudfront import CloudFront
+from drugforge.data.services.aws.s3 import S3
+from drugforge.workflows.postera.manifold_artifacts import (
     ArtifactType,
     ManifoldArtifactUploader,
 )
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.data.services.postera.manifold_data_validation import (
     map_output_col_to_manifold_tag,
     rename_output_columns_for_manifold,
 )
-from asapdiscovery.data.services.postera.molecule_set import MoleculeSetAPI
-from asapdiscovery.workflows.postera.postera_uploader import PosteraUploader
-from asapdiscovery.data.services.services_config import (
+from drugforge.data.services.postera.molecule_set import MoleculeSetAPI
+from drugforge.workflows.postera.postera_uploader import PosteraUploader
+from drugforge.data.services.services_config import (
     CloudfrontSettings,
     PosteraSettings,
     S3Settings,
 )
-from asapdiscovery.data.util.dask_utils import BackendType, make_dask_client_meta
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.data.util.utils import check_empty_dataframe
-from asapdiscovery.dataviz.html_viz import ColorMethod, HTMLVisualizer
-from asapdiscovery.docking.docking import write_results_to_multi_sdf
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
-from asapdiscovery.docking.openeye import POSITDocker
-from asapdiscovery.docking.scorer import (
+from drugforge.data.util.dask_utils import BackendType, make_dask_client_meta
+from drugforge.data.util.logging import FileLogger
+from drugforge.data.util.utils import check_empty_dataframe
+from drugforge.dataviz.html_viz import ColorMethod, HTMLVisualizer
+from drugforge.docking.docking import write_results_to_multi_sdf
+from drugforge.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.openeye import POSITDocker
+from drugforge.docking.scorer import (
     ChemGauss4Scorer,
 )
-from asapdiscovery.docking.fint_scorer import FINTScorer
-from asapdiscovery.docking.meta_scorer import MetaScorer
-from asapdiscovery.modeling.protein_prep import ProteinPrepper
-from asapdiscovery.spectrum.fitness import target_has_fitness_data
-from asapdiscovery.workflows.docking_workflows.workflows import (
+from drugforge.docking.fint_scorer import FINTScorer
+from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.modeling.protein_prep import ProteinPrepper
+from drugforge.spectrum.fitness import target_has_fitness_data
+from drugforge.workflows.docking_workflows.workflows import (
     PosteraDockingWorkflowInputs,
 )
 from pydantic.v1 import Field, PositiveInt
@@ -290,8 +290,8 @@ def large_scale_docking_workflow(inputs: LargeScaleDockingInputs):
     if inputs.ml_score:
         # TODO: We probably should have this in a separate function/callable
         logger.warning("Using ML scorer is still experimental. Fails are expected.")
-        from asapdiscovery.docking.ml_scorer import MLModelScorer  # Lazy import
-        from asapdiscovery.ml.models import ASAPMLModelRegistry
+        from drugforge.docking.ml_scorer import MLModelScorer  # Lazy import
+        from drugforge.ml.models import ASAPMLModelRegistry
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         for model in models:

@@ -2,7 +2,7 @@ import logging
 from typing import Optional, Union
 
 import click
-from asapdiscovery.cli.cli_args import (
+from drugforge.cli.cli_args import (
     active_site_chain,
     cache_dir,
     dask_args,
@@ -22,28 +22,28 @@ from asapdiscovery.cli.cli_args import (
     target,
     use_only_cache,
 )
-from asapdiscovery.docking.selectors.selector_list import StructureSelector
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.util.dask_utils import DaskType, FailureMode
-from asapdiscovery.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE
-from asapdiscovery.simulation.simulate import OpenMMPlatform
-from asapdiscovery.workflows.docking_workflows.cross_docking import (
+from drugforge.docking.selectors.selector_list import StructureSelector
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.util.dask_utils import DaskType, FailureMode
+from drugforge.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE
+from drugforge.simulation.simulate import OpenMMPlatform
+from drugforge.workflows.docking_workflows.cross_docking import (
     CrossDockingWorkflowInputs,
     cross_docking_workflow,
 )
-from asapdiscovery.workflows.docking_workflows.large_scale_docking import (
+from drugforge.workflows.docking_workflows.large_scale_docking import (
     LargeScaleDockingInputs,
     large_scale_docking_workflow,
 )
-from asapdiscovery.workflows.docking_workflows.ligand_transfer_docking import (
+from drugforge.workflows.docking_workflows.ligand_transfer_docking import (
     LigandTransferDockingWorkflowInputs,
     ligand_transfer_docking_workflow,
 )
-from asapdiscovery.workflows.docking_workflows.small_scale_docking import (
+from drugforge.workflows.docking_workflows.small_scale_docking import (
     SmallScaleDockingInputs,
     small_scale_docking_workflow,
 )
-from asapdiscovery.workflows.docking_workflows.symexp_crystal_packing import (
+from drugforge.workflows.docking_workflows.symexp_crystal_packing import (
     SymExpCrystalPackingInputs,
     symexp_crystal_packing_workflow,
 )

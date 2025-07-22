@@ -1,10 +1,10 @@
 import pytest
-from asapdiscovery.data.backend.openeye import oechem
-from asapdiscovery.modeling.schema import PreppedComplex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.docking.docking import DockingInputMultiStructure, DockingInputPair
-from asapdiscovery.docking.openeye import POSITDockingResults
+from drugforge.data.backend.openeye import oechem
+from drugforge.modeling.schema import PreppedComplex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.docking.docking import DockingInputMultiStructure, DockingInputPair
+from drugforge.docking.openeye import POSITDockingResults
 
 
 @pytest.fixture()

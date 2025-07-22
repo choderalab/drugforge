@@ -2,14 +2,14 @@ import logging
 from pathlib import Path
 from typing import Optional, Union
 
-from asapdiscovery.data.metadata.resources import master_structures
-from asapdiscovery.data.readers.structure_dir import StructureDirFactory
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.services.fragalysis.fragalysis_reader import FragalysisFactory
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.util.dask_utils import DaskType, make_dask_client_meta
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.modeling.protein_prep import ProteinPrepper
+from drugforge.data.metadata.resources import master_structures
+from drugforge.data.readers.structure_dir import StructureDirFactory
+from drugforge.data.schema.complex import Complex
+from drugforge.data.services.fragalysis.fragalysis_reader import FragalysisFactory
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.util.dask_utils import DaskType, make_dask_client_meta
+from drugforge.data.util.logging import FileLogger
+from drugforge.modeling.protein_prep import ProteinPrepper
 from pydantic.v1 import BaseModel, Field, PositiveInt, root_validator
 
 

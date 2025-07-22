@@ -3,9 +3,9 @@ import traceback
 from unittest import mock
 
 import pytest
-from asapdiscovery.docking.docking import DockingResult
-from asapdiscovery.simulation.simulate import SimulationResult, VanillaMDSimulator
-from asapdiscovery.workflows.docking_workflows.cli import docking as cli
+from drugforge.docking.docking import DockingResult
+from drugforge.simulation.simulate import SimulationResult, VanillaMDSimulator
+from drugforge.workflows.docking_workflows.cli import docking as cli
 from click.testing import CliRunner
 
 

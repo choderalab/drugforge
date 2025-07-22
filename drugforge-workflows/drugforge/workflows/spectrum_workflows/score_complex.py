@@ -1,8 +1,8 @@
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.simulation.simulate import OpenMMPlatform
-from asapdiscovery.docking.scorer import ChemGauss4Scorer
-from asapdiscovery.spectrum.score import (
+from drugforge.data.schema.complex import Complex
+from drugforge.data.util.logging import FileLogger
+from drugforge.simulation.simulate import OpenMMPlatform
+from drugforge.docking.scorer import ChemGauss4Scorer
+from drugforge.spectrum.score import (
     ScoreSpectrumInputsBase,
     dock_and_score,
     get_ligand_rmsd,
@@ -10,7 +10,7 @@ from asapdiscovery.spectrum.score import (
     minimize_structure,
     score_gnina,
 )
-from asapdiscovery.spectrum.calculate_rmsd import get_binding_site_rmsd
+from drugforge.spectrum.calculate_rmsd import get_binding_site_rmsd
 
 import pandas as pd
 from pathlib import Path
@@ -275,8 +275,8 @@ def score_complex_workflow(inputs: ScoreInputs):
         scorers = [ChemGauss4Scorer()]
         # load addtional ml scorers
         if inputs.ml_score:
-            from asapdiscovery.ml.models import ASAPMLModelRegistry
-            from asapdiscovery.docking.scorer import MLModelScorer
+            from drugforge.ml.models import ASAPMLModelRegistry
+            from drugforge.docking.scorer import MLModelScorer
             logger.info("Loading additional ML scorers")
             # check which endpoints are availabe for the target
             models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
@@ -298,7 +298,7 @@ def score_complex_workflow(inputs: ScoreInputs):
             align_chain_ref=inputs.ref_chain,
         )
         logger.debug(
-            "Columns of scoring dataset from asapdiscovery: %s", scores_df.columns
+            "Columns of scoring dataset from drugforge: %s", scores_df.columns
         )
         scores_df["premin-score-POSIT"] = pre_min_score
         df_save = scores_df[["premin-score-POSIT", "docking-score-POSIT"]]
