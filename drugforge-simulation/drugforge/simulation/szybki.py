@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from asapdiscovery.data.backend.openeye import oechem, oeszybki
-from asapdiscovery.data.util.logging import FileLogger
+from drugforge.data.backend.openeye import oechem, oeszybki
+from drugforge.data.util.logging import FileLogger
 from openmm import unit
 from pydantic.v1 import BaseModel
 

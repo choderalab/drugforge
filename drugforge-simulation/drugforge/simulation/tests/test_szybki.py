@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest import mock
 
-from asapdiscovery.simulation.szybki import (
+from drugforge.simulation.szybki import (
     SzybkiFreeformConformerAnalyzer,
     SzybkiFreeformResult,
 )

@@ -8,15 +8,15 @@ from typing import Any, ClassVar, Optional, Union  # noqa: F401
 import mdtraj
 import openmm
 import pandas as pd
-from asapdiscovery.data.backend.openeye import save_openeye_pdb
-from asapdiscovery.data.util.dask_utils import (
+from drugforge.data.backend.openeye import save_openeye_pdb
+from drugforge.data.util.dask_utils import (
     BackendType,
     FailureMode,
     backend_wrapper,
     dask_vmap,
 )
-from asapdiscovery.data.util.stringenum import StringEnum
-from asapdiscovery.docking.docking import DockingResult
+from drugforge.data.util.stringenum import StringEnum
+from drugforge.docking.docking import DockingResult
 from mdtraj.core.residue_names import _SOLVENT_TYPES
 from mdtraj.reporters import XTCReporter
 from multimethod import multimethod

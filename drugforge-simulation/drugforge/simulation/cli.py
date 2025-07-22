@@ -5,7 +5,7 @@ from shutil import rmtree
 from typing import Optional, Union
 
 import click
-from asapdiscovery.cli.cli_args import (
+from drugforge.cli.cli_args import (
     ligands,
     loglevel,
     md_openmm_platform,
@@ -14,11 +14,11 @@ from asapdiscovery.cli.cli_args import (
     pdb_file,
     use_dask,
 )
-from asapdiscovery.data.readers.molfile import MolFileFactory
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.util.dask_utils import DaskType, make_dask_client_meta
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
+from drugforge.data.readers.molfile import MolFileFactory
+from drugforge.data.schema.complex import Complex
+from drugforge.data.util.dask_utils import DaskType, make_dask_client_meta
+from drugforge.data.util.logging import FileLogger
+from drugforge.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
 from openmm import unit
 
 
