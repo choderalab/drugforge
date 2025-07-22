@@ -9,18 +9,18 @@ from typing import Any, ClassVar, Optional, Union
 import MDAnalysis as mda
 import numpy as np
 import pandas as pd
-from asapdiscovery.data.backend.openeye import oedocking, oemol_to_pdb_string
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.ligand import Ligand, LigandIdentifiers
-from asapdiscovery.data.schema.target import TargetIdentifiers
-from asapdiscovery.data.util.dask_utils import (
+from drugforge.data.backend.openeye import oedocking, oemol_to_pdb_string
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand, LigandIdentifiers
+from drugforge.data.schema.target import TargetIdentifiers
+from drugforge.data.util.dask_utils import (
     BackendType,
     FailureMode,
     backend_wrapper,
     dask_vmap,
 )
-from asapdiscovery.docking.docking import DockingResult
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.docking import DockingResult
+from drugforge.docking.docking_data_validation import DockingResultCols
 from multimethod import multimethod
 from pydantic.v1 import BaseModel, Field
 

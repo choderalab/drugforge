@@ -7,11 +7,11 @@ import multiprocessing as mp
 from functools import partial
 from pathlib import Path
 
-from asapdiscovery.data.backend.openeye import load_openeye_sdfs
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.schema.target import Target
-from asapdiscovery.data.util.utils import (
+from drugforge.data.backend.openeye import load_openeye_sdfs
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.schema.target import Target
+from drugforge.data.util.utils import (
     MOONSHOT_CDD_ID_REGEX,
     MPRO_ID_REGEX,
     construct_regex_function,

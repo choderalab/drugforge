@@ -9,19 +9,19 @@ from pathlib import Path
 from typing import Any, Literal, Optional, Union
 
 import numpy as np
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     combine_protein_ligand,
     oechem,
     save_openeye_pdb,
     split_openeye_design_unit
 )
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.modeling.schema import PreppedComplex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.schema.pairs import CompoundStructurePair
-from asapdiscovery.data.schema.sets import MultiStructureBase
-from asapdiscovery.data.schema.target import Target
-from asapdiscovery.data.util.dask_utils import BackendType, FailureMode
+from drugforge.data.schema.complex import Complex
+from drugforge.modeling.schema import PreppedComplex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.schema.pairs import CompoundStructurePair
+from drugforge.data.schema.sets import MultiStructureBase
+from drugforge.data.schema.target import Target
+from drugforge.data.util.dask_utils import BackendType, FailureMode
 from pydantic.v1 import BaseModel, Field, PositiveFloat
 
 logger = logging.getLogger(__name__)

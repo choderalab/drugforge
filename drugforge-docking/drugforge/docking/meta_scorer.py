@@ -1,9 +1,9 @@
 import numpy as np
 from pydantic.v1 import BaseModel, Field
 
-from asapdiscovery.docking.docking import DockingResult
-from asapdiscovery.docking.scorer import ScorerBase, Score
-from asapdiscovery.data.util.dask_utils import FailureMode, BackendType
+from drugforge.docking.docking import DockingResult
+from drugforge.docking.scorer import ScorerBase, Score
+from drugforge.data.util.dask_utils import FailureMode, BackendType
 
 
 class MetaScorer(BaseModel):

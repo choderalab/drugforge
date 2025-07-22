@@ -2,4 +2,4 @@
 
 from importlib.metadata import version
 
-__version__ = version("asapdiscovery-docking")
+__version__ = version("drugforge-docking")

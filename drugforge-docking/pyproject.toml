@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "versioningit"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "asapdiscovery-docking"
+name = "drugforge-docking"
 #version = "0.0.1"
 dynamic = ["version"]
 authors = [
@@ -21,11 +21,11 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-"Homepage" = "https://github.com/choderalab/asapdiscovery"
-"Bug Tracker" = "https://github.com/choderalab/asapdiscovery/issues"
+"Homepage" = "https://github.com/choderalab/drugforge"
+"Bug Tracker" = "https://github.com/choderalab/drugforge/issues"
 
 [project.scripts]
-make-docked-complexes = "asapdiscovery.docking.scripts.make_docked_complexes_schema_v2:main"
+make-docked-complexes = "drugforge.docking.scripts.make_docked_complexes_schema_v2:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

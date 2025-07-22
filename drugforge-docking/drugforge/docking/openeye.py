@@ -7,18 +7,18 @@ from pathlib import Path
 from typing import ClassVar, Literal, Optional, Union
 
 import pandas as pd
-from asapdiscovery.data.backend.openeye import oechem, oedocking, oeomega
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.util.dask_utils import dask_vmap
-from asapdiscovery.data.util.intenum import IntEnum
-from asapdiscovery.docking.docking import (
+from drugforge.data.backend.openeye import oechem, oedocking, oeomega
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.util.dask_utils import dask_vmap
+from drugforge.data.util.intenum import IntEnum
+from drugforge.docking.docking import (
     DockingBase,
     DockingInputBase,
     DockingInputMultiStructure,
     DockingInputPair,
     DockingResult,
 )
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.docking_data_validation import DockingResultCols
 from pydantic.v1 import Field, PositiveInt, root_validator
 
 logger = logging.getLogger(__name__)

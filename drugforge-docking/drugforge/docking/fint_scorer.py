@@ -4,19 +4,19 @@ from typing import ClassVar, Union
 from multimethod import multimethod
 from pydantic.v1 import Field, validator
 
-from asapdiscovery.dataviz.plip import compute_fint_score
-from asapdiscovery.docking.docking import DockingResult
-from asapdiscovery.docking.scorer import (
+from drugforge.dataviz.plip import compute_fint_score
+from drugforge.docking.docking import DockingResult
+from drugforge.docking.scorer import (
     ScorerBase,
     ScoreType,
     ScoreUnits,
     Score,
     _get_disk_path_from_docking_result,
 )
-from asapdiscovery.spectrum.fitness import target_has_fitness_data
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.util.dask_utils import dask_vmap, backend_wrapper
+from drugforge.spectrum.fitness import target_has_fitness_data
+from drugforge.data.schema.complex import Complex
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.util.dask_utils import dask_vmap, backend_wrapper
 
 
 class FINTScorer(ScorerBase):

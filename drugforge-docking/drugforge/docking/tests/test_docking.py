@@ -2,15 +2,15 @@ import os
 from pathlib import Path
 
 import pytest
-from asapdiscovery.docking.docking_data_validation import DockingResultCols
-from asapdiscovery.docking.openeye import POSIT_METHOD, POSITDocker
+from drugforge.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.openeye import POSIT_METHOD, POSITDocker
 
 
 @pytest.mark.parametrize("posit_method", ["ALL", "HYBRID", "FRED", "SHAPEFIT"])
 def test_posit_methods(posit_method):
     assert posit_method in POSIT_METHOD.get_names()
     myvalue = POSIT_METHOD[posit_method]
-    from asapdiscovery.docking.openeye import oedocking
+    from drugforge.docking.openeye import oedocking
 
     opts = oedocking.OEPositOptions()
     assert opts.SetPositMethods(myvalue.value)

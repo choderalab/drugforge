@@ -3,7 +3,7 @@ import warnings
 from enum import Enum
 from typing import Any, Literal, Optional
 
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     get_SD_data,
     oechem,
     oedocking,
@@ -12,8 +12,8 @@ from asapdiscovery.data.backend.openeye import (
     set_SD_data,
     smiles_to_oemol,
 )
-from asapdiscovery.modeling.schema import PreppedComplex
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.modeling.schema import PreppedComplex
+from drugforge.data.schema.ligand import Ligand
 from pydantic.v1 import BaseModel, Field, PositiveFloat, PositiveInt
 from rdkit import Chem, RDLogger
 
@@ -375,7 +375,7 @@ class OpenEyeConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
         Returns:
             The openeye molecule containing the posed conformers.
         """
-        from asapdiscovery.data.backend.openeye import get_SD_data, set_SD_data
+        from drugforge.data.backend.openeye import get_SD_data, set_SD_data
 
         if core_smarts is not None:
             core_fragment = self._generate_core_fragment(

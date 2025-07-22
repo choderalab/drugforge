@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
-from asapdiscovery.data.backend.openeye import load_openeye_sdf
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.docking.analysis import (
+from drugforge.data.backend.openeye import load_openeye_sdf
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.docking.analysis import (
     TanimotoType,
     calculate_rmsd_openeye,
     calculate_tanimoto_oe,
@@ -41,7 +41,7 @@ def test_rmsd_calculation(ref_mol, query_mol):
 
     The first test checks whether the RMSD between a reference molecule and itself is zero.
     It does this by loading the reference molecule from an SDF file using the load_openeye_sdf function from the
-    asapdiscovery.data.openeye module and passing it twice to the calculate_rmsd_openeye function.
+    drugforge.data.openeye module and passing it twice to the calculate_rmsd_openeye function.
     It then uses the assert statement to check that the calculated RMSD is equal to zero.
 
     The second test checks whether the RMSD between a reference molecule and a query molecule is correct.
@@ -61,8 +61,8 @@ def test_writing_rmsd_calculation(tmp_path, ref_mol, query_mol):
     """
     This function tests the ability to write all RMSD values between a reference molecule and a list of query molecules
     to a NumPy array file. It first loads a reference molecule and a query molecule from SDF files using the
-    load_openeye_sdf function from the asapdiscovery.data.openeye module. It then calls the write_all_rmsds_to_reference
-    function from the asapdiscovery.docking.analysis module to calculate and write RMSD values to a NumPy array file.
+    load_openeye_sdf function from the drugforge.data.openeye module. It then calls the write_all_rmsds_to_reference
+    function from the drugforge.docking.analysis module to calculate and write RMSD values to a NumPy array file.
     The function finally loads the NumPy array file and compares to the pre-calculated reference for verification.
     """
 

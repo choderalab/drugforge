@@ -4,7 +4,7 @@ This collects the docking methods together in a single enum
 
 from enum import Enum
 
-from asapdiscovery.docking.openeye import POSITDocker
+from drugforge.docking.openeye import POSITDocker
 
 _ALL_DOCKING_METHODS = {POSITDocker.type: POSITDocker}
 

@@ -5,8 +5,8 @@ from mtenn.config import ModelType
 from multimethod import multimethod
 from pydantic.v1 import Field
 
-from asapdiscovery.docking.docking import DockingResult
-from asapdiscovery.docking.scorer import (
+from drugforge.docking.docking import DockingResult
+from drugforge.docking.scorer import (
     ScoreType,
     ScorerBase,
     ScoreUnits,
@@ -14,12 +14,12 @@ from asapdiscovery.docking.scorer import (
     Score,
     _get_disk_path_from_docking_result,
 )
-from asapdiscovery.ml.inference import InferenceBase, get_inference_cls_from_model_type
-from asapdiscovery.ml.models import MLModelSpecBase
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.util.dask_utils import dask_vmap, backend_wrapper
+from drugforge.ml.inference import InferenceBase, get_inference_cls_from_model_type
+from drugforge.ml.models import MLModelSpecBase
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.util.dask_utils import dask_vmap, backend_wrapper
 
 
 def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> ScoreType:

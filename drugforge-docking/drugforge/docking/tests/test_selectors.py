@@ -1,22 +1,22 @@
 import pytest
-from asapdiscovery.docking.selectors.mcs_selector import (
+from drugforge.docking.selectors.mcs_selector import (
     MCSSelector,
     RascalMCESSelector,
 )
-from asapdiscovery.docking.selectors.pairwise_selector import (
+from drugforge.docking.selectors.pairwise_selector import (
     LeaveOneOutSelector,
     LeaveSimilarOutSelector,
     PairwiseSelector,
     SelfDockingSelector,
 )
-from asapdiscovery.data.schema.pairs import CompoundStructurePair
-from asapdiscovery.docking.docking import DockingInputPair  # TODO: move to data
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.services.cdd.cdd_api import CDDAPI
-from asapdiscovery.data.services.services_config import CDDSettings
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.modeling.schema import PreppedComplex
+from drugforge.data.schema.pairs import CompoundStructurePair
+from drugforge.docking.docking import DockingInputPair  # TODO: move to data
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.services.cdd.cdd_api import CDDAPI
+from drugforge.data.services.services_config import CDDSettings
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.modeling.schema import PreppedComplex
 
 @pytest.fixture(scope="session")
 def all_mpro_fns():

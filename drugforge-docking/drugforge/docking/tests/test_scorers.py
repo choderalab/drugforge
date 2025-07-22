@@ -1,12 +1,12 @@
 import pytest
-from asapdiscovery.docking.scorer import (
+from drugforge.docking.scorer import (
     ChemGauss4Scorer,
 )
-from asapdiscovery.docking.fint_scorer import FINTScorer
+from drugforge.docking.fint_scorer import FINTScorer
 
 # TODO: undo this comment when xfail is removed
-# from asapdiscovery.docking.ml_scorer import GATScorer, SchnetScorer, E3NNScorer
-from asapdiscovery.docking.meta_scorer import MetaScorer
+# from drugforge.docking.ml_scorer import GATScorer, SchnetScorer, E3NNScorer
+from drugforge.docking.meta_scorer import MetaScorer
 
 
 # parametrize over fixtures
