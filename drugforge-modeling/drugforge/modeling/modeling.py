@@ -1,14 +1,14 @@
 import warnings
 from pathlib import Path
 
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     oechem,
     oedocking,
     oegrid,
     oespruce,
     openeye_perceive_residues,
 )
-from asapdiscovery.data.schema.schema_base import MoleculeComponent
+from drugforge.data.schema.schema_base import MoleculeComponent
 
 
 def add_seqres_to_openeye_protein(

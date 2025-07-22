@@ -6,17 +6,17 @@ from typing import Optional, Any, Union
 from openeye import oechem
 from pydantic.v1 import Field, root_validator
 
-from asapdiscovery.data.schema.complex import ComplexBase, Complex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.backend.openeye import (oedu_to_bytes64,
+from drugforge.data.schema.complex import ComplexBase, Complex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.backend.openeye import (oedu_to_bytes64,
                                                 bytes64_to_oedu,
                                                 load_openeye_design_unit,
                                                 save_openeye_design_unit,
                                                 split_openeye_design_unit,
                                                 openeye_perceive_residues,
                                                 save_openeye_pdb)
-from asapdiscovery.data.schema.identifiers import TargetIdentifiers
-from asapdiscovery.data.schema.schema_base import DataModelAbstractBase, DataStorageType, schema_dict_get_val_overload
+from drugforge.data.schema.identifiers import TargetIdentifiers
+from drugforge.data.schema.schema_base import DataModelAbstractBase, DataStorageType, schema_dict_get_val_overload
 
 
 class PreppedTarget(DataModelAbstractBase):
@@ -94,7 +94,7 @@ class PreppedTarget(DataModelAbstractBase):
         """
         oedu = self.to_oedu()
         _, oe_receptor, _ = split_openeye_design_unit(du=oedu)
-        # As advised by Alex <https://github.com/choderalab/asapdiscovery/pull/608#discussion_r1388067468>
+        # As advised by Alex <https://github.com/choderalab/drugforge/pull/608#discussion_r1388067468>
         openeye_perceive_residues(oe_receptor)
         save_openeye_pdb(oe_receptor, pdb_fn=filename)
 
@@ -156,7 +156,7 @@ class PreppedComplex(ComplexBase):
             PreppedComplex object
         """
         # use local import here to avoid circular imports
-        from asapdiscovery.modeling.protein_prep import ProteinPrepper
+        from drugforge.modeling.protein_prep import ProteinPrepper
 
         # overwrite ligand_chain with ligand_chain from complex if it exists
         prep_kwargs.pop("ligand_chain", None)

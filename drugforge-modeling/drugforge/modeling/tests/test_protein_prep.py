@@ -3,14 +3,14 @@ import os
 import pytest
 from pydantic.v1 import ValidationError
 
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.sequence import seqres_by_target
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.modeling.protein_prep import ProteinPrepper
-from asapdiscovery.modeling.schema import PreppedComplex, PreppedTarget
-from asapdiscovery.data.backend.openeye import load_openeye_design_unit
-from asapdiscovery.data.schema.identifiers import TargetIdentifiers
+from drugforge.data.schema.complex import Complex
+from drugforge.data.sequence import seqres_by_target
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.modeling.protein_prep import ProteinPrepper
+from drugforge.modeling.schema import PreppedComplex, PreppedTarget
+from drugforge.data.backend.openeye import load_openeye_design_unit
+from drugforge.data.schema.identifiers import TargetIdentifiers
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
 import pytest
-from asapdiscovery.modeling.schema import PreppedComplex
+from drugforge.modeling.schema import PreppedComplex
 
 @pytest.fixture(scope="session")
 def prepped_complexes(complexes):

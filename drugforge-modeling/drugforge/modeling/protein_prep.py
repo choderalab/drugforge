@@ -6,23 +6,23 @@ from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import dask
 import yaml
-from asapdiscovery.data.backend.openeye import oechem
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.modeling.schema import PreppedComplex, PreppedTarget
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.util.dask_utils import (
+from drugforge.data.backend.openeye import oechem
+from drugforge.data.schema.complex import Complex
+from drugforge.modeling.schema import PreppedComplex, PreppedTarget
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.util.dask_utils import (
     FailureMode,
     actualise_dask_delayed_iterable,
 )
-from asapdiscovery.data.util.stringenum import StringEnum
-from asapdiscovery.data.util.utils import seqres_to_res_list
-from asapdiscovery.modeling.modeling import (
+from drugforge.data.util.stringenum import StringEnum
+from drugforge.data.util.utils import seqres_to_res_list
+from drugforge.modeling.modeling import (
     make_design_unit,
     mutate_residues,
     spruce_protein,
     superpose_molecule,
 )
-from asapdiscovery.data.backend.openeye import split_openeye_design_unit
+from drugforge.data.backend.openeye import split_openeye_design_unit
 from pydantic.v1 import BaseModel, Field
 
 if TYPE_CHECKING:
@@ -422,7 +422,7 @@ class LigandTransferProteinPrepper(ProteinPrepper):
 
                 ligand = complex_ref.ligand.to_oemol()
 
-                from asapdiscovery.modeling.modeling import make_du_from_new_lig
+                from drugforge.modeling.modeling import make_du_from_new_lig
 
                 success, du = make_du_from_new_lig(
                     aligned,
@@ -434,7 +434,7 @@ class LigandTransferProteinPrepper(ProteinPrepper):
                     )
                     continue
 
-                from asapdiscovery.data.backend.openeye import oedocking
+                from drugforge.data.backend.openeye import oedocking
 
                 success = oedocking.OEMakeReceptor(du)
 
