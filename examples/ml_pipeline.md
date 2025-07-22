@@ -14,7 +14,7 @@ dock when generating our structural inputs.
 ## Download and Parse Data
 First we will download and parse the CDD data. Both of these steps are handled in the
 same script:
-`asapdiscovery-data/asapdiscovery/data/scripts/download_moonshot_data.py`. Running this
+`drugforge-data/drugforge/data/scripts/download_moonshot_data.py`. Running this
 script will require a CDD API token, which can either be stored in the `CDDTOKEN`
 environment variable, or in a file that is then passed to the script. By default, the
 script will download all Moonshot compounds that have fluorescence values for SARS-Cov-2
@@ -40,7 +40,7 @@ not included anywhere else in the download.
 Next we will convert the downloaded CSV file into a JSON file containing
 `ExperimentalCompoundData` objects that will serve as part of the inputs to the ML
 model. The script that handles this is
-`asapdiscovery-data/asapdiscovery/data/scripts/cdd_to_schema.py`. This script doesn't
+`drugforge-data/drugforge/data/scripts/cdd_to_schema.py`. This script doesn't
 have too many options, and for most cases the following simple call will suffice:
 ```bash
 cdd-to-schema \
@@ -169,21 +169,21 @@ I'll try to show how things can be done both with the new CLI and with the API.
 ## Some preliminary API notes
 The API has been updated to follow the Pydantic schema pattern that the rest of the repo
 has adopted. There are now 8 `*Config` classes (5 of which are implemented in
-`asapdiscovery.ml.config` and 3 of which are implemented in `mtenn.config`).
+`drugforge.ml.config` and 3 of which are implemented in `mtenn.config`).
 Each config class is fairly well documented so I'll just give a brief summary here:
-* `asapdiscovery.ml.config.OptimizerConfig`: A Config class describing the
+* `drugforge.ml.config.OptimizerConfig`: A Config class describing the
 optimizer to be used in training.
-* `asapdiscovery.ml.config.EarlyStoppingConfig`: A Config class describing the
+* `drugforge.ml.config.EarlyStoppingConfig`: A Config class describing the
 early stopping method to be used in training.
-* `asapdiscovery.ml.config.DatasetConfig`: A Config class describing a Dataset
+* `drugforge.ml.config.DatasetConfig`: A Config class describing a Dataset
 (either graph-based or structural). This Config has two convenient constructor
 methods, one for constructing a graph-based Config from an experimental data file
 (`DatasetConfig.from_exp_file`) and one for constructing a structural Config from
 PDB file(s) and an optional experimental data file (`DatasetConfig.from_str_files`).
-* `asapdiscovery.ml.config.DatasetSplitterConfig`: A Config class describing how
+* `drugforge.ml.config.DatasetSplitterConfig`: A Config class describing how
 to split a Dataset. This Config differs from the others in that it does not build a
 secondary object, but can instead be used directly.
-* `asapdiscovery.ml.config.LossFunctionConfig`: A Config class describing a loss
+* `drugforge.ml.config.LossFunctionConfig`: A Config class describing a loss
 function to be used in training.
 * `mtenn.config.[GAT/SchNet/E3NN]ModelConfig`: Config classes describing an `mtenn`
 GAT/SchNet/E3NN model. Each of these Configs also contains the parameters in the
@@ -214,8 +214,8 @@ The equivalent Python code would be:
 ```python
 from pathlib import Path
 
-from asapdiscovery.data.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
-from asapdiscovery.ml.config import DatasetConfig
+from drugforge.data.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
+from drugforge.ml.config import DatasetConfig
 
 ds_config = DatasetConfig.from_str_files(
     structures="./docking_results/*/*_bound.pdb",
@@ -282,8 +282,8 @@ This can also be accomplished directly in Python, with:
 import json
 from pathlib import Path
 
-from asapdiscovery.ml.config import DatasetConfig
-from asapdiscovery.ml.trainer import Trainer
+from drugforge.ml.config import DatasetConfig
+from drugforge.ml.trainer import Trainer
 from mtenn.config import SchNetModelConfig
 
 # Dicts for individual Configs. A lot of them can be mostly empty, as we're just using
