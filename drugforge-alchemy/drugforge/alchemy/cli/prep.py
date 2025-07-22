@@ -3,7 +3,7 @@ from typing import Optional
 from warnings import warn
 
 import click
-from asapdiscovery.alchemy.cli.utils import SpecialHelpOrder
+from drugforge.alchemy.cli.utils import SpecialHelpOrder
 
 
 @click.group(
@@ -36,8 +36,8 @@ def create(filename: str, core_smarts: str):
     Create a new AlchemyPrepWorkflow with default settings and save it to JSON file.
     """
     import rich
-    from asapdiscovery.alchemy.cli.utils import print_header
-    from asapdiscovery.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
+    from drugforge.alchemy.cli.utils import print_header
+    from drugforge.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
     from rich import pretty
     from rich.padding import Padding
 
@@ -131,17 +131,17 @@ def alchemize(
     from multiprocessing import cpu_count
 
     import rich
-    from asapdiscovery.alchemy.alchemize import (
+    from drugforge.alchemy.alchemize import (
         compute_clusters,
         rescue_outsiders,
         write_clusters,
     )
-    from asapdiscovery.alchemy.cli.utils import (
+    from drugforge.alchemy.cli.utils import (
         print_header,
         pull_from_postera,
         report_alchemize_clusters,
     )
-    from asapdiscovery.data.readers.molfile import MolFileFactory
+    from drugforge.data.readers.molfile import MolFileFactory
     from rich import pretty
     from rich.padding import Padding
 
@@ -301,14 +301,14 @@ def run(
 
     import pandas
     import rich
-    from asapdiscovery.alchemy.cli.utils import (
+    from drugforge.alchemy.cli.utils import (
         get_cpus,
         print_header,
         pull_from_postera,
     )
-    from asapdiscovery.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
-    from asapdiscovery.data.readers.molfile import MolFileFactory
-    from asapdiscovery.modeling.schema import PreppedComplex
+    from drugforge.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
+    from drugforge.data.readers.molfile import MolFileFactory
+    from drugforge.modeling.schema import PreppedComplex
     from rich import pretty
     from rich.padding import Padding
 
@@ -349,11 +349,11 @@ def run(
         )
         ref_select_status.start()
 
-        from asapdiscovery.alchemy.utils import (
+        from drugforge.alchemy.utils import (
             get_similarity,
             select_reference_for_compounds,
         )
-        from asapdiscovery.modeling.protein_prep import ProteinPrepperBase
+        from drugforge.modeling.protein_prep import ProteinPrepperBase
 
         reference_complex = ProteinPrepperBase.load_cache(cache_dir=structure_dir)
         ref_complex, largest_ligand = select_reference_for_compounds(
@@ -384,7 +384,7 @@ def run(
 
     # check if we need to add experimental ligands
     if experimental_protocol is not None and factory.n_references > 0:
-        from asapdiscovery.alchemy.cli.utils import get_cdd_molecules
+        from drugforge.alchemy.cli.utils import get_cdd_molecules
 
         message = Padding(
             f"Requested injection of {factory.n_references} experimental references into the network",

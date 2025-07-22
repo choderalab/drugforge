@@ -2,19 +2,19 @@ import copy
 from typing import Any, Literal, Optional, Union
 
 import rich
-from asapdiscovery.alchemy.schema.base import _SchemaBase
-from asapdiscovery.alchemy.schema.charge import OpenFFCharges
-from asapdiscovery.data.operators.state_expanders.protomer_expander import (
+from drugforge.alchemy.schema.base import _SchemaBase
+from drugforge.alchemy.schema.charge import OpenFFCharges
+from drugforge.data.operators.state_expanders.protomer_expander import (
     EpikExpander,
     ProtomerExpander,
 )
-from asapdiscovery.data.operators.state_expanders.stereo_expander import StereoExpander
-from asapdiscovery.data.operators.state_expanders.tautomer_expander import (
+from drugforge.data.operators.state_expanders.stereo_expander import StereoExpander
+from drugforge.data.operators.state_expanders.tautomer_expander import (
     TautomerExpander,
 )
-from asapdiscovery.modeling.schema import PreppedComplex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.docking.schema.pose_generation import (
+from drugforge.modeling.schema import PreppedComplex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.docking.schema.pose_generation import (
     OpenEyeConstrainedPoseGenerator,
     RDKitConstrainedPoseGenerator,
 )
@@ -104,7 +104,7 @@ class AlchemyDataSet(_AlchemyPrepBase):
         ----------
         filename: The name of the SDF the ligands should be saved to.
         """
-        from asapdiscovery.data.backend.openeye import save_openeye_sdfs
+        from drugforge.data.backend.openeye import save_openeye_sdfs
 
         oemols = [ligand.to_oemol() for ligand in self.posed_ligands]
         save_openeye_sdfs(oemols, filename)
@@ -146,7 +146,7 @@ class AlchemyPrepWorkflow(_AlchemyPrepBase):
             The experimental_ligands in order of MCS overlap with the reference ligand
         """
         import numpy as np
-        from asapdiscovery.docking.selectors.mcs_selector import sort_by_mcs
+        from drugforge.docking.selectors.mcs_selector import sort_by_mcs
 
         # use the mcs code to get the ordered indices of the matches
         sort_idx = sort_by_mcs(

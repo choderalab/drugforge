@@ -6,7 +6,7 @@ You will need local copies of tyk2_small_network.json and tyk2_result_network.js
 
 import json
 
-from asapdiscovery.alchemy.schema.fec import (
+from drugforge.alchemy.schema.fec import (
     AlchemiscaleResults,
     FreeEnergyCalculationNetwork,
     TransformationResult,

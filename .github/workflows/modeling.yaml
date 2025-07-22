@@ -68,8 +68,8 @@ jobs:
     - name: Install packages
       run: |
         micromamba install -n modeling --file devtools/conda-envs/${{ matrix.os }}/data.yaml
-        python -m pip install -e ./asapdiscovery-data --no-deps
-        python -m pip install -e ./asapdiscovery-modeling --no-deps
+        python -m pip install -e ./drugforge-data --no-deps
+        python -m pip install -e ./drugforge-modeling --no-deps
         micromamba list
 
     - name: Test OE License & Write License to File
@@ -88,13 +88,13 @@ jobs:
         # Exit immediately if a command exits with a non-zero status.
         set -e
         pytest -n auto --durations=10 -v --cov-report=xml --cov-report=term --color=yes \
-                       --cov=asapdiscovery-modeling \
-                       asapdiscovery-modeling/asapdiscovery/modeling/tests
+                       --cov=drugforge-modeling \
+                       drugforge-modeling/drugforge/modeling/tests
 
     - name: Upload Code Coverage to Codecov
       uses: codecov/codecov-action@v3
       # Don't upload coverage scheduled or on fork
-      if: ${{ github.repository == 'choderalab/asapdiscovery'
+      if: ${{ github.repository == 'choderalab/drugforge'
               && github.event != 'schedule' }}
       with:
         file: ./coverage.xml

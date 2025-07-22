@@ -4,7 +4,7 @@ from gufe.custom_json import JSONCodec
 from alchemiscale import ScopedKey
 
 if TYPE_CHECKING:
-    from asapdiscovery.data.schema.ligand import Ligand
+    from drugforge.data.schema.ligand import Ligand
 
 
 # create a codec for ScopedKey to be able to serialize to JSON

@@ -5,8 +5,8 @@ import pandas as pd
 import rich
 
 if TYPE_CHECKING:
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationNetwork
-    from asapdiscovery.data.schema.ligand import Ligand
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
+    from drugforge.data.schema.ligand import Ligand
     from cinnabar import FEMap
 
 
@@ -42,8 +42,8 @@ def pull_from_postera(molecule_set_name: str):
     Returns:
         A list of Ligands extracted from postera molecule set.
     """
-    from asapdiscovery.data.services.postera.postera_factory import PosteraFactory
-    from asapdiscovery.data.services.services_config import PosteraSettings
+    from drugforge.data.services.postera.postera_factory import PosteraFactory
+    from drugforge.data.services.services_config import PosteraSettings
 
     # this will pull the settings from environment variables
     settings = PosteraSettings()
@@ -64,12 +64,12 @@ def upload_to_postera(
     """
     from enum import Enum
 
-    from asapdiscovery.alchemy.predict import dg_to_postera_dataframe
-    from asapdiscovery.data.services.postera.manifold_data_validation import (
+    from drugforge.alchemy.predict import dg_to_postera_dataframe
+    from drugforge.data.services.postera.manifold_data_validation import (
         rename_output_columns_for_manifold,
     )
-    from asapdiscovery.workflows.postera.postera_uploader import PosteraUploader
-    from asapdiscovery.data.services.services_config import PosteraSettings
+    from drugforge.workflows.postera.postera_uploader import PosteraUploader
+    from drugforge.data.services.services_config import PosteraSettings
 
     # mock an enum to specify which columns are allowed
     class AlchemyResults(str, Enum):
@@ -106,7 +106,7 @@ def get_cdd_molecules(
     protocol_name: str, defined_stereo_only: bool = True, remove_covalent: bool = True
 ) -> list["Ligand"]:
     """
-    Search the CDD protocol for molecules with experimental values and return a list of asapdiscovery ligands.
+    Search the CDD protocol for molecules with experimental values and return a list of drugforge ligands.
 
     Notes:
         The ligands will contain a tag which can be used to identify them as experimental compounds later.
@@ -120,8 +120,8 @@ def get_cdd_molecules(
     Returns:
         A list of molecules with experimental data.
     """
-    from asapdiscovery.alchemy.predict import download_cdd_data
-    from asapdiscovery.data.schema.ligand import Ligand
+    from drugforge.alchemy.predict import download_cdd_data
+    from drugforge.data.schema.ligand import Ligand
     from openff.toolkit import Molecule
     from openff.toolkit.utils.exceptions import (
         RadicalsNotSupportedError,
@@ -295,7 +295,7 @@ def cinnabar_femap_get_largest_subnetwork(
     import itertools
 
     import networkx as nx
-    from asapdiscovery.alchemy.schema.fec import (
+    from drugforge.alchemy.schema.fec import (
         AlchemiscaleResults,
         FreeEnergyCalculationNetwork,
     )

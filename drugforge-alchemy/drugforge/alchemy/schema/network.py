@@ -2,7 +2,7 @@ import abc
 from typing import Callable, Literal, Optional, Union
 
 import openfe
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.data.schema.ligand import Ligand
 from openfe.setup import LigandNetwork
 from pydantic.v1 import Field
 

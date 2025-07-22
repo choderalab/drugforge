@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Optional
 
 import click
-from asapdiscovery.alchemy.cli.utils import SpecialHelpOrder
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.alchemy.cli.utils import SpecialHelpOrder
+from drugforge.data.services.postera.manifold_data_validation import (
     TagEnumBase,
     TargetTags,
 )
@@ -34,7 +34,7 @@ def create(filename: str):
     Args:
         filename: The name of the JSON file containing the factory schema.
     """
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationFactory
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationFactory
 
     factory = FreeEnergyCalculationFactory()
     factory.to_file(filename=filename)
@@ -125,9 +125,9 @@ def plan(
     import pathlib
 
     import openfe
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationFactory
-    from asapdiscovery.alchemy.schema.prep_workflow import AlchemyDataSet
-    from asapdiscovery.data.readers.molfile import MolFileFactory
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationFactory
+    from drugforge.alchemy.schema.prep_workflow import AlchemyDataSet
+    from drugforge.data.readers.molfile import MolFileFactory
 
     # check mutually exclusive args
     if ligands and graphml:
@@ -208,8 +208,8 @@ def plan(
         raise RuntimeError("Please provide a name for the dataset.")
 
     if custom_network_file is not None:
-        from asapdiscovery.alchemy.schema.network import CustomNetworkPlanner
-        from asapdiscovery.alchemy.utils import extract_custom_ligand_network
+        from drugforge.alchemy.schema.network import CustomNetworkPlanner
+        from drugforge.alchemy.utils import extract_custom_ligand_network
 
         click.echo(
             f"Using custom network specified in {custom_network_file}, ignoring network mapper settings and central ligand if supplied."
@@ -303,9 +303,9 @@ def submit(
     """
     import rich
     from alchemiscale import Scope
-    from asapdiscovery.alchemy.cli.utils import print_header, print_message
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationNetwork
-    from asapdiscovery.alchemy.utils import AlchemiscaleHelper
+    from drugforge.alchemy.cli.utils import print_header, print_message
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
+    from drugforge.alchemy.utils import AlchemiscaleHelper
     from rich import pretty
 
     pretty.install()
@@ -399,8 +399,8 @@ def gather(
     Raises:
         Runtime error if all calculations are not complete and allow missing is False.
     """
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationNetwork
-    from asapdiscovery.alchemy.utils import AlchemiscaleHelper
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
+    from drugforge.alchemy.utils import AlchemiscaleHelper
 
     # launch the helper which will try to login
     click.echo("Connecting to Alchemiscale...")
@@ -518,9 +518,9 @@ def status(
 
     """
     import rich
-    from asapdiscovery.alchemy.cli.utils import print_header
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationNetwork
-    from asapdiscovery.alchemy.utils import AlchemiscaleHelper
+    from drugforge.alchemy.cli.utils import print_header
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
+    from drugforge.alchemy.utils import AlchemiscaleHelper
     from rich import pretty
     from rich.table import Table
 
@@ -679,8 +679,8 @@ def restart(network: str, verbose: bool, tasks):
 
     """
     from alchemiscale import ScopedKey
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationNetwork
-    from asapdiscovery.alchemy.utils import AlchemiscaleHelper
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
+    from drugforge.alchemy.utils import AlchemiscaleHelper
 
     client = AlchemiscaleHelper.from_settings()
     planned_network = FreeEnergyCalculationNetwork.from_file(network)
@@ -717,8 +717,8 @@ def restart(network: str, verbose: bool, tasks):
 def prioritize(network_key: str, weight: float):
     """Adjust a network's weight to influence how often its tasks will be actioned compared to other networks."""
     import rich
-    from asapdiscovery.alchemy.cli.utils import print_header
-    from asapdiscovery.alchemy.utils import AlchemiscaleHelper
+    from drugforge.alchemy.cli.utils import print_header
+    from drugforge.alchemy.utils import AlchemiscaleHelper
     from rich import pretty
     from rich.padding import Padding
 
@@ -769,8 +769,8 @@ def prioritize(network_key: str, weight: float):
 def stop(network_key: str, hard: bool = False):
     """Stop (i.e. set to 'error') a network's running and waiting tasks."""
     import rich
-    from asapdiscovery.alchemy.cli.utils import print_header
-    from asapdiscovery.alchemy.utils import AlchemiscaleHelper
+    from drugforge.alchemy.cli.utils import print_header
+    from drugforge.alchemy.utils import AlchemiscaleHelper
     from rich import pretty
     from rich.padding import Padding
 
@@ -894,20 +894,20 @@ def predict(
     """
     import numpy as np
     import rich
-    from asapdiscovery.alchemy.cli.utils import (
+    from drugforge.alchemy.cli.utils import (
         cinnabar_femap_get_largest_subnetwork,
         cinnabar_femap_is_connected,
         print_header,
         upload_to_postera,
     )
-    from asapdiscovery.alchemy.predict import (
+    from drugforge.alchemy.predict import (
         clean_result_network,
         create_absolute_report,
         create_relative_report,
         get_data_from_femap,
         get_top_n_poses,
     )
-    from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationNetwork
+    from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
     from rich import pretty
     from rich.padding import Padding
 

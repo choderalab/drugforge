@@ -2,7 +2,7 @@ Tutorials
 =========
 
 The following tutorials are available to help you get started with ASAP.
-These are designed as an introduction to the library layer of `asapdiscovery`.
+These are designed as an introduction to the library layer of `drugforge`.
 
 .. note::
    Many of these functionalities are available in easy to use CLI tools.
@@ -12,7 +12,7 @@ These are designed as an introduction to the library layer of `asapdiscovery`.
 Start here
 ----------
 
-:any:`Start Here <start_here>` will introduce you to the `asapdiscovery` library and some of our key concepts.
+:any:`Start Here <start_here>` will introduce you to the `drugforge` library and some of our key concepts.
 
 
 Docking and scoring

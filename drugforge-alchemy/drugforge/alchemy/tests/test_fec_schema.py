@@ -3,19 +3,19 @@ import functools
 import openfe
 import pytest
 from alchemiscale import Scope, ScopedKey
-from asapdiscovery.alchemy.schema.atom_mapping import (
+from drugforge.alchemy.schema.atom_mapping import (
     KartografAtomMapper,
     LomapAtomMapper,
     PersesAtomMapper,
 )
-from asapdiscovery.alchemy.schema.fec import (
+from drugforge.alchemy.schema.fec import (
     AdaptiveSettings,
     AlchemiscaleResults,
     FreeEnergyCalculationFactory,
     SolventSettings,
     TransformationResult,
 )
-from asapdiscovery.alchemy.schema.network import (
+from drugforge.alchemy.schema.network import (
     CustomNetworkPlanner,
     MaximalPlanner,
     MinimalRedundantPlanner,
@@ -23,8 +23,8 @@ from asapdiscovery.alchemy.schema.network import (
     NetworkPlanner,
     RadialPlanner,
 )
-from asapdiscovery.alchemy.utils import extract_custom_ligand_network
-from asapdiscovery.data.schema.identifiers import BespokeParameter, BespokeParameters
+from drugforge.alchemy.utils import extract_custom_ligand_network
+from drugforge.data.schema.identifiers import BespokeParameter, BespokeParameters
 from openff.toolkit import ForceField
 from openff.units import unit as OFFUnit
 

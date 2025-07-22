@@ -3,14 +3,14 @@ import tempfile
 
 import openfe
 import pytest
-from asapdiscovery.alchemy.schema.fec import FreeEnergyCalculationNetwork
-from asapdiscovery.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
-from asapdiscovery.alchemy.utils import AlchemiscaleHelper
-from asapdiscovery.data.readers.molfile import MolFileFactory
-from asapdiscovery.modeling.schema import PreppedComplex
-from asapdiscovery.data.schema.ligand import Ligand, write_ligands_to_multi_sdf
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.docking.schema.pose_generation import OpenEyeConstrainedPoseGenerator
+from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
+from drugforge.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
+from drugforge.alchemy.utils import AlchemiscaleHelper
+from drugforge.data.readers.molfile import MolFileFactory
+from drugforge.modeling.schema import PreppedComplex
+from drugforge.data.schema.ligand import Ligand, write_ligands_to_multi_sdf
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.docking.schema.pose_generation import OpenEyeConstrainedPoseGenerator
 from gufe.protocols import Context, ProtocolUnit, ProtocolUnitFailure
 
 

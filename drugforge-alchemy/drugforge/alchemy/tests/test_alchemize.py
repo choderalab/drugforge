@@ -1,6 +1,6 @@
 from glob import glob
 
-from asapdiscovery.alchemy.alchemize import (
+from drugforge.alchemy.alchemize import (
     calc_mcs_residuals,
     compute_clusters,
     partial_sanitize,

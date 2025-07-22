@@ -2,8 +2,8 @@ import abc
 import warnings
 from typing import Any, Literal
 
-from asapdiscovery.alchemy.schema.base import _SchemaBase
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.alchemy.schema.base import _SchemaBase
+from drugforge.data.schema.ligand import Ligand
 from pydantic.v1 import Field
 from tqdm import tqdm
 

@@ -4,12 +4,12 @@ from uuid import uuid4
 import pandas
 import pytest
 from alchemiscale import Scope, ScopedKey
-from asapdiscovery.alchemy.cli.utils import get_cdd_molecules, upload_to_postera
-from asapdiscovery.alchemy.schema.fec import (
+from drugforge.alchemy.cli.utils import get_cdd_molecules, upload_to_postera
+from drugforge.alchemy.schema.fec import (
     AlchemiscaleResults,
     FreeEnergyCalculationNetwork,
 )
-from asapdiscovery.alchemy.utils import extract_custom_ligand_network
+from drugforge.alchemy.utils import extract_custom_ligand_network
 from gufe.protocols import ProtocolDAGResult, ProtocolUnitResult
 from openfe.protocols.openmm_rfe import RelativeHybridTopologyProtocolResult
 from openff.units import unit as OFFUnit
@@ -310,8 +310,8 @@ def test_get_actioned_weights(alchemiscale_helper, monkeypatch, tyk2_fec_network
 
 def test_upload_to_postera(monkeypatch, tyk2_result_network):
     """A mocked test to make sure the dataframe is formatted correctly ready for upload to postera."""
-    from asapdiscovery.alchemy.predict import get_data_from_femap
-    from asapdiscovery.workflows.postera.postera_uploader import PosteraUploader
+    from drugforge.alchemy.predict import get_data_from_femap
+    from drugforge.workflows.postera.postera_uploader import PosteraUploader
 
     fe_map = tyk2_result_network.results.to_fe_map()
     fe_map.generate_absolute_values()
@@ -360,7 +360,7 @@ def test_upload_to_postera(monkeypatch, tyk2_result_network):
 def test_get_cdd_molecules_util(monkeypatch, defined_only, n_ligands, remove_covalent):
     """Test downloading molecules from a cdd mocked protocol and removing molecules with undefined stereo."""
 
-    import asapdiscovery.alchemy.predict
+    import drugforge.alchemy.predict
 
     def get_cdd_data(protocol_name: str):
         data = [
@@ -379,7 +379,7 @@ def test_get_cdd_molecules_util(monkeypatch, defined_only, n_ligands, remove_cov
         return pandas.DataFrame(data)
 
     monkeypatch.setattr(
-        asapdiscovery.alchemy.predict, "download_cdd_data", get_cdd_data
+        drugforge.alchemy.predict, "download_cdd_data", get_cdd_data
     )
 
     molecules = get_cdd_molecules(
@@ -397,7 +397,7 @@ def test_get_cdd_molecules_util(monkeypatch, defined_only, n_ligands, remove_cov
 def test_cdd_download_remove_radicals(monkeypatch):
     """Make sure radical molecules are removed from downloaded protocols."""
 
-    import asapdiscovery.alchemy.predict
+    import drugforge.alchemy.predict
 
     def get_cdd_data(protocol_name: str):
         data = [
@@ -411,7 +411,7 @@ def test_cdd_download_remove_radicals(monkeypatch):
         return pandas.DataFrame(data)
 
     monkeypatch.setattr(
-        asapdiscovery.alchemy.predict, "download_cdd_data", get_cdd_data
+        drugforge.alchemy.predict, "download_cdd_data", get_cdd_data
     )
 
     molecules = get_cdd_molecules(

@@ -2,21 +2,21 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 from alchemiscale import Scope, ScopedKey
-from asapdiscovery.alchemy.interfaces import AlchemiscaleSettings
-from asapdiscovery.alchemy.schema.fec import (
+from drugforge.alchemy.interfaces import AlchemiscaleSettings
+from drugforge.alchemy.schema.fec import (
     AlchemiscaleFailure,
     AlchemiscaleResults,
     FreeEnergyCalculationNetwork,
     TransformationResult,
 )
-from asapdiscovery.alchemy.schema.forcefield import ForceFieldParams
+from drugforge.alchemy.schema.forcefield import ForceFieldParams
 from openmm.app import ForceField, Modeller, PDBFile
 
 
 if TYPE_CHECKING:
-    from asapdiscovery.modeling.schema import PreppedComplex, PreppedTarget
-    from asapdiscovery.data.schema.ligand import Ligand
-    from asapdiscovery.data.schema.target import PreppedTarget
+    from drugforge.modeling.schema import PreppedComplex, PreppedTarget
+    from drugforge.data.schema.ligand import Ligand
+    from drugforge.data.schema.target import PreppedTarget
 
 
 def create_protein_only_system(input_pdb_path: str, ff_params: ForceFieldParams):
@@ -415,7 +415,7 @@ def select_reference_for_compounds(
     Returns:
         The PreppedComplex most suitable for the input ligands and the largest ligand that it was selected to match.
     """
-    from asapdiscovery.docking.selectors.mcs_selector import sort_by_mcs
+    from drugforge.docking.selectors.mcs_selector import sort_by_mcs
 
     # sort the ligands by the number of atoms
     compounds_by_size = [

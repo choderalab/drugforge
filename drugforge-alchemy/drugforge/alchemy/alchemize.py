@@ -1,5 +1,5 @@
-from asapdiscovery.alchemy.cli.utils import report_alchemize_clusters
-from asapdiscovery.data.schema.ligand import Ligand, write_ligands_to_multi_sdf
+from drugforge.alchemy.cli.utils import report_alchemize_clusters
+from drugforge.data.schema.ligand import Ligand, write_ligands_to_multi_sdf
 from rdkit import Chem
 from rdkit.Chem import AllChem, rdFMCS
 from rdkit.Chem.rdchem import Mol
