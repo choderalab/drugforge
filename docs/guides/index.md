@@ -1,7 +1,7 @@
 Guides
 =======
 
-The below guides are designed to help you get started with the `asapdiscovery` toolkit, with a focus on the command line tools and the various submodules.
+The below guides are designed to help you get started with the `drugforge` toolkit, with a focus on the command line tools and the various submodules.
 
 
 ```{toctree}
@@ -10,5 +10,5 @@ The below guides are designed to help you get started with the `asapdiscovery` t
 using_asap_alchemy_cli
 using_docking_cli
 using_ml_cli
-developing_asapdiscovery
+developing_drugforge
 ```

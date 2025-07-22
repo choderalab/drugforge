@@ -8,42 +8,42 @@ The toolkit in this repo is a batteries-included drug discovery pipeline being a
 Coupled with ASAP's [active data disclosures](https://asapdiscovery.org/outputs) our campaign to develop a new series of antivirals can provide insight into the drug discovery process that is normally conducted behind closed doors.
 
 ```{note}
-asapdiscovery is not designed as a one size fits all solution for drug discovery, rather it is our opinionated tooling designed with our targets in mind. Your mileage will vary if not using an ASAP target.
+drugforge is not designed as a one size fits all solution for drug discovery, rather it is our opinionated tooling designed with our targets in mind. Your mileage will vary if not using an ASAP target.
 ```
 
-The `asapdiscovery` toolkit is focused around the following core competencies, organised into submodules:
+The `drugforge` toolkit is focused around the following core competencies, organised into submodules:
 
- - `asapdiscovery-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://github.com/openforcefield/alchemiscale)
+ - `drugforge-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://github.com/openforcefield/alchemiscale)
 
- - `asapdiscovery-cli`: Command line tools uniting the whole repo.
+ - `drugforge-cli`: Command line tools uniting the whole repo.
 
- - `asapdiscovery-data`: Core data models and integrations with services such as [postera.ai](https://postera.ai/) , [Collaborative Drug Discovery Vault](https://www.collaborativedrug.com/)`, and Diamond Light Source's [Fragalysis](https://fragalysis.diamond.ac.uk/viewer/react/landing) database
+ - `drugforge-data`: Core data models and integrations with services such as [postera.ai](https://postera.ai/) , [Collaborative Drug Discovery Vault](https://www.collaborativedrug.com/)`, and Diamond Light Source's [Fragalysis](https://fragalysis.diamond.ac.uk/viewer/react/landing) database
 
- - `asapdiscovery-dataviz`: Data and structure visualization using [3DMol](https://3dmol.csb.pitt.edu) and [PyMOL](https://pymol.org/)
+ - `drugforge-dataviz`: Data and structure visualization using [3DMol](https://3dmol.csb.pitt.edu) and [PyMOL](https://pymol.org/)
 
- - `asapdiscovery-docking`: Docking and compound screening with the [OpenEye toolkit](https://docs.eyesopen.com/toolkits/python/index.html)
+ - `drugforge-docking`: Docking and compound screening with the [OpenEye toolkit](https://docs.eyesopen.com/toolkits/python/index.html)
 
- - `asapdiscovery-spectrum`: Working with sequence and fitness information and conducting protein structure inference
+ - `drugforge-spectrum`: Working with sequence and fitness information and conducting protein structure inference
 
- - `asapdiscovery-ml`: Structure and graph based ML models for predicting compound activity and other endpoints
+ - `drugforge-ml`: Structure and graph based ML models for predicting compound activity and other endpoints
 
- - `asapdiscovery-modelling`: Structure prep and standardisation
+ - `drugforge-modelling`: Structure prep and standardisation
 
- - `asapdiscovery-simulation`: MD simulations and analysis using [OpenMM](https://openmm.org/)
+ - `drugforge-simulation`: MD simulations and analysis using [OpenMM](https://openmm.org/)
 
- - `asapdiscovery-workflows`: Workflows that combine components to enable end to end project support
-
-
+ - `drugforge-workflows`: Workflows that combine components to enable end to end project support
 
 
-The `asapdiscovery` toolkit is currently focused on [ASAP's targets](https://asapdiscovery.org/pipeline/), which are enumerated on the ASAP website.
+
+
+The `drugforge` toolkit is currently focused on [ASAP's targets](https://asapdiscovery.org/pipeline/), which are enumerated on the ASAP website.
 
 See `future` for more information on our roadmap and future plans for the toolkit.
 
 
 Disclaimer
 ----------
-asapdiscovery is pre-alpha and is under very active development, we make no guarantees around correctness and the API is liable to change rapidly at any time.
+drugforge is pre-alpha and is under very active development, we make no guarantees around correctness and the API is liable to change rapidly at any time.
 
 
 ```{toctree}
