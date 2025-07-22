@@ -10,13 +10,13 @@ from typing import Any
 
 import numpy as np
 import torch
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.experimental import ExperimentalCompoundData
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.util.stringenum import StringEnum
-from asapdiscovery.data.util.utils import extract_compounds_from_filenames
-from asapdiscovery.ml.dataset import DockedDataset, GraphDataset, GroupedDockedDataset
-from asapdiscovery.ml.es import (
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.experimental import ExperimentalCompoundData
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.util.stringenum import StringEnum
+from drugforge.data.util.utils import extract_compounds_from_filenames
+from drugforge.ml.dataset import DockedDataset, GraphDataset, GroupedDockedDataset
+from drugforge.ml.es import (
     BestEarlyStopping,
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,
@@ -1022,7 +1022,7 @@ class LossFunctionConfig(ConfigBase):
         return values
 
     def build(self):
-        from asapdiscovery.ml.loss import (
+        from drugforge.ml.loss import (
             GaussianNLLLoss,
             L1Loss,
             MSELoss,
@@ -1101,7 +1101,7 @@ class DataAugConfig(BaseModel):
     )
 
     def build(self):
-        from asapdiscovery.ml.data_augmentation import JitterFixed
+        from drugforge.ml.data_augmentation import JitterFixed
 
         match self.aug_type:
             case DataAugType.jitter_fixed:

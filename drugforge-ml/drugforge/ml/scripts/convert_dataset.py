@@ -3,20 +3,20 @@ from glob import glob
 from pathlib import Path
 
 import click
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.util.utils import (
+from drugforge.data.schema.complex import Complex
+from drugforge.data.util.utils import (
     MOONSHOT_CDD_ID_REGEX,
     MPRO_ID_REGEX,
     extract_compounds_from_filenames,
 )
-from asapdiscovery.ml.cli_args import (
+from drugforge.ml.cli_args import (
     ds_cache,
     grouped,
     str_files,
     str_fn_cpd_regex,
     str_fn_xtal_regex,
 )
-from asapdiscovery.ml.config import DatasetConfig, DatasetType
+from drugforge.ml.config import DatasetConfig, DatasetType
 
 
 @click.command()

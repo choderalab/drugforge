@@ -2,11 +2,11 @@ import json
 import pickle as pkl
 
 import pytest
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.ml.cli import ml as cli
-from asapdiscovery.ml.config import DatasetConfig
-from asapdiscovery.ml.schema import TrainingPredictionTracker
-from asapdiscovery.ml.trainer import Trainer
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.ml.cli import ml as cli
+from drugforge.ml.config import DatasetConfig
+from drugforge.ml.schema import TrainingPredictionTracker
+from drugforge.ml.trainer import Trainer
 from click.testing import CliRunner
 
 

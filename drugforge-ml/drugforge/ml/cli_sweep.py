@@ -3,8 +3,8 @@ from pathlib import Path
 
 import click
 import torch
-from asapdiscovery.data.util.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
-from asapdiscovery.ml.cli_args import (
+from drugforge.data.util.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
+from drugforge.ml.cli_args import (
     ds_split_args,
     e3nn_args,
     es_args,
@@ -32,13 +32,13 @@ from asapdiscovery.ml.cli_args import (
     wandb_args,
     weights_path,
 )
-from asapdiscovery.ml.config import (
+from drugforge.ml.config import (
     DatasetSplitterType,
     EarlyStoppingType,
     OptimizerType,
 )
-from asapdiscovery.ml.sweep import Sweeper
-from asapdiscovery.ml.trainer import Trainer
+from drugforge.ml.sweep import Sweeper
+from drugforge.ml.trainer import Trainer
 from mtenn.config import CombinationConfig, ModelType, ReadoutConfig, StrategyConfig
 from pydantic.v1 import ValidationError
 

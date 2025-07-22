@@ -1,9 +1,9 @@
 import pytest
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.experimental import ExperimentalCompoundData
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.ml.dataset import DockedDataset, GraphDataset, GroupedDockedDataset
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.experimental import ExperimentalCompoundData
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.ml.dataset import DockedDataset, GraphDataset, GroupedDockedDataset
 
 
 @pytest.fixture(scope="session")

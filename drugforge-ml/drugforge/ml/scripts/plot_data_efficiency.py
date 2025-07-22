@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas
 import seaborn as sns
-from asapdiscovery.ml.scripts.plot_loss import convert_pic50
+from drugforge.ml.scripts.plot_loss import convert_pic50
 
 
 def load_losses(loss_dir, conv_function=None, agg=np.mean):

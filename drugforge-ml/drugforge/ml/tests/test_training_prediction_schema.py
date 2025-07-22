@@ -1,8 +1,8 @@
 import json
 
 import pytest
-from asapdiscovery.ml.config import LossFunctionConfig
-from asapdiscovery.ml.schema import TrainingPrediction, TrainingPredictionTracker
+from drugforge.ml.config import LossFunctionConfig
+from drugforge.ml.schema import TrainingPrediction, TrainingPredictionTracker
 from pydantic.v1 import ValidationError
 
 

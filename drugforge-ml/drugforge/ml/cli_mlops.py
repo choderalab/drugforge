@@ -17,30 +17,30 @@ import seaborn as sns
 import torch
 import wandb
 import yaml
-from asapdiscovery.alchemy.cli.utils import has_warhead
-from asapdiscovery.cli.cli_args import loglevel
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.services.aws.s3 import S3
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.services.services_config import S3Settings
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.data.util.utils import (
+from drugforge.alchemy.cli.utils import has_warhead
+from drugforge.cli.cli_args import loglevel
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.services.aws.s3 import S3
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.services.services_config import S3Settings
+from drugforge.data.util.logging import FileLogger
+from drugforge.data.util.utils import (
     cdd_to_schema,
     cdd_to_schema_v2,
     filter_molecules_dataframe,
 )
-from asapdiscovery.ml.cli_args import output_dir
-from asapdiscovery.ml.config import (
+from drugforge.ml.cli_args import output_dir
+from drugforge.ml.config import (
     DatasetConfig,
     DatasetSplitterConfig,
     EarlyStoppingConfig,
     LossFunctionConfig,
     OptimizerConfig,
 )
-from asapdiscovery.ml.inference import GATInference
-from asapdiscovery.ml.models import RemoteEnsembleHelper
-from asapdiscovery.ml.pretrained_models import cdd_protocols_yaml
-from asapdiscovery.ml.trainer import Trainer
+from drugforge.ml.inference import GATInference
+from drugforge.ml.models import RemoteEnsembleHelper
+from drugforge.ml.pretrained_models import cdd_protocols_yaml
+from drugforge.ml.trainer import Trainer
 from mtenn.config import GATModelConfig
 from openff.toolkit import Molecule
 from openff.toolkit.utils.exceptions import RadicalsNotSupportedError
@@ -433,9 +433,9 @@ def _gather_and_clean_data(
         DataFrame containing the cleaned data
     """
 
-    from asapdiscovery.data.services.cdd.cdd_api import CDDAPI
-    from asapdiscovery.data.services.services_config import CDDSettings
-    from asapdiscovery.data.util.utils import parse_fluorescence_data_cdd
+    from drugforge.data.services.cdd.cdd_api import CDDAPI
+    from drugforge.data.services.services_config import CDDSettings
+    from drugforge.data.util.utils import parse_fluorescence_data_cdd
 
     if protocol_name not in PROTOCOLS.keys():
         raise ValueError(
@@ -599,7 +599,7 @@ def _write_ensemble_manifest_yaml(
         Manifest looks like:
 
 
-    asapdiscovery-GAT-ensemble-test:
+    drugforge-GAT-ensemble-test:
       type: GAT
       base_url: https://d1ibwnbvfa7iey.cloudfront.net/test_manifest/endpoint/
       ensemble: True
@@ -817,7 +817,7 @@ def train_GAT_for_endpoint(
     ).getLogger()
 
     ISO_TODAY = datetime.datetime.now().strftime("%Y-%m-%d")
-    model_tag = f"asapdiscovery-GAT-{protocol}-ensemble-{ISO_TODAY}"
+    model_tag = f"drugforge-GAT-{protocol}-ensemble-{ISO_TODAY}"
 
     logger.info(f"Training GAT model for endpoint {protocol}")
     logger.info(f"Start time: {ISO_TODAY}")

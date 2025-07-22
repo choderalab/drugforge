@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from asapdiscovery.ml.es import (
+from drugforge.ml.es import (
     BestEarlyStopping,
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,

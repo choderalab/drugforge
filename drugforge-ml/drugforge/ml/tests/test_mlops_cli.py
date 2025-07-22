@@ -3,8 +3,8 @@ import traceback
 from unittest.mock import Mock, patch
 
 import pandas as pd
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.ml.cli_mlops import mlops as cli
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.ml.cli_mlops import mlops as cli
 from click.testing import CliRunner
 
 
@@ -20,9 +20,9 @@ def mock_gather_and_clean_data(*args, **kwargs) -> pd.DataFrame:
     return pd.read_csv(fetch_test_file("sample_training_data.csv"))
 
 
-@patch("asapdiscovery.ml.cli_mlops._gather_and_clean_data", mock_gather_and_clean_data)
-@patch("asapdiscovery.data.services.aws.s3.S3.push_file", Mock(return_value=None))
-@patch("asapdiscovery.data.services.aws.s3.S3.push_dir", Mock(return_value=None))
+@patch("drugforge.ml.cli_mlops._gather_and_clean_data", mock_gather_and_clean_data)
+@patch("drugforge.data.services.aws.s3.S3.push_file", Mock(return_value=None))
+@patch("drugforge.data.services.aws.s3.S3.push_dir", Mock(return_value=None))
 def test_mlops_run(tmp_path):
 
     runner = CliRunner()

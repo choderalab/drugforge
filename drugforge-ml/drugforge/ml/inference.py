@@ -6,13 +6,13 @@ import dgl
 import mtenn
 import numpy as np
 import torch
-from asapdiscovery.data.backend.openeye import oechem
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.ligand import Ligand
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.ml.config import DatasetConfig
-from asapdiscovery.ml.dataset import DockedDataset, GraphDataset
-from asapdiscovery.ml.models import (
+from drugforge.data.backend.openeye import oechem
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.ml.config import DatasetConfig
+from drugforge.ml.dataset import DockedDataset, GraphDataset
+from drugforge.ml.models import (
     ASAPMLModelRegistry,
     LocalMLModelSpecBase,
     MLModelRegistry,

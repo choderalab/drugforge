@@ -36,7 +36,7 @@ gat_test:
 
 
 # new models trained with mtenn v0.5.0
-asapdiscovery-SARS-CoV-2-Mpro-GAT-2024.02.06:
+drugforge-SARS-CoV-2-Mpro-GAT-2024.02.06:
   type: GAT
   base_url: https://d2slxrwfphomy2.cloudfront.net/production/GAT/
   weights:
@@ -52,7 +52,7 @@ asapdiscovery-SARS-CoV-2-Mpro-GAT-2024.02.06:
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
 
-asapdiscovery-SARS-CoV-2-Mac1-GAT-2024.02.06:
+drugforge-SARS-CoV-2-Mac1-GAT-2024.02.06:
   type: GAT
   base_url: https://d2slxrwfphomy2.cloudfront.net/production/GAT/
   weights:
@@ -67,7 +67,7 @@ asapdiscovery-SARS-CoV-2-Mac1-GAT-2024.02.06:
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
 
-asapdiscovery-SARS-CoV-2-Mpro-schnet-2024.02.05:
+drugforge-SARS-CoV-2-Mpro-schnet-2024.02.05:
   type: schnet
   base_url: https://d2slxrwfphomy2.cloudfront.net/production/schnet/
   weights:
@@ -83,7 +83,7 @@ asapdiscovery-SARS-CoV-2-Mpro-schnet-2024.02.05:
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
 
-asapdiscovery-SARS-CoV-2-Mpro-e3nn-2024.02.06:
+drugforge-SARS-CoV-2-Mpro-e3nn-2024.02.06:
   type: e3nn
   base_url: https://d2slxrwfphomy2.cloudfront.net/production/e3nn/
   weights:
@@ -99,45 +99,45 @@ asapdiscovery-SARS-CoV-2-Mpro-e3nn-2024.02.06:
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
 
-asapdiscovery-GAT-remote-ensemble:
+drugforge-GAT-remote-ensemble:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/test_manifest/asap_ensemble_models.yaml
 
 
-asapdiscovery-GAT-pIC50-MERS-CoV-Mpro-latest:
+drugforge-GAT-pIC50-MERS-CoV-Mpro-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/MERS-CoV-MPro_fluorescence-dose-response_weizmann/latest/manifest.yaml
 
-asapdiscovery-GAT-pIC50-SARS-CoV-2-Mpro-latest:
+drugforge-GAT-pIC50-SARS-CoV-2-Mpro-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/SARS-CoV-2-MPro_fluorescence-dose-response_weizmann/latest/manifest.yaml
 
 
-asapdiscovery-GAT-pIC50-DENV-2-NS2B-NS3_fluorescence-dose-response_weizmann-latest:
+drugforge-GAT-pIC50-DENV-2-NS2B-NS3_fluorescence-dose-response_weizmann-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/DENV-2-NS2B-NS3_fluorescence-dose-response_weizmann/latest/manifest.yaml
 
-asapdiscovery-GAT-pIC50-ZIKV-NS2B-NS3_fluorescence-dose-response_weizmann-latest:
+drugforge-GAT-pIC50-ZIKV-NS2B-NS3_fluorescence-dose-response_weizmann-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/ZIKV-NS2B-NS3_fluorescence-dose-response_weizmann/latest/manifest.yaml
 
-asapdiscovery-GAT-LogD-bienta-latest:
+drugforge-GAT-LogD-bienta-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_LogD_bienta/latest/manifest.yaml
 
 
-asapdiscovery-GAT-KSOL-PBS-bienta-latest:
+drugforge-GAT-KSOL-PBS-bienta-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_KSOL-PBS_bienta/latest/manifest.yaml
 
-asapdiscovery-GAT-in-vitro_HLM_bienta-latest:
+drugforge-GAT-in-vitro_HLM_bienta-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_HLM_bienta/latest/manifest.yaml
 
-asapdiscovery-GAT-in-vitro_MLM_bienta-latest:
+drugforge-GAT-in-vitro_MLM_bienta-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_MLM_bienta/latest/manifest.yaml
 
-asapdiscovery-GAT-in-vitro_MDR1-MDCKII-Papp_bienta-latest:
+drugforge-GAT-in-vitro_MDR1-MDCKII-Papp_bienta-latest:
   remote_ensemble: true
   manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_MDR1-MDCKII-Papp_bienta/latest/manifest.yaml

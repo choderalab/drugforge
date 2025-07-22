@@ -8,10 +8,10 @@ from time import time
 import numpy as np
 import torch
 import wandb
-from asapdiscovery.data.services.aws.s3 import S3
-from asapdiscovery.data.services.services_config import S3Settings
-from asapdiscovery.data.util.logging import FileLogger
-from asapdiscovery.ml.config import (
+from drugforge.data.services.aws.s3 import S3
+from drugforge.data.services.services_config import S3Settings
+from drugforge.data.util.logging import FileLogger
+from drugforge.ml.config import (
     DataAugConfig,
     DatasetConfig,
     DatasetSplitterConfig,
@@ -19,8 +19,8 @@ from asapdiscovery.ml.config import (
     LossFunctionConfig,
     OptimizerConfig,
 )
-from asapdiscovery.ml.dataset import dataset_to_csv
-from asapdiscovery.ml.schema import TrainingPredictionTracker
+from drugforge.ml.dataset import dataset_to_csv
+from drugforge.ml.schema import TrainingPredictionTracker
 from mtenn.config import (
     E3NNModelConfig,
     GATModelConfig,
@@ -154,7 +154,7 @@ class Trainer(BaseModel):
     )
     log_file: Path | None = Field(
         None,
-        description="Output using asapdiscovery.data.FileLogger in addition to stdout.",
+        description="Output using drugforge.data.FileLogger in addition to stdout.",
     )
     save_weights: str = Field(
         "all",
@@ -189,7 +189,7 @@ class Trainer(BaseModel):
     _is_initialized = False
 
     class Config:
-        # Temporary fix for now. This is necessary for the asapdiscovery Dataset
+        # Temporary fix for now. This is necessary for the drugforge Dataset
         #  classes, but we should probably figure out a workaround eventurally. Probably
         #  best to implement __get_validators__ for the Dataset classes.
         arbitrary_types_allowed = True

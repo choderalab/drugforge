@@ -3,7 +3,7 @@ from pathlib import Path
 
 import wandb
 import yaml
-from asapdiscovery.ml.trainer import Trainer
+from drugforge.ml.trainer import Trainer
 from pydantic.v1 import Field, validator
 
 

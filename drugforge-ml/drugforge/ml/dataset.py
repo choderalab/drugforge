@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 import torch
-from asapdiscovery.data.backend.openeye import oechem
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.data.backend.openeye import oechem
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand
 from torch.utils.data import Dataset
 
 
@@ -341,7 +341,7 @@ class GroupedDockedDataset(Dataset):
         -------
         GroupedDockedDataset
         """
-        from asapdiscovery.docking.analysis import calculate_rmsd_openeye
+        from drugforge.docking.analysis import calculate_rmsd_openeye
 
         compound_ids = []
         structures = {}

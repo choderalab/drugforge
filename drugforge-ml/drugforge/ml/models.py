@@ -10,8 +10,8 @@ import mtenn
 import pooch
 import requests
 import yaml
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.ml.pretrained_models import asap_models_yaml
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.ml.pretrained_models import asap_models_yaml
 from mtenn.config import ModelType
 from pydantic.v1 import BaseModel, Field, HttpUrl, validator
 from semver import Version
@@ -340,23 +340,23 @@ class RemoteEnsembleHelper(BaseModel):
 
     Parses manifests of the form
 
-    asapdiscovery-GAT-ensemble-test:
+    drugforge-GAT-ensemble-test:
     type: GAT
     base_url: https://d2slxrwfphomy2.cloudfront.net/production/GAT/
     ensemble: True
 
     weights:
-        - asapdiscovery-GAT-X:
-            resource: asapdiscovery-GAT-X.th
+        - drugforge-GAT-X:
+            resource: drugforge-GAT-X.th
             sha256hash: 0b1
-        - asapdiscovery-GAT-Y:
-            resource: asapdiscovery-GAT-Y.th
+        - drugforge-GAT-Y:
+            resource: drugforge-GAT-Y.th
             sha256hash: 0b2
-        - asapdiscovery-GAT-Z:
-            resource: asapdiscovery-GAT-Z.th
+        - drugforge-GAT-Z:
+            resource: drugforge-GAT-Z.th
             sha256hash: 0b3
     config:
-        resource: asapdiscovery-SARS-CoV-2-Mpro.json
+        resource: drugforge-SARS-CoV-2-Mpro.json
     targets:
         - SARS-CoV-2-Mpro
         - MERS-CoV-Mpro

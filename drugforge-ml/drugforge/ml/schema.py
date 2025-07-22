@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas
 import torch
-from asapdiscovery.ml.config import LossFunctionConfig
+from drugforge.ml.config import LossFunctionConfig
 from pydantic.v1 import BaseModel, Extra, Field, validator
 from scipy.stats import bootstrap, kendalltau, spearmanr
 

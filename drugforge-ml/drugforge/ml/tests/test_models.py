@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from asapdiscovery.ml.models import (
+from drugforge.ml.models import (
     ASAPMLModelRegistry,
     LocalMLModelSpec,
     MLModelBase,

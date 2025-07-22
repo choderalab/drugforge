@@ -1,11 +1,11 @@
-import asapdiscovery.ml
+import drugforge.ml
 import mtenn
 import numpy as np
 import pytest
 import torch
-from asapdiscovery.data.backend.openeye import load_openeye_pdb
-from asapdiscovery.data.testing.test_resources import fetch_test_file
-from asapdiscovery.ml.inference import E3nnInference, GATInference, SchnetInference
+from drugforge.data.backend.openeye import load_openeye_pdb
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.ml.inference import E3nnInference, GATInference, SchnetInference
 from numpy.testing import assert_allclose
 
 
@@ -262,7 +262,7 @@ def test_schnet_inference_predict_from_structure_file_err_multi(docked_structure
 def test_schnet_inference_predict_from_pose(docked_structure_file):
     inference_cls = SchnetInference.from_latest_by_target("SARS-CoV-2-Mpro")
 
-    dataset = asapdiscovery.ml.dataset.DockedDataset.from_files(
+    dataset = drugforge.ml.dataset.DockedDataset.from_files(
         str_fns=[docked_structure_file],
         compounds=[("Mpro-P0008_0A", "ERI-UCB-ce40166b-17")],
     )

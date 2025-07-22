@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "versioningit"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "asapdiscovery-ml"
+name = "drugforge-ml"
 #version = "0.0.1"
 dynamic = ["version"]
 authors = [
@@ -21,12 +21,12 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-"Homepage" = "https://github.com/choderalab/asapdiscovery"
-"Bug Tracker" = "https://github.com/choderalab/asapdiscovery/issues"
+"Homepage" = "https://github.com/choderalab/drugforge"
+"Bug Tracker" = "https://github.com/choderalab/drugforge/issues"
 
 [project.scripts]
-asap-ml = "asapdiscovery.ml.cli:ml"
-convert-ds = "asapdiscovery.ml.scripts.convert_dataset:convert"
+asap-ml = "drugforge.ml.cli:ml"
+convert-ds = "drugforge.ml.scripts.convert_dataset:convert"
 
 [tool.setuptools.packages.find]
 where = ["."]

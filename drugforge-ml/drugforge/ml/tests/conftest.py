@@ -1,8 +1,8 @@
 import os
 
 import pytest
-from asapdiscovery.data.schema.experimental import ExperimentalCompoundData
-from asapdiscovery.ml.dataset import GraphDataset
+from drugforge.data.schema.experimental import ExperimentalCompoundData
+from drugforge.ml.dataset import GraphDataset
 from dgllife.utils import CanonicalAtomFeaturizer
 from rdkit import Chem
 
