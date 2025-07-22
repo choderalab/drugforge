@@ -1,20 +1,20 @@
-from asapdiscovery.data.schema.complex import Complex
-from asapdiscovery.modeling.schema import PreppedComplex
-from asapdiscovery.docking.docking import DockingInputPair
-from asapdiscovery.docking.meta_scorer import MetaScorer
-from asapdiscovery.docking.analysis import calculate_rmsd_openeye
+from drugforge.data.schema.complex import Complex
+from drugforge.modeling.schema import PreppedComplex
+from drugforge.docking.docking import DockingInputPair
+from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.docking.analysis import calculate_rmsd_openeye
 
-from asapdiscovery.docking.openeye import POSITDocker
+from drugforge.docking.openeye import POSITDocker
 
-from asapdiscovery.data.backend.openeye import (
+from drugforge.data.backend.openeye import (
     load_openeye_pdb,
     save_openeye_sdf,
 )
-from asapdiscovery.data.backend.openeye import oechem, split_openeye_mol
-from asapdiscovery.spectrum.calculate_rmsd import rmsd_alignment
-from asapdiscovery.simulation.simulate import VanillaMDSimulator
-from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
-from asapdiscovery.data.metadata.resources import active_site_chains
+from drugforge.data.backend.openeye import oechem, split_openeye_mol
+from drugforge.spectrum.calculate_rmsd import rmsd_alignment
+from drugforge.simulation.simulate import VanillaMDSimulator
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.metadata.resources import active_site_chains
 
 import os
 import shutil
@@ -239,7 +239,7 @@ def dock_and_score(
     comp_name : str
         Name of to give to complex. Can be arbitrary.
     target_name : str
-        Name of reference target (see asapdiscovery documentation).
+        Name of reference target (see drugforge documentation).
     scorers : List
         List with scorer objects. For ChemGauss use ChemGauss4Scorer().
     pdb_ref : Union[Path, str], optional
@@ -667,7 +667,7 @@ def minimize_structure(
     comp_name : str
         Name of to give to complex. Can be arbitrary.
     target_name : str
-        Name of reference target (see asapdiscovery documentation).
+        Name of reference target (see drugforge documentation).
 
     Returns
     -------

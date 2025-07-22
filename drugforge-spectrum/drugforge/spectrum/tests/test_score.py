@@ -3,15 +3,15 @@ import traceback
 from pathlib import Path
 
 import pytest
-from asapdiscovery.spectrum.score import (
+from drugforge.spectrum.score import (
     dock_and_score,
     get_ligand_rmsd,
     score_autodock_vina,
     minimize_structure
 )
-from asapdiscovery.spectrum.calculate_rmsd import get_binding_site_rmsd
-from asapdiscovery.docking.scorer import ChemGauss4Scorer
-from asapdiscovery.data.schema.ligand import Ligand
+from drugforge.spectrum.calculate_rmsd import get_binding_site_rmsd
+from drugforge.docking.scorer import ChemGauss4Scorer
+from drugforge.data.schema.ligand import Ligand
 
 
 def click_success(result):

@@ -4,9 +4,9 @@ import numpy as np
 import pymol2
 import MDAnalysis as mda
 from Bio import pairwise2
-from asapdiscovery.data.backend.openeye import load_openeye_pdb, save_openeye_pdb
-from asapdiscovery.modeling.modeling import superpose_molecule
-from asapdiscovery.spectrum.blast import pdb_to_seq
+from drugforge.data.backend.openeye import load_openeye_pdb, save_openeye_pdb
+from drugforge.modeling.modeling import superpose_molecule
+from drugforge.spectrum.blast import pdb_to_seq
 
 from typing import Union
 import logging

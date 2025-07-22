@@ -2,4 +2,4 @@
 
 from importlib.metadata import version
 
-__version__ = version("asapdiscovery-spectrum")
+__version__ = version("drugforge-spectrum")

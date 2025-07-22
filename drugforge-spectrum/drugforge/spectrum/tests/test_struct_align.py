@@ -2,11 +2,11 @@ import os
 import traceback
 
 import pytest
-from asapdiscovery.spectrum.align_seq_match import (
+from drugforge.spectrum.align_seq_match import (
     pairwise_alignment,
     save_pymol_seq_align,
 )
-from asapdiscovery.spectrum.calculate_rmsd import rmsd_alignment, save_alignment_pymol
+from drugforge.spectrum.calculate_rmsd import rmsd_alignment, save_alignment_pymol
 
 
 def click_success(result):

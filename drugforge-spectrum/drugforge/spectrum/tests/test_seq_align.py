@@ -3,8 +3,8 @@ import traceback
 
 import pandas as pd
 import pytest
-from asapdiscovery.spectrum.blast import pdb_to_seq
-from asapdiscovery.spectrum.seq_alignment import Alignment, do_MSA
+from drugforge.spectrum.blast import pdb_to_seq
+from drugforge.spectrum.seq_alignment import Alignment, do_MSA
 
 
 def click_success(result):

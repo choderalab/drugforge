@@ -2,13 +2,13 @@ import json
 
 import numpy as np
 import pandas as pd
-from asapdiscovery.data.metadata.resources import (
+from drugforge.data.metadata.resources import (
     SARS_CoV_2_fitness_data,
     ZIKV_NS2B_NS3pro_fitness_data,
     ZIKV_RdRppro_fitness_data,
     targets_with_fitness_data,
 )
-from asapdiscovery.data.services.postera.manifold_data_validation import (
+from drugforge.data.services.postera.manifold_data_validation import (
     TargetTags,
     TargetVirusMap,
     VirusTags,
@@ -158,7 +158,7 @@ def parse_fitness_json(target: TargetTags) -> pd.DataFrame:
     Parameters
     ----------
     target: str
-        Specifies the target and virus, conforming to asapdiscovery.data.postera.manifold_data_validation.TargetTags
+        Specifies the target and virus, conforming to drugforge.data.postera.manifold_data_validation.TargetTags
 
     Returns
     -------
