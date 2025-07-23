@@ -56,7 +56,7 @@ jobs:
       uses: mamba-org/setup-micromamba@v2
       with:
         environment-file: devtools/conda-envs/${{ matrix.os }}/simulation.yaml
-        environment-name: asapdiscovery
+        environment-name: drugforge
         cache-environment: true
         cache-downloads: true
         cache-environment-key: environment-${{ steps.date.outputs.date }}
@@ -73,13 +73,13 @@ jobs:
 
     - name: Install packages
       run: |
-        python -m pip install -e ./asapdiscovery-cli --no-deps
-        python -m pip install -e ./asapdiscovery-data --no-deps
-        python -m pip install -e ./asapdiscovery-dataviz --no-deps
-        python -m pip install -e ./asapdiscovery-docking --no-deps
-        python -m pip install -e ./asapdiscovery-modeling --no-deps
-        python -m pip install -e ./asapdiscovery-spectrum --no-deps
-        python -m pip install -e ./asapdiscovery-simulation --no-deps
+        python -m pip install -e ./drugforge-cli --no-deps
+        python -m pip install -e ./drugforge-data --no-deps
+        python -m pip install -e ./drugforge-dataviz --no-deps
+        python -m pip install -e ./drugforge-docking --no-deps
+        python -m pip install -e ./drugforge-modeling --no-deps
+        python -m pip install -e ./drugforge-spectrum --no-deps
+        python -m pip install -e ./drugforge-simulation --no-deps
         micromamba list
 
     - name: Run tests
@@ -91,13 +91,13 @@ jobs:
         # Exit immediately if a command exits with a non-zero status.
         set -e
         pytest -n auto --durations=10 -v --cov-report=xml --cov-report=term --color=yes \
-                       --cov=asapdiscovery-simulation \
-                       asapdiscovery-simulation/asapdiscovery/simulation/tests
+                       --cov=drugforge-simulation \
+                       drugforge-simulation/drugforge/simulation/tests
 
     - name: Upload Code Coverage to Codecov
       uses: codecov/codecov-action@v3
       # Don't upload coverage scheduled or on fork
-      if: ${{ github.repository == 'choderalab/asapdiscovery'
+      if: ${{ github.repository == 'choderalab/drugforge'
               && github.event != 'schedule' }}
       with:
         file: ./coverage.xml

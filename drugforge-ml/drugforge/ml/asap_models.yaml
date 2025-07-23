@@ -1,0 +1,143 @@
+# The model name is the key for each model, for production models we prefer CalVer (https://calver.org/)
+# the below is a test model that also has annotations to indicate what each field is.
+
+# model name is the key for each model
+gat_test:
+  # The model type is used to determine which model class to use.
+  type: GAT
+  # The base url is used to determine where to look for the weights and config files
+  base_url: https://d2slxrwfphomy2.cloudfront.net/test/
+  # The weights key has the name of the weights file and the sha256 hash of the file.
+  weights:
+    # resource is the name of the file
+    resource: gat_example_v2.th
+    # sha256hash is the sha256 hash of the file
+    sha256hash: c1a6b3240b1a44aff558ea80983a895f18ab203111f366610bf88fbda6c904b2
+  # The config key has the name of the config file and the sha256 hash of the file.
+  # This key is optional
+  config:
+    # resource is the name of the file
+    resource: gat_example_config_v2.json
+    # sha256hash is the sha256 hash of the file
+    sha256hash: d26f278c189eb897607b9b3a2c61ed6c82fbcd7590683631dc9afd7fa010f256
+  # The last_updated key is the date the model was last updated. in the format YYYY-MM-DD
+  last_updated: 1995-02-06 # actually updated 2024-02-06, but keep old to stop inteferring with prod models
+  targets:
+    - SARS-CoV-2-Mpro
+    - MERS-CoV-Mpro
+  # Because model compatibility with mtenn versions changes over time, the below pins
+  #  will make sure the model spec is compatible with the installed mtenn version.
+  #  Versions will be checked as:
+  #   `mtenn_lower_pin <= mtenn.__version__ < mtenn_upper_pin`
+  #  If a pin is left blank, it will not be checked
+  endpoint: pIC50
+  mtenn_lower_pin: "0.5.0"
+  mtenn_upper_pin:
+
+
+# new models trained with mtenn v0.5.0
+drugforge-SARS-CoV-2-Mpro-GAT-2024.02.06:
+  type: GAT
+  base_url: https://d2slxrwfphomy2.cloudfront.net/production/GAT/
+  weights:
+    resource: asapdiscovery-SARS-CoV-2-Mpro-GAT-2024.02.06.th
+    sha256hash: c1a6b3240b1a44aff558ea80983a895f18ab203111f366610bf88fbda6c904b2
+  config:
+    resource: asapdiscovery-SARS-CoV-2-Mpro-GAT-2024.02.06.json
+    sha256hash: d26f278c189eb897607b9b3a2c61ed6c82fbcd7590683631dc9afd7fa010f256
+  last_updated: 2024-02-06
+  targets:
+    - SARS-CoV-2-Mpro
+    - MERS-CoV-Mpro
+  endpoint: pIC50
+  mtenn_lower_pin: "0.5.0"
+
+drugforge-SARS-CoV-2-Mac1-GAT-2024.02.06:
+  type: GAT
+  base_url: https://d2slxrwfphomy2.cloudfront.net/production/GAT/
+  weights:
+    resource: asapdiscovery-SARS-CoV-2-Mac1-GAT-2024.02.06.th
+    sha256hash: 4a6494412089d390723b107a30361672f2d2711622eea016c33caf1d7c28e1a7
+  config:
+    resource: asapdiscovery-SARS-CoV-2-Mac1-GAT-2024.02.06.json
+    sha256hash: d26f278c189eb897607b9b3a2c61ed6c82fbcd7590683631dc9afd7fa010f256
+  last_updated: 2024-02-06
+  targets:
+    - SARS-CoV-2-Mac1
+  endpoint: pIC50
+  mtenn_lower_pin: "0.5.0"
+
+drugforge-SARS-CoV-2-Mpro-schnet-2024.02.05:
+  type: schnet
+  base_url: https://d2slxrwfphomy2.cloudfront.net/production/schnet/
+  weights:
+    resource: asapdiscovery-SARS-CoV-2-Mpro-schnet-2024.02.05.th
+    sha256hash: 41daaebc2f0820104154378fb972ee9a64a478bf3f4ea91f9c4b4844efce53e5
+  config:
+    resource: asapdiscovery-SARS-CoV-2-Mpro-schnet-2024.02.05.json
+    sha256hash: 85d63a99a44f23b98587c23fdae8ba5f81928f67e7229b240c4fc6f30bac33e7
+  last_updated: 2024-02-05
+  targets:
+    - SARS-CoV-2-Mpro
+    - MERS-CoV-Mpro
+  endpoint: pIC50
+  mtenn_lower_pin: "0.5.0"
+
+drugforge-SARS-CoV-2-Mpro-e3nn-2024.02.06:
+  type: e3nn
+  base_url: https://d2slxrwfphomy2.cloudfront.net/production/e3nn/
+  weights:
+    resource: asapdiscovery-SARS-CoV-2-Mpro-e3nn-2024.02.06.th
+    sha256hash: 510cc7c327df3f7aa18f42925f5a2c059b44ab079d28eb5081ad8c17237a1ac4
+  config:
+    resource: asapdiscovery-SARS-CoV-2-Mpro-e3nn-2024.02.06.json
+    sha256hash: 4129453b62624a18a6295486c285e3eb66a5070c868dad87bc447a14406ed712
+  last_updated: 2024-02-06
+  targets:
+    - SARS-CoV-2-Mpro
+    - MERS-CoV-Mpro
+  endpoint: pIC50
+  mtenn_lower_pin: "0.5.0"
+
+drugforge-GAT-remote-ensemble:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/test_manifest/asap_ensemble_models.yaml
+
+
+drugforge-GAT-pIC50-MERS-CoV-Mpro-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/MERS-CoV-MPro_fluorescence-dose-response_weizmann/latest/manifest.yaml
+
+drugforge-GAT-pIC50-SARS-CoV-2-Mpro-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/SARS-CoV-2-MPro_fluorescence-dose-response_weizmann/latest/manifest.yaml
+
+
+drugforge-GAT-pIC50-DENV-2-NS2B-NS3_fluorescence-dose-response_weizmann-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/DENV-2-NS2B-NS3_fluorescence-dose-response_weizmann/latest/manifest.yaml
+
+drugforge-GAT-pIC50-ZIKV-NS2B-NS3_fluorescence-dose-response_weizmann-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/ZIKV-NS2B-NS3_fluorescence-dose-response_weizmann/latest/manifest.yaml
+
+drugforge-GAT-LogD-bienta-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_LogD_bienta/latest/manifest.yaml
+
+
+drugforge-GAT-KSOL-PBS-bienta-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_KSOL-PBS_bienta/latest/manifest.yaml
+
+drugforge-GAT-in-vitro_HLM_bienta-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_HLM_bienta/latest/manifest.yaml
+
+drugforge-GAT-in-vitro_MLM_bienta-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_MLM_bienta/latest/manifest.yaml
+
+drugforge-GAT-in-vitro_MDR1-MDCKII-Papp_bienta-latest:
+  remote_ensemble: true
+  manifest_url: https://d1ibwnbvfa7iey.cloudfront.net/in-vitro_MDR1-MDCKII-Papp_bienta/latest/manifest.yaml

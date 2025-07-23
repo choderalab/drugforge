@@ -1,0 +1,399 @@
+# testing files for drugforge, these are used for testing the models and the drugforge package
+# if you need to make a sha256 hash you can use the following command
+# shasum -a 256 <file_name>
+# or
+# openssl sha256 <file_name>
+
+base_url: https://d1whv9agzxuuu9.cloudfront.net/
+
+files:
+  # file for internal testing
+  - resource: internal_testing/file1.txt
+    sha256hash: 8fe3f5e68365b15094d8de3b914ef0f4013e4365e19d857d08ac651a4e71dbfe
+
+  # Mpro SDF
+  - resource: Mpro_combined_labeled.sdf
+    sha256hash: 1e7d68356d3a82ce4104bcfe328dcf67d32dccd64c75820403373cad140e5565
+
+  # Mpro SMILES file
+  - resource: Mpro_combined_labeled.smi
+    sha256hash: 4a796c2b22095e3a9440250772cd0e6fed41e88759732272cbf4e6c2f4ac619c
+
+  # single ligand SDF
+  - resource: Mpro-P0008_0A_ERI-UCB-ce40166b-17.sdf
+    sha256hash: 84398b3bcf741f9a26edf73bb93b3a8b0b555861bab0486f385ff7efacbcf197
+
+  # query ligand for rmsd calculation
+  - resource: ERI-UCB-ce40166b-17_Mpro-P2201_0A.sdf
+    sha256hash: 8a1205b1c219321d12e364720d0561f69712ece248759e8af72fb3dbfbbf7e82
+
+  # prepped openeye DU
+  - resource: Mpro-P0008_0A_ERI-UCB-ce40166b-17_prepped_receptor_0.oedu
+    sha256hash: 075775f55efb7daa07ca0b3fa6a9f522483b432850196c6c5a31f8d45b4452d0
+
+  # prepped PDB
+  - resource: Mpro-P0008_0A_ERI-UCB-ce40166b-17_prepped_receptor_0.pdb
+    sha256hash: d4bf45cd72583ee63cd61c0367db1ac0e648d3f4d8f82cb483e0ab222041a90d
+
+  # input file for testing filtering
+  - resource: test_filter_in.csv
+    sha256hash: 48f75eaf8c36feede6e7a7867b41af80ebd8be5108704bb51d0c1eca81060127
+
+  # output files for testing filtering
+  - resource: test_filter_achiral_enantiopure_out.csv
+    sha256hash: f49f799bf6bfadda62f2a2310cd8875eed3eee8a3b013d5e8de002632aac2ed9
+
+  - resource: test_filter_achiral_enantiopure_semiquant_out.csv
+    sha256hash: d6fbe1e77f306091142ba1c853c0bf2c4586786042498dbc770a30f795daabe0
+
+  - resource: test_filter_achiral_out.csv
+    sha256hash: ed73edd9e035aa786ec9a2af37fe9035f258043abdce41ca07061bf5cc3b03a1
+
+  - resource: test_filter_achiral_racemic_enantiopure_out.csv
+    sha256hash: 2d22e4fa9633e70a5d1b8c9cd7f5f699134bf3c1db0dea1163c1e397492908a4
+
+  - resource: test_filter_achiral_racemic_enantiopure_semiquant_out.csv
+    sha256hash: 48f75eaf8c36feede6e7a7867b41af80ebd8be5108704bb51d0c1eca81060127
+
+  - resource: test_filter_achiral_racemic_out.csv
+    sha256hash: 7010e7535e46babef6b32746eb37cf3b80d24a6dc01ccab2770931bae8b7bf0e
+
+  - resource: test_filter_achiral_racemic_semiquant_out.csv
+    sha256hash: 125842ec72a3a861c874879bd3e12cac972744acdb488f7eff259bd711423dbf
+
+  - resource: test_filter_achiral_semiquant_out.csv
+    sha256hash: f7b8425e20b64a8d42701a2fd666c5f4ffa8ba4e8bc5ba16401990c54c115f7d
+
+  - resource: test_filter_enantiopure_out.csv
+    sha256hash: fcf5141a426d4137ca18968a9bd42851cd7bb778df31020bc349067d9f112db2
+
+  - resource: test_filter_enantiopure_semiquant_out.csv
+    sha256hash: b4e1e4a71831537db0dda7a82a5874aa4a8427050cdaaa581fce4ed88bc72fcb
+
+  - resource: test_filter_out.csv
+    sha256hash: 6f0fc5096041e06f3daf5754f72760ef05ded36247a6e822af1bbfa34294612b
+
+  - resource: test_filter_racemic_enantiopure_out.csv
+    sha256hash: a2d38e8231da349ec608bf546db428f05d98388823ff06c15a8e599560f24f70
+
+  - resource: test_filter_racemic_enantiopure_semiquant_out.csv
+    sha256hash: 19507c742903b0ec11ea0ecd934cf0a61981d256b3f6b02aa22af2259d2e88fd
+
+  - resource: test_filter_racemic_out.csv
+    sha256hash: be7c5cd26804f59f0c8936a9195bae027cc110943b2c04312070a9aa91a4a617
+
+  - resource: test_filter_racemic_semiquant_out.csv
+    sha256hash: 8900f160e270ad37302ddecbc154fe51468c13ee0bda8961223fe62c73711528
+
+  - resource: test_filter_semiquant_out.csv
+    sha256hash: 6f0fc5096041e06f3daf5754f72760ef05ded36247a6e822af1bbfa34294612b
+
+  # input file for testing CDD parsing
+  - resource: test_parse_in.csv
+    sha256hash: 1f4939574a8510a78bf0ca761ee9e24bd46125c60912e1b3a5f41c6c9ad310b0
+
+  # output files for testing CDD parsing
+  - resource: test_parse_best_cheng_out.csv
+    sha256hash: bb232959f19189c7032f89c666279249e6951eccfd1b93497bb4a32984c82d29
+
+  - resource: test_parse_best_out.csv
+    sha256hash: af9743adcbd4d7b16b4fa3d8039cf0225bb756a6711120290d6f060b755c7a87
+
+  - resource: test_parse_cheng_out.csv
+    sha256hash: 8b84cb1abc54742c5770332070d7c5ea13fb890e0007ee2d46314ae141c030ed
+
+  - resource: test_parse_out.csv
+    sha256hash: b2adb03a6546f17f298ceb277a204072e791caa7d0745811656ae56cd7c7e6c6
+
+  # fragalysis SARS-2 reference
+  - resource: reference.pdb
+    sha256hash: 8d8fdf6deaba866727a7c676f95f4e93c3180dfab902f7a3bf248d1f629efe56
+
+  # fragalysis SARS-2 PDB
+  - resource: Mpro-P2660_0A_bound.pdb
+    sha256hash: c7bdf1ba1d63bf65d813b1f1dc8b36b007f44627c6cba1f3f9bcc29c255f336d
+
+  # fragalysis SARS-2 PDB processed with openeye
+  - resource: Mpro-P2660_0A_bound_oe_processed.pdb
+    sha256hash: 29139a7f145af62cc6bc4636fb8e500aba672503eea4c68b27540d832ad34178
+
+  # mers CIF1 biological assembly structure
+  - resource: rcsb_8czv-assembly1.cif
+    sha256hash: ec937cda078a4656a1a11815a555136a6670354d54c37fc966cc9ffca72740e5
+
+  # mers seqres yaml
+  - resource: mpro_mers_seqres.yaml
+    sha256hash: 6c2937fb2a98bc57dd7b239f3b5e6f9dbc3cd2720c259fb23af17f9446a8f356
+
+  # sars seqres yaml
+  - resource: mpro_sars2_seqres.yaml
+    sha256hash: 743d9c975cb70024c50952268a2a6cafdf54b20ef165023a5762a8b91ba4a938
+
+  # fragalysis-mpro_spruce.loop_db
+  - resource: fragalysis-mpro_spruce.loop_db
+    sha256hash: ac0c05f07c7e5d0cafad37074db6b9ba6924c8e276d2d8e0bf8b4ad98a981cec
+
+  # prepped sars protein
+  - resource: Mpro-P2660_0A_bound-prepped_protein.pdb
+    sha256hash: 60f1d22ee730adee22c908b07ba96104507e3e8eafc1423c32f60a7cecb881ea
+
+  # prepped sars complex
+  - resource: Mpro-P2660_0A_bound-prepped_complex.pdb
+    sha256hash: a612bf2bd9f0531160a04b8dd4ecf52bba0ce7ceac722e808719fb74eb9c9d19
+
+  # prepped sars ligand
+  - resource: Mpro-P2660_0A_bound-prepped_ligand.sdf
+    sha256hash: 6224f6cba2140648498731acadbacc9772a224119c465694e132a905ff0189d8
+
+  # docked multiconf ligand
+  - resource: multiconf.sdf
+    sha256hash: 8ae697cd5c4e98bf41d7839d49068ebb781ae2a32d48e958dba25297e0015c20
+
+  # prepped sars design unit
+  - resource: Mpro-P2660_0A_bound-prepped_receptor.oedu
+    sha256hash: 802593b2d741be258b1a1b4ee75d5c582cf56303f9a97ca9c6825d2893f14eb7
+
+  # prepped mers protein
+  - resource: rcsb_8czv-assembly1-prepped_protein.pdb
+    sha256hash: c231b87f149007e8fb84c32dcf31f0f8b562f3583d84deb15e4467785b92ff25
+
+  # prepped mers receptor
+  - resource: rcsb_8czv-assembly1-prepped_receptor.oedu
+    sha256hash: e5aecd38d72566d61a01fdf537ce6fc5e1d5d35ec7bce0a864cc6ca73627d929
+
+  # mers pdb IDs to download
+  - resource: mers-structures.yaml
+    sha256hash: 3972d0e4848a15397065cd376be684e895c2ff65f824c9cfac38972fba4d0ab3
+
+  # fragalysis metadata.csv
+  - resource: metadata.csv
+    sha256hash: 0b8c3f6e3cec7d1a8a6aca34cd870455793812f2c1673cda73b5bf830a581f7f
+
+  # spruced rcsb_8czv-assembly1
+  - resource: mers_spruced.pdb
+    sha256hash: 4a042f4446a054d5103fb35e694364ebb78906e00ebf4eaeea7259685fc2801a
+
+  # spruced sars_spruced.pdb
+  - resource: sars_spruced.pdb
+    sha256hash: 3c4c2b33c7ac6e5cea0084dd56bfa70dd37cd44dd529c83bdf2624435708f6d0
+
+  # trajectory and topology to test GIF generation
+  - resource: example_traj.xtc
+    sha256hash: 72b2cd95d257f358bd5267b0d01097db4778d83efc332c1e9c39f790b8ec94a8
+
+  - resource: example_traj_top.pdb
+    sha256hash: 295b59f81dee63c8567adcbe6ebd700f346823309a3bfefa1ca235e709fdaa46
+
+  # used to create FEC networks
+  - resource: tyk2_ligands.sdf
+    sha256hash: 00479cdf26039d7ce14f8f6477a6eb8d6b6645b863cbf3d830ce907b3853c361
+  - resource: tyk2_ligands_cursed_chemistry.sdf
+    sha256hash: 76c1d885294a50f4ee29f050ba81c36da8686453ebbc57cbc2e5dac91911d0ff
+  - resource: "tyk2_complex.json"
+    sha256hash: b02319e8c37053724529fb0fb95b79b99929c0812d2f3306c4bd501013558ea9
+  - resource: tyk2_protein.pdb
+    sha256hash: c8473899ea40b3f4d9382fca3a2b5f76b1e878313a7287a9240bc4322a5db79d
+
+  - resource: prepared_alchemy_dataset.json
+    sha256hash: c988455b3e60d84939666d521415da9c8318fc3b5b4d4606b88acc659763d46d
+
+  # TYK2 FEC networks for testing
+  - resource: tyk2_small_network.json
+    sha256hash: cf6d416ef4c802ad64d72966e2a8ce9115ef3dd87ffa9181309c7c5515b42a66
+  - resource: tyk2_small_custom_network.csv
+    sha256hash: be8e0d829c5ed7dd5ac0392c67cd6fbcfb3ca05a778cea67efd8b67f4161c53d
+  - resource: tyk2_small_custom_network_faulty_missing_comma.csv
+    sha256hash: b74a7dde635383697b749b01fe1113b37e99cd93355d85affe4a407736a238a7
+  - resource: tyk2_small_custom_network_faulty_with_header.csv
+    sha256hash: 1d88664d2090edc743617676b96cfa37021bdbe1c8b3a09f93b4b10dec8c7efd
+  - resource: tyk2_small_custom_network_faulty_with_spaces.csv
+    sha256hash: 0f1280779f09069037d7229befa57683126751e7837cda67a99e775256989403
+
+
+  # TYK2 FEC network for testing (disconnected, i.e. missing edges)
+  - resource: tyk2_result_network_disconnected.json
+    sha256hash: 0468c9b0abffd68613fd8c391bd6422871beeb5ee075dbac3ad844526a6eb797
+
+  # SMILES file with fully defined chirality for testing
+  - resource: chalcogran_defined.smi
+    sha256hash: 247e8d51cd6f404180bfe773a4eb2d6fae37b28919d1527d8b39e5286ea9755c
+  # FragalysisFactory testing
+  - resource: frag_factory_test/metadata.csv
+    sha256hash: a5ee3666fb60f11a87eec59757a9295895c58c2880fcf4c6395b052d4fddf5d3
+
+  - resource: frag_factory_test/aligned/Mpro-x11041_0A/Mpro-x11041_0A_bound.pdb
+    sha256hash: f9f7381df8e577631c455f287095bed39fe13794d7c3d6fa71908954d09da905
+
+  - resource: frag_factory_test/aligned/Mpro-x1425_0A/Mpro-x1425_0A_bound.pdb
+    sha256hash: 1f7a150223b7b8603f70133e7293033fd61ae81fc52236d146b42cb62024bbf9
+
+  - resource: frag_factory_test/aligned/Mpro-x11894_0A/Mpro-x11894_0A_bound.pdb
+    sha256hash: c5b5ecc3e11c0f57a4f96207456a6bc649dd01e983c2cc66f800ed9fb41ab2e9
+
+  - resource: frag_factory_test/aligned/Mpro-x1002_0A/Mpro-x1002_0A_bound.pdb
+    sha256hash: cedee5a737bf7a8d6819323b8eb84dc6ad6e63d52d5a64d36a43215419aea522
+
+  - resource: frag_factory_test/aligned/Mpro-x10155_0A/Mpro-x10155_0A_bound.pdb
+    sha256hash: 6076e89d695695e20643914cf7be74ed548e585189cdb823bbfe943caa1dd017
+
+  - resource: frag_factory_test/aligned/Mpro-x0354_0A/Mpro-x0354_0A_bound.pdb
+    sha256hash: 1cb016532f9e9ca121f3f8ce388f29654e5700aed880bb76c56c3b1707c0fe5e
+
+  - resource: frag_factory_test/aligned/Mpro-x11271_0A/Mpro-x11271_0A_bound.pdb
+    sha256hash: 2e310970111d87244704f64e7e5ba5db72946d2da1aab298dbfc2b3686ff2003
+
+  - resource: frag_factory_test/aligned/Mpro-x1101_1A/Mpro-x1101_1A_bound.pdb
+    sha256hash: 04e9a867ce433618b769d600ba1af7a77e55a9aec30cfc22a33c8d3344b72cd8
+
+  - resource: frag_factory_test/aligned/Mpro-x1187_0A/Mpro-x1187_0A_bound.pdb
+    sha256hash: dbf3c864ec9dd4afe7727d7af12c6250c8e5c4ecf43961453b536de47462e055
+
+  - resource: frag_factory_test/aligned/Mpro-x10338_0A/Mpro-x10338_0A_bound.pdb
+    sha256hash: 54d7a6fc4e4eb3cbe19006e23333e84069b2226db8486d194017ed5c19035016
+
+  # structure directory
+  - resource: structure_dir/Mpro-x0354_0A_bound.pdb
+    sha256hash: 1cb016532f9e9ca121f3f8ce388f29654e5700aed880bb76c56c3b1707c0fe5e
+
+  - resource: structure_dir/Mpro-x1002_0A_bound.pdb
+    sha256hash: cedee5a737bf7a8d6819323b8eb84dc6ad6e63d52d5a64d36a43215419aea522
+
+  - resource: du_cache/Mpro-x0354_0A_bound.oedu
+    sha256hash: 6af7a47a4c2a28000cd979422ed88a45432cbe4badfef4badf0d6fbb9a20f673
+
+  - resource: du_cache/Mpro-x1002_0A_bound.oedu
+    sha256hash: e1362be3ef584e68d0f25c99d4a6c26497cb4f8633585bf04ea389b30c1c468d
+
+  # protein prep testing
+  - resource: SARS2_Mac1A-A1013.pdb
+    sha256hash: 2109f9581336b5e6332fee3136f59ef677a3dbf76cdabf0b4316ec705a1a4a3b
+
+  - resource: protein_json_cache/Mpro-x0354_0A_bound.json
+    sha256hash: 83bb3460d708a140919f122cbc9c69715ede4521ffa90cda4a9ddb32cae78a79
+
+  # precomputed docking result to make some tests faster
+  - resource: docking_results.json
+    sha256hash: 4340695755c2f30edc834a2ad339425df320cbf3f5a1af2e389df8a1758584cc
+
+  # precomputed docking result to make some tests faster
+  - resource: docking_results_simple.json
+    sha256hash: 420d8a50a7ba19a1ba9f1a5b5add2f93bc4a33839f07895421edf1fe6eeea66c
+
+  # constrained conformer generation testing
+  - resource: constrained_conformer/ASAP-0008650.sdf
+    sha256hash: 2aded7f8f4450b94b6bfeb13095ba755867918fb0195d1176165928fc7e5cd13
+
+  - resource: constrained_conformer/complex.json
+    sha256hash: b8adae1898deb77e429bf0904e404ac823ef4d9d9c5f5a7b38c60cc97c4ebda4
+
+  - resource: constrained_conformer/mac1_ligands.smi
+    sha256hash: afdab32d12c2b87b995a76368b47e945006ed58aaf66f5e798ae964ab2f123d1
+
+  # alchemy result testing
+  - resource: tyk2_result_network.json
+    sha256hash: 0deb89052985a3c2758c4e77160abd9afc22e3896b229618f28e8b18e9dc807a
+
+  - resource: tyk2_reference_data.csv
+    sha256hash: 5e73f6cf3b68defcffa5cf54c91ffb5ac1569688278a91c8032d4cd3426930cc
+
+  # integration testing for ML
+  - resource: ml_testing/cdd_filtered_processed.csv
+    sha256hash: a3ac008167733a6473fe4ccdb6111d0802ad96fda0b9b7a6444710911701bfda
+
+  - resource: ml_testing/cdd_filtered_processed.json
+    sha256hash: 7a6753e33d52f4d1d5dcd07a8bfa85b542cd1b1c3718a582a56daee5fe246074
+
+  - resource: ml_testing/cdd_unfiltered.csv
+    sha256hash: 632e7067ef155349054405247396edcbd5c2aa19442e5626cb9ebb8ecb36874c
+
+  - resource: ml_testing/exp_file.json
+    sha256hash: d887d5bdc705b22b8dfb2be2f9fdd3ac2679be4d19d434fd61873b6497d6f36b
+
+  - resource: ml_testing/docked/AAR-POS-5507155c-1_Mpro-P0018_0A_0_bound_best.pdb
+    sha256hash: 236e690fbaac7a811afa4cf2cd950c004582173c8346c5439476eb5d8e0b6f97
+
+  - resource: ml_testing/docked/AAR-RCN-390aeb1f-1_Mpro-P3074_0A_0_bound_best.pdb
+    sha256hash: b5655f753560f32b93eb8fdbfb6d48afa51e2076ccadf75a4d42d7cde2b30931
+
+  - resource: ml_testing/docked/AAR-RCN-67438d21-1_Mpro-P3074_0A_0_bound_best.pdb
+    sha256hash: 6ba3df5050d99e052b511990c576620e3628312fbb9c2fa6633dc783acfb42ed
+
+  - resource: ml_testing/docked/AAR-POS-d2a4d1df-27_Mpro-P0238_0A_0_bound_best.pdb
+    sha256hash: 75a059a032b4ab61148ec8b66392fade4def68c21bd8f91f055ac79a0ab1c456
+
+  - resource: ml_testing/docked/AAR-POS-8a4e0f60-7_Mpro-P0053_0A_0_bound_best.pdb
+    sha256hash: cc15d8f59dc8d6168969c628e6dc8a0a00433045d31bf15822923f9418839db9
+
+  - resource: ml_testing/docked/AAR-RCN-28a8122f-1_Mpro-P2005_0A_0_bound_best.pdb
+    sha256hash: 4899b6ddfe4c3b5164b2f04547486fa3523ab9e189bb3649e54d16b9abbd4536
+
+  - resource: ml_testing/docked/AAR-RCN-37d0aa00-1_Mpro-P3074_0A_0_bound_best.pdb
+    sha256hash: d088efc7a802fcc6cfa40100580ec2949e7c1d15a322d886139d0f5149f8c4f8
+
+  - resource: ml_testing/docked/AAR-RCN-748c104b-1_Mpro-P3074_0A_0_bound_best.pdb
+    sha256hash: cf67ac6c0fccaba1171166794ad909dda0753494c2a96af68985d30c619e2c3b
+
+  - resource: ml_testing/docked/AAR-RCN-521d1733-1_Mpro-P2005_0A_0_bound_best.pdb
+    sha256hash: d0dc51b8a5694632b3bac2aed448383b1ecf3753c11e8ce134ea1ea2dae1f845
+
+  - resource: ml_testing/docked/AAR-RCN-845f9611-1_Mpro-P2005_0A_0_bound_best.pdb
+    sha256hash: 028cb829b537906edf57f3ddafb5a1daad8d4e969669801aa27e01dac520adae
+
+  - resource: mpro_fragalysis-04-01-24_zipped.zip
+    sha256hash: 82c47271ce2f1035b6c00d3421f43b7beeebcb27aedfea3dba9f2def8194421b
+
+  - resource: zikv_nsb2_nsb3_literature_structure.pdb
+    sha256hash: 33cf1112975b5901f2510be1d42959f95d5601fd3befcc84768260ccb2a5c3e6
+
+  - resource: tyk2_one_lig.sdf
+    sha256hash: 182f6882a0160d041159ccedabc7fd3c7e74f07bf52d4e9974b91eb090f68485
+
+  - resource: Mpro-YP_009725301_AFold_processed.pdb
+    sha256hash: 3cdc93de0186243d790e7abd61d77eacde649f547f3d0cd0aaa58243631431f8
+
+  # asap-spectrum testing
+  - resource: SARS_blast_results.xml
+    sha256hash: d6e59d1f6b2eeee5162cca4dbeee7ffcd56eeeabdb733a505ff86ee1588cf8f6
+
+  - resource: SARS_blast_results.csv
+    sha256hash: 1867827bd921e269b44c88476c1dfad2f198266388eef15696eefbb669e24abd
+
+  - resource: mers_8hut.pdb
+    sha256hash: ad5d14671ffc290ee59b1809b4f0b8b31fb709798271dcae97c5633338750b9d
+
+  - resource: sars_alignment.fasta
+    sha256hash: 7e0ab56374e4e4e54197a23649d5d48daa2ba3bfecaed1f3f92d39983a1d9ddc
+
+  - resource: spectrum_dir/YP_009725295_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
+    sha256hash: 5eadcaa47f507281f80eb3cd8a84453dbd5012e549ef6151c808f56bad1dfc7b
+  
+  - resource: lt_docking_scores.csv
+    sha256hash: 469f82bbd2f726601df1371538e6c0bff10e7d40fdc60f9bbab466aa03678b9e
+
+  - resource: SARS_model_ligand_prepped.pdbqt
+    sha256hash: beaff892b09ec66bb1933d5d02922970913d2fbc3a20113ee34203aacf75ccca
+
+  - resource: SARS_model_target_prepped.pdbqt
+    sha256hash: 4d1a32f965208418882909dc045fc9163c131fb5c7d556ea9f01d31ec5a24df4
+
+  - resource: tyk2_result_network_ddg0s.json
+    sha256hash: f9ba9049f40eaa41e108a4cea5efafc726d08729b636c1df61fa771677f4c093
+
+  - resource: p38.graphml
+    sha256hash: 23488ee26d8f717f08057d33e35a257bf63fb4ac01a05e4b4957a846d3c00394
+
+  - resource: p38.pdb
+    sha256hash: 3f0bf718644e7c29f5200cd3def4240ac25ef5fb1948b2e64deb5015d8a45aa4
+
+  - resource: sample_training_data.csv
+    sha256hash: 7b126d8981406b6991347edd8ea47c8d53bbe6df8f3cbd2933dcfa53e233473c
+
+  # testing for cdd-to-schema CLI
+  - resource: test_cdd_to_schema_in.csv
+    sha256hash: 43f0074a78afb4401ff533274288e4f74d2aaa29fb580d7349075ff4108d1914
+
+  - resource: test_cdd_to_schema_out.csv
+    sha256hash: 8931b588606600f9c3a13f493296b313df68540fd194401c896c41b520d9a7ca
+
+  - resource: test_cdd_to_schema_out.json
+    sha256hash: d5db54a7d2a0f4a4d9b252a52a4863263700f341cc1a3d0ac6bda9fa308781a8

@@ -1,15 +1,18 @@
-asapdiscovery
+drugforge
 =============
 [//]: # (Badges)
-[![codecov](https://codecov.io/gh/choderalab/asapdiscovery/branch/main/graph/badge.svg)](https://codecov.io/gh/choderalab/asapdiscovery/branch/main)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/choderalab/asapdiscovery/main.svg)](https://results.pre-commit.ci/latest/github/choderalab/asapdiscovery/main)
+[![codecov](https://codecov.io/gh/choderalab/drugforge/branch/main/graph/badge.svg)](https://codecov.io/gh/choderalab/drugforge/branch/main)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/choderalab/drugforge/main.svg)](https://results.pre-commit.ci/latest/github/choderalab/drugforge/main)
 [![Documentation Status](https://readthedocs.org/projects/asapdiscovery/badge/?version=latest)](https://asapdiscovery.readthedocs.io/en/latest/?badge=latest)
 
 
-A toolkit for structure-based open antiviral drug discovery by the [ASAP Discovery Consortium](https://asapdiscovery.org/).
+A toolkit for structure-based open antiviral drug discovery based on the work by the [ASAP Discovery Consortium](https://asapdiscovery.org/).
 
-<img src="docs/_static/asap_logo.png" width="500">
+This project is a fork of  [ASAPDiscovery](https://github.com/asapdiscovery/asapdiscovery) by the ASAP Discovery Consortium. We thank the original authors for their work and for making it available under MIT license.
 
+This fork is now developed and maintained independently by the [Chodera Lab](https://www.choderalab.org/).
+
+<!-- <img src="docs/_static/asap_logo.png" width="500"> # TODO: do we need a drugforge logo here? -->  
 
 ## Intro
 
@@ -20,77 +23,77 @@ The toolkit in this repo is a batteries-included drug discovery pipeline being a
 
 ## Getting Started
 
-Install the `asapdiscovery` subpackages and begin to explore! Our [docs can be found here](https://asapdiscovery.readthedocs.io/en/latest).
+Install the `drugforge` subpackages and begin to explore! Our [docs can be found here](https://drugforge.readthedocs.io/en/latest).
 
 There are a range of workflows and tooling to use split into several namespace subpackages by theme.
 
-`asapdiscovery-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://docs.alchemiscale.org/en/latest/). See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/running_alchemical_free_energy_calculations.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_asap_alchemy_cli.html)
+`drugforge-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://docs.alchemiscale.org/en/latest/). See [tutorial](https://drugforge.readthedocs.io/en/latest/tutorials/running_alchemical_free_energy_calculations.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_asap_alchemy_cli.html)
 
-`asapdiscovery-cli`: Command line tools uniting the whole repo.
+`drugforge-cli`: Command line tools uniting the whole repo.
 
-`asapdiscovery-data`: Core data models and integrations with services such as [Postera.ai](https://postera.ai/). See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/interfacing_with_databases_and_systems.html)
+`drugforge-data`: Core data models and integrations with services such as [Postera.ai](https://postera.ai/). See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/interfacing_with_databases_and_systems.html)
 
-`asapdiscovery-dataviz`: Data and structure visualization using `3DMol` and `PyMOL`. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/visualizing_asap_targets.html)
+`drugforge-dataviz`: Data and structure visualization using `3DMol` and `PyMOL`. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/visualizing_asap_targets.html)
 
-`asapdiscovery-docking`: Docking and compound screening with the `OpenEye` toolkit
+`drugforge-docking`: Docking and compound screening with the `OpenEye` toolkit
 
-`asapdiscovery-spectrum`: Working with sequence and fitness information. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/exploring_related_sequences_and_structures.html)
+`drugforge-spectrum`: Working with sequence and fitness information. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/exploring_related_sequences_and_structures.html)
 
-`asapdiscovery-ml`: Structure based ML models for predicting compound activity. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/training_ml_models_on_asap_data.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_ml_cli.html)
+`drugforge-ml`: Structure based ML models for predicting compound activity. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/training_ml_models_on_asap_data.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_ml_cli.html)
 
-`asapdiscovery-modelling`: Structure prep and standardisation
+`drugforge-modelling`: Structure prep and standardisation
 
-`asapdiscovery-simulation`: MD simulations and analysis using OpenMM. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/running_md_simulations.html)
+`drugforge-simulation`: MD simulations and analysis using OpenMM. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/running_md_simulations.html)
 
-`asapdiscovery-workflows`: Workflows that combine components to enable project support. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/docking_and_scoring.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_docking_cli.html)
+`drugforge-workflows`: Workflows that combine components to enable project support. See [tutorial](https://asapdiscovery.readthedocs.io/en/latest/tutorials/docking_and_scoring.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_docking_cli.html)
 
 
 ### Disclaimer
 
-`asapdiscovery` is pre-alpha and is under very active development, we make no guarantees around correctness and the API is liable to change rapidly at any time.
+`drugforge` is pre-alpha and is under very active development, we make no guarantees around correctness and the API is liable to change rapidly at any time.
 
 
 ## Installation
 
-**Note**: currently all `asapdiscovery` packages support Python <=3.11 only.
+**Note**: currently all `drugforge` packages support Python <=3.11 only.
 
 
-### Installing from conda-forge
+### Installing from conda-forge (WIP)
 
-You can install the package from the wonderful `conda-forge` with `mamba install -c conda-forge asapdiscovery`.
+You can install the package from the wonderful `conda-forge` with `mamba install -c conda-forge drugforge`.
 
 ### Developer install
 
-`asapdiscovery` is a namespace package, composed of individual Python packages with their own dependencies.
-Each of these packages follows the `asapdiscovery-*` convention for the package name, e.g. `asapdiscovery-data`.
+`drugforge` is a namespace package, composed of individual Python packages with their own dependencies.
+Each of these packages follows the `drugforge-*` convention for the package name, e.g. `drugforge-data`.
 
-To install an `asapdiscovery` package hosted in this repository, we recommend the following:
+To install an `drugforge` package hosted in this repository, we recommend the following:
 
 1. Clone the repository, then enter the source tree:
 
     ```
-    git clone https://github.com/choderalab/asapdiscovery.git
-    cd asapdiscovery
+    git clone https://github.com/choderalab/drugforge.git
+    cd drugforge
     ```
 
 2. Install the dependencies into a new `conda` environment, and activate it:
    NOTES: Conda will almost certainly fail to build the environment - `mamba` is a drop-in replacement for `conda` that is much faster and more reliable.  Additionally, if the environment is built on a CPU, `torch` may not compile with GPU support. Instead, build the environment as described on a GPU node; the architecture will be detected automatically. Alternatively to build for a specific CUDA version you can use the
 
     ```
-    mamba env create -f devtools/conda-envs/asapdiscovery-{platform}.yml
-    conda activate asapdiscovery
+    mamba env create -f devtools/conda-envs/drugforge-{platform}.yml
+    conda activate drugforge
     ```
     Alternatively to build for a specific CUDA version you can use the following.
     ```
-    export CONDA_OVERRIDE_CUDA=12.2 && mamba env create -f devtools/conda-envs/asapdiscovery-{platform}.yml && conda activate asapdiscovery
+    export CONDA_OVERRIDE_CUDA=12.2 && mamba env create -f devtools/conda-envs/drugforge-{platform}.yml && conda activate drugforge
     ```
 
 
-3. Install the individual `asapdiscovery` packages you want to use with `pip` into the environment.
-   For example, `asapdiscovery-data`:
+3. Install the individual `drugforge` packages you want to use with `pip` into the environment.
+   For example, `drugforge-data`:
 
     ```
-    pip install asapdiscovery-data
+    pip install drugforge-data
     ```
 
 
@@ -116,6 +119,7 @@ See [here](https://pre-commit.com/#usage) for more details.
 ### Copyright
 
 Copyright (c) 2023, ASAP Discovery
+Copyright (c) 2025, Chodera Lab
 
 
 #### Acknowledgements

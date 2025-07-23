@@ -3,7 +3,7 @@ Ecosystem
 
 ## Key upstream packages
 
-`asapdiscovery` relies extensively on several key packages within the molecular simulation community.
+`drugforge` relies extensively on several key packages within the molecular simulation community.
 
 * `asap-alchemy` relies heavily on [Open Free Energy](https://openfree.energy/) and [alchemiscale](https://github.com/openforcefield/alchemiscale) to perform alchemical free energy calculations
 * `asap-ml` relies on [MTENN](https://github.com/choderalab/mtenn) to modularize training and evaluation of structure based ML
@@ -14,7 +14,7 @@ Thanks also to the whole FOSS community and the tireless work done to make all o
 
 ## Downstream packages
 
-ASAP maintains several satellite packages that depend on the functionality in the `asapdiscovery` repo.
+ASAP maintains several satellite packages that depend on the functionality in the `drugforge` repo.
 
 Each of these help us fulfil our purpose as an open-science drug discovery enterprises.
 
