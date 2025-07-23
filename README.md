@@ -6,10 +6,13 @@ drugforge
 [![Documentation Status](https://readthedocs.org/projects/asapdiscovery/badge/?version=latest)](https://asapdiscovery.readthedocs.io/en/latest/?badge=latest)
 
 
-A toolkit for structure-based open antiviral drug discovery by the [ASAP Discovery Consortium](https://asapdiscovery.org/).
+A toolkit for structure-based open antiviral drug discovery based on the work by the [ASAP Discovery Consortium](https://asapdiscovery.org/).
 
-<img src="docs/_static/asap_logo.png" width="500">
+This project is a fork of  [ASAPDiscovery](https://github.com/asapdiscovery/asapdiscovery) by the ASAP Discovery Consortium. We thank the original authors for their work and for making it available under MIT license.
 
+This fork is now developed and maintained independently by the [Chodera Lab](https://www.choderalab.org/).
+
+<!-- <img src="docs/_static/asap_logo.png" width="500"> # TODO: do we need a drugforge logo here? -->  
 
 ## Intro
 
