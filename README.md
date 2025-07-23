@@ -119,6 +119,7 @@ See [here](https://pre-commit.com/#usage) for more details.
 ### Copyright
 
 Copyright (c) 2023, ASAP Discovery
+Copyright (c) 2025, Chodera Lab
 
 
 #### Acknowledgements

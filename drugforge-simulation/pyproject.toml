@@ -7,7 +7,8 @@ name = "drugforge-simulation"
 #version = "0.0.1"
 dynamic = ["version"]
 authors = [
-  { name="ASAP Discovery", email="benjamin.kaminow@choderalab.org" },
+    { name="ASAP Discovery", email="benjamin.kaminow@choderalab.org" },
+    { name="ChoderaLab" },
 ]
 description = "API and scripts for running molecular dynamics simulations"
 readme = "README.md"
