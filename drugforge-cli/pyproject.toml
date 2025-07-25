@@ -26,7 +26,7 @@ dependencies = []
 "Bug Tracker" = "https://github.com/choderalab/drugforge/issues"
 
 [project.scripts]
-asap-cli = "drugforge.cli.cli:cli"
+drugforge-cli = "drugforge.cli.cli:cli"
 
 [tool.setuptools.packages.find]
 where = ["."]

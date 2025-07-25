@@ -26,9 +26,9 @@ dependencies = []
 "Bug Tracker" = "https://github.com/choderalab/drugforge/issues"
 
 [project.scripts]
-asap-docking = "drugforge.workflows.docking_workflows.cli:docking"
-asap-prep = "drugforge.workflows.prep_workflows.cli:protein_prep"
-asap-spectrum = "drugforge.workflows.spectrum_workflows.cli:spectrum"
+drugforge-docking = "drugforge.workflows.docking_workflows.cli:docking"
+drugforge-prep = "drugforge.workflows.prep_workflows.cli:protein_prep"
+drugforge-spectrum = "drugforge.workflows.spectrum_workflows.cli:spectrum"
 
 [tool.setuptools.packages.find]
 where = ["."]

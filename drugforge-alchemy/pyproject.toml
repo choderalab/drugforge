@@ -26,7 +26,7 @@ dependencies = []
 "Bug Tracker" = "https://github.com/choderalab/drugforge/issues"
 
 [project.scripts]
-asap-alchemy = "drugforge.alchemy.cli.cli:alchemy"
+drugforge-alchemy = "drugforge.alchemy.cli.cli:alchemy"
 
 [tool.setuptools.packages.find]
 where = ["."]

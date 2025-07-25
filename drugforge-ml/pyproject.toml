@@ -26,7 +26,7 @@ dependencies = []
 "Bug Tracker" = "https://github.com/choderalab/drugforge/issues"
 
 [project.scripts]
-asap-ml = "drugforge.ml.cli:ml"
+drugforge-ml = "drugforge.ml.cli:ml"
 convert-ds = "drugforge.ml.scripts.convert_dataset:convert"
 
 [tool.setuptools.packages.find]
