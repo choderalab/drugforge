@@ -2,7 +2,6 @@ import abc
 from typing import Callable, Literal, Optional, Union
 
 import openfe
-import gufe
 from drugforge.data.schema.ligand import Ligand
 from openfe.setup import LigandNetwork
 from pydantic.v1 import Field
@@ -160,7 +159,7 @@ class PlannedNetwork(_NetworkPlannerSettings):
         """
         return openfe.LigandNetwork.from_graphml(self.graphml)
 
-    def to_openfe_ligands(self) -> list[gufe.components.SmallMoleculeComponent]:
+    def to_openfe_ligands(self) -> list[openfe.SmallMoleculeComponent]:
         """
         Convert all ligand sdfs back to the openfe SmallMoleculeComponent including the central ligand if present.
 
