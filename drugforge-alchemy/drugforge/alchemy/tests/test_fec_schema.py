@@ -1,6 +1,7 @@
 import functools
 
 import openfe
+import gufe
 import pytest
 from alchemiscale import Scope, ScopedKey
 from drugforge.alchemy.schema.atom_mapping import (
@@ -179,7 +180,7 @@ def test_generate_network_lomap(network_type, tyk2_ligands):
     # make sure we can convert back to openfe ligands
     openfe_ligands = planned_network.to_openfe_ligands()
     assert len(openfe_ligands) == 10
-    assert isinstance(openfe_ligands[0], openfe.SmallMoleculeComponent)
+    assert isinstance(openfe_ligands[0], gufe.components.SmallMoleculeComponent)
 
 
 def test_plan_radial_error(tyk2_ligands):
