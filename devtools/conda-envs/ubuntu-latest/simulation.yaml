@@ -39,7 +39,7 @@ dependencies:
   - openeye-toolkits
   - openff-forcefields >=2024.04.0
   - openff-toolkit
-  - openfe
+  - openfe ~=1.0
   - openmm
   - openmmtools
   - openmmforcefields >= 0.13.0
