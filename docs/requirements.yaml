@@ -105,7 +105,7 @@ dependencies:
   - httpx
   - perses >=0.10.2
   - kartograf
-  - rich<14.1.0
+  - rich <14.1.0
   - alchemiscale-client
   - cinnabar >=0.4.1
 
