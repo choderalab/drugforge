@@ -13,7 +13,7 @@ dependencies:
   # drugforge-spectrum
 
   # Command Line Tools & Scripting
-  - rich
+  - rich<14.1.0
   - click
   - pyyaml
 
