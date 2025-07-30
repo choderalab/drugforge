@@ -47,7 +47,7 @@ from .schema_base import (
 )
 
 if TYPE_CHECKING:
-    import openfe
+    import gufe
     from rdkit import Chem
 
 logger = logging.getLogger(__name__)
@@ -386,16 +386,16 @@ class Ligand(DataModelAbstractBase):
         set_SD_data(rdkit_mol, data)
         return rdkit_mol
 
-    def to_openfe(self) -> "openfe.SmallMoleculeComponent":
+    def to_openfe(self) -> "gufe.components.SmallMoleculeComponent":
         """
         Convert to an openfe SmallMoleculeComponent via the rdkit interface.
         """
-        import openfe
+        import gufe
 
-        return openfe.SmallMoleculeComponent.from_rdkit(self.to_rdkit())
+        return gufe.components.SmallMoleculeComponent.from_rdkit(self.to_rdkit())
 
     @classmethod
-    def from_openfe(cls, mol: "openfe.SmallMoleculeComponent", **kwargs) -> "Ligand":
+    def from_openfe(cls, mol: "gufe.components.SmallMoleculeComponent", **kwargs) -> "Ligand":
         """
         Create a Ligand from an openfe SmallMoleculeComponent
         """

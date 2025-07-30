@@ -26,7 +26,7 @@ class ScoreInputs(ScoreSpectrumInputsBase):
     Parameters
     ----------
     docking_csv : Path
-        Path to docking output csv file, from previoud asap-docking step.
+        Path to docking output csv file, from previous drugforge-docking step.
     ligand_regex : str
         Pattern for extracting ligand ID from file string.
     protein_regex : str        
@@ -34,7 +34,7 @@ class ScoreInputs(ScoreSpectrumInputsBase):
     bsite_rmsd : bool
         Whether to calculate binding site RMSD.
     ml_score : bool
-        Whether to employ asap-ml models to score poses.
+        Whether to employ ml models to score poses.
     minimize : bool
         Whether to minimize the pdb structures before running scoring.
     md_openmm_platform : OpenMMPlatform
@@ -74,7 +74,7 @@ class ScoreInputs(ScoreSpectrumInputsBase):
     )
 
     ml_score: bool = Field(
-        False, description="Whether to employ asap-implemented ML models to score poses."
+        False, description="Whether to employ implemented ML models to score poses."
     )
 
     minimize: bool = Field(
