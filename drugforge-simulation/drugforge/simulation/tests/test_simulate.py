@@ -3,6 +3,7 @@ import traceback
 from unittest import mock
 
 import pytest
+from pathlib import Path
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.openeye import POSITDockingResults
 from drugforge.simulation.cli import simulation as cli
@@ -201,3 +202,27 @@ def test_simulation_cli(
         ]
         result = runner.invoke(cli, args)
     assert click_success(result)
+
+
+
+@pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
+def test_minimize_cli(protein_path, tmp_path):
+    """Test minimization of protein PDB using OpenMM."""
+    runner = CliRunner()
+    min_out = f"{tmp_path}/min_out.pdb"
+    args = [
+        "minimize",
+        "--pdb-file",
+        protein_path,
+        "--min-out",
+        min_out,
+        "--output-dir",
+        tmp_path,
+        "--md-openmm-platform",
+        "CPU",
+        "--target",
+        "SARS-CoV-2-Mpro",
+    ]
+    result = runner.invoke(cli, args)
+    assert click_success(result)
+    assert Path(min_out).exists()

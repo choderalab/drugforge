@@ -1,13 +1,12 @@
 from drugforge.data.schema.complex import Complex
 from drugforge.data.util.logging import FileLogger
-from drugforge.simulation.simulate import OpenMMPlatform
+from drugforge.simulation.simulate import minimize_from_pdb, OpenMMPlatform
 from drugforge.docking.scorer import ChemGauss4Scorer
 from drugforge.spectrum.score import (
     ScoreSpectrumInputsBase,
     dock_and_score,
     get_ligand_rmsd,
     score_autodock_vina,
-    minimize_structure,
     score_gnina,
 )
 from drugforge.spectrum.calculate_rmsd import get_binding_site_rmsd
@@ -248,7 +247,7 @@ def score_complex_workflow(inputs: ScoreInputs):
             try:
                 min_out = f"{min_folder}/{tag}_min.pdb"
                 logger.info("Running MD minimization of %s", tag)
-                minimize_structure(
+                minimize_from_pdb(
                     file_min,
                     min_out,
                     min_folder,

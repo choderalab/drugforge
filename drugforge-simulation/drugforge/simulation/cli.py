@@ -13,12 +13,14 @@ from drugforge.cli.cli_args import (
     output_dir,
     pdb_file,
     use_dask,
+    target
 )
 from drugforge.data.readers.molfile import MolFileFactory
 from drugforge.data.schema.complex import Complex
 from drugforge.data.util.dask_utils import DaskType, make_dask_client_meta
 from drugforge.data.util.logging import FileLogger
 from drugforge.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
+from drugforge.simulation.simulate import minimize_from_pdb
 from openmm import unit
 
 
@@ -144,3 +146,43 @@ def vanilla_md(
 @pdb_file
 def szybki():
     raise NotImplementedError("Szybki simulation not yet implemented")
+
+@simulation.command()
+@pdb_file
+@click.option(
+    "--min-out",
+    type=str,
+    default="minimized.pdb",
+    help="Optional file name for saving result of BLAST search",
+)
+@output_dir
+@md_openmm_platform
+@target
+@loglevel
+def minimize(
+    pdb_file: Union[Path, str],
+    min_out: Union[Path, str],
+    output_dir: Union[Path, str],
+    md_openmm_platform: str,
+    target: str,
+    loglevel: Union[int, str] = logging.INFO,
+):
+    logger = FileLogger(
+        "",  # default root logger so that dask logging is forwarded
+        path=output_dir,
+        logfile="vanilla_md.log",
+        stdout=True,
+        level=loglevel,
+    ).getLogger()
+
+    logger.info("Running minimization")
+
+    minimize_from_pdb(
+        pdb_file=pdb_file,
+        min_out=min_out,
+        output_dir=output_dir,
+        md_openmm_platform=md_openmm_platform,
+        target=target,
+    )
+    logger.info(f"Minimized structure saved to {min_out}")
+    
