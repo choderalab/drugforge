@@ -65,7 +65,7 @@ If you wish to use the Postera  platform, contact the ASAP team. There are sevrr
 Running on your own computer locally using dask, using a **molecule file**  and docking against **Fragalysis,** using a **cache**  ****and **saving any structures** that are not already prepped to the cache
 
 ```bash
-asap-cli docking large-scale
+drugforge-cli docking large-scale
  --target SARS-CoV-2-Mpro
  --ligands moonshot_subseries.smi
  --fragalysis-dir mpro_fragalysis-24-07-23
@@ -77,7 +77,7 @@ asap-cli docking large-scale
 Running on your own computer locally using a **molecule file,**  docking against **a pdb file** and uploading to postera.
 
 ```bash
-asap-cli docking large-scale
+drugforge-cli docking large-scale
  --target SARS-CoV-2-Mpro
  --ligands moonshot_subseries.smi
  --pdb-file my_structure.pdb
@@ -90,7 +90,7 @@ asap-cli docking large-scale
 Running on your own computer locally,  pulling and pushing to **Postera, using** a **set of custom structures**, using GAT and Schnet **ML scorers** and adjusting the **acceptable POSIT cutoff,** how many **MCS matched docking partners,**  and how many **top structures** to return.
 
 ```bash
-asap-cli docking large-scale
+drugforge-cli docking large-scale
  --target SARS-CoV-2-Mac1
  --postera
  --postera-molset-name MY_POSTERA_MOLSET
@@ -118,7 +118,7 @@ Request MD with `--md` and a default timestep of `4.0 fs` is used with  and a de
 Running on your own computer locally using dask, using a **molecule file**  and docking against **Fragalysis,** using a **cache**  ****and **saving any structures** that are not already prepped to the cache then **running MD** using the **OpenMM OpenCL platform**
 
 ```bash
-asap-cli docking small-scale
+drugforge-cli docking small-scale
  --target SARS-CoV-2-Mpro
  --ligands moonshot_subseries.smi
  --fragalysis-dir mpro_fragalysis-24-07-23
