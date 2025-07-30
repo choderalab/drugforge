@@ -32,9 +32,6 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe ~=1.0
-  - openmm
-  - gufe >=1.0.0
   - pymol-open-source
   - rdkit
   - plip

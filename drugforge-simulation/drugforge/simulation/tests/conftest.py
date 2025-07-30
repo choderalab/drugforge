@@ -12,7 +12,7 @@ def ligand_path():
 
 @pytest.fixture(scope="session")
 def protein_path():
-    return fetch_test_file("Mpro-x0071_0A_ERI-UCB-8c6b7d0d-1.pdb")
+    return fetch_test_file("Mpro-P2660_0A_bound.pdb")
 
 
 @pytest.fixture(scope="session")

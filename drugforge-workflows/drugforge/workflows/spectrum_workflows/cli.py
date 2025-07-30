@@ -564,7 +564,7 @@ def fitness_alignment(
     "--ml-score",
     is_flag=True,
     default=False,
-    help="Whether to employ asap-implemented ML models to score poses.",
+    help="Whether to employ implemented ML models to score poses.",
 )
 @click.option(
     "--bsite-rmsd",

@@ -12,7 +12,6 @@ from drugforge.data.backend.openeye import (
 )
 from drugforge.data.backend.openeye import oechem, split_openeye_mol
 from drugforge.spectrum.calculate_rmsd import rmsd_alignment
-from drugforge.simulation.simulate import VanillaMDSimulator
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.metadata.resources import active_site_chains
 
@@ -641,73 +640,3 @@ def score_gnina(pdb_target:str,
             ]
         )
     return df
-
-
-def minimize_structure(
-    pdb_complex: Union[Path, str],
-    min_out: Union[Path, str],
-    out_dir: Union[Path, str],
-    md_platform: str,
-    comp_name: str,
-    target_name: str,
-) -> Union[Path, str]:
-    """MD energy minimization a protein ligand complex. 
-    Energy minimization is performed with OpenMM (no equilibration or production MD is performed).
-
-    Parameters
-    ----------
-    pdb_complex : Union[Path, str]
-        Path to protein ligand complex pdb
-    min_out : Union[Path, str]
-        Output file with minimized pdb
-    out_dir : Union[Path, str]
-        Directory to save output minimized complex
-    md_platform : str
-        MD OpenMM platform [CPU, CUDA, OpenCL, Reference, Fastest]
-    comp_name : str
-        Name of to give to complex. Can be arbitrary.
-    target_name : str
-        Name of reference target (see drugforge documentation).
-
-    Returns
-    -------
-    str
-       Path to minimized file
-    """
-
-    if Path(min_out).is_file():
-        logger.warning(
-            f"The file {min_out} already exists. The minimization will be skipped"
-        )
-        return min_out
-    cmp = Complex.from_pdb(
-        pdb_complex,
-        ligand_kwargs={"compound_name": comp_name},
-        target_kwargs={"target_name": target_name},
-    )
-    out_dir = Path(out_dir)
-    prepped_cmp = PreppedComplex.from_complex(cmp)
-    prepped_cmp.target.to_pdb_file(out_dir / "target.pdb")
-    cmp.ligand.to_sdf(out_dir / "ligand.sdf")
-
-    md_simulator = VanillaMDSimulator(
-        output_dir=out_dir,
-        openmm_platform=md_platform,
-        minimize_only=True,
-        num_steps=1,
-    )
-    simulation_results = md_simulator.simulate(
-        [(out_dir / "target.pdb", out_dir / "ligand.sdf")],
-        outpaths=[out_dir],
-        failure_mode="skip",
-    )
-    min_path = simulation_results[0].minimized_pdb_path
-    shutil.move(min_path, min_out)
-    shutil.rmtree(f"{out_dir}/target_ligand", ignore_errors=True)
-    for file_path in [f"{out_dir}/target.pdb", f"{out_dir}/ligand.sdf"]:
-        try:
-            os.remove(file_path)
-        except FileNotFoundError:
-            pass
-
-    return min_out
