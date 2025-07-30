@@ -13,7 +13,7 @@ dependencies:
   # drugforge-spectrum
 
   # Command Line Tools & Scripting
-  - rich
+  - rich <14.1.0
   - click
   - pyyaml
 
@@ -31,7 +31,7 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe
+  - openfe ~=1.0
   - openmm
   - gufe >=1.0.0
   - pymol-open-source

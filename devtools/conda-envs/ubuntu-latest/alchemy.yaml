@@ -25,7 +25,7 @@ dependencies:
   - perses
   - plotmol
   - rdkit
-  - rich
+  - rich <14.1.0
   - tqdm
   - pip
   - pydantic >=2.0.0a0
