@@ -5,17 +5,17 @@ For the docs to compile properly, you will need to have the full drugforge envir
 The docs for this project are built with [Sphinx](http://www.sphinx-doc.org/en/master/).
 To install the needed dependencies, you can run:
 
-```
+```bash
  mamba env update -f docs/requirements.yaml -n YOUR_DRUGFORGE_ENVIRONMENT_NAME 
 ```
 
 You can then build the docs with:
-```
+```bash
 sphinx-build -M html DOCS_SOURCE TEST_DIR
 ```
 
 And examine them with:
-```
+```bash
 cd TEST_DIR/html
 python -m http.server
 ```
