@@ -34,6 +34,8 @@ dependencies:
   - openeye-toolkits
   - openfe ~=1.0
   - openmm
+  - openmmtools
+  - openmmforcefields >= 0.13.0
   - gufe >=1.0.0
   - pymol-open-source
   - rdkit
