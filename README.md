@@ -5,20 +5,20 @@ drugforge
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/choderalab/drugforge/main.svg)](https://results.pre-commit.ci/latest/github/choderalab/drugforge/main)
 [![Documentation Status](https://readthedocs.org/projects/asapdiscovery/badge/?version=latest)](https://asapdiscovery.readthedocs.io/en/latest/?badge=latest)
 
+<img src="docs/_static/smelty_v3.png" width="200">
 
 A toolkit for structure-based open antiviral drug discovery based on the work by the [ASAP Discovery Consortium](https://asapdiscovery.org/).
 
 This project is a fork of  [ASAPDiscovery](https://github.com/asapdiscovery/asapdiscovery) by the ASAP Discovery Consortium. We thank the original authors for their work and for making it available under MIT license.
 
 This fork is now developed and maintained independently by the [Chodera Lab](https://www.choderalab.org/).
-
-<!-- <img src="docs/_static/asap_logo.png" width="500"> # TODO: do we need a drugforge logo here? -->  
+ 
 
 ## Intro
 
-All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools. The AI-driven Structure-enabled Antiviral Platform (ASAP) is making this a reality!
+All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools. 
 
-The toolkit in this repo is a batteries-included drug discovery pipeline being actively developed in a transparent open-source way, with a focus on computational chemistry and informatics support for medicinal chemistry. Coupled with ASAP's [active data disclosures](https://asapdiscovery.org/outputs/) our campaign to develop a new series of antivirals can provide insight into the drug discovery process that is normally conducted behind closed doors.
+The toolkit in this repo is a batteries-included drug discovery pipeline being actively developed in a transparent open-source way, with a focus on computational chemistry and informatics support for medicinal chemistry. 
 
 
 ## Getting Started
@@ -26,6 +26,8 @@ The toolkit in this repo is a batteries-included drug discovery pipeline being a
 Install the `drugforge` subpackages and begin to explore! Our [docs can be found here](https://drugforge.readthedocs.io/en/latest).
 
 There are a range of workflows and tooling to use split into several namespace subpackages by theme.
+
+**Warning:** The implementation of drugforge-ML is still in the works and will be available in the next release. If you want to use ML scoring please refer to the original version of this code under [asapdiscovery](https://github.com/asapdiscovery/asapdiscovery). 
 
 `drugforge-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://docs.alchemiscale.org/en/latest/). See [tutorial](https://drugforge.readthedocs.io/en/latest/tutorials/running_alchemical_free_energy_calculations.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_asap_alchemy_cli.html)
 
