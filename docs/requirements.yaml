@@ -1,5 +1,6 @@
-name: df2
+name: drugforge
 channels:
+  - openeye
   - conda-forge
 dependencies:
   - airium
@@ -79,4 +80,3 @@ dependencies:
   - wandb
   - mafft
   - vina
-prefix: /home/paynea/miniforge3/envs/df2
