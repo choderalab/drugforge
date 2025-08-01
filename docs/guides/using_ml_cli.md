@@ -1,6 +1,8 @@
 Using the ML CLI
 ================
 
+**Warning:** The implementation of drugforge-ML is still in the works and will be available in the next release. If you want to use ML scoring features please refer to the original version of this code under [asapdiscovery](https://github.com/asapdiscovery/asapdiscovery)
+
 This guide will roughly follow the same flow as the corresponding [tutorial notebook](examples/training_ml_models_on_asap_data.ipynb).
 
 <!--- TODO: Switch these scripts to click instead of argparse and hook into main CLI --->
@@ -54,20 +56,20 @@ We assume that the docked PDB files are all in the top level of the directory `.
 
 ```
 # Build GAT dataset
-asap-ml build-ds gat \
+drugforge-ml build-ds gat \
 --exp-file cdd_filtered_processed.json \
 --ds-cache gat_ds.pkl \
 --ds-config-cache gat_config.json
 
 # Build SchNet dataset
-asap-ml build-ds schnet \
+drugforge-ml build-ds schnet \
 --exp-file cdd_filtered_processed.json \
 --ds-cache schnet_ds.pkl \
 --ds-config-cache schnet_config.json \
 --structures './docked_results/*.pdb'
 
 # Build e3nn dataset
-asap-ml build-ds e3nn \
+drugforge-ml build-ds e3nn \
 --exp-file cdd_filtered_processed.json \
 --ds-cache e3nn_ds.pkl \
 --ds-config-cache e3nn_config.json \
@@ -80,7 +82,7 @@ These files can now be passed to the next step without having to reprocess all t
 ## Training the models
 
 There are many CLI args that can be passed for this, defining every different part of training.
-We'll leave most of them as the default here, but you can explore the different options by running `asap-ml build-and-train --help`.
+We'll leave most of them as the default here, but you can explore the different options by running `drugforge-ml build-and-train --help`.
 
 We will be using the default Adam optimizer, default model hyperparameters with a pIC50 readout for the structure-basd models, no early stopping, temporal data splitting with an 80:10:10 split, and a semi-quantitative MSE loss function.
 We will train for 500 epochs, with a mini-batch size of 25, on the GPU, and will save the model outputs to `<model>_training/`.
@@ -96,7 +98,7 @@ They are:
 
 ```
 # Train GAT model
-asap-ml build-and-train gat \
+drugforge-ml build-and-train gat \
 --output-dir ./gat_training/ \
 --trainer-config-cache ./gat_training/trainer.json \
 --ds-split-type temporal \
@@ -110,7 +112,7 @@ asap-ml build-and-train gat \
 --wandb-name gat
 
 # Train SchNet model
-asap-ml build-and-train schnet \
+drugforge-ml build-and-train schnet \
 --output-dir ./schnet_training/ \
 --trainer-config-cache ./schnet_training/trainer.json \
 --ds-split-type temporal \
@@ -124,7 +126,7 @@ asap-ml build-and-train schnet \
 --wandb-name schnet
 
 # Train e3nn model
-asap-ml build-and-train e3nn \
+drugforge-ml build-and-train e3nn \
 --output-dir ./e3nn_training/ \
 --trainer-config-cache ./e3nn_training/trainer.json \
 --ds-split-type temporal \
@@ -141,21 +143,21 @@ asap-ml build-and-train e3nn \
 In the above CLI calls, we passed a value for `--trainer-config-cache`.
 This option serializes the `Trainer` object to a JSON file, so that it can be reused in future runs without needing to pass every single arg.
 This functionality also helps with reproducibility, as there's no need to remember every single CLI arg you specified since it's all stored in the `trainer.json` file.
-To generate these files without also training the model, you can replace the above CLI call with `asap-ml build <model>`, while keeping all the args the same.
+To generate these files without also training the model, you can replace the above CLI call with `drugforge-ml build <model>`, while keeping all the args the same.
 This will generate the `trainer.json` file and then exit, rather than also building and training the model.
 
 Once the above is run, future training runs can be carried out by simply passing the `trainer.json` file.
 
 ```
 # Train GAT model
-asap-ml build-and-train gat \
+drugforge-ml build-and-train gat \
 --trainer-config-cache ./gat_training/trainer.json
 
 # Train SchNet model
-asap-ml build-and-train schnet \
+drugforge-ml build-and-train schnet \
 --trainer-config-cache ./schnet_training/trainer.json
 
 # Train e3nn model
-asap-ml build-and-train e3nn \
+drugforge-ml build-and-train e3nn \
 --trainer-config-cache ./e3nn_training/trainer.json
 ```

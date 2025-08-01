@@ -1,14 +1,21 @@
 Welcome to drugforge's documentation!
 =========================================
+<img src="_static/drugforge_logo.png" width="200">
 
-All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools.
-[The AI-driven Structure-enabled Antiviral Platform](https://asapdiscovery.org) is making this a reality!
+All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools. 
 
 The toolkit in this repo is a batteries-included drug discovery pipeline being actively developed in a transparent open-source way, with a focus on computational chemistry and informatics support for medicinal chemistry.
-Coupled with ASAP's [active data disclosures](https://asapdiscovery.org/outputs) our campaign to develop a new series of antivirals can provide insight into the drug discovery process that is normally conducted behind closed doors.
+
+This project is a fork of  [ASAPDiscovery](https://github.com/asapdiscovery/asapdiscovery) by the ASAP Discovery Consortium. We thank the original authors for their work and for making it available under MIT license.
+
+This fork is now developed and maintained independently by the [Chodera Lab](https://www.choderalab.org/).
 
 ```{note}
-drugforge is not designed as a one size fits all solution for drug discovery, rather it is our opinionated tooling designed with our targets in mind. Your mileage will vary if not using an ASAP target.
+drugforge is not designed as a one size fits all solution for drug discovery, rather it is our opinionated tooling designed with our targets in mind. Your mileage will vary if not using an ASAP target. We will be working towards more general solutions in future releases.
+```
+
+```{warning}
+The implementation of drugforge-ML is still in the works and will be available in the next release. If you want to use ML scoring please refer to the original version of this code under [asapdiscovery](https://github.com/asapdiscovery/asapdiscovery). 
 ```
 
 The `drugforge` toolkit is focused around the following core competencies, organised into submodules:
@@ -32,8 +39,6 @@ The `drugforge` toolkit is focused around the following core competencies, organ
  - `drugforge-simulation`: MD simulations and analysis using [OpenMM](https://openmm.org/)
 
  - `drugforge-workflows`: Workflows that combine components to enable end to end project support
-
-
 
 
 The `drugforge` toolkit is currently focused on [ASAP's targets](https://asapdiscovery.org/pipeline/), which are enumerated on the ASAP website.
