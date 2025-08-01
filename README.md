@@ -5,7 +5,7 @@ drugforge
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/choderalab/drugforge/main.svg)](https://results.pre-commit.ci/latest/github/choderalab/drugforge/main)
 [![Documentation Status](https://readthedocs.org/projects/asapdiscovery/badge/?version=latest)](https://asapdiscovery.readthedocs.io/en/latest/?badge=latest)
 
-<img src="docs/_static/smelty_v3.png" width="200">
+<img src="docs/_static/drugforge_logo.png" width="200">
 
 A toolkit for structure-based open antiviral drug discovery based on the work by the [ASAP Discovery Consortium](https://asapdiscovery.org/).
 
