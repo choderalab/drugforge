@@ -370,13 +370,16 @@ files:
   # ColabFold files for spectrum
   - resource: spectrum_dir/NP_835346_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: a3c94c9d684ef381afeddcfb28860bffd0b87f86334055e6585f47549430e03c
-
   - resource: spectrum_dir/YP_009047217_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: 029bc2ef0d5e38cd3c6779f0782dbc45bd555c0352e046195467b0beda43d9a1
-
   - resource: spectrum_dir/YP_009555250_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: f8e638ec32cb758049dfa23d118d837d74ab9c8b9a5148d7c8aefdaff5ebb70e
-
+  - resource: spectrum_dir/YP_009944365_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
+    sha256hash: 86c0d261c5521141ef11c6112aa6794f22767e6c3490ba1520cc69003d69265d
+  - resource: spectrum_dir/YP_009944273_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
+    sha256hash: 32b5758b7c12e02fd52177c3ebd323bbf5c8bd06dcbcd82ef89042df10ae346d
+  - resource: spectrum_dir/YP_010229075_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
+    sha256hash: 5fb77395f9d65add9d52c4d8ba83195a771fd4ea5c6020b6f9b8d5eaf446f274 
   - resource: spectrum_dir/YP_009725295_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: 5eadcaa47f507281f80eb3cd8a84453dbd5012e549ef6151c808f56bad1dfc7b
 
