@@ -9,16 +9,13 @@ the API in detail including the customisation options available. Here we will gi
 how they should be used in production.
 
 ## drugforge-alchemy Pipeline
-The below figure shows the overall structure of the `drugforge-alchemy` pipeline and how it can fit into the design-make-test-analyse
-cycle of a drug discovery campaign. Each of the blue dashed boxes shows the command used to run that part of the pipeline. The commands
+The `drugforge-alchemy` allows for the preparation, planning and prediction of alchemical free energy calculations at scale. Each step of the pipeline can be run via the command line. The commands
 can be viewed at any time by running:
 ```shell
 drugforge-alchemy --help
 ```
 
 Now lets walk through a typical application starting with `prep`.
-
-![alchemy-fig.png](alchemy-fig.png)
 
 ## drugforge-alchemy Prep
 
@@ -142,64 +139,6 @@ file which can be viewed as an interactive network using the `OpenFE` CLI:
 
 ```shell
 openfe view-ligand-network ligand_network.graphml
-```
-
-## drugforge-alchemy Bespoke
-
-Before submitting our alchemical free energy network for simulation we can optionally generate molecule specific dihedral
-force field parameters using an interface to [OpenFF-BespokeFit](https://github.com/openforcefield/openff-bespokefit).
- BespokeFit is an automated solution for creating bespoke force field parameters for small molecules which are compatible
-with OpenFF general force fields such as Parsley and Sage at scale.
-
-```{eval-rst}
-.. note::
-    Make sure to have your ``BEFLOW_GATEWAY_ADDRESS`` and ``BEFLOW_GATEWAY_PORT`` exported as environment variables
-```
-
-Here we assume you already have a running [BespokeFit executor](https://docs.openforcefield.org/projects/bespokefit/en/latest/getting-started/quick-start.html#production-fits) instance running which you can query via the
-[BespokeFit CLI](https://docs.openforcefield.org/projects/bespokefit/en/latest/getting-started/bespoke-cli.html#openff-bespoke-executor).
-
-### drugforge-alchemy Bespoke Submit
-We can now submit the ligands in our planned network for bespoke parameterization using one of our pre-defined
-bespoke workflows such as the `aimnet2` workflow which offers a good balance between speed and accuracy:
-
-```shell
-drugforge-alchemy bespoke submit --network "planned_network.json"    \
-                            --protocol "aimnet2"
-```
-
-This command submits each of the ligands to the BespokeFit executor and stores their bespoke task `ID` back into the
-provided network file, these `IDs` are then used later to retrieve results and check the status of the parameterization.
-
-For users who want more fine-grained control over the BespokeFit fitting workflow they can provide a JSON file of the
-workflow via:
-
-```shell
-drugforge-alchemy bespoke submit --network "planned_network.json"               \
-                            --factory-file "my_bespokefit_workflow.json"
-```
-
-### drugforge-alchemy Bespoke Status
-To track the progress of the BespokeFit jobs you can use the following command:
-```shell
-drugforge-alchemy bespoke status
-```
-
-### drugforge-alchemy Bespoke Gather
-Once all the BespokeFit jobs have finished you can gather the results using:
-
-```shell
-drugforge-alchemy bespoke gather
-```
-
-This will save the bespoke parameters for each ligand into the `planned_network.json` file which can be used with the
-rest of the workflow and the bespoke parameters will be used automatically.
-
-If we some incomplete jobs in this network or some consistent failures this command will fail, you can however
-bypass this check using:
-
-```shell
-drugforge-alchemy bespoke gather --allow-missing
 ```
 
 ## drugforge-alchemy Submit
