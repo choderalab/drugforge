@@ -3,7 +3,7 @@ drugforge
 [//]: # (Badges)
 [![codecov](https://codecov.io/gh/choderalab/drugforge/branch/main/graph/badge.svg)](https://codecov.io/gh/choderalab/drugforge/branch/main)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/choderalab/drugforge/main.svg)](https://results.pre-commit.ci/latest/github/choderalab/drugforge/main)
-[![Documentation Status](https://readthedocs.org/projects/asapdiscovery/badge/?version=latest)](https://asapdiscovery.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/drugforge/badge/?version=latest)](https://drugforge.readthedocs.io/en/latest/?badge=latest)
 
 <img src="docs/_static/drugforge_logo.png" width="200">
 
@@ -12,7 +12,7 @@ A toolkit for structure-based open antiviral drug discovery based on the work by
 This project is a fork of  [ASAPDiscovery](https://github.com/asapdiscovery/asapdiscovery) by the ASAP Discovery Consortium. We thank the original authors for their work and for making it available under MIT license.
 
 This fork is now developed and maintained independently by the [Chodera Lab](https://www.choderalab.org/).
- 
+
 
 ## Intro
 
@@ -23,7 +23,7 @@ The toolkit in this repo is a batteries-included drug discovery pipeline being a
 
 ## Getting Started
 
-Install the `drugforge` subpackages and begin to explore! Our [docs can be found here](https://drugforge.readthedocs.io/en/latest).
+Install the `drugforge` subpackages and begin to explore! The drugforge [documentation can be found here](https://drugforge.readthedocs.io/en/latest).
 
 There are a range of workflows and tooling to use split into several namespace subpackages by theme.
 
