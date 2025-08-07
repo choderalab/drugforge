@@ -5,10 +5,10 @@ Ecosystem
 
 `drugforge` relies extensively on several key packages within the molecular simulation community.
 
-* `asap-alchemy` relies heavily on [Open Free Energy](https://openfree.energy/) and [alchemiscale](https://github.com/openforcefield/alchemiscale) to perform alchemical free energy calculations
-* `asap-ml` relies on [MTENN](https://github.com/choderalab/mtenn) to modularize training and evaluation of structure based ML
-* `asap-simulation` relies on [OpenMM](https://github.com/openmm/openmm) and [OpenForceField](https://openforcefield.org/) for running and parameterizing MD simulations respectively.
-* `asap-spectrum` uses [Colabfold](https://github.com/sokrypton/ColabFold) for protein structure prediction.
+* `drugforge-alchemy` relies heavily on [Open Free Energy](https://openfree.energy/) and [alchemiscale](https://github.com/openforcefield/alchemiscale) to perform alchemical free energy calculations
+* `drugforge-ml` relies on [MTENN](https://github.com/choderalab/mtenn) to modularize training and evaluation of structure based ML
+* `drugforge-simulation` relies on [OpenMM](https://github.com/openmm/openmm) and [OpenForceField](https://openforcefield.org/) for running and parameterizing MD simulations respectively.
+* `drugforge-spectrum` uses [Colabfold](https://github.com/sokrypton/ColabFold) for protein structure prediction.
 
 Thanks also to the whole FOSS community and the tireless work done to make all of this possible.
 
@@ -37,8 +37,8 @@ We are aiming to productize some aspects of the `asapdiscovery` stack into their
 
 ### Choppa
 
-[Choppa](https://github.com/asapdiscovery/choppa) is a spinout of our fitness PyMOL and HTML viewer for arbitrary fitness data in the form of for example DMS or phylospectrum experiments.
+[Choppa](https://github.com/asapdiscovery/choppa) is a spinout of our fitness PyMOL and HTML viewer for arbitrary fitness data in the form of, for example, DMS or phylospectrum experiments.
 
-### ASAP-Alchemy
+### Quaid-Alchemy
 
-ASAP-Alchemy is a planned spinout of our free energy calculation tooling into a standalone product. Watch this space!
+[Quaid-Alchemy](https://github.com/QuaidAlchemy/quaid) is a planned spinout of our free energy calculation tooling into a standalone product. Watch this space!

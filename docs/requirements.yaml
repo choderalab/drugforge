@@ -1,116 +1,89 @@
-name: docs
+name: drugforge
 channels:
   - openeye
   - conda-forge
 dependencies:
-  # Base depends
+  - airium
+  - click
+  - imageio
+  - logomaker
+  - matplotlib
+  - mdtraj
+  - multimethod
+  - pandas
+  - pillow
+  - pydantic[version='>=2.0.0a0']
+  - pygifsicle
+  - pymol-open-source
+  - pytest
+  - alchemiscale-client
+  - bokeh
+  - cinnabar
+  - codecov
+  - gufe[version='>=1.0.0']
+  - kartograf
+  - lomap2
+  - netifaces
+  - networkx
+  - numpy
+  - openeye-toolkits
+  - openfe~=1.0
+  - openff-models
+  - openff-qcsubmit
+  - openff-toolkit
+  - openff-units
+  - openff-utilities
+  - openmm
+  - panel
+  - perses
   - pip
-  - python >=3.10,<3.11
-
-
-  # docs
-  - sphinx
-  - sphinx_rtd_theme
+  - plotmol
+  - pooch
+  - pytest-console-scripts
+  - pytest-cov
+  - pytest-timeout
+  - pytest-xdist
+  - pyyaml
+  - rdkit
+  - requests-mock
+  - rich[version='<14.1.0']
+  - tqdm
+  - typing-extensions
+  - biopython
+  - boto3
+  - dask
+  - dask-cuda
+  - dask-jobqueue
+  - distributed
+  - mdanalysis
+  - moto
+  - plip
+  - pydantic-settings
+  - python[version='>=3.10,<3.12']
+  - requests
+  - sigfig
+  - dgl[version='<=2.0.0']
+  - mtenn[version='>=0.6.3']
+  - semver
+  - cudatoolkit
+  - dgllife
+  - openff-forcefields[version='>=2024.04.0']
+  - openmmforcefields[version='>=0.13.0']
+  - openmmtools
+  - pytorch
+  - pytorch_cluster
+  - pytorch_geometric[version='>=2.5.0']
+  - pytorch_scatter
+  - pytorch_sparse
+  - scipy[version='>=1.13.1']
+  - seaborn
+  - wandb
+  - mafft
+  - vina
+  - docutils[version='>=0.18.1,<0.21']
   - myst-parser
   - nbsphinx
   - nbsphinx-link
   - pandoc
-  - docutils >=0.18.1,<0.21 # see #1260
-
-  # Testing
-  - pytest
-  - pytest-cov
-  - pytest-xdist
-  - codecov
-  - pytest-console-scripts
-  - pytest-timeout
-  - requests-mock
-  - mock
-
-  # cli
-  - click
-
-  # Others
-  - appdirs
-  - mdanalysis
-  - openff-toolkit
-  - openeye-toolkits <2023.2.3
-  - pandas
-  - pebble
-  - pydantic >=1.10.8,<2.0.0a0
-  - rdkit
-  - seaborn
-  - pebble
-  - panel
-  - plotmol
-  - semver
-
-  # data
-  - requests
-  - boto3
-  - moto
-  - flask
-  - flask-cors
-  - typing-extensions
-  - biopython
-  - ase
-  - validators
-  - pyyaml
-  - sigfig
-  - multimethod
-
-  # ml
-  - pytorch
-  - pytorch_geometric
-  - pytorch_cluster
-  - pytorch_scatter
-  - pytorch_sparse
-  - numpy
-  - h5py
-  - e3nn
-  - dgl
-  - dgllife
-  - pooch
-  - mtenn >=0.5.0
-  - wandb
-
-  # md
-  - openmm
-  - openmmforcefields
-  - mdtraj
-  - openff-toolkit
-  - cudatoolkit
-
-  # execution
-  - distributed
-  - dask
-  - dask-jobqueue
-  - dask-cuda
-  - netifaces
-
-  # viz
-  - imageio
-  - pymol-open-source
-  - gifsicle
-  - plip
-  - plotly
-  - dash
-  - pygifsicle
-  - airium
-  - logomaker
-
-  # simulation
-  - openfe ~=1.0
-  - gufe =>0.9.5
-  - httpx
-  - perses >=0.10.2
-  - kartograf
-  - rich <14.1.0
-  - alchemiscale-client
-  - cinnabar >=0.4.1
-
-
-
-
-    # Pip-only installs
-  #- pip:
+  - sphinx
+  - sphinx_rtd_theme

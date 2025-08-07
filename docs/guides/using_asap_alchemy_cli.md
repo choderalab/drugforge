@@ -1,38 +1,35 @@
-Using the `ASAP-Alchemy` CLI
+Using the `drugforge-alchemy` CLI
 =============================
 
-The `ASAP-Alchemy` CLI provides a series of automated workflows and convince functions that when combined create and
+The `drugforge-alchemy` CLI provides a series of automated workflows and convince functions that when combined create and
 end-to-end pipeline enabling the routine running of state-of-the-art alchemical free energy calculations at (Alchemi)scale!
 The CLI is designed to get you up and running as quickly as possible and has tried and tested defaults, but also allows you to
 customise every part of the workflow if required. To build custom workflows see the Alchemy API tutorial which explains
 the API in detail including the customisation options available. Here we will give a very quick over view of the CLI and
 how they should be used in production.
 
-## ASAP-Alchemy Pipeline
-The below figure shows the overall structure of the `ASAP-Alchemy` pipeline and how it can fit into the design-make-test-analyse
-cycle of a drug discovery campaign. Each of the blue dashed boxes shows the command used to run that part of the pipeline. The commands
+## drugforge-alchemy Pipeline
+The `drugforge-alchemy` allows for the preparation, planning and prediction of alchemical free energy calculations at scale. Each step of the pipeline can be run via the command line. The commands
 can be viewed at any time by running:
 ```shell
-asap-alchemy --help
+drugforge-alchemy --help
 ```
 
 Now lets walk through a typical application starting with `prep`.
 
-![alchemy-fig.png](alchemy-fig.png)
-
-## ASAP-Alchemy Prep
+## drugforge-alchemy Prep
 
 `Prep` offers a pipeline of tools to prepare our ligand series for binding free energy calculations including state enumeration,
 constrained pose and partial charge generation. To view the default prep workflow we can use the following command to write workflow to file
 where it can be edited although this is much easier using the API:
 
 ```shell
-asap-alchemy prep create -f "prep-workflow.json"
+drugforge-alchemy prep create -f "prep-workflow.json"
 ```
 
 The prep workflow can then be executed on a set of ligands (in a local file smi/sdf) using the following command:
 ```shell
-asap-alchemy prep run --factory-file "prep-workflow.json"  \
+drugforge-alchemy prep run --factory-file "prep-workflow.json"  \
                       --dataset-name "example-dataset"     \
                       --ligands "ligand_file.sdf"          \
                       --receptor-complex "receptor.json"   \
@@ -43,7 +40,7 @@ or if you use postera you can provide the name of the molecule set to pull the l
 as an environment variable:
 
 ```shell
-asap-alchemy prep run --factory-file "prep-workflow.json"   \
+drugforge-alchemy prep run --factory-file "prep-workflow.json"   \
                       --dataset-name "example-dataset"      \
                       --postera-molset-name "ligand-series" \
                       --receptor-complex "receptor.json"    \
@@ -56,10 +53,10 @@ asap-alchemy prep run --factory-file "prep-workflow.json"   \
 ```
 
 If you are not sure which reference crystal you would like to use when generating the poses for the  ligands you can
-provide a directory of prepared structures using the `asap-prep` CLI and one will be selected for you.
+provide a directory of prepared structures using the `drugforge-prep` CLI and one will be selected for you.
 
 ```shell
-asap-alchemy prep run --factory-file "prep-workflow.json"   \
+drugforge-alchemy prep run --factory-file "prep-workflow.json"   \
                       --dataset-name "example-dataset"      \
                       --postera-molset-name "ligand-series" \
                       --structure-dir "receptor-cache"      \
@@ -82,7 +79,7 @@ for ligands with an activity within the assay sensitivity range, fully defined s
 will then be posed using the same protocol as the target ligands and marked as experimental via an SD tag.
 
 ```shell
-asap-alchemy prep run --factory-file "prep-workflow.json"   \
+drugforge-alchemy prep run --factory-file "prep-workflow.json"   \
                       --dataset-name "example-dataset"      \
                       --postera-molset-name "ligand-series" \
                       --structure-dir "receptor-cache"      \
@@ -96,7 +93,7 @@ Within this you will find a PDB file of the receptor along with an SDF of ligand
 detailing any ligand for which a pose could not be generated and the reason why. An `prepared_alchemy_dataset.json` file
 will also be present which can be used in the next stage of the workflow.
 
-## ASAP-Alchemy Plan
+## drugforge-alchemy Plan
 
 We are now ready to plan an alchemical free energy network using a state-of-the-art workflow built on the [OpenFE](https://docs.openfree.energy/en/stable/)
 infrastructure. Our default workflow plans a minimal spanning tree network with redundancy to ensure each ligand is connected to
@@ -104,7 +101,7 @@ at least two other ligands in the network, using the Lomap atom mapping and scor
 via the API or via manually editing the workflow file which can be generated using:
 
 ```shell
-asap-alchemy create "alchemy-factory.json"
+drugforge-alchemy create "alchemy-factory.json"
 ```
 
 We can now plan our network using the default workflow and the ligands we have just posed using the `prep` pipeline from
@@ -112,14 +109,14 @@ the previous stage. The `prepared_alchemy_dataset.json` file contains everything
 ligands, a dataset name and the receptor. The network is then generated by running:
 
 ```shell
-asap-alchemy plan --alchemy-dataset "prepared_alchemy_dataset.json"
+drugforge-alchemy plan --alchemy-dataset "prepared_alchemy_dataset.json"
 ```
 
 Or if you have posed the ligands using some other pipeline you can provide them as an SDF file and the receptor can be
 provided as a PDB and should already be protonated:
 
 ```shell
-asap-alchemy plan --name "my-network"      \
+drugforge-alchemy plan --name "my-network"      \
                   --ligands "ligands.sdf"  \
                   --receptor "protein.pdb"
 ```
@@ -129,7 +126,7 @@ the name of the assay protocol and biological target which should be associated 
 them each time you make a prediction later in the workflow:
 
 ```shell
-asap-alchemy plan --name "my-network"                \
+drugforge-alchemy plan --name "my-network"                \
                   --ligands "ligands.sdf"            \
                   --receptor "protein.pdb"           \
                   --experimental-protocol "assay-2"  \
@@ -144,65 +141,7 @@ file which can be viewed as an interactive network using the `OpenFE` CLI:
 openfe view-ligand-network ligand_network.graphml
 ```
 
-## ASAP-Alchemy Bespoke
-
-Before submitting our alchemical free energy network for simulation we can optionally generate molecule specific dihedral
-force field parameters using an interface to [OpenFF-BespokeFit](https://github.com/openforcefield/openff-bespokefit).
- BespokeFit is an automated solution for creating bespoke force field parameters for small molecules which are compatible
-with OpenFF general force fields such as Parsley and Sage at scale.
-
-```{eval-rst}
-.. note::
-    Make sure to have your ``BEFLOW_GATEWAY_ADDRESS`` and ``BEFLOW_GATEWAY_PORT`` exported as environment variables
-```
-
-Here we assume you already have a running [BespokeFit executor](https://docs.openforcefield.org/projects/bespokefit/en/latest/getting-started/quick-start.html#production-fits) instance running which you can query via the
-[BespokeFit CLI](https://docs.openforcefield.org/projects/bespokefit/en/latest/getting-started/bespoke-cli.html#openff-bespoke-executor).
-
-### ASAP-Alchemy Bespoke Submit
-We can now submit the ligands in our planned network for bespoke parameterization using one of our pre-defined
-bespoke workflows such as the `aimnet2` workflow which offers a good balance between speed and accuracy:
-
-```shell
-asap-alchemy bespoke submit --network "planned_network.json"    \
-                            --protocol "aimnet2"
-```
-
-This command submits each of the ligands to the BespokeFit executor and stores their bespoke task `ID` back into the
-provided network file, these `IDs` are then used later to retrieve results and check the status of the parameterization.
-
-For users who want more fine-grained control over the BespokeFit fitting workflow they can provide a JSON file of the
-workflow via:
-
-```shell
-asap-alchemy bespoke submit --network "planned_network.json"               \
-                            --factory-file "my_bespokefit_workflow.json"
-```
-
-### ASAP-Alchemy Bespoke Status
-To track the progress of the BespokeFit jobs you can use the following command:
-```shell
-asap-alchemy bespoke status
-```
-
-### ASAP-Alchemy Bespoke Gather
-Once all the BespokeFit jobs have finished you can gather the results using:
-
-```shell
-asap-alchemy bespoke gather
-```
-
-This will save the bespoke parameters for each ligand into the `planned_network.json` file which can be used with the
-rest of the workflow and the bespoke parameters will be used automatically.
-
-If we some incomplete jobs in this network or some consistent failures this command will fail, you can however
-bypass this check using:
-
-```shell
-asap-alchemy bespoke gather --allow-missing
-```
-
-## ASAP-Alchemy Submit
+## drugforge-alchemy Submit
 
 ```{eval-rst}
 .. note::
@@ -225,7 +164,7 @@ provides a convent API to track and manage calculations rather than having to ma
 We can now submit our `planned_network.json` and execute the tasks on Alchemiscale using:
 
 ```shell
-asap-alchemy submit --network "planned_network.json"    \
+drugforge-alchemy submit --network "planned_network.json"    \
                     --organization "my_org"             \
                     --campaign "testing_asap_alchemy"   \
                     --project "target_1"
@@ -236,68 +175,68 @@ and project, then created tasks for each transformation and submitted them to be
 during this process which allows you to quickly look up the network on Alchemiscale and is stored in the `planned_network.json` file.
 
 
-## ASAP-Alchemy Status
+## drugforge-alchemy Status
 
 
 To track to progress of the alchemical network on Alchemiscale you can use the following command:
 
 ```shell
-asap-alchemy status
+drugforge-alchemy status
 ```
 
 If your network has some errored tasks we can also retrieve the errors and tracebacks using:
 
 ```shell
-asap-alchemy status --errors --with-traceback
+drugforge-alchemy status --errors --with-traceback
 ```
 
 or if you would like to view the status of all currently actioned networks on Alchemiscale under your scope you can use:
 
 ```shell
-asap-alchemy status --all-networks
+drugforge-alchemy status --all-networks
 ```
 
-## ASAP-Alchemy Restart
+## drugforge-alchemy Restart
 
 Sometimes calculations can fail due to a verity of reasons, some of which can be cleared by simply restarting the tasks.
 Until automatic restarting is built into Alchemiscale we provide a command which allows you to restart all the
 errored tasks in a network:
 
 ```shell
-asap-alchemy restart
+drugforge-alchemy restart
 ```
 
-## ASAP-Alchemy Stop
+## drugforge-alchemy Stop
 
 If for any reason you want to stop a network, which removes all currently actioned tasks, you will need the network key which
 can be found in the `status` command:
 
 ```shell
-asap-alchemy stop --network-key "network-key"
+drugforge-alchemy stop --network-key "network-key"
 ```
 
-## ASAP-Alchemy Gather
+## drugforge-alchemy Gather
 
 Once our network has completed all its tasks we can gather the results and store them locally for analysis using:
 
 ```shell
-asap-alchemy gather
+drugforge-alchemy gather
 ```
 
 if the network has some incomplete edges this command will fail, you can however bypass this check using:
 
 ```shell
-asap-alchemy gather --allow-missing
+drugforge-alchemy gather --allow-missing
 ```
 
 This will create a new copy of the network with the results called `result_network.json`.
 
-## ASAP-Alchemy Predict
+## drugforge-alchemy Predict
 
 Finally, with our local results we can now estimate the binding affinity of our ligands using:
 
 ```shell
-asap-alchemy predict
+drugforge-alchemy predict
 ```
 
 This will produce two `CSV` files one containing the relative and the other the absolute binding affinity predictions.
@@ -311,19 +250,19 @@ help analyse the results in more detail.
 If you did not provide the protocol earlier you can provide it as an argument to the prediction command:
 
 ```shell
-asap-alchemy predict --experimental-protocol "assay-1"
+drugforge-alchemy predict --experimental-protocol "assay-1"
 ```
 
 or if you keep you experimental data in a different source you can provide it as a formated csv file which matches the CDD
 data:
 
 ```shell
-asap-alchemy predict  --reference-dataset "assay_data.csv" --reference-units "pIC50"
+drugforge-alchemy predict  --reference-dataset "assay_data.csv" --reference-units "pIC50"
 ```
 
 If you use postera and would like to upload the results you can provide the molecule set name and a biological target if
 not provided earlier:
 
 ```shell
-asap-alchemy predict --target "SARS-CoV-2-Mac1" --postera-molset-name "alchemy-ligands-1"
+drugforge-alchemy predict --target "SARS-CoV-2-Mac1" --postera-molset-name "alchemy-ligands-1"
 ```

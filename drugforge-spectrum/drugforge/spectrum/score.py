@@ -490,7 +490,10 @@ def score_autodock_vina(
 
     # get coordinates of box
     if box_center is None:
-        parent_dir = ligand_sdf.resolve().parents[0]
+        ligand_pdbqt = ligand_pdbqt.resolve()
+        receptor_pdbqt = receptor_pdbqt.resolve()
+        parent_dir = ligand_pdbqt.parents[0]
+        path_to_prepare_file = Path(path_to_prepare_file).resolve()
         p = subprocess.Popen(
             f"pythonsh {path_to_prepare_file}/prepare_gpf.py -l {ligand_pdbqt} -r {receptor_pdbqt} -y",
             cwd=parent_dir,
