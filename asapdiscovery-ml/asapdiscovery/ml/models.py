@@ -26,12 +26,10 @@ class MLModelBase(BaseModel):
     model_config = {"arbitrary_types_allowed": True}
 
     name: str = Field(..., description="Model name")
-    endpoint: Optional[str] = Field(..., description="Endpoint for model")
+    endpoint: str = Field(..., description="Endpoint for model")
     type: ModelType = Field(..., description="Model type")
     last_updated: date = Field(..., description="Last updated datetime")
-    targets: Optional[Set[TargetTags]] = Field(
-        ..., description="Biological targets of the model"
-    )
+    targets: Set[TargetTags] = Field(..., description="Biological targets of the model")
     mtenn_lower_pin: Version | None = Field(
         None, description="Lower bound on compatible mtenn versions (inclusive)."
     )
