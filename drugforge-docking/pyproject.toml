@@ -27,6 +27,7 @@ dependencies = []
 
 [project.scripts]
 make-docked-complexes = "drugforge.docking.scripts.make_docked_complexes_schema_v2:main"
+drugforge-docking = "drugforge.docking.workflows.cli:cli"
 
 [tool.setuptools.packages.find]
 where = ["."]
