@@ -3,7 +3,7 @@ import warnings
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union  # noqa: F401
+from typing import Optional, Set, Union
 from urllib.parse import urljoin
 
 import mtenn
@@ -13,7 +13,7 @@ import yaml
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.ml.pretrained_models import asap_models_yaml
 from mtenn.config import ModelType
-from pydantic.v1 import BaseModel, Field, HttpUrl, validator
+from pydantic.v1 import BaseModel, Field, HttpUrl, field_validator, field_serializer
 from semver import Version
 
 
@@ -22,23 +22,16 @@ class MLModelBase(BaseModel):
     Base model class for ML models
     """
 
-    class Config:
-
-        # Add custom encoders for semver Versions
-        json_encoders = {Version: lambda v: str(v)}
-
-        # Allow arbitrary types so that pydantic will accept Versions
-        arbitrary_types_allowed = True
+    # Allow arbitrary types so that pydantic will accept Versions
+    model_config = {"arbitrary_types_allowed": True}
 
     name: str = Field(..., description="Model name")
-    endpoint: Any = Field(
-        ..., description="Endpoint for model"
-    )  # FIXME: should be Optional[str] but this causes issues with pydantic
+    endpoint: Optional[str] = Field(..., description="Endpoint for model")
     type: ModelType = Field(..., description="Model type")
     last_updated: date = Field(..., description="Last updated datetime")
-    targets: Any = Field(
+    targets: Optional[Set[TargetTags]] = Field(
         ..., description="Biological targets of the model"
-    )  # FIXME: should be Optional[Set[TargetTags]] but this causes issues with pydantic
+    )
     mtenn_lower_pin: Version | None = Field(
         None, description="Lower bound on compatible mtenn versions (inclusive)."
     )
@@ -46,7 +39,11 @@ class MLModelBase(BaseModel):
         None, description="Upper bound on compatible mtenn versions (exclusive)."
     )
 
-    @validator("mtenn_lower_pin", "mtenn_upper_pin", pre=True)
+    @field_serializer("mtenn_lower_pin", "mtenn_upper_pin", when_used="unless-none")
+    def serialize_version(self, version):
+        return str(version)
+
+    @field_validator("mtenn_lower_pin", "mtenn_upper_pin", mode="before")
     def cast_versions(cls, v):
         """
         Cast SemVer version strings to Version objects.
@@ -170,7 +167,7 @@ class EnsembleMLModelSpec(MLModelSpecBase):
     )
     ensemble: bool = True
 
-    @validator("models")
+    @field_validator("models")
     @classmethod
     def check_all_types(cls, models):
         """
@@ -180,7 +177,7 @@ class EnsembleMLModelSpec(MLModelSpecBase):
             raise ValueError("All models in an ensemble must be of the same type")
         return models
 
-    @validator("models")
+    @field_validator("models")
     @classmethod
     def check_all_mtenn_versions(cls, models):
         """
