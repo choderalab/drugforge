@@ -1,37 +1,6 @@
 import click
 
 
-def postera(func):
-    return click.option(
-        "--postera",
-        is_flag=True,
-        default=False,
-        help="Whether to download complexes from Postera.",
-    )(func)
-
-
-def postera_molset_name(func):
-    return click.option(
-        "--postera-molset-name",
-        type=str,
-        default=None,
-        help="The name of the Postera molecule set to use.",
-    )(func)
-
-
-def postera_upload(func):
-    return click.option(
-        "--postera-upload",
-        is_flag=True,
-        default=False,
-        help="Whether to upload results to Postera.",
-    )(func)
-
-
-def postera_args(func):
-    return postera(postera_molset_name(postera_upload(func)))
-
-
 def use_dask(func):
     return click.option(
         "--use-dask",
@@ -124,29 +93,6 @@ def input_json(func):
     )(func)
 
 
-def ml_scorers(func):
-    from drugforge.ml.models import ASAPMLModelRegistry
-
-    return click.option(
-        "--ml-scorer",
-        type=click.Choice(
-            ASAPMLModelRegistry.get_implemented_model_types(), case_sensitive=True
-        ),
-        multiple=True,
-        help="The names of the ml scorer to use, can be specified multiple times to use multiple ml scorers.",
-    )(func)
-
-
-# flag to run all ml scorers
-def ml_score(func):
-    return click.option(
-        "--ml-score",
-        is_flag=True,
-        default=False,
-        help="Whether to run all ml scorers",
-    )(func)
-
-
 def fragalysis_dir(func):
     return click.option(
         "--fragalysis-dir",
@@ -190,59 +136,6 @@ def use_only_cache(func):
     )(func)
 
 
-def gen_cache_w_default(func):
-    return click.option(
-        "--gen-cache",
-        type=click.Path(
-            resolve_path=False, exists=False, file_okay=False, dir_okay=True
-        ),
-        help="Path to a directory where a design unit cache should be generated.",
-        default="prepped_structure_cache",
-    )(func)
-
-
-def md(func):
-    return click.option(
-        "--md",
-        is_flag=True,
-        default=False,
-        help="Whether to run MD",
-    )(func)
-
-
-def md_steps(func):
-    return click.option(
-        "--md-steps",
-        type=int,
-        default=2500000,
-        help="Number of MD steps",
-    )(func)
-
-
-def md_openmm_platform(func):
-    from drugforge.simulation.simulate import OpenMMPlatform
-
-    return click.option(
-        "--md-openmm-platform",
-        type=click.Choice(OpenMMPlatform.get_values(), case_sensitive=False),
-        default=OpenMMPlatform.Fastest,
-        help="The OpenMM platform to use for MD",
-    )(func)
-
-
-def md_args(func):
-    return md(md_steps(md_openmm_platform(func)))
-
-
-def core_smarts(func):
-    return click.option(
-        "-cs",
-        "--core-smarts",
-        type=click.STRING,
-        help="The SMARTS which should be used to select which atoms to constrain to the reference structure.",
-    )(func)
-
-
 def save_to_cache(func):
     return click.option(
         "--save-to-cache/--no-save-to-cache",
@@ -258,105 +151,4 @@ def loglevel(func):
         help="The log level to use.",
         default="INFO",
         show_default=True,
-    )(func)
-
-
-def ref_chain(func):
-    return click.option(
-        "--ref-chain",
-        type=str,
-        default=None,
-        help="Chain ID to align to in reference structure containing the active site.",
-    )(func)
-
-
-def active_site_chain(func):
-    return click.option(
-        "--active-site-chain",
-        type=str,
-        default=None,
-        help="Active site chain ID to align to ref_chain in reference structure",
-    )(func)
-
-
-def seq_file(func):
-    return click.option(
-        "-f",
-        "--seq-file",
-        type=click.Path(resolve_path=True, exists=True, file_okay=True, dir_okay=False),
-        help="File containing reference sequences",
-    )(func)
-
-
-def seq_type(func):
-    return click.option(
-        "-t",
-        "--seq_type",
-        type=click.Choice(["fasta", "pdb", "pre-calc"]),
-        help="Type of input from which the sequence will be read.",
-        default="fasta",
-        show_default=True,
-    )(func)
-
-
-def blast_json(func):
-    return click.option(
-        "--blast-json",
-        type=click.Path(resolve_path=True, exists=True, file_okay=True, dir_okay=False),
-        help="Path to a json file containing parameters for the blast search.",
-    )(func)
-
-
-def email(func):
-    return click.option(
-        "--email",
-        type=str,
-        default="",
-        help="Email for Entrez search.",
-    )(func)
-
-
-def max_mismatches(func):
-    return click.option(
-        "--max-mismatches",
-        default=0,
-        help="Maximum number of aminoacid group missmatches to be allowed in color-seq-match mode.",
-    )(func)
-
-
-def gen_ref_pdb(func):
-    return click.option(
-        "--gen-ref-pdb",
-        is_flag=True,
-        default=False,
-        help="Whether to retrieve a pdb file for the query structure.",
-    )(func)
-
-
-def multimer(func):
-    return click.option(
-        "--multimer",
-        is_flag=True,
-        default=False,
-        help="Store the output sequences for a multimer ColabFold run (from identical chains)."
-        ' If not set, "--n-chains" will not be used. ',
-    )(func)
-
-
-def n_chains(func):
-    return click.option(
-        "--n-chains",
-        type=int,
-        default=None,
-        help="Number of repeated chains that will be saved in csv file."
-        ' Requires calling the "--multimer" flag',
-    )(func)
-
-
-def pymol_save(func):
-    return click.option(
-        "--pymol-save",
-        type=str,
-        default="session.pse",
-        help="Path to file where session will be saved.",
     )(func)
