@@ -1,15 +1,34 @@
 import click
 import logging
 from typing import Optional, Union
-from drugforge.docking.workflows.cross_docking import CrossDockingWorkflowInputs, cross_docking_workflow
-from drugforge.cli.cli_args import target, ligands, pdb_file, fragalysis_dir, structure_dir, save_to_cache, cache_dir, use_only_cache, dask_args, output_dir, overwrite, input_json, loglevel
+from drugforge.docking.workflows.cross_docking import (
+    CrossDockingWorkflowInputs,
+    cross_docking_workflow,
+)
+from drugforge.docking.workflows.cli_args import (
+    target,
+    ligands,
+    pdb_file,
+    fragalysis_dir,
+    structure_dir,
+    save_to_cache,
+    cache_dir,
+    use_only_cache,
+    dask_args,
+    output_dir,
+    overwrite,
+    input_json,
+    loglevel,
+)
 from drugforge.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE
 from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.util.dask_utils import DaskType, FailureMode
 
+
 @click.group()
 def cli(help="Command-line interface for drugforge-docking"): ...
+
 
 @cli.command()
 @target
