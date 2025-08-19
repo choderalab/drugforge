@@ -234,14 +234,14 @@ def test_build_trainer_graph(exp_file, tmp_path):
     assert t.output_dir == output_dir
     assert not t.use_wandb
     assert not t._is_initialized
-    assert not hasattr(t, "model")
-    assert not hasattr(t, "optimizer")
-    assert not hasattr(t, "es")
-    assert not hasattr(t, "ds")
-    assert not hasattr(t, "ds_train")
-    assert not hasattr(t, "ds_val")
-    assert not hasattr(t, "ds_test")
-    assert not hasattr(t, "loss_func")
+    t.model is None
+    t.optimizer is None
+    t.es is None
+    t.ds is None
+    t.ds_train is None
+    t.ds_val is None
+    t.ds_test is None
+    t.loss_funcs is None
 
 
 def test_build_trainer_schnet(exp_file, docked_files, tmp_path):
@@ -293,14 +293,14 @@ def test_build_trainer_schnet(exp_file, docked_files, tmp_path):
     assert t.output_dir == output_dir
     assert not t.use_wandb
     assert not t._is_initialized
-    assert not hasattr(t, "model")
-    assert not hasattr(t, "optimizer")
-    assert not hasattr(t, "es")
-    assert not hasattr(t, "ds")
-    assert not hasattr(t, "ds_train")
-    assert not hasattr(t, "ds_val")
-    assert not hasattr(t, "ds_test")
-    assert not hasattr(t, "loss_func")
+    t.model is None
+    t.optimizer is None
+    t.es is None
+    t.ds is None
+    t.ds_train is None
+    t.ds_val is None
+    t.ds_test is None
+    t.loss_funcs is None
 
     assert not t.ds_config.for_e3nn
 
@@ -356,18 +356,18 @@ def test_build_trainer_e3nn(exp_file, docked_files, tmp_path):
     assert t.output_dir == output_dir
     assert not t.use_wandb
     assert not t._is_initialized
-    assert not hasattr(t, "model")
-    assert not hasattr(t, "optimizer")
-    assert not hasattr(t, "es")
-    assert not hasattr(t, "ds")
-    assert not hasattr(t, "ds_train")
-    assert not hasattr(t, "ds_val")
-    assert not hasattr(t, "ds_test")
-    assert not hasattr(t, "loss_func")
+    t.model is None
+    t.optimizer is None
+    t.es is None
+    t.ds is None
+    t.ds_train is None
+    t.ds_val is None
+    t.ds_test is None
+    t.loss_funcs is None
 
     assert t.ds_config.for_e3nn
 
-    assert t.model_config.irreps_hidden == "5x0o+5x0e"
+    assert t.mtenn_model_config.irreps_hidden == "5x0o+5x0e"
 
 
 def test_build_trainer_visnet(exp_file, docked_files, tmp_path):
@@ -419,14 +419,14 @@ def test_build_trainer_visnet(exp_file, docked_files, tmp_path):
     assert t.output_dir == output_dir
     assert not t.use_wandb
     assert not t._is_initialized
-    assert not hasattr(t, "model")
-    assert not hasattr(t, "optimizer")
-    assert not hasattr(t, "es")
-    assert not hasattr(t, "ds")
-    assert not hasattr(t, "ds_train")
-    assert not hasattr(t, "ds_val")
-    assert not hasattr(t, "ds_test")
-    assert not hasattr(t, "loss_func")
+    t.model is None
+    t.optimizer is None
+    t.es is None
+    t.ds is None
+    t.ds_train is None
+    t.ds_val is None
+    t.ds_test is None
+    t.loss_funcs is None
 
     assert not t.ds_config.for_e3nn
 
