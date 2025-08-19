@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Optional, Union  # noqa: F401
+from typing import ClassVar, Optional, Union, Set
 
 import dgl
 import mtenn
@@ -23,7 +23,7 @@ from asapdiscovery.ml.models import (
 # static import of models from base yaml here
 from dgllife.utils import CanonicalAtomFeaturizer
 from mtenn.config import E3NNModelConfig, GATModelConfig, ModelType, SchNetModelConfig
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 """
 TODO
@@ -34,13 +34,9 @@ each model and store in S3 to use during testing.
 
 
 class InferenceBase(BaseModel):
-    class Config:
-        validate_assignment = True
-        allow_mutation = False
-        arbitrary_types_allowed = True
-        allow_extra = False
+    model_config = {"frozen": True, "arbitrary_types_allowed": True}
 
-    targets: Optional[Any] = Field(
+    targets: Optional[Set[TargetTags]] = Field(
         None,
         description="Targets that them model can predict for",  # FIXME: should be Optional[Set[TargetTags]] but this causes issues with pydantic
     )
@@ -216,7 +212,6 @@ class InferenceBase(BaseModel):
 
         if model_spec.ensemble:
             for model in local_model_spec.models:
-
                 config_kwargs = json.loads(model.config_file.read_text())
 
                 # warnings.warn(f"failed to parse model config file, {model.config_file}")
@@ -270,7 +265,6 @@ class InferenceBase(BaseModel):
             Error from model.
         """
         with torch.no_grad():
-
             # feed in data in whatever format is required by the model
             # for model ensemble, we need to loop through each model and get the
             # prediction from each, then aggregate
