@@ -13,7 +13,7 @@ import yaml
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.ml.pretrained_models import asap_models_yaml
 from mtenn.config import ModelType
-from pydantic.v1 import BaseModel, Field, HttpUrl, field_validator, field_serializer
+from pydantic import BaseModel, Field, HttpUrl, field_validator, field_serializer
 from semver import Version
 
 
@@ -466,7 +466,7 @@ class RemoteEnsembleHelper(BaseModel):
 class LocalMLModelSpecBase(MLModelBase):
     """Base class for local model specs"""
 
-    ensemble = False
+    ensemble: bool = False
 
 
 class LocalMLModelSpec(LocalMLModelSpecBase):
@@ -487,7 +487,7 @@ class LocalEnsembleMLModelSpec(LocalMLModelSpecBase):
     Model spec for an ensemble model instantiated locally, containing file paths to model files
     """
 
-    ensemble = True
+    ensemble: bool = True
     models: list[LocalMLModelSpec] = Field(
         ..., description="List of local model specs for ensemble models"
     )
