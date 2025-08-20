@@ -121,15 +121,31 @@ def mac1_complex():
         fetch_test_file("constrained_conformer/complex.json")
     )
 
+
 # For workflow
 @pytest.fixture
 def ligand_file():
     return fetch_test_file("Mpro-P0008_0A_ERI-UCB-ce40166b-17.sdf")
 
+
+@pytest.fixture()
+def all_structure_dir_fns():
+    return [
+        "structure_dir/Mpro-x0354_0A_bound.pdb",
+        "structure_dir/Mpro-x1002_0A_bound.pdb",
+    ]
+
+
 @pytest.fixture()
 def structure_dir(all_structure_dir_fns):
     all_paths = [fetch_test_file(f) for f in all_structure_dir_fns]
     return all_paths[0].parent, all_paths
+
+
+@pytest.fixture()
+def du_cache_files():
+    return ["du_cache/Mpro-x0354_0A_bound.oedu", "du_cache/Mpro-x1002_0A_bound.oedu"]
+
 
 @pytest.fixture()
 def du_cache(du_cache_files):
