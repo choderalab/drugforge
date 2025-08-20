@@ -115,7 +115,7 @@ class MLModelSpec(MLModelSpecBase):
             Local model spec
         """
 
-        weights_url = urljoin(self.base_url, self.weights_resource)
+        weights_url = urljoin(str(self.base_url), self.weights_resource)
         try:
             weights_file = Path(
                 pooch.retrieve(
@@ -131,7 +131,7 @@ class MLModelSpec(MLModelSpecBase):
 
         # fetch config
         if self.config_resource:
-            config_url = urljoin(self.base_url, self.config_resource)
+            config_url = urljoin(str(self.base_url), self.config_resource)
             try:
                 config_file = Path(
                     pooch.retrieve(
