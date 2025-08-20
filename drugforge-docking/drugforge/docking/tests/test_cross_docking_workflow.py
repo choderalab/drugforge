@@ -1,8 +1,9 @@
 import os
 import traceback
 import pytest
-from drugforge.docking.workflows.cli import cross_docking as cli
+from drugforge.docking.workflows.cli import cli
 from click.testing import CliRunner
+
 
 def click_success(result):
     if result.exit_code != 0:  # -no-cov-  (only occurs on test error)
@@ -10,6 +11,7 @@ def click_success(result):
         traceback.print_tb(result.exc_info[2])
         print(result.exc_info[0], result.exc_info[1])
     return result.exit_code == 0
+
 
 @pytest.mark.skipif(
     os.getenv("RUNNER_OS") == "macOS", reason="Docking tests slow on GHA on macOS"
