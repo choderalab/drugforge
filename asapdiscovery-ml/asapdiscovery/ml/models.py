@@ -632,6 +632,9 @@ class MLModelRegistry(BaseModel):
                 protein_representation_type,
             ],
         ):
+            if rep_type is None:
+                continue
+
             if rep_type not in RepresentationType.get_values():
                 raise ValueError(
                     f"Passsed RepresentationType for {lab} is not valid, "
@@ -766,10 +769,12 @@ class MLModelRegistry(BaseModel):
         )
         if len(models) == 0:
             rep_type = tuple(
-                representation_type,
-                complex_representation_type,
-                ligand_representation_type,
-                protein_representation_type,
+                [
+                    representation_type,
+                    complex_representation_type,
+                    ligand_representation_type,
+                    protein_representation_type,
+                ]
             )
             warnings.warn(
                 f"No models available for target {target} and type {type} "
