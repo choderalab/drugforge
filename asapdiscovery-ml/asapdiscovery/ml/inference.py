@@ -85,6 +85,10 @@ class InferenceBase(abc.ABC, BaseModel):
         cls,
         target: TargetTags,
         model_registry: MLModelRegistry = ASAPMLModelRegistry,
+        representation_type: RepresentationType = None,
+        complex_representation_type: RepresentationType = None,
+        ligand_representation_type: RepresentationType = None,
+        protein_representation_type: RepresentationType = None,
         **kwargs,
     ):
         """
@@ -95,9 +99,28 @@ class InferenceBase(abc.ABC, BaseModel):
         InferenceBase
             InferenceBase object created from latest model for latest target.
         """
-        model_spec = model_registry.get_latest_model_for_target_and_type(
-            target, cls.model_type
-        )
+        if all(
+            [
+                representation_type is None,
+                complex_representation_type is None,
+                ligand_representation_type is None,
+                protein_representation_type is None,
+            ]
+        ):
+            model_spec = model_registry.get_latest_model_for_target_and_type(
+                target, cls.model_type
+            )
+        else:
+            model_spec = (
+                model_registry.get_latest_model_for_target_and_type_and_rep_type(
+                    target,
+                    cls.model_type,
+                    representation_type,
+                    complex_representation_type,
+                    ligand_representation_type,
+                    protein_representation_type,
+                )
+            )
 
         if model_spec is None:  # No model found, return None
             return None

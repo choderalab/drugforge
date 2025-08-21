@@ -568,6 +568,96 @@ class MLModelRegistry(BaseModel):
     )
     time_updated: datetime = Field(datetime.utcnow(), description="Time last updated")
 
+    def get_models_for_target_and_type_and_rep_type(
+        self,
+        target: TargetTags,
+        type: ModelType,
+        representation_type: RepresentationType = None,
+        complex_representation_type: RepresentationType = None,
+        ligand_representation_type: RepresentationType = None,
+        protein_representation_type: RepresentationType = None,
+    ):
+        """
+        Get available model specs for a target, type, and specified representation
+        model(s).
+
+        Parameters
+        ----------
+        target : TargetTags
+            Target to get models for
+        type : ModelType
+            Type of model to get
+        representation_type: RepresentationType, optional
+            Representation type for Models
+        complex_representation_type
+            Complex representation type for SplitModels
+        ligand_representation_type
+            Ligand representation type for SplitModels
+        protein_representation_type
+            Protein representation type for SplitModels
+
+        Returns
+        -------
+        List[MLModelSpecBase]
+            List of model specs
+        """
+        if type == ModelType.split:
+            if complex_representation_type is None:
+                raise ValueError(
+                    "SplitModel specs must specify at least a "
+                    "complex_representation_type."
+                )
+        elif representation_type is None:
+            raise ValueError("Model specs must specify a representation_type.")
+
+        if target not in TargetTags.get_values():
+            raise ValueError(
+                f"Target {target} not valid, must be one of {TargetTags.get_values()}"
+            )
+        if type not in ModelType.get_values():
+            raise ValueError(
+                f"Model type {type} not valid, must be one of {ModelType.get_values()}"
+            )
+        for lab, rep_type in zip(
+            [
+                "representation_type",
+                "complex_representation_type",
+                "ligand_representation_type",
+                "protein_representation_type",
+            ],
+            [
+                representation_type,
+                complex_representation_type,
+                ligand_representation_type,
+                protein_representation_type,
+            ],
+        ):
+            if rep_type not in RepresentationType.get_values():
+                raise ValueError(
+                    f"Passsed RepresentationType for {lab} is not valid, "
+                    f"must by one of {RepresentationType.get_values()}"
+                )
+
+        def check_cur_rep_types(model):
+            if model.type == ModelType.split:
+                return (
+                    (model.complex_representation_type == complex_representation_type)
+                    and (model.ligand_representation_type == ligand_representation_type)
+                    and (
+                        model.protein_representation_type == protein_representation_type
+                    )
+                )
+            else:
+                return model.representation_type == representation_type
+
+        return [
+            model
+            for model in self.models.values()
+            if (target in model.targets)
+            and (model.type == type)
+            and check_cur_rep_types(model)
+        ]
+
     def get_models_for_target_and_type(
         self, target: TargetTags, type: ModelType
     ) -> list[MLModelSpecBase]:
@@ -633,6 +723,61 @@ class MLModelRegistry(BaseModel):
         return list(
             {target for model in self.models.values() for target in model.targets}
         )
+
+    def get_latest_model_for_target_and_type_and_rep_type(
+        self,
+        target: TargetTags,
+        type: ModelType,
+        representation_type: RepresentationType = None,
+        complex_representation_type: RepresentationType = None,
+        ligand_representation_type: RepresentationType = None,
+        protein_representation_type: RepresentationType = None,
+    ) -> MLModelSpec:
+        """
+        Get latest model spec for a target
+
+        Parameters
+        ----------
+        target : TargetTags
+            Target to get model for
+        type : ModelType
+            Type of model to get
+        representation_type: RepresentationType, optional
+            Representation type for Models
+        complex_representation_type
+            Complex representation type for SplitModels
+        ligand_representation_type
+            Ligand representation type for SplitModels
+        protein_representation_type
+            Protein representation type for SplitModels
+
+        Returns
+        -------
+        MLModelSpec
+            Latest model spec
+        """
+        models = self.get_models_for_target_and_type_and_rep_type(
+            target,
+            type,
+            representation_type=representation_type,
+            complex_representation_type=complex_representation_type,
+            ligand_representation_type=ligand_representation_type,
+            protein_representation_type=protein_representation_type,
+        )
+        if len(models) == 0:
+            rep_type = tuple(
+                representation_type,
+                complex_representation_type,
+                ligand_representation_type,
+                protein_representation_type,
+            )
+            warnings.warn(
+                f"No models available for target {target} and type {type} "
+                f"and representation types {rep_type}"
+            )
+            return None
+        else:
+            return max(models, key=lambda model: model.last_updated)
 
     def get_latest_model_for_target_and_type(
         self,
