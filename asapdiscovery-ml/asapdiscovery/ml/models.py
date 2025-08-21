@@ -12,8 +12,15 @@ import requests
 import yaml
 from asapdiscovery.data.services.postera.manifold_data_validation import TargetTags
 from asapdiscovery.ml.pretrained_models import asap_models_yaml
-from mtenn.config import ModelType
-from pydantic import BaseModel, Field, HttpUrl, field_validator, field_serializer
+from mtenn.config import ModelType, RepresentationType
+from pydantic import (
+    BaseModel,
+    Field,
+    HttpUrl,
+    field_validator,
+    field_serializer,
+    model_validator,
+)
 from semver import Version
 
 
@@ -28,6 +35,21 @@ class MLModelBase(BaseModel):
     name: str = Field(..., description="Model name")
     endpoint: str = Field(..., description="Endpoint for model")
     type: ModelType = Field(..., description="Model type")
+    representation_type: Optional[RepresentationType] = Field(
+        None, description="Representation type of the underlying model(s)."
+    )
+    complex_representation_type: Optional[RepresentationType] = Field(
+        None,
+        description="Representation type of complex in the underlying split model(s).",
+    )
+    ligand_representation_type: Optional[RepresentationType] = Field(
+        None,
+        description="Representation type of ligand in the underlying split model(s).",
+    )
+    protein_representation_type: Optional[RepresentationType] = Field(
+        None,
+        description="Representation type of protein in the underlying split model(s).",
+    )
     last_updated: date = Field(..., description="Last updated datetime")
     targets: Set[TargetTags] = Field(..., description="Biological targets of the model")
     mtenn_lower_pin: Version | None = Field(
@@ -52,6 +74,19 @@ class MLModelBase(BaseModel):
             return v
         else:
             return Version.parse(v)
+
+    @model_validator(mode="after")
+    def check_rep_types(self):
+        if self.type == ModelType.split:
+            if self.complex_representation_type is None:
+                raise ValueError(
+                    "SplitModel specs must specify at least a "
+                    "complex_representation_type."
+                )
+        elif self.representation_type is None:
+            raise ValueError("Model specs must specify a representation_type.")
+
+        return self
 
     def check_mtenn_version(self):
         """
@@ -148,6 +183,10 @@ class MLModelSpec(MLModelSpecBase):
         return LocalMLModelSpec(
             name=self.name,
             type=self.type,
+            representation_type=self.representation_type,
+            complex_representation_type=self.complex_representation_type,
+            ligand_representation_type=self.ligand_representation_type,
+            protein_representation_type=self.protein_representation_type,
             weights_file=Path(weights_file),
             config_file=Path(config_file) if self.config_resource else None,
             last_updated=self.last_updated,
@@ -403,6 +442,16 @@ class RemoteEnsembleHelper(BaseModel):
                         MLModelSpec(
                             name=model + "_ens_" + subname,
                             type=model_data["type"],
+                            representation_type=model_data.get("representation_type"),
+                            complex_representation_type=model_data.get(
+                                "complex_representation_type"
+                            ),
+                            ligand_representation_type=model_data.get(
+                                "ligand_representation_type"
+                            ),
+                            protein_representation_type=model_data.get(
+                                "protein_representation_type"
+                            ),
                             base_url=model_data["base_url"],
                             weights_resource=submodel[subname]["resource"],
                             weights_sha256hash=submodel[subname]["sha256hash"],
@@ -441,6 +490,16 @@ class RemoteEnsembleHelper(BaseModel):
                     models=models,
                     name=model,
                     type=model_data["type"],
+                    representation_type=model_data.get("representation_type"),
+                    complex_representation_type=model_data.get(
+                        "complex_representation_type"
+                    ),
+                    ligand_representation_type=model_data.get(
+                        "ligand_representation_type"
+                    ),
+                    protein_representation_type=model_data.get(
+                        "protein_representation_type"
+                    ),
                     last_updated=last_updated,
                     targets=set(model_data["targets"]),
                     endpoint=model_data["endpoint"],
@@ -950,6 +1009,16 @@ class MLModelRegistry(BaseModel):
                     models[model] = MLModelSpec(
                         name=model,
                         type=model_data["type"],
+                        representation_type=model_data.get("representation_type"),
+                        complex_representation_type=model_data.get(
+                            "complex_representation_type"
+                        ),
+                        ligand_representation_type=model_data.get(
+                            "ligand_representation_type"
+                        ),
+                        protein_representation_type=model_data.get(
+                            "protein_representation_type"
+                        ),
                         base_url=model_data["base_url"],
                         weights_resource=model_data["weights"]["resource"],
                         weights_sha256hash=model_data["weights"]["sha256hash"],
