@@ -17,22 +17,22 @@ python:
   # Install our python package before building the docs
   install:
     - method: pip
-      path: asapdiscovery-alchemy
+      path: drugforge-alchemy
     - method: pip
-      path: asapdiscovery-cli
+      path: drugforge-cli
     - method: pip
-      path: asapdiscovery-data
+      path: drugforge-data
     - method: pip
-      path: asapdiscovery-dataviz
+      path: drugforge-dataviz
     - method: pip
-      path: asapdiscovery-docking
+      path: drugforge-docking
     - method: pip
-      path: asapdiscovery-spectrum
+      path: drugforge-spectrum
     - method: pip
-      path: asapdiscovery-ml
+      path: drugforge-ml
     - method: pip
-      path: asapdiscovery-modeling
+      path: drugforge-modeling
     - method: pip
-      path: asapdiscovery-simulation
+      path: drugforge-simulation
     - method: pip
-      path: asapdiscovery-workflows
+      path: drugforge-workflows

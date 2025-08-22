@@ -17,19 +17,19 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 
-import asapdiscovery
+import drugforge
 import nbformat
 import nbsphinx
 import nbsphinx_link
 
 # -- Project information -----------------------------------------------------
 
-project = "asapdiscovery"
+project = "drugforge"
 copyright = (
-    "2023, asapdiscovery contributors. Project structure based on the "
+    "2025, drugforge contributors. Project structure based on the "
     "Computational Molecular Science Python Cookiecutter version 1.6"
 )
-author = "asapdiscovery contributors"
+author = "drugforge contributors"
 
 # The short X.Y version
 version = ""
@@ -58,7 +58,17 @@ extensions = [
     "myst_parser",
     "nbsphinx",
     "nbsphinx_link",
+    "sphinxcontrib.collections",
 ]
+
+collections = {
+    "notebooks": {
+        "driver": "copy_folder",
+        "source": "../examples",
+        "target": "notebooks",
+        "ignore": [".sqlite", ".db", ".py"],
+    }
+}
 
 autosummary_generate = True
 napoleon_google_docstring = False
@@ -129,7 +139,7 @@ html_static_path = ["_static"]
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "asapdiscoverydoc"
+htmlhelp_basename = "drugforgedoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -155,9 +165,9 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "asapdiscovery.tex",
+        "drugforge.tex",
         "COVIDMoonshotML Documentation",
-        "asapdiscovery",
+        "drugforge",
         "manual",
     ),
 ]
@@ -170,7 +180,7 @@ latex_documents = [
 man_pages = [
     (
         master_doc,
-        "asapdiscovery",
+        "drugforge",
         "COVIDMoonshotML Documentation",
         [author],
         1,
@@ -186,10 +196,10 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "asapdiscovery",
+        "drugforge",
         "COVIDMoonshotML Documentation",
         author,
-        "asapdiscovery",
+        "drugforge",
         "Scripts and models for ML with COVID Moonshot data.",
         "Miscellaneous",
     ),
@@ -221,7 +231,7 @@ nbsphinx_prolog = (
     .. nbinfo::
         This page was generated from `{{ docpath }}`__.
 
-    __ https://github.com/choderalab/asapdiscovery/tree/main/
+    __ https://github.com/choderalab/drugforge/tree/main/
         """
     + r"{{ docpath }}"
 )

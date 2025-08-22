@@ -56,7 +56,7 @@ jobs:
       uses: mamba-org/setup-micromamba@v2
       with:
         environment-file: devtools/conda-envs/${{ matrix.os }}/ml.yaml
-        environment-name: asapdiscovery
+        environment-name: drugforge
         cache-environment: true
         cache-downloads: true
         cache-environment-key: environment-${{ steps.date.outputs.date }}
@@ -73,17 +73,17 @@ jobs:
 
     - name: Install packages
       run: |
-        micromamba install -n asapdiscovery --file devtools/conda-envs/${{ matrix.os }}/data.yaml
-        micromamba install -n asapdiscovery --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
-        micromamba install -n asapdiscovery --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
-        micromamba install -n asapdiscovery --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
-        micromamba install -n asapdiscovery --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
-        python -m pip install -e ./asapdiscovery-data --no-deps
-        python -m pip install -e ./asapdiscovery-docking --no-deps
-        python -m pip install -e ./asapdiscovery-ml --no-deps
-        python -m pip install -e ./asapdiscovery-modeling --no-deps
-        python -m pip install -e ./asapdiscovery-alchemy --no-deps
-        python -m pip install -e ./asapdiscovery-cli --no-deps
+        micromamba install -n ml-cli --file devtools/conda-envs/${{ matrix.os }}/data.yaml
+        micromamba install -n ml-cli --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
+        micromamba install -n ml-cli --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
+        micromamba install -n ml-cli --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
+        micromamba install -n ml-cli --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
+        python -m pip install -e ./drugforge-data --no-deps
+        python -m pip install -e ./drugforge-docking --no-deps
+        python -m pip install -e ./drugforge-ml --no-deps
+        python -m pip install -e ./drugforge-modeling --no-deps
+        python -m pip install -e ./drugforge-alchemy --no-deps
+        python -m pip install -e ./drugforge-cli --no-deps
 
         micromamba list
 
@@ -96,14 +96,14 @@ jobs:
         # Exit immediately if a command exits with a non-zero status.
         set -e
         pytest -n auto --durations=10 -v --cov-report=xml --cov-report=term --color=yes \
-                       --cov=asapdiscovery-ml \
-                       asapdiscovery-ml/asapdiscovery/ml/tests
+                       --cov=drugforge-ml \
+                       drugforge-ml/drugforge/ml/tests
 
 
     - name: Upload Code Coverage to Codecov
       uses: codecov/codecov-action@v3
       # Don't upload coverage scheduled or on fork
-      if: ${{ github.repository == 'choderalab/asapdiscovery'
+      if: ${{ github.repository == 'choderalab/drugforge'
               && github.event != 'schedule' }}
       with:
         file: ./coverage.xml

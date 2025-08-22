@@ -1,13 +1,13 @@
 #!/bin/bash
-# install asapdiscovery repo
+# install drugforge repo
 # run this script from the root of the repo
-pip install -e asapdiscovery-data/.
-pip install -e asapdiscovery-cli/.
-pip install -e asapdiscovery-simulation/.
-pip install -e asapdiscovery-modeling/.
-pip install -e asapdiscovery-dataviz/.
-pip install -e asapdiscovery-docking/.
-pip install -e asapdiscovery-ml/.
-pip install -e asapdiscovery-alchemy/.
-pip install -e asapdiscovery-spectrum/.
-pip install -e asapdiscovery-workflows/.
+pip install -e drugforge-data/.
+pip install -e drugforge-cli/.
+pip install -e drugforge-simulation/.
+pip install -e drugforge-modeling/.
+pip install -e drugforge-dataviz/.
+pip install -e drugforge-docking/.
+pip install -e drugforge-ml/.
+pip install -e drugforge-alchemy/.
+pip install -e drugforge-spectrum/.
+pip install -e drugforge-workflows/.

@@ -15,17 +15,17 @@ repos:
   rev: 24.10.0
   hooks:
   - id: black
-    files: ^asapdiscovery
+    files: ^drugforge
 - repo: https://github.com/PyCQA/isort
   rev: 5.13.2
   hooks:
   - id: isort
-    files: ^asapdiscovery
+    files: ^drugforge
 - repo: https://github.com/PyCQA/flake8
   rev: 7.1.1
   hooks:
   - id: flake8
-    files: ^asapdiscovery
+    files: ^drugforge
     additional_dependencies: [Flake8-pyproject]
 - repo: https://github.com/asottile/pyupgrade
   rev: 'v3.17.0'
@@ -34,4 +34,4 @@ repos:
     args:
     - --py39-plus
 # exclude current FEC wf
-exclude: 'asapdiscovery-simulation/asapdiscovery/simulation/current_fec_worfklow/.*'
+exclude: 'drugforge-simulation/drugforge/simulation/current_fec_worfklow/.*'
