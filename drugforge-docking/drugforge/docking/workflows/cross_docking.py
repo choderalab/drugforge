@@ -2,6 +2,7 @@
 A test-oriented docking workflow for testing the docking pipeline.
 Removes all the additional layers in the other workflows and adds some features to make running cross-docking easier
 """
+
 import logging
 from pathlib import Path
 from typing import Optional, Union
@@ -139,12 +140,14 @@ class DockingWorkflowInputsBase(BaseModel):
         active_site_chain = values.get("active_site_chain")
         ref_chain = values.get("ref_chain")
         target = values.get("target")
-        if not active_site_chain:
-            values["active_site_chain"] = active_site_chains[target]
-        # set same chain for active site if not specified
-        if not ref_chain:
-            values["ref_chain"] = active_site_chains[target]
+        if target:
+            if not active_site_chain:
+                values["active_site_chain"] = active_site_chains[target]
+            # set same chain for active site if not specified
+            if not ref_chain:
+                values["ref_chain"] = active_site_chains[target]
         return values
+
 
 class CrossDockingWorkflowInputs(DockingWorkflowInputsBase):
     logname: str = Field("", description="Name of the log file.")
@@ -180,6 +183,7 @@ class CrossDockingWorkflowInputs(DockingWorkflowInputsBase):
         True,
         description="Allow retries with different options if docking fails initially",
     )
+
 
 def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
     """

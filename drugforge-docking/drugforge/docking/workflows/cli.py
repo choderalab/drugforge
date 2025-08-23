@@ -6,7 +6,6 @@ from drugforge.docking.workflows.cross_docking import (
     cross_docking_workflow,
 )
 from drugforge.docking.workflows.cli_args import (
-    target,
     ligands,
     pdb_file,
     fragalysis_dir,
@@ -31,7 +30,12 @@ def cli(help="Command-line interface for drugforge-docking"): ...
 
 
 @cli.command()
-@target
+@click.option(
+    "--target",
+    type=click.Choice(TargetTags.get_values(), case_sensitive=True),
+    help="The target for the workflow",
+    required=False,
+)
 @click.option(
     "--use-omega",
     is_flag=True,

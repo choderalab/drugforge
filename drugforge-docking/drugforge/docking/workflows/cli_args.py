@@ -46,17 +46,6 @@ def dask_args(func):
     return use_dask(dask_type(dask_n_workers(failure_mode(func))))
 
 
-def target(func):
-    from drugforge.data.services.postera.manifold_data_validation import TargetTags
-
-    return click.option(
-        "--target",
-        type=click.Choice(TargetTags.get_values(), case_sensitive=True),
-        help="The target for the workflow",
-        required=True,
-    )(func)
-
-
 def ligands(func):
     return click.option(
         "-l",
