@@ -351,6 +351,9 @@ files:
   - resource: Mpro-YP_009725301_AFold_processed.pdb
     sha256hash: 3cdc93de0186243d790e7abd61d77eacde649f547f3d0cd0aaa58243631431f8
 
+  - resource: ml_testing/inference_testing_mtenn_0_7_0/test_models.yaml
+    sha256hash: 4df93f0e2e17ec03244a297f00cddd5bc7cfc767d43f8f2ffa64576a293812f7
+
   # spectrum testing
   - resource: SARS_blast_results.xml
     sha256hash: d6e59d1f6b2eeee5162cca4dbeee7ffcd56eeeabdb733a505ff86ee1588cf8f6
@@ -379,7 +382,7 @@ files:
   - resource: spectrum_dir/YP_009944273_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: 32b5758b7c12e02fd52177c3ebd323bbf5c8bd06dcbcd82ef89042df10ae346d
   - resource: spectrum_dir/YP_010229075_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
-    sha256hash: 5fb77395f9d65add9d52c4d8ba83195a771fd4ea5c6020b6f9b8d5eaf446f274 
+    sha256hash: 5fb77395f9d65add9d52c4d8ba83195a771fd4ea5c6020b6f9b8d5eaf446f274
   - resource: spectrum_dir/YP_009725295_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: 5eadcaa47f507281f80eb3cd8a84453dbd5012e549ef6151c808f56bad1dfc7b
 

@@ -282,7 +282,7 @@ class OpenEyeConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
         input_mol = oechem.OEMol(reference_ligand)
         oechem.OESuppressHydrogens(input_mol)
         # build a query mol which allows for wild card matches
-        # <https://github.com/choderalab/asapdiscovery/pull/430#issuecomment-1702360130>
+        # <https://github.com/choderalab/drugforge/pull/430#issuecomment-1702360130>
         smarts_mol = oechem.OEGraphMol()
         oechem.OESmilesToMol(smarts_mol, core_smarts)
         pattern_query = oechem.OEQMol(smarts_mol)

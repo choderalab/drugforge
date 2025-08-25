@@ -4,19 +4,25 @@ from pathlib import Path
 from typing import Optional, Any, Union
 
 from openeye import oechem
-from pydantic.v1 import Field, root_validator
+from pydantic import Field, model_validator
 
 from drugforge.data.schema.complex import ComplexBase, Complex
 from drugforge.data.schema.ligand import Ligand
-from drugforge.data.backend.openeye import (oedu_to_bytes64,
-                                                bytes64_to_oedu,
-                                                load_openeye_design_unit,
-                                                save_openeye_design_unit,
-                                                split_openeye_design_unit,
-                                                openeye_perceive_residues,
-                                                save_openeye_pdb)
+from drugforge.data.backend.openeye import (
+    oedu_to_bytes64,
+    bytes64_to_oedu,
+    load_openeye_design_unit,
+    save_openeye_design_unit,
+    split_openeye_design_unit,
+    openeye_perceive_residues,
+    save_openeye_pdb,
+)
 from drugforge.data.schema.identifiers import TargetIdentifiers
-from drugforge.data.schema.schema_base import DataModelAbstractBase, DataStorageType, schema_dict_get_val_overload
+from drugforge.data.schema.schema_base import (
+    DataModelAbstractBase,
+    DataStorageType,
+    schema_dict_get_val_overload,
+)
 
 
 class PreppedTarget(DataModelAbstractBase):
@@ -52,7 +58,7 @@ class PreppedTarget(DataModelAbstractBase):
         description="bounding box of the target, lost in oedu conversion so can be saved as attribute.",
     )
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     @classmethod
     def _validate_at_least_one_id(cls, v):
         # simpler as we never need to pop attrs off the serialised representation.
@@ -94,7 +100,7 @@ class PreppedTarget(DataModelAbstractBase):
         """
         oedu = self.to_oedu()
         _, oe_receptor, _ = split_openeye_design_unit(du=oedu)
-        # As advised by Alex <https://github.com/asapdiscovery/asapdiscovery/pull/608#discussion_r1388067468>
+        # As advised by Alex <https://github.com/choderalab/drugforge/pull/608#discussion_r1388067468>
         openeye_perceive_residues(oe_receptor)
         save_openeye_pdb(oe_receptor, pdb_fn=filename)
 
@@ -104,6 +110,7 @@ class PreppedTarget(DataModelAbstractBase):
         import hashlib
 
         return hashlib.sha256(self.data).hexdigest()
+
 
 class PreppedComplex(ComplexBase):
     """
@@ -168,4 +175,3 @@ class PreppedComplex(ComplexBase):
     def hash(self):
         # Using the target_hash instead hashing the OEDU bytes because prepping is stochastic
         return f"{self.target.target_hash}+{self.ligand.fixed_inchikey}"
-

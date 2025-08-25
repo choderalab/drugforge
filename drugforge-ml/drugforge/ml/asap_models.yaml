@@ -1,3 +1,6 @@
+## Maybe want to rename these back to asapdiscovery or just get rid of them? Since they
+## were trained on the ASAP data
+
 # The model name is the key for each model, for production models we prefer CalVer (https://calver.org/)
 # the below is a test model that also has annotations to indicate what each field is.
 
@@ -32,7 +35,7 @@ gat_test:
   #  If a pin is left blank, it will not be checked
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
-  mtenn_upper_pin:
+  mtenn_upper_pin: "0.6.3"
 
 
 # new models trained with mtenn v0.5.0
@@ -51,6 +54,7 @@ drugforge-SARS-CoV-2-Mpro-GAT-2024.02.06:
     - MERS-CoV-Mpro
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
+  mtenn_upper_pin: "0.6.3"
 
 drugforge-SARS-CoV-2-Mac1-GAT-2024.02.06:
   type: GAT
@@ -66,6 +70,7 @@ drugforge-SARS-CoV-2-Mac1-GAT-2024.02.06:
     - SARS-CoV-2-Mac1
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
+  mtenn_upper_pin: "0.6.3"
 
 drugforge-SARS-CoV-2-Mpro-schnet-2024.02.05:
   type: schnet
@@ -82,6 +87,7 @@ drugforge-SARS-CoV-2-Mpro-schnet-2024.02.05:
     - MERS-CoV-Mpro
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
+  mtenn_upper_pin: "0.6.3"
 
 drugforge-SARS-CoV-2-Mpro-e3nn-2024.02.06:
   type: e3nn
@@ -98,6 +104,7 @@ drugforge-SARS-CoV-2-Mpro-e3nn-2024.02.06:
     - MERS-CoV-Mpro
   endpoint: pIC50
   mtenn_lower_pin: "0.5.0"
+  mtenn_upper_pin: "0.6.3"
 
 drugforge-GAT-remote-ensemble:
   remote_ensemble: true

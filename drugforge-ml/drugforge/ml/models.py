@@ -3,7 +3,7 @@ import warnings
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union  # noqa: F401
+from typing import Optional, Set, Union
 from urllib.parse import urljoin
 
 import mtenn
@@ -12,8 +12,15 @@ import requests
 import yaml
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.ml.pretrained_models import asap_models_yaml
-from mtenn.config import ModelType
-from pydantic.v1 import BaseModel, Field, HttpUrl, validator
+from mtenn.config import ModelType, RepresentationType
+from pydantic import (
+    BaseModel,
+    Field,
+    HttpUrl,
+    field_validator,
+    field_serializer,
+    model_validator,
+)
 from semver import Version
 
 
@@ -22,23 +29,29 @@ class MLModelBase(BaseModel):
     Base model class for ML models
     """
 
-    class Config:
-
-        # Add custom encoders for semver Versions
-        json_encoders = {Version: lambda v: str(v)}
-
-        # Allow arbitrary types so that pydantic will accept Versions
-        arbitrary_types_allowed = True
+    # Allow arbitrary types so that pydantic will accept Versions
+    model_config = {"arbitrary_types_allowed": True}
 
     name: str = Field(..., description="Model name")
-    endpoint: Any = Field(
-        ..., description="Endpoint for model"
-    )  # FIXME: should be Optional[str] but this causes issues with pydantic
+    endpoint: str = Field(..., description="Endpoint for model")
     type: ModelType = Field(..., description="Model type")
+    representation_type: Optional[RepresentationType] = Field(
+        None, description="Representation type of the underlying model(s)."
+    )
+    complex_representation_type: Optional[RepresentationType] = Field(
+        None,
+        description="Representation type of complex in the underlying split model(s).",
+    )
+    ligand_representation_type: Optional[RepresentationType] = Field(
+        None,
+        description="Representation type of ligand in the underlying split model(s).",
+    )
+    protein_representation_type: Optional[RepresentationType] = Field(
+        None,
+        description="Representation type of protein in the underlying split model(s).",
+    )
     last_updated: date = Field(..., description="Last updated datetime")
-    targets: Any = Field(
-        ..., description="Biological targets of the model"
-    )  # FIXME: should be Optional[Set[TargetTags]] but this causes issues with pydantic
+    targets: Set[TargetTags] = Field(..., description="Biological targets of the model")
     mtenn_lower_pin: Version | None = Field(
         None, description="Lower bound on compatible mtenn versions (inclusive)."
     )
@@ -46,7 +59,11 @@ class MLModelBase(BaseModel):
         None, description="Upper bound on compatible mtenn versions (exclusive)."
     )
 
-    @validator("mtenn_lower_pin", "mtenn_upper_pin", pre=True)
+    @field_serializer("mtenn_lower_pin", "mtenn_upper_pin", when_used="unless-none")
+    def serialize_version(self, version):
+        return str(version)
+
+    @field_validator("mtenn_lower_pin", "mtenn_upper_pin", mode="before")
     def cast_versions(cls, v):
         """
         Cast SemVer version strings to Version objects.
@@ -57,6 +74,19 @@ class MLModelBase(BaseModel):
             return v
         else:
             return Version.parse(v)
+
+    @model_validator(mode="after")
+    def check_rep_types(self):
+        if self.type == ModelType.split:
+            if self.complex_representation_type is None:
+                raise ValueError(
+                    "SplitModel specs must specify at least a "
+                    "complex_representation_type."
+                )
+        elif self.representation_type is None:
+            raise ValueError("Model specs must specify a representation_type.")
+
+        return self
 
     def check_mtenn_version(self):
         """
@@ -120,7 +150,7 @@ class MLModelSpec(MLModelSpecBase):
             Local model spec
         """
 
-        weights_url = urljoin(self.base_url, self.weights_resource)
+        weights_url = urljoin(str(self.base_url), self.weights_resource)
         try:
             weights_file = Path(
                 pooch.retrieve(
@@ -136,7 +166,7 @@ class MLModelSpec(MLModelSpecBase):
 
         # fetch config
         if self.config_resource:
-            config_url = urljoin(self.base_url, self.config_resource)
+            config_url = urljoin(str(self.base_url), self.config_resource)
             try:
                 config_file = Path(
                     pooch.retrieve(
@@ -153,6 +183,10 @@ class MLModelSpec(MLModelSpecBase):
         return LocalMLModelSpec(
             name=self.name,
             type=self.type,
+            representation_type=self.representation_type,
+            complex_representation_type=self.complex_representation_type,
+            ligand_representation_type=self.ligand_representation_type,
+            protein_representation_type=self.protein_representation_type,
             weights_file=Path(weights_file),
             config_file=Path(config_file) if self.config_resource else None,
             last_updated=self.last_updated,
@@ -170,7 +204,7 @@ class EnsembleMLModelSpec(MLModelSpecBase):
     )
     ensemble: bool = True
 
-    @validator("models")
+    @field_validator("models")
     @classmethod
     def check_all_types(cls, models):
         """
@@ -180,7 +214,7 @@ class EnsembleMLModelSpec(MLModelSpecBase):
             raise ValueError("All models in an ensemble must be of the same type")
         return models
 
-    @validator("models")
+    @field_validator("models")
     @classmethod
     def check_all_mtenn_versions(cls, models):
         """
@@ -408,6 +442,16 @@ class RemoteEnsembleHelper(BaseModel):
                         MLModelSpec(
                             name=model + "_ens_" + subname,
                             type=model_data["type"],
+                            representation_type=model_data.get("representation_type"),
+                            complex_representation_type=model_data.get(
+                                "complex_representation_type"
+                            ),
+                            ligand_representation_type=model_data.get(
+                                "ligand_representation_type"
+                            ),
+                            protein_representation_type=model_data.get(
+                                "protein_representation_type"
+                            ),
                             base_url=model_data["base_url"],
                             weights_resource=submodel[subname]["resource"],
                             weights_sha256hash=submodel[subname]["sha256hash"],
@@ -446,6 +490,16 @@ class RemoteEnsembleHelper(BaseModel):
                     models=models,
                     name=model,
                     type=model_data["type"],
+                    representation_type=model_data.get("representation_type"),
+                    complex_representation_type=model_data.get(
+                        "complex_representation_type"
+                    ),
+                    ligand_representation_type=model_data.get(
+                        "ligand_representation_type"
+                    ),
+                    protein_representation_type=model_data.get(
+                        "protein_representation_type"
+                    ),
                     last_updated=last_updated,
                     targets=set(model_data["targets"]),
                     endpoint=model_data["endpoint"],
@@ -469,7 +523,7 @@ class RemoteEnsembleHelper(BaseModel):
 class LocalMLModelSpecBase(MLModelBase):
     """Base class for local model specs"""
 
-    ensemble = False
+    ensemble: bool = False
 
 
 class LocalMLModelSpec(LocalMLModelSpecBase):
@@ -490,7 +544,7 @@ class LocalEnsembleMLModelSpec(LocalMLModelSpecBase):
     Model spec for an ensemble model instantiated locally, containing file paths to model files
     """
 
-    ensemble = True
+    ensemble: bool = True
     models: list[LocalMLModelSpec] = Field(
         ..., description="List of local model specs for ensemble models"
     )
@@ -513,6 +567,99 @@ class MLModelRegistry(BaseModel):
         None, description="Source yaml file for model registry"
     )
     time_updated: datetime = Field(datetime.utcnow(), description="Time last updated")
+
+    def get_models_for_target_and_type_and_rep_type(
+        self,
+        target: TargetTags,
+        type: ModelType,
+        representation_type: RepresentationType = None,
+        complex_representation_type: RepresentationType = None,
+        ligand_representation_type: RepresentationType = None,
+        protein_representation_type: RepresentationType = None,
+    ):
+        """
+        Get available model specs for a target, type, and specified representation
+        model(s).
+
+        Parameters
+        ----------
+        target : TargetTags
+            Target to get models for
+        type : ModelType
+            Type of model to get
+        representation_type: RepresentationType, optional
+            Representation type for Models
+        complex_representation_type
+            Complex representation type for SplitModels
+        ligand_representation_type
+            Ligand representation type for SplitModels
+        protein_representation_type
+            Protein representation type for SplitModels
+
+        Returns
+        -------
+        List[MLModelSpecBase]
+            List of model specs
+        """
+        if type == ModelType.split:
+            if complex_representation_type is None:
+                raise ValueError(
+                    "SplitModel specs must specify at least a "
+                    "complex_representation_type."
+                )
+        elif representation_type is None:
+            raise ValueError("Model specs must specify a representation_type.")
+
+        if target not in TargetTags.get_values():
+            raise ValueError(
+                f"Target {target} not valid, must be one of {TargetTags.get_values()}"
+            )
+        if type not in ModelType.get_values():
+            raise ValueError(
+                f"Model type {type} not valid, must be one of {ModelType.get_values()}"
+            )
+        for lab, rep_type in zip(
+            [
+                "representation_type",
+                "complex_representation_type",
+                "ligand_representation_type",
+                "protein_representation_type",
+            ],
+            [
+                representation_type,
+                complex_representation_type,
+                ligand_representation_type,
+                protein_representation_type,
+            ],
+        ):
+            if rep_type is None:
+                continue
+
+            if rep_type not in RepresentationType.get_values():
+                raise ValueError(
+                    f"Passsed RepresentationType for {lab} is not valid, "
+                    f"must by one of {RepresentationType.get_values()}"
+                )
+
+        def check_cur_rep_types(model):
+            if model.type == ModelType.split:
+                return (
+                    (model.complex_representation_type == complex_representation_type)
+                    and (model.ligand_representation_type == ligand_representation_type)
+                    and (
+                        model.protein_representation_type == protein_representation_type
+                    )
+                )
+            else:
+                return model.representation_type == representation_type
+
+        return [
+            model
+            for model in self.models.values()
+            if (target in model.targets)
+            and (model.type == type)
+            and check_cur_rep_types(model)
+        ]
 
     def get_models_for_target_and_type(
         self, target: TargetTags, type: ModelType
@@ -579,6 +726,63 @@ class MLModelRegistry(BaseModel):
         return list(
             {target for model in self.models.values() for target in model.targets}
         )
+
+    def get_latest_model_for_target_and_type_and_rep_type(
+        self,
+        target: TargetTags,
+        type: ModelType,
+        representation_type: RepresentationType = None,
+        complex_representation_type: RepresentationType = None,
+        ligand_representation_type: RepresentationType = None,
+        protein_representation_type: RepresentationType = None,
+    ) -> MLModelSpec:
+        """
+        Get latest model spec for a target
+
+        Parameters
+        ----------
+        target : TargetTags
+            Target to get model for
+        type : ModelType
+            Type of model to get
+        representation_type: RepresentationType, optional
+            Representation type for Models
+        complex_representation_type
+            Complex representation type for SplitModels
+        ligand_representation_type
+            Ligand representation type for SplitModels
+        protein_representation_type
+            Protein representation type for SplitModels
+
+        Returns
+        -------
+        MLModelSpec
+            Latest model spec
+        """
+        models = self.get_models_for_target_and_type_and_rep_type(
+            target,
+            type,
+            representation_type=representation_type,
+            complex_representation_type=complex_representation_type,
+            ligand_representation_type=ligand_representation_type,
+            protein_representation_type=protein_representation_type,
+        )
+        if len(models) == 0:
+            rep_type = tuple(
+                [
+                    representation_type,
+                    complex_representation_type,
+                    ligand_representation_type,
+                    protein_representation_type,
+                ]
+            )
+            warnings.warn(
+                f"No models available for target {target} and type {type} "
+                f"and representation types {rep_type}"
+            )
+            return None
+        else:
+            return max(models, key=lambda model: model.last_updated)
 
     def get_latest_model_for_target_and_type(
         self,
@@ -955,6 +1159,16 @@ class MLModelRegistry(BaseModel):
                     models[model] = MLModelSpec(
                         name=model,
                         type=model_data["type"],
+                        representation_type=model_data.get("representation_type"),
+                        complex_representation_type=model_data.get(
+                            "complex_representation_type"
+                        ),
+                        ligand_representation_type=model_data.get(
+                            "ligand_representation_type"
+                        ),
+                        protein_representation_type=model_data.get(
+                            "protein_representation_type"
+                        ),
                         base_url=model_data["base_url"],
                         weights_resource=model_data["weights"]["resource"],
                         weights_sha256hash=model_data["weights"]["sha256hash"],

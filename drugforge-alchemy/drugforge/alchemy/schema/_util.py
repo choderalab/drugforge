@@ -1,6 +1,6 @@
 from collections import Counter
 from typing import TYPE_CHECKING
-from gufe.custom_json import JSONCodec
+from gufe.serialization.json import JSONCodec
 from alchemiscale import ScopedKey
 
 if TYPE_CHECKING:
