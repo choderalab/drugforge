@@ -87,3 +87,6 @@ dependencies:
   - pandoc
   - sphinx
   - sphinx_rtd_theme
+
+  - pip:
+      - sphinx-collections

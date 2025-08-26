@@ -58,7 +58,17 @@ extensions = [
     "myst_parser",
     "nbsphinx",
     "nbsphinx_link",
+    "sphinxcontrib.collections",
 ]
+
+collections = {
+    "notebooks": {
+        "driver": "copy_folder",
+        "source": "../examples",
+        "target": "notebooks",
+        "ignore": [".sqlite", ".db", ".py"],
+    }
+}
 
 autosummary_generate = True
 napoleon_google_docstring = False
