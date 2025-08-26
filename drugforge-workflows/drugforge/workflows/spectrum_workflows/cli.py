@@ -100,6 +100,7 @@ def spectrum():
     default="",
     help="Custom order of aligned sequences (not including ref) can be provided as a string with comma-sep indexes.",
 )
+@pdb_file
 @loglevel
 def seq_alignment(
     seq_file: str,
@@ -120,6 +121,7 @@ def seq_alignment(
     max_mismatches: int = 2,
     custom_order: str = "",
     loglevel: str = "INFO",
+    pdb_file: Optional[str] = None,
 ):
     """
     Find similarities between reference protein and its related proteins by sequence.
@@ -179,6 +181,7 @@ def seq_alignment(
         database="refseq_protein",
         verbose=False,
         email=email,
+        pdb_file=pdb_file,
     )
 
     # Perform alignment for each entry in the FASTA file
@@ -205,7 +208,7 @@ def seq_alignment(
             )
 
             record = pdb_file_record[0]
-            logger.info(f"A PDB template for {record.label} was saved as {record.pdb_file}")
+            logging.info(f"A PDB template for {record.label} was saved as {record.pdb_file}")
 
 
 @spectrum.command()
