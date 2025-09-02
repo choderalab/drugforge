@@ -7,7 +7,8 @@ dependencies:
   - bokeh
   - cinnabar =0.4.1
   - click
-  - gufe
+  - gufe <1.6
+  - importlib_resources  # manually added. More info at https://github.com/conda-forge/openmmforcefields-feedstock/pull/26
   - kartograf
   - lomap2
   - networkx
