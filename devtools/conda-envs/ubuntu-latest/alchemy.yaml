@@ -5,7 +5,7 @@ channels:
 dependencies:
   - alchemiscale-client
   - bokeh
-  - cinnabar =0.4.1
+  - cinnabar ~=0.5.0
   - click
   - gufe ~=1.6.0
   - importlib_resources  # manually added. More info at https://github.com/conda-forge/openmmforcefields-feedstock/pull/26
