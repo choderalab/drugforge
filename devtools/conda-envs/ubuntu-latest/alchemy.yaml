@@ -5,7 +5,7 @@ channels:
 dependencies:
   - alchemiscale-client
   - bokeh
-  - cinnabar
+  - cinnabar =0.4.1
   - click
   - gufe
   - kartograf
