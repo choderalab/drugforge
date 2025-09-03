@@ -8,6 +8,7 @@ dependencies:
   - cinnabar =0.4.1
   - click
   - gufe ~=1.4.0
+  - importlib_resources  # Added manually because of https://github.com/conda-forge/openmmforcefields-feedstock/pull/26
   - kartograf
   - lomap2
   - networkx
