@@ -12,7 +12,7 @@ from drugforge.data.util.dask_utils import (
     FailureMode,
     actualise_dask_delayed_iterable,
 )
-from pydantic.v1 import BaseModel, Field, root_validator, validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,8 @@ class FragalysisFactory(BaseModel):
         "metadata.csv", description="Name of the metadata file."
     )
 
-    @validator("parent_dir")
+
+    @field_validator("parent_dir", mode="before")
     @classmethod
     def _validate_parent_dir(cls, v):
         if not v.exists():
@@ -49,7 +50,7 @@ class FragalysisFactory(BaseModel):
 
         return v
 
-    @root_validator
+    @model_validator(mode="after")
     @classmethod
     def _validate_metadata_csv_name(cls, values):
         parent_dir = values.get("parent_dir")
@@ -59,7 +60,7 @@ class FragalysisFactory(BaseModel):
             raise FileNotFoundError(f"No {csv_path.name} file found in parent_dir.")
         return values
 
-    @root_validator
+    @model_validator(mode="after")
     @classmethod
     def _validate_aligned_dir(cls, values):
         parent_dir = values.get("parent_dir")

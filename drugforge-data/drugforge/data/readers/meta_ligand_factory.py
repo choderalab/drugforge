@@ -6,7 +6,7 @@ from drugforge.data.readers.molfile import MolFileFactory
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.services.postera.postera_factory import PosteraFactory
 from drugforge.data.services.services_config import PosteraSettings
-from pydantic.v1 import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class MetaLigandFactory(BaseModel):
     )
     ligand_file: Optional[str | Path] = Field(..., description="Ligand file to read")
 
-    @root_validator
+    @model_validator(mode="after")
     @classmethod
     def options_mutex(cls, values):
         postera = values.get("postera")
@@ -40,7 +40,7 @@ class MetaLigandFactory(BaseModel):
             raise ValueError("cannot specify postera and ligand_file")
         return values
 
-    @root_validator
+    @model_validator(mode="after")
     @classmethod
     def postera_molset_and_name(cls, values):
         postera_molset_name = values.get("postera_molset_name")

@@ -1,8 +1,27 @@
 import abc
 import json
 from typing import Literal
+from pydantic import BaseModel
 
-from openff.models.models import DefaultModel
+from openff.units import Quantity
+# the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1
+#from openff.models.models import DefaultModel
+
+class DefaultModel(BaseModel):
+    """A custom Pydantic model used by other components."""
+
+    model_config = ConfigDict(
+        #use_enum_values=True,
+        arbitrary_types_allowed=True,
+        validate_assignment=True,
+        extra="forbid",
+    )
+
+        # json_encoders: dict[Any, Callable] = {
+        #     Quantity: custom_quantity_encoder,
+        # }
+        # json_loads: Callable = json_loader
+
 
 
 class _SchemaBase(abc.ABC, DefaultModel):

@@ -4,7 +4,7 @@ import json
 from enum import Enum
 from pathlib import Path
 
-from pydantic import BaseModel, ByteSize, Field
+from pydantic import BaseModel, ByteSize, Field, ConfigDict
 
 _SCHEMA_VERSION = "0.1.0"
 
@@ -49,15 +49,18 @@ class DataModelAbstractBase(BaseModel):
 
     @classmethod
     def from_dict(cls, dict):
-        return cls.parse_obj(dict)
+        return cls.model_validate(dict)
 
     @classmethod
     def from_json(cls, json_str):
-        return cls.parse_obj(json.loads(json_str))
+        return cls.model_validate(json.loads(json_str))
 
     @classmethod
     def from_json_file(cls, file: str | Path):
-        return cls.parse_file(str(file))
+        # first load the file, then use the json parser
+        contents = read_file_directly(file)
+        return cls.from_json(contents)
+        #return cls.parse_file(str(file))
 
     def to_json_file(self, file: str | Path):
         write_file_directly(file, self.json())
@@ -88,7 +91,7 @@ class DataModelAbstractBase(BaseModel):
     def __ne__(self, other: DataModelAbstractBase) -> bool:
         return not self.__eq__(other)
 
-    model_config = {"validate_assignment": True}
+    model_config = ConfigDict(validate_assignment=True)
 
 
 def schema_dict_get_val_overload(obj: dict | BaseModel):
@@ -107,7 +110,7 @@ def schema_dict_get_val_overload(obj: dict | BaseModel):
     if isinstance(obj, dict):
         return obj.values()
     elif isinstance(obj, BaseModel):
-        return obj.dict().values()
+        return obj.model_dump().values()
     else:
         raise TypeError(f"Unsupported type {type(obj)}")
 

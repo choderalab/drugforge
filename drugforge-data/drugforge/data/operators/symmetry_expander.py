@@ -9,7 +9,7 @@ from drugforge.data.backend.openeye import oemol_to_pdb_string
 from drugforge.data.schema.complex import Complex
 from drugforge.data.util.dask_utils import FailureMode, dask_vmap
 from MDAnalysis.lib.util import NamedStream
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 

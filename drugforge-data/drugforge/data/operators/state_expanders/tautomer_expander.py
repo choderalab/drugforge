@@ -5,7 +5,7 @@ from drugforge.data.operators.state_expanders.state_expander import (
     StateExpanderBase,
 )
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import Field
+from pydantic import Field
 
 
 class TautomerExpander(StateExpanderBase):

@@ -10,7 +10,7 @@ import pandas
 from drugforge.data.backend.openeye import oechem
 from drugforge.data.schema.experimental import ExperimentalCompoundData
 from drugforge.data.schema.legacy import EnantiomerPair, EnantiomerPairList
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 # Not sure if this is the right place for these
 # Regex patterns for extracting Mpro dataset ID and Moonshot CDD style compound ID

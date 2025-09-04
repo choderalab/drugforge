@@ -130,8 +130,9 @@ class Ligand(DataModelAbstractBase):
         None,
         description="The bespoke parameters for this ligand organised by interaction type.",
     )
-
-    tags: dict[str, str] = Field(
+    # r_epik_state_penalty seems to be a float in some cases and a str in others
+    # this should resolve the issue
+    tags: dict[str, Union[str, float]] = Field(
         {},
         description="Dictionary of SD tags. "
         "If multiple conformers are present, these tags represent the first conformer.",

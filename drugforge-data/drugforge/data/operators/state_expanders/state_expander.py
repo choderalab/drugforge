@@ -2,7 +2,7 @@ import abc
 from typing import Literal
 
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class StateExpanderBase(abc.ABC, BaseModel):

@@ -4,7 +4,7 @@ from typing import Union
 
 from drugforge.data.backend.openeye import oechem
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator
 
 logger = logging.getLogger(__name__)
 

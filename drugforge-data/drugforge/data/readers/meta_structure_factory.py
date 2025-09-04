@@ -6,7 +6,7 @@ from drugforge.data.readers.structure_dir import StructureDirFactory
 from drugforge.data.schema.complex import Complex
 from drugforge.data.services.fragalysis.fragalysis_reader import FragalysisFactory
 from drugforge.data.util.dask_utils import FailureMode
-from pydantic.v1 import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field,model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class MetaStructureFactory(BaseModel):
         ..., description="Path to pdb file containing structure"
     )
 
-    @root_validator
+    @model_validator(mode="after")
     def options_mutex(cls, values):
         fragalysis = values.get("fragalysis_dir")
         pdb_file = values.get("pdb_file")
