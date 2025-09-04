@@ -1163,8 +1163,14 @@ def load_collection_df(
     -------
     dict[tuple[str, str], TrainingPredictionTracker]
     """
+    # Handle any missing values
+    if spec_name_to_output_name is None:
+        spec_name_to_output_name = {}
+    if spec_lab_to_output_lab is None:
+        spec_lab_to_output_lab = {}
     if extract_epochs is None:
         extract_epochs = []
+
     mp_func = partial(
         _load_one_df,
         extract_epochs=extract_epochs,
