@@ -349,6 +349,18 @@ class ChemGauss4Scorer(ScorerBase):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
+    def _dispatch(self, inputs: list[Union[Complex, Path, DockingResult]], **kwargs) -> list[Score]:
+        """
+        Dispatch for Complexes or PDB files from disk
+        """
+        # if we have docking results, dispatch to that method
+        if isinstance(inputs[0], DockingResult):
+            return self._dispatch_docking_result(inputs, **kwargs)
+        elif isinstance(inputs[0], Complex):
+            return self._dispatch_complex(inputs, **kwargs)
+        elif isinstance(inputs[0], Path):
+            return self._dispatch_from_path(inputs, **kwargs)
+
     #@multimethod
     def _dispatch_docking_result(
         self,
@@ -378,7 +390,7 @@ class ChemGauss4Scorer(ScorerBase):
         return results
 
     #@_dispatch.register
-    def _dispatch(self, inputs: list[Union[Complex, Path, DockingResult]], **kwargs) -> list[Score]:
+    def _dispatch_complex(self, inputs: list[Complex], **kwargs) -> list[Score]:
         """
         Dispatch for Complexes or PDB files from disk
         """
@@ -388,7 +400,7 @@ class ChemGauss4Scorer(ScorerBase):
 
         # if we have paths, load the complexes from disk
         if isinstance(inputs[0], Path):
-            inputs = self._load_from_path_to_complex(inputs, **kwargs)
+            inputs = self._dispatch_from_path(inputs, **kwargs)
 
 
         results = []
@@ -406,7 +418,7 @@ class ChemGauss4Scorer(ScorerBase):
         return results
 
     #@_dispatch.register
-    def _load_from_path_to_complex(self, inputs: list[Path], **kwargs) -> list[Score]:
+    def _dispatch_from_path(self, inputs: list[Path], **kwargs) -> list[Score]:
         """
         Load the PDB files from disk and convert to Complexes.
 
@@ -420,7 +432,7 @@ class ChemGauss4Scorer(ScorerBase):
             )
             for p in inputs
         ]
-        return complexes
+        return self._dispatch_complex(complexes, **kwargs)
 
 
 class SymClashScorer(ScorerBase):
