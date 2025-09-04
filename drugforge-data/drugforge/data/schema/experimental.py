@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class ExperimentalCompoundData(BaseModel):
@@ -65,4 +65,4 @@ class ExperimentalCompoundData(BaseModel):
         exp_data = {str(k): float(v) for k, v in exp_data.items() if v is not None}
         return data, exp_data
 
-    model_config = {"frozen": True, "extra": "forbid"}
+    model_config = ConfigDict(extra="forbid", frozen=True)

@@ -63,15 +63,15 @@ class DataModelAbstractBase(BaseModel):
         #return cls.parse_file(str(file))
 
     def to_json_file(self, file: str | Path):
-        write_file_directly(file, self.json())
+        write_file_directly(file, self.model_dump_json())
 
     @property
     def size(self) -> ByteSize:
         """Size of the resulting JSON object for this class"""
-        return ByteSize(utf8len(self.json())).human_readable()
+        return ByteSize(utf8len(self.model_dump_json())).human_readable()
 
     def full_equal(self, other: DataModelAbstractBase) -> bool:
-        return self.dict() == other.dict()
+        return self.model_dump() == other.model_dump()
 
     def data_equal(self, other: DataModelAbstractBase) -> bool:
         return self.data == other.data
@@ -125,8 +125,7 @@ class MoleculeComponent(str, Enum):
 class MoleculeFilter(BaseModel):
     """Filter for selecting components of a molecule."""
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra = "forbid")
 
     protein_chains: list = Field(
         list(),
