@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import ClassVar, Union
 
 from multimethod import multimethod
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 
 from drugforge.dataviz.plip import compute_fint_score
 from drugforge.docking.docking import DockingResult
@@ -30,7 +30,7 @@ class FINTScorer(ScorerBase):
     units: ClassVar[ScoreUnits.arbitrary] = ScoreUnits.arbitrary
     target: TargetTags = Field(..., description="Which target to use for scoring")
 
-    @validator("target")
+    @field_validator("target", mode="before")
     @classmethod
     def validate_target(cls, v):
         if not target_has_fitness_data(v):
