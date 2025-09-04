@@ -81,15 +81,15 @@ class Score(BaseModel):
 
     score_type: ScoreType
     score: float
-    compound_name: Optional[str]
-    smiles: Optional[str]
-    ligand_identifiers: Optional[LigandIdentifiers]
-    ligand_inchikey: Optional[str]
-    target_name: Optional[str]
-    target_identifiers: Optional[TargetIdentifiers]
-    complex_ligand_smiles: Optional[str]
-    probability: Optional[float]
-    pose_id: Optional[int]
+    compound_name: Optional[str] = None
+    smiles: Optional[str] = None
+    ligand_identifiers: Optional[LigandIdentifiers] = None
+    ligand_inchikey: Optional[str] = None
+    target_name: Optional[str] = None
+    target_identifiers: Optional[TargetIdentifiers] = None
+    complex_ligand_smiles: Optional[str] = None
+    probability: Optional[float] = None
+    pose_id: Optional[int] =None
     units: ScoreUnits
     input: Optional[Any] = None
 
@@ -349,8 +349,8 @@ class ChemGauss4Scorer(ScorerBase):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
-    @multimethod
-    def _dispatch(
+    #@multimethod
+    def _dispatch_docking_result(
         self,
         inputs: list[DockingResult],
         return_for_disk_backend: bool = False,
@@ -374,15 +374,23 @@ class ChemGauss4Scorer(ScorerBase):
             # overwrite the input with the path to the file
             if return_for_disk_backend:
                 sc.input = _get_disk_path_from_docking_result(inp)
-
             results.append(sc)
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Complex], **kwargs) -> list[Score]:
+    #@_dispatch.register
+    def _dispatch(self, inputs: list[Union[Complex, Path, DockingResult]], **kwargs) -> list[Score]:
         """
-        Dispatch for Complexes
+        Dispatch for Complexes or PDB files from disk
         """
+        # if we have docking results, dispatch to that method
+        if isinstance(inputs[0], DockingResult):
+            return self._dispatch_docking_result(inputs, **kwargs)
+
+        # if we have paths, load the complexes from disk
+        if isinstance(inputs[0], Path):
+            inputs = self._load_from_path_to_complex(inputs, **kwargs)
+
+
         results = []
         for inp in inputs:
             posed_mol = inp.ligand.to_oemol()
@@ -392,15 +400,16 @@ class ChemGauss4Scorer(ScorerBase):
             chemgauss_score = pose_scorer.ScoreLigand(posed_mol)
             results.append(
                 Score.from_score_and_complex(
-                    chemgauss_score, self.score_type, self.units, inp
+                    score=chemgauss_score, score_type=self.score_type, units=self.units, complex=inp
                 )
             )
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Path], **kwargs) -> list[Score]:
+    #@_dispatch.register
+    def _load_from_path_to_complex(self, inputs: list[Path], **kwargs) -> list[Score]:
         """
-        Dispatch for PDB files from disk
+        Load the PDB files from disk and convert to Complexes.
+
         """
         # assuming reading PDB files from disk
         complexes = [
@@ -411,7 +420,7 @@ class ChemGauss4Scorer(ScorerBase):
             )
             for p in inputs
         ]
-        return self._dispatch(complexes)
+        return complexes
 
 
 class SymClashScorer(ScorerBase):
