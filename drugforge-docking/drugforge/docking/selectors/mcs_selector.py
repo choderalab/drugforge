@@ -15,7 +15,7 @@ from drugforge.data.util.dask_utils import (
 )
 from drugforge.docking.docking import DockingInputPair  # TODO: move to backend
 from dask import delayed
-from pydantic.v1 import Field
+from pydantic import Field
 from rdkit import Chem, rdBase
 from rdkit.Chem import rdRascalMCES
 

@@ -14,7 +14,7 @@ from drugforge.data.backend.openeye import (
 )
 from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import BaseModel, Field, PositiveFloat, PositiveInt
+from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
 from rdkit import Chem, RDLogger
 
 RDLogger.DisableLog(

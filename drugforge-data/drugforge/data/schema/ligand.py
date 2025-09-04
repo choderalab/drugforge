@@ -168,7 +168,7 @@ class Ligand(DataModelAbstractBase):
     @classmethod
     def _validate_tags(cls, v):
         # check that tags are not reserved attribute names and format partial charges
-        reser_attr_names = cls.model_fields.keys()
+        reser_attr_names = Ligand.model_fields.keys()
         for k in v.keys():
             if k in reser_attr_names:
                 raise ValueError(f"Tag name {k} is a reserved attribute name")
@@ -267,11 +267,11 @@ class Ligand(DataModelAbstractBase):
         """
         mol = sdf_string_to_oemol(self.data)
         data = {}
-        for key in self.model_fields.keys():
+        for key in Ligand.model_fields.keys():
             if key not in ["data", "tags", "conf_tags", "data_format"]:
                 field = getattr(self, key)
                 try:
-                    data[key] = field.json()
+                    data[key] = field.model_dump_json()
                 except AttributeError:
                     if field is not None:
                         data[key] = str(getattr(self, key))
@@ -551,7 +551,7 @@ class Ligand(DataModelAbstractBase):
         # and ensure that the length of the data matches the number of conformers
         new_data = {}
         for k, v in data.items():
-            if k in self.model_fields.keys():
+            if k in Ligand.model_fields.keys():
                 warnings.warn(f"Tag name {k} is a reserved attribute name, skipping")
             else:
                 # if list is len 1, generate a list of len N, where N is the number of conformers

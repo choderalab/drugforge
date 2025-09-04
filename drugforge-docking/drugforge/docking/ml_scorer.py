@@ -3,7 +3,7 @@ from typing import ClassVar, Optional, Any, Union
 
 from mtenn.config import ModelType
 from multimethod import multimethod
-from pydantic.v1 import Field
+from pydantic import Field
 
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.scorer import (

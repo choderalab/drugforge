@@ -22,7 +22,7 @@ from drugforge.data.schema.pairs import CompoundStructurePair
 from drugforge.data.schema.sets import MultiStructureBase
 from drugforge.data.schema.target import Target
 from drugforge.data.util.dask_utils import BackendType, FailureMode
-from pydantic.v1 import BaseModel, Field, PositiveFloat
+from pydantic import BaseModel, Field, PositiveFloat
 
 logger = logging.getLogger(__name__)
 
@@ -184,13 +184,13 @@ class DockingResult(BaseModel):
     input_pair: DockingInputPair = Field(description="Input pair")
     posed_ligand: Ligand = Field(description="Posed ligand")
     probability: Optional[PositiveFloat] = Field(
-        description="Probability"
+        description="Probability", default=None
     )  # not easy to get the probability from rescoring
-    pose_id: Optional[int] = Field(description="Nth returned pose from docking")
+    pose_id: Optional[int] = Field(description="Nth returned pose from docking", default=None)
     num_poses: Optional[int] = Field(
-        description="Total number of poses returned from docking"
+        description="Total number of poses returned from docking", default=None
     )
-    provenance: dict[str, str] = Field(description="Provenance")
+    provenance: dict[str, Union[str, int]] = Field(description="Provenance")
 
     def to_json_file(self, file: str | Path):
         with open(file, "w") as f:
@@ -199,7 +199,7 @@ class DockingResult(BaseModel):
     @classmethod
     def from_json_file(cls, file: str | Path) -> "DockingResult":
         with open(file) as f:
-            return cls.parse_raw(f.read())
+            return cls.model_validate_json(f.read())
 
     @abc.abstractmethod
     def _get_single_pose_results(self) -> list["DockingResult"]: ...

@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import ClassVar, Union
 
 from multimethod import multimethod
-from pydantic.v1 import Field, validator
+from pydantic import Field, validator
 
 from drugforge.dataviz.plip import compute_fint_score
 from drugforge.docking.docking import DockingResult
