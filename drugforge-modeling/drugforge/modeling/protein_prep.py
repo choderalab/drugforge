@@ -313,7 +313,7 @@ class ProteinPrepper(ProteinPrepperBase):
                 # we need the ligand at the new translated coordinates
                 translated_oemol, _, _ = split_openeye_design_unit(du=du)
                 translated_lig = Ligand.from_oemol(
-                    translated_oemol, **complex_target.ligand.dict(exclude={"data"})
+                    translated_oemol, **complex_target.ligand.model_dump(exclude={"data"})
                 )
                 pc = PreppedComplex(target=prepped_target, ligand=translated_lig)
                 pc.target.crystal_symmetry = complex_target.target.crystal_symmetry

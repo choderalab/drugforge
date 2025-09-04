@@ -175,7 +175,7 @@ class Ligand(DataModelAbstractBase):
         return v
 
     def __hash__(self):
-        return self.json().__hash__()
+        return self.model_dump_json().__hash__()
 
     def __eq__(self, other: "Ligand") -> bool:
         return self.data_equal(other)
@@ -350,11 +350,11 @@ class Ligand(DataModelAbstractBase):
 
         rdkit_mol: Chem.Mol = sdf_str_to_rdkit_mol(self.data)
         data = {}
-        for key in self.model_fields.keys():
+        for key in Ligand.model_fields.keys():
             if key not in ["data", "tags", "data_format", "conf_tags"]:
                 field = getattr(self, key)
                 try:
-                    data[key] = field.json()
+                    data[key] = field.model_dump_json()
                 except AttributeError:
                     if field is not None:
                         data[key] = str(getattr(self, key))
