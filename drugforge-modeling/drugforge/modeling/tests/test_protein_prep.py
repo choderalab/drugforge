@@ -151,7 +151,7 @@ def test_preppedtarget_from_oedu_file(oedu_file):
 
 
 def test_preppedtarget_from_oedu_file_at_least_one_id(oedu_file):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         # neither id is set
         PreppedTarget.from_oedu_file(oedu_file)
 
@@ -169,7 +169,7 @@ def test_preppedtarget_to_pdb_file(oedu_file, tmpdir):
 
 
 def test_preppedtarget_from_oedu_file_at_least_one_target_id(oedu_file):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         _ = PreppedTarget.from_oedu_file(oedu_file, ids=TargetIdentifiers())
 
 

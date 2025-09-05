@@ -68,7 +68,7 @@ class PreppedTarget(DataModelAbstractBase):
         if compound_name is None:
             if ids is None or all([not v for v in schema_dict_get_val_overload(ids)]):
                 raise ValueError(
-                    "At least one identifier must be provide, or target_name must be provided"
+                    "At least one identifier must be provided, or target_name must be provided"
                 )
         return v
 
