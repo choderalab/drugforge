@@ -48,7 +48,7 @@ class Target(DataModelAbstractBase):
     data_format: DataStorageType = Field(
         DataStorageType.pdb,
         description="Enum describing the data storage method",
-        allow_mutation=False,
+        frozen=True,
     )
 
     @model_validator(mode="before")

@@ -1234,3 +1234,36 @@ def check_empty_dataframe(
             return True
         else:
             raise ValueError(f"fail argument {fail} not recognised")
+
+def get_path_string(module) -> str:
+    """
+    Get the absolute path as a string to an imported module.
+
+    Parameters
+    ----------
+    module : module
+        The module to get the path of.
+
+    Returns
+    -------
+    str
+        The path of the module as a string.
+    """
+
+    from importlib import resources
+    from importlib.readers import MultiplexedPath
+
+    temp_path = resources.files(module)
+
+    # in some cases, using importlib.resources returns a MultiplexedPath object and other times a regular path
+    # this helper function is designed to handle both cases
+
+    # see if we have a MultiplexedPath object
+    if isinstance(temp_path, MultiplexedPath):
+        if len(temp_path._paths) == 0:
+            raise ValueError(f"No paths found for module {module}")
+
+        # return the first path, which is to the directory, as a string
+        return str(temp_path._paths[0])
+    else:  # return the path as a string
+        return str(temp_path)
