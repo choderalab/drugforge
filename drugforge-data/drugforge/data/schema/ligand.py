@@ -132,7 +132,7 @@ class Ligand(DataModelAbstractBase):
     )
     # r_epik_state_penalty seems to be a float in some cases and a str in others
     # this should resolve the issue
-    tags: dict[str, Union[str, float]] = Field(
+    tags: dict[str, str] = Field(
         {},
         description="Dictionary of SD tags. "
         "If multiple conformers are present, these tags represent the first conformer.",
@@ -148,6 +148,13 @@ class Ligand(DataModelAbstractBase):
         repr=False,
     )
     data_format: Literal[DataStorageType.sdf] = DataStorageType.sdf
+
+    #add in a field validator to ensure that any values in the tags dict are converted to strings
+    @field_validator("tags", mode="before")
+    def _convert_tags_to_str(cls, v):
+        if not isinstance(v, dict):
+            raise ValueError("tags must be a dictionary")
+        return {k: str(vv) for k, vv in v.items()}
 
     @model_validator(mode="before")
     def _validate_at_least_one_id(cls, values):

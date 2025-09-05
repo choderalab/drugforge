@@ -102,6 +102,12 @@ class ChargeProvenance(BaseModel):
         ...,
         description="The versions of the software used to generate the local charges.",
     )
+    # in case the dictionary of the provenance contains int/float as values, convert them to strings
+    # as this seems to be the expected behavior
+    @field_validator("provenance", mode="before")
+    def cast_provenance_dict(cls, v):
+        return {k: str(vv) for k, vv in v.items()}
+
 
 
 class BespokeParameter(BaseModel):

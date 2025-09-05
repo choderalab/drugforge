@@ -49,10 +49,11 @@ class ExperimentalCompoundData(BaseModel):
         # If a date is specified as just the year, it'll be loaded as an int and we need
         #  to format it into ISO format. Set for last day of the year so it gets sorted
         #  at the end
+
         if isinstance(value, int):
             value = f"{value}-12-31"
-
         return value
+
 
     def to_SD_tags(self) -> tuple[dict[str, str], dict[str, float]]:
         """

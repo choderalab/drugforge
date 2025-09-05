@@ -51,23 +51,21 @@ class FragalysisFactory(BaseModel):
         return v
 
     @model_validator(mode="after")
-    @classmethod
-    def _validate_metadata_csv_name(cls, values):
-        parent_dir = values.get("parent_dir")
-        metadata_csv_name = values.get("metadata_csv_name")
+    def _validate_metadata_csv_name(self):
+        parent_dir = self.parent_dir
+        metadata_csv_name = self.metadata_csv_name
         csv_path = parent_dir / metadata_csv_name
         if not csv_path.exists():
             raise FileNotFoundError(f"No {csv_path.name} file found in parent_dir.")
-        return values
+        return self
 
     @model_validator(mode="after")
-    @classmethod
-    def _validate_aligned_dir(cls, values):
-        parent_dir = values.get("parent_dir")
+    def _validate_aligned_dir(self):
+        parent_dir = self.parent_dir
         aligned_dir = parent_dir / "aligned"
         if not aligned_dir.exists():
             raise FileNotFoundError("No aligned/ directory found in parent_dir.")
-        return values
+        return self
 
     def load(
         self, use_dask=False, dask_client=None, failure_mode=FailureMode.SKIP
