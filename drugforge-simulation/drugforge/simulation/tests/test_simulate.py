@@ -77,6 +77,8 @@ def test_actual_simulation_paths(tyk2_protein, tmp_path, tyk2_lig):
     simulation_results = vs.simulate(
         [(tyk2_protein, tyk2_lig)], outpaths=[tmp_path], failure_mode="raise"
     )
+    print("sim results")
+    print(simulation_results)
     assert simulation_results[0].traj_path.exists()
     assert simulation_results[0].success
 
@@ -113,13 +115,14 @@ def test_rmsd_restraint_indices(tmp_path):
         output_dir=tmp_path,
         truncate_steps=False,
         rmsd_restraint=True,
-        rmsd_restraint_indices=[1, 2, 3],
+        rmsd_restraint_atom_indices=[1, 2, 3],
     )
     assert vs.num_steps == 1
-    assert vs.rmsd_restraint_indices == [1, 2, 3]
+    assert vs.rmsd_restraint_atom_indices == [1, 2, 3]
 
 
 def test_rmsd_restraint_indices_mutex_type(tmp_path):
+    # should raise an error if we specify both rmsd_restraint_type and rmsd_restraint_atom_indices
     with pytest.raises(ValueError):
         _ = VanillaMDSimulator(
             num_steps=1,
@@ -127,7 +130,7 @@ def test_rmsd_restraint_indices_mutex_type(tmp_path):
             output_dir=tmp_path,
             truncate_steps=False,
             rmsd_restraint=True,
-            rmsd_restraint_indices=[1, 2, 3],
+            rmsd_restraint_atom_indices=[1, 2, 3],
             rmsd_restraint_type="CA",
         )
 

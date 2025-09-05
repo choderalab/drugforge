@@ -7,7 +7,7 @@ import pandas as pd
 from drugforge.data.backend.openeye import oechem, oeszybki
 from drugforge.data.util.logging import FileLogger
 from openmm import unit
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SzybkiFreeformResult(BaseModel):
@@ -19,11 +19,9 @@ class SzybkiFreeformResult(BaseModel):
     szybki_global_strain: float
     szybki_local_strain: float
     szybki_conformer_strain: float
-    units = unit.kilocalories_per_mole
+    units: unit.Unit = unit.kilocalories_per_mole
 
-    class Config:
-        allow_mutation = False
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(frozen = True, arbitrary_types_allowed = True)
 
     def as_result_cols(self):
         dict = {

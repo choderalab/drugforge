@@ -15,7 +15,7 @@ from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.schema_base import DataModelAbstractBase
 from drugforge.data.schema.target import Target
 from drugforge.data.schema.schema_base import MoleculeFilter
-from pydantic import Field
+from pydantic import Field, field_validator
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +57,12 @@ class Complex(ComplexBase):
         return self.target.data_equal(other.target) and self.ligand.data_equal(
             other.ligand
         )
+
+    @field_validator("ligand_chain")
+    def check_ligand_chain(cls, v, values):
+        if v is None:
+            v = ""
+        return v
 
     @classmethod
     def from_oemol(
