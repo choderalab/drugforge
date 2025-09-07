@@ -18,7 +18,7 @@ from drugforge.docking.schema.pose_generation import (
     OpenEyeConstrainedPoseGenerator,
     RDKitConstrainedPoseGenerator,
 )
-from pydantic.v1 import Field
+from pydantic import Field
 from rich import pretty
 from rich.padding import Padding
 

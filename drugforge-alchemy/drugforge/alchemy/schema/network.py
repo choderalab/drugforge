@@ -4,7 +4,7 @@ from typing import Callable, Literal, Optional, Union
 import openfe
 from drugforge.data.schema.ligand import Ligand
 from openfe.setup import LigandNetwork
-from pydantic.v1 import Field
+from pydantic import Field
 
 from ._util import check_ligand_series_uniqueness_and_names
 from .atom_mapping import KartografAtomMapper, LomapAtomMapper, PersesAtomMapper

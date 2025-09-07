@@ -4,7 +4,7 @@ from typing import Any, Literal
 
 from drugforge.alchemy.schema.base import _SchemaBase
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import Field
+from pydantic import Field
 from tqdm import tqdm
 
 
