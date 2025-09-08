@@ -1149,6 +1149,12 @@ def es_burnin(func):
     )(func)
 
 
+def es_threshold(func):
+    return click.option(
+        "--es-threshold", type=float, help="Loss below which to stop model training."
+    )(func)
+
+
 def es_config_cache(func):
     return click.option(
         "--es-config-cache",

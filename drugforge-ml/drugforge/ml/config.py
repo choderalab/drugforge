@@ -6,7 +6,7 @@ from collections.abc import Iterator
 from copy import deepcopy
 from glob import glob
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 import torch
@@ -25,6 +25,7 @@ from drugforge.ml.es import (
     BestEarlyStopping,
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,
+    ThresholdEarlyStopping,
 )
 from pydantic import (
     BaseModel,
@@ -169,6 +170,7 @@ class EarlyStoppingType(StringEnum):
     best = "best"
     converged = "converged"
     patient_converged = "patient_converged"
+    threshold = "threshold"
 
 
 class EarlyStoppingConfig(ConfigBase):
@@ -213,6 +215,10 @@ class EarlyStoppingConfig(ConfigBase):
             "stopping criteria."
         ),
     )
+    # Paremeters for threshold
+    threshold: Optional[float] = Field(
+        None, description="Loss below which to stop model training."
+    )
 
     @model_validator(mode="after")
     def check_args(self):
@@ -240,6 +246,12 @@ class EarlyStoppingConfig(ConfigBase):
                         "Values required for n_check, divergence, and patience when "
                         "using PatientConvergedEarlyStopping."
                     )
+            case EarlyStoppingType.threshold:
+                if (self.threshold is None) or (self.patience is None):
+                    raise ValueError(
+                        "Values required for threshold and patience when "
+                        "using ThresholdEarlyStopping."
+                    )
             case other:
                 raise ValueError(f"Unknown EarlyStoppingType: {other}")
 
@@ -260,6 +272,10 @@ class EarlyStoppingConfig(ConfigBase):
             case EarlyStoppingType.patient_converged:
                 return PatientConvergedEarlyStopping(
                     self.n_check, self.divergence, self.patience, self.burnin
+                )
+            case EarlyStoppingType.threshold:
+                return ThresholdEarlyStopping(
+                    self.threshold, self.patience, self.burnin
                 )
             case other:
                 raise ValueError(f"Unknown EarlyStoppingType: {other}")

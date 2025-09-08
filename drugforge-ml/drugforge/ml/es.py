@@ -265,3 +265,59 @@ class PatientConvergedEarlyStopping:
             self.converged_epoch = 0
 
         return False
+
+
+class ThresholdEarlyStopping:
+    """
+    Class for handling early stopping in training based on whether loss has been below
+    a certain threshold for some number of epochs.
+    """
+
+    def __init__(self, threshold, patience, burnin=0):
+        """
+        Parameters
+        ----------
+        threshold : float
+            Loss below which to stop model training
+        patience : ing
+            Number of epochs to wait once loss has dipped below threshold to make sure
+            it stays there
+        burnin : int, optional
+            If given, ensure that at least this many epochs of training have been done
+            before we stop
+        """
+        super().__init__()
+        self.threshold = threshold
+        self.patience = patience
+        self.burnin = burnin
+
+        # Variables to track early stopping
+        self.converged_epochs = 0
+
+    def check(self, epoch, loss):
+        """
+        Check if training should be stopped. Return True to stop, False to keep going.
+
+        Parameters
+        ----------
+        epoch : int
+            Current training epoch
+        loss : float
+            Model loss from the current epoch of training
+
+        Returns
+        -------
+        bool
+            Whether to stop training
+        """
+        # Make sure we've got a reasonable value for loss
+        loss = _sanitize_loss(loss)
+
+        if loss > self.threshold:
+            self.converged_epochs = 0
+            return False
+
+        self.converged_epochs += 1
+        if (self.converged_epochs == self.patience) and (epoch >= self.burnin):
+            return True
+        return False

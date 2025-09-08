@@ -1429,6 +1429,14 @@ class Trainer(BaseModel):
                         self.logger.info(f"Stopping training after epoch {epoch_idx}")
                     use_epoch = epoch_idx
                     break
+                elif self.es_config.es_type == "threshold" and self.es.check(
+                    epoch_idx, epoch_val_loss
+                ):
+                    print(f"Stopping training after epoch {epoch_idx}", flush=True)
+                    if self.log_file:
+                        self.logger.info(f"Stopping training after epoch {epoch_idx}")
+                    use_epoch = epoch_idx
+                    break
         else:
             use_epoch = None
 

@@ -268,6 +268,7 @@ def build(
     es_n_check: int | None = None,
     es_divergence: float | None = None,
     es_burnin: int | None = None,
+    es_threshold: float | None = None,
     es_config_cache: Path | None = None,
     dataset_type: DatasetType | None = None,
     export_input_data: bool | None = None,
@@ -379,6 +380,7 @@ def build(
         "n_check": es_n_check,
         "divergence": es_divergence,
         "burnin": es_burnin,
+        "threshold": es_threshold,
     }
     if dataset_type is not None:
         is_structural = dataset_type != DatasetType.graph
@@ -529,6 +531,7 @@ def build_and_train(
     es_n_check: int | None = None,
     es_divergence: float | None = None,
     es_burnin: int | None = None,
+    es_threshold: float | None = None,
     es_config_cache: Path | None = None,
     exp_file: Path | None = None,
     structures: str | None = None,
@@ -640,6 +643,7 @@ def build_and_train(
         "n_check": es_n_check,
         "divergence": es_divergence,
         "burnin": es_burnin,
+        "threshold": es_threshold,
     }
     if dataset_type is not None:
         is_structural = dataset_type != DatasetType.graph
