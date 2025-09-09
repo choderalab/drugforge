@@ -90,7 +90,7 @@ jobs:
         # Exit immediately if a command exits with a non-zero status.
         set -e
         # can only run tests on a single worker because "Only one live display may be activate at once"
-        pytest -n 1 --durations=10 -v --cov-report=xml --cov-report=term --color=yes \
+        pytest -n logical --durations=10 -v --cov-report=xml --cov-report=term --color=yes \
                        --cov=drugforge-alchemy \
                        drugforge-alchemy/drugforge/alchemy/
 
