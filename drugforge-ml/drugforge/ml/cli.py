@@ -34,6 +34,7 @@ from drugforge.ml.cli_args import (
 
 # from drugforge.ml.cli_mlops import mlops
 # from drugforge.ml.cli_sweep import sweep
+from drugforge.ml.analysis import analysis
 from drugforge.ml.config import (
     DatasetConfig,
     DatasetSplitterType,
@@ -50,6 +51,9 @@ from pydantic import ValidationError
 def ml():
     """Tools to build and train ML models and run inference."""
     pass
+
+
+ml.add_command(analysis)
 
 
 # Function for training using an already built Trainer
