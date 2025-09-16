@@ -1,10 +1,14 @@
+from functools import partial
+import multiprocessing as mp
 from pathlib import Path
 import time
 from typing import List, Union
 import yaml
 
 import click
+import numpy as np
 import pandas
+from scipy.stats import bootstrap, kendalltau, spearmanr
 
 import drugforge.ml.schema as mlschema
 
@@ -14,6 +18,8 @@ def analysis():
     pass
 
 
+################################################################################
+## build_results_dfs
 @analysis.command()
 @click.option(
     "--collection-args-fn",
@@ -146,3 +152,161 @@ def build_results_dfs(
     per_epoch_df.to_csv(output_dir / "per_epoch_df.csv", index=False)
     last_epoch_df.to_csv(output_dir / "last_epoch_df.csv", index=False)
     best_mae_epoch_df.to_csv(output_dir / "best_mae_epoch_df.csv", index=False)
+
+
+################################################################################
+
+
+################################################################################
+## calc_stats
+# Function to calculate a statistic (for multiprocessing)
+def calc_one_stat(stat_func, target_vals, preds):
+    val = stat_func(target_vals, preds)
+    try:
+        conf_interval = bootstrap(
+            (target_vals, preds),
+            statistic=lambda target, pred: stat_func(target, pred),
+            method="basic",
+            confidence_level=0.95,
+            paired=True,
+        ).confidence_interval
+    except ValueError as e:
+        print(target_vals, preds, flush=True)
+        raise e
+
+    print("finished", stat_func, flush=True)
+    return val, conf_interval
+
+
+# Different stat functions
+def calc_mae(target_vals, preds):
+    return np.abs(target_vals - preds).mean()
+
+
+def calc_rmse(target_vals, preds):
+    return np.sqrt(np.power(target_vals - preds, 2).mean())
+
+
+def calc_spearmanr(target_vals, preds):
+    return spearmanr(target_vals, preds).statistic
+
+
+def calc_kendalltau(target_vals, preds):
+    return kendalltau(target_vals, preds).statistic
+
+
+@analysis.command()
+@click.option(
+    "--in-fn",
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=False, writable=True, path_type=Path
+    ),
+    required=True,
+    help="Input csv file.",
+)
+@click.option(
+    "--out-fn",
+    type=click.Path(
+        exists=False, file_okay=True, dir_okay=False, writable=True, path_type=Path
+    ),
+    help="Output csv file.",
+)
+@click.option(
+    "--gb-keys",
+    type=str,
+    required=True,
+    help="Comma separated list of DF columns to group by when calculating stats.",
+)
+def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
+    gb_keys = gb_keys.split(",")
+    dtypes = {k: str for k in gb_keys} | {"Model Seed": str, "Dataset Seed": str}
+
+    # Load DF
+    df = pandas.read_csv(in_fn, dtype=dtypes)
+    df = df.fillna(value={"Strategy": ""})
+    print("loaded df", flush=True)
+
+    # Loop through each split and run the stats calculations
+    stats_df = []
+    in_range_stats_df = []
+    for keys, g in df.groupby(gb_keys):
+        target_vals = g["target"].values
+        preds = g["pred"].values
+
+        num_compounds = len(preds)
+
+        # Values and low/high bounds of 95% CIs for all stats
+        stat_names = []
+        stat_vals = []
+        stat_95ci_lows = []
+        stat_95ci_highs = []
+
+        mp_func = partial(calc_one_stat, target_vals=target_vals, preds=preds)
+        stats_funcs = [calc_mae, calc_rmse, calc_spearmanr, calc_kendalltau]
+        with mp.Pool(processes=4) as pool:
+            stat_res = pool.map(mp_func, stats_funcs)
+        # stat_res = [mp_func(f) for f in stats_funcs]
+        for stat_name, (val, conf_interval) in zip(
+            ["MAE", "RMSE", r"Spearman's $\rho$", r"Kendall's $\tau$"], stat_res
+        ):
+            stat_names.append(stat_name)
+            stat_vals.append(val)
+            stat_95ci_lows.append(conf_interval.low)
+            stat_95ci_highs.append(conf_interval.high)
+
+        stats_dict = {
+            "Num Compounds": num_compounds,
+            "Statistic": stat_names,
+            "Value": stat_vals,
+            "95ci_low": stat_95ci_lows,
+            "95ci_high": stat_95ci_highs,
+        }
+        stats_df.append(pandas.DataFrame(dict(zip(gb_keys, keys)) | stats_dict))
+
+        if "in_range" not in g:
+            continue
+        # Use only in range values
+        range_idx = (g["in_range"] == 0).values
+        target_vals = target_vals[range_idx]
+        preds = preds[range_idx]
+
+        num_compounds = len(preds)
+
+        # Values and low/high bounds of 95% CIs for all stats
+        stat_names = []
+        stat_vals = []
+        stat_95ci_lows = []
+        stat_95ci_highs = []
+
+        mp_func = partial(calc_one_stat, target_vals=target_vals, preds=preds)
+        stats_funcs = [calc_mae, calc_rmse, calc_spearmanr, calc_kendalltau]
+        with mp.Pool(processes=4) as pool:
+            stat_res = pool.map(mp_func, stats_funcs)
+        # stat_res = [mp_func(f) for f in stats_funcs]
+        for stat_name, (val, conf_interval) in zip(
+            ["MAE", "RMSE", r"Spearman's $\rho$", r"Kendall's $\tau$"], stat_res
+        ):
+            stat_names.append(stat_name)
+            stat_vals.append(val)
+            stat_95ci_lows.append(conf_interval.low)
+            stat_95ci_highs.append(conf_interval.high)
+
+        stats_dict = {
+            "Num Compounds": num_compounds,
+            "Statistic": stat_names,
+            "Value": stat_vals,
+            "95ci_low": stat_95ci_lows,
+            "95ci_high": stat_95ci_highs,
+        }
+        in_range_stats_df.append(
+            pandas.DataFrame(dict(zip(gb_keys, keys)) | stats_dict)
+        )
+
+    stats_df = pandas.concat(stats_df, axis=0, ignore_index=True)
+    stats_df.to_csv(out_fn, index=False)
+    in_range_out_fn = out_fn.with_stem(f"{out_fn.stem}_in_range")
+    in_range_stats_df = pandas.concat(in_range_stats_df, axis=0, ignore_index=True)
+    in_range_stats_df.to_csv(in_range_out_fn, index=False)
+
+
+################################################################################
