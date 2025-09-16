@@ -263,7 +263,7 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         }
         stats_df.append(pandas.DataFrame(dict(zip(gb_keys, keys)) | stats_dict))
 
-        if "in_range" not in g:
+        if ("in_range" not in g) or g["in_range"].isna().all():
             continue
         # Use only in range values
         range_idx = (g["in_range"] == 0).values
@@ -304,9 +304,105 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
 
     stats_df = pandas.concat(stats_df, axis=0, ignore_index=True)
     stats_df.to_csv(out_fn, index=False)
-    in_range_out_fn = out_fn.with_stem(f"{out_fn.stem}_in_range")
-    in_range_stats_df = pandas.concat(in_range_stats_df, axis=0, ignore_index=True)
-    in_range_stats_df.to_csv(in_range_out_fn, index=False)
+    if len(in_range_stats_df) > 0:
+        in_range_out_fn = out_fn.with_stem(f"{out_fn.stem}_in_range")
+        in_range_stats_df = pandas.concat(in_range_stats_df, axis=0, ignore_index=True)
+        in_range_stats_df.to_csv(in_range_out_fn, index=False)
+
+
+################################################################################
+
+
+################################################################################
+## subset_by_strat
+@analysis.command()
+@click.option(
+    "--in-fn",
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=False, writable=True, path_type=Path
+    ),
+    required=True,
+    help="Input csv file.",
+)
+@click.option(
+    "--out-fn",
+    type=click.Path(
+        exists=False, file_okay=True, dir_okay=False, writable=True, path_type=Path
+    ),
+    help="Output csv file.",
+)
+@click.option(
+    "--model-strat",
+    type=str,
+    multiple=True,
+    help=(
+        "Which strategy to keep for each model. Pass as multiple <model>:<strategy> "
+        "pairs."
+    ),
+)
+def subset_by_strat(in_fn, out_fn, model_strat):
+    df = pandas.read_csv(in_fn, dtype=str)
+    df = df.fillna(value={"Strategy": ""})
+
+    model_strat = [kvp.split(":") for kvp in model_strat]
+    idx = (df["Model"] == model_strat[0][0]) & (df["Strategy"] == model_strat[0][1])
+    for model, strat in model_strat:
+        idx |= (df["Model"] == model) & (df["Strategy"] == strat)
+
+    df = df.loc[idx, :]
+    df.to_csv(out_fn, index=False)
+
+
+################################################################################
+
+
+################################################################################
+## subset_general
+@analysis.command()
+@click.option(
+    "--in-fn",
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=False, writable=True, path_type=Path
+    ),
+    required=True,
+    help="Input csv file.",
+)
+@click.option(
+    "--out-fn",
+    type=click.Path(
+        exists=False, file_okay=True, dir_okay=False, writable=True, path_type=Path
+    ),
+    help="Output csv file.",
+)
+@click.option(
+    "--filters",
+    type=str,
+    multiple=True,
+    help=(
+        "Filters to use to subset DF. Pass as a comma separated list of <key>:<value> "
+        "pairs. The final index will be the intersection of these fitlers. If multiple "
+        "values are passed, for this option, the final index will be the union of the "
+        "index from each individual list of filters."
+    ),
+)
+def subset_general(in_fn, out_fn, model_strat, filters):
+    df = pandas.read_csv(in_fn, dtype=str)
+    df = df.fillna(value={"Strategy": ""})
+
+    filter_pairs = [[kvp.split(":") for kvp in f] for f in filters]
+    filter_idxs = []
+    for filt_pair_list in filter_pairs:
+        idx = df[filt_pair_list[0][0]] == df[filt_pair_list[0][1]]
+        for col, val in filt_pair_list[1:]:
+            idx &= df[col] == val
+        filter_idxs.append(idx)
+
+    final_idx = filter_idxs[0]
+    for idx in filter_idxs[1:]:
+        final_idx |= idx
+
+    df = df.loc[final_idx, :]
+    df.to_csv(out_fn, index=False)
 
 
 ################################################################################
