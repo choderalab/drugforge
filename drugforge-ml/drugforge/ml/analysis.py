@@ -160,12 +160,12 @@ def build_results_dfs(
 ################################################################################
 ## calc_stats
 # Function to calculate a statistic (for multiprocessing)
-def calc_one_stat(stat_func, target_vals, preds):
-    val = stat_func(target_vals, preds)
+def calc_one_stat(stat_func, target_vals, preds, in_range):
+    val = stat_func(target_vals, preds, in_range)
     try:
         conf_interval = bootstrap(
-            (target_vals, preds),
-            statistic=lambda target, pred: stat_func(target, pred),
+            (target_vals, preds, in_range),
+            statistic=lambda target, pred, r: stat_func(target, pred, r),
             method="basic",
             confidence_level=0.95,
             paired=True,
@@ -179,19 +179,28 @@ def calc_one_stat(stat_func, target_vals, preds):
 
 
 # Different stat functions
-def calc_mae(target_vals, preds):
+def calc_mae(target_vals, preds, _):
     return np.abs(target_vals - preds).mean()
 
 
-def calc_rmse(target_vals, preds):
+def calc_mae_stepped(target_vals, preds, in_range):
+    zero_loss_mask = ((in_range < 0) & (preds <= target_vals)) | (
+        (in_range > 0) & (preds >= target_vals)
+    )
+    abs_err_vals = np.abs(target_vals - preds)
+    abs_err_vals[zero_loss_mask] = 0
+    return abs_err_vals.mean()
+
+
+def calc_rmse(target_vals, preds, _):
     return np.sqrt(np.power(target_vals - preds, 2).mean())
 
 
-def calc_spearmanr(target_vals, preds):
+def calc_spearmanr(target_vals, preds, _):
     return spearmanr(target_vals, preds).statistic
 
 
-def calc_kendalltau(target_vals, preds):
+def calc_kendalltau(target_vals, preds, _):
     return kendalltau(target_vals, preds).statistic
 
 
@@ -232,6 +241,12 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
     for keys, g in df.groupby(gb_keys):
         target_vals = g["target"].values
         preds = g["pred"].values
+        if ("in_range" not in g) or g["in_range"].isna().all():
+            use_range = False
+            in_range = np.zeros(len(preds))
+        else:
+            use_range = True
+            in_range = g["in_range"].values
 
         num_compounds = len(preds)
 
@@ -241,13 +256,22 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         stat_95ci_lows = []
         stat_95ci_highs = []
 
-        mp_func = partial(calc_one_stat, target_vals=target_vals, preds=preds)
-        stats_funcs = [calc_mae, calc_rmse, calc_spearmanr, calc_kendalltau]
-        with mp.Pool(processes=4) as pool:
+        mp_func = partial(
+            calc_one_stat, target_vals=target_vals, preds=preds, in_range=in_range
+        )
+        stats_funcs = [
+            calc_mae,
+            calc_mae_stepped,
+            calc_rmse,
+            calc_spearmanr,
+            calc_kendalltau,
+        ]
+        with mp.Pool(processes=5) as pool:
             stat_res = pool.map(mp_func, stats_funcs)
         # stat_res = [mp_func(f) for f in stats_funcs]
         for stat_name, (val, conf_interval) in zip(
-            ["MAE", "RMSE", r"Spearman's $\rho$", r"Kendall's $\tau$"], stat_res
+            ["MAE", "Adjusted MAE", "RMSE", r"Spearman's $\rho$", r"Kendall's $\tau$"],
+            stat_res,
         ):
             stat_names.append(stat_name)
             stat_vals.append(val)
@@ -263,12 +287,13 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         }
         stats_df.append(pandas.DataFrame(dict(zip(gb_keys, keys)) | stats_dict))
 
-        if ("in_range" not in g) or g["in_range"].isna().all():
+        if not use_range:
             continue
         # Use only in range values
         range_idx = (g["in_range"] == 0).values
         target_vals = target_vals[range_idx]
         preds = preds[range_idx]
+        in_range = in_range[range_idx]
 
         num_compounds = len(preds)
 
@@ -278,9 +303,11 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         stat_95ci_lows = []
         stat_95ci_highs = []
 
-        mp_func = partial(calc_one_stat, target_vals=target_vals, preds=preds)
         stats_funcs = [calc_mae, calc_rmse, calc_spearmanr, calc_kendalltau]
-        with mp.Pool(processes=4) as pool:
+        mp_func = partial(
+            calc_one_stat, target_vals=target_vals, preds=preds, in_range=in_range
+        )
+        with mp.Pool(processes=5) as pool:
             stat_res = pool.map(mp_func, stats_funcs)
         # stat_res = [mp_func(f) for f in stats_funcs]
         for stat_name, (val, conf_interval) in zip(
