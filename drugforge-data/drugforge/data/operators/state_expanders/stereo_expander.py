@@ -67,7 +67,7 @@ class StereoExpander(StateExpanderBase):
                     enantiomer
                 )  # a single conformer needs to be built to fully define stereochemistry
                 enantiomer_ligand = Ligand.from_oemol(
-                    enantiomer, **parent_ligand.dict(exclude={"provenance", "data"})
+                    enantiomer, **parent_ligand.model_dump(exclude={"provenance", "data"})
                 )
                 # if the ligand is the parent ie no possible expansions don't tag it
                 if enantiomer_ligand.fixed_inchikey == parent_ligand.fixed_inchikey:

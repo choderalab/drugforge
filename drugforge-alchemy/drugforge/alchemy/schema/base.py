@@ -18,6 +18,7 @@ class QuantityEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, Quantity):
+
             if isinstance(obj.magnitude, (float, int)):
                 data = obj.magnitude
             elif isinstance(obj.magnitude, numpy.ndarray):

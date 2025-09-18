@@ -274,7 +274,7 @@ class Ligand(DataModelAbstractBase):
         """
         mol = sdf_string_to_oemol(self.data)
         data = {}
-        for key in Ligand.model_fields.keys():
+        for key in self.model_fields.keys():
             if key not in ["data", "tags", "conf_tags", "data_format"]:
                 field = getattr(self, key)
                 try:
@@ -360,7 +360,11 @@ class Ligand(DataModelAbstractBase):
         for key in Ligand.model_fields.keys():
             if key not in ["data", "tags", "data_format", "conf_tags"]:
                 field = getattr(self, key)
+                print(key, field)
                 try:
+                    print("fffffff")
+                    print(field.model_dump())
+
                     data[key] = field.model_dump_json()
                 except AttributeError:
                     if field is not None:

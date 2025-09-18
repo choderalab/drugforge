@@ -32,7 +32,7 @@ class StateExpanderBase(abc.ABC, BaseModel):
         -------
             A dict of the expander and the software used to do the expansion.
         """
-        data = {"expander": self.dict()}
+        data = {"expander": self.model_dump()}
         data.update(self._provenance())
         return data
 

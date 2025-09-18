@@ -34,7 +34,7 @@ from drugforge.modeling.protein_prep import ProteinPrepper
 from drugforge.workflows.docking_workflows.workflows import (
     PosteraDockingWorkflowInputs,
 )
-from pydantic.v1 import Field
+from pydantic import Field
 
 
 class SymExpCrystalPackingInputs(PosteraDockingWorkflowInputs):

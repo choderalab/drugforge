@@ -45,7 +45,7 @@ class DataModelAbstractBase(BaseModel):
     """
 
     def __hash__(self) -> int:
-        return self.json().__hash__()
+        return self.model_dump_json().__hash__()
 
     @classmethod
     def from_dict(cls, dict):
