@@ -27,12 +27,11 @@ class MetaLigandFactory(BaseModel):
 
     postera: bool = Field(..., description="use Postera")
     postera_molset_name: Optional[str] = Field(
-        ..., description="Postera molecule set name"
+        None, description="Postera molecule set name"
     )
     ligand_file: Optional[str | Path] = Field(..., description="Ligand file to read")
 
-    @model_validator(mode="after")
-    @classmethod
+    @model_validator(mode="before")
     def options_mutex(cls, values):
         postera = values.get("postera")
         ligand_file = values.get("ligand_file")
@@ -40,8 +39,7 @@ class MetaLigandFactory(BaseModel):
             raise ValueError("cannot specify postera and ligand_file")
         return values
 
-    @model_validator(mode="after")
-    @classmethod
+    @model_validator(mode="before")
     def postera_molset_and_name(cls, values):
         postera_molset_name = values.get("postera_molset_name")
         postera = values.get("postera")

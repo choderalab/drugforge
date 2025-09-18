@@ -39,7 +39,7 @@ class MetaStructureFactory(BaseModel):
         ..., description="Path to pdb file containing structure"
     )
 
-    @model_validator(mode="after")
+    @model_validator(mode="before")
     def options_mutex(cls, values):
         fragalysis = values.get("fragalysis_dir")
         pdb_file = values.get("pdb_file")
