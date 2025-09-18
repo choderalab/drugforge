@@ -263,7 +263,7 @@ class DockingResult(BaseModel):
             target_name=self.input_pair.complex.target.target_name,
             ids=self.input_pair.complex.target.ids,
         )
-        lig = Ligand.from_oemol(lig, **self.input_pair.ligand.dict())
+        lig = Ligand.from_oemol(lig, **self.input_pair.ligand.model_dump())
         return Complex(target=tar, ligand=lig)
 
     @property

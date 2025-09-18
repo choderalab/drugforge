@@ -304,7 +304,7 @@ class ScorerBase(BaseModel):
         # flatten the list of scores
         scores = np.ravel(scores)
         for score in scores:
-            dct = score.dict()
+            dct = score.model_dump()
             dct["score_type"] = score.score_type.value  # convert to string
             # we don't want the unpacked version of the input
             dct.pop("input")
@@ -361,7 +361,7 @@ class ChemGauss4Scorer(ScorerBase):
         elif isinstance(inputs[0], Path):
             return self._dispatch_from_path(inputs, **kwargs)
 
-    #@multimethod
+
     def _dispatch_docking_result(
         self,
         inputs: list[DockingResult],
@@ -389,7 +389,6 @@ class ChemGauss4Scorer(ScorerBase):
             results.append(sc)
         return results
 
-    #@_dispatch.register
     def _dispatch_complex(self, inputs: list[Complex], **kwargs) -> list[Score]:
         """
         Dispatch for Complexes or PDB files from disk
@@ -417,7 +416,6 @@ class ChemGauss4Scorer(ScorerBase):
             )
         return results
 
-    #@_dispatch.register
     def _dispatch_from_path(self, inputs: list[Path], **kwargs) -> list[Score]:
         """
         Load the PDB files from disk and convert to Complexes.
@@ -462,7 +460,6 @@ class SymClashScorer(ScorerBase):
         """
         return self._dispatch(inputs, **kwargs)
 
-    @multimethod
     def _dispatch(self, inputs: list[Complex], **kwargs) -> list[Score]:
         """
         Dispatch for Complex

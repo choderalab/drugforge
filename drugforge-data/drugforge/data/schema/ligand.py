@@ -274,7 +274,7 @@ class Ligand(DataModelAbstractBase):
         """
         mol = sdf_string_to_oemol(self.data)
         data = {}
-        for key in self.model_fields.keys():
+        for key in Ligand.model_fields.keys():
             if key not in ["data", "tags", "conf_tags", "data_format"]:
                 field = getattr(self, key)
                 try:
