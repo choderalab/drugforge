@@ -21,7 +21,6 @@ from drugforge.data.util.dask_utils import (
 )
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.docking_data_validation import DockingResultCols
-from multimethod import multimethod
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)

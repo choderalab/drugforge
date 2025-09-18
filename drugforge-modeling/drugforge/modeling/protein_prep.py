@@ -23,7 +23,7 @@ from drugforge.modeling.modeling import (
     superpose_molecule,
 )
 from drugforge.data.backend.openeye import split_openeye_design_unit
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
     from distributed import Client

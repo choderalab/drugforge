@@ -3,7 +3,7 @@ import abc
 import pandas as pd
 from drugforge.data.util.dask_utils import BackendType, FailureMode
 from drugforge.docking.docking import DockingResult
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 
 class VisualizerBase(abc.ABC, BaseModel):

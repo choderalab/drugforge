@@ -17,7 +17,6 @@ from drugforge.dataviz.show_contacts import show_contacts
 from drugforge.dataviz.visualizer import VisualizerBase
 from drugforge.docking.docking_data_validation import DockingResultCols
 from drugforge.simulation.simulate import SimulationResult
-from multimethod import multimethod
 from pydantic import Field, PositiveInt
 
 logger = logging.getLogger(__name__)

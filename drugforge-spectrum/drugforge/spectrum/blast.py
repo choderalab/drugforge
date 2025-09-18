@@ -7,7 +7,7 @@ import requests
 # BioPython
 from Bio import SeqIO
 from Bio.Blast import NCBIWWW, NCBIXML
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 def parse_blast(

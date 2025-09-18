@@ -40,7 +40,7 @@ from drugforge.ml.config import (
 from drugforge.ml.sweep import Sweeper
 from drugforge.ml.trainer import Trainer
 from mtenn.config import CombinationConfig, ModelType, ReadoutConfig, StrategyConfig
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 
 @click.group()

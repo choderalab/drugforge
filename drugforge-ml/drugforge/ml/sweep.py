@@ -4,7 +4,7 @@ from pathlib import Path
 import wandb
 import yaml
 from drugforge.ml.trainer import Trainer
-from pydantic.v1 import Field, validator
+from pydantic import Field, field_validator
 
 
 class Sweeper(Trainer):
@@ -33,7 +33,7 @@ class Sweeper(Trainer):
         False, description="Start a new sweep even if an existing sweep_id is present."
     )
 
-    @validator("sweep_config", pre=True)
+    @field_validator("sweep_config", mode="before")
     def load_config(cls, v):
         """
         Support for loading sweep config YAML files.

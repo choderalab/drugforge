@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import ClassVar, Optional, Any, Union
 
 from mtenn.config import ModelType
-from multimethod import multimethod
 from pydantic import Field
 
 from drugforge.docking.docking import DockingResult

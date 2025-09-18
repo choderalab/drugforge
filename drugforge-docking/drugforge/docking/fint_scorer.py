@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import ClassVar, Union
 
-from multimethod import multimethod
 from pydantic import Field, field_validator
 
 from drugforge.dataviz.plip import compute_fint_score
@@ -72,7 +71,6 @@ class FINTScorer(ScorerBase):
         elif isinstance(inputs[0], Path):
             return self._dispatch_from_path(inputs, **kwargs)
 
-    #@multimethod
     def _dispatch_docking_result(
         self,
         inputs: list[DockingResult],

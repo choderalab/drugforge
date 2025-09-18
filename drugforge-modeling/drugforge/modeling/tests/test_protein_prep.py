@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 from drugforge.data.schema.complex import Complex
 from drugforge.data.sequence import seqres_by_target
