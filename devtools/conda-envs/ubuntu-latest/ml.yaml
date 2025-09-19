@@ -68,11 +68,11 @@ dependencies:
   - boto3
 
   # ML
-  - dgl
+  - dgl<=2.0.0
   - dgllife
   - mtenn >=0.7.0
   - pytorch
-  - pytorch_geometric
+  - pytorch_geometric >=2.5.0
   - pytorch_cluster
   - pytorch_scatter
   - pytorch_sparse

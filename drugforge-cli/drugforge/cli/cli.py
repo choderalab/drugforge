@@ -36,8 +36,8 @@ cli.add_command(spectrum)
 # to import all of the other packages.
 # We will also address this in a future release.
 
-# from drugforge.ml.cli import ml  # noqa: F401, E402, F811
-# cli.add_command(ml)
+from drugforge.ml.cli import ml  # noqa: F401, E402, F811
+cli.add_command(ml)
 
 
 from drugforge.dataviz.cli import visualization  # noqa: F401, E402, F811
