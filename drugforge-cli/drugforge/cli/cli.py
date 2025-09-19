@@ -26,9 +26,13 @@ from drugforge.workflows.spectrum_workflows.cli import (  # noqa: F401, E402, F8
 
 cli.add_command(spectrum)
 
-from drugforge.ml.cli import ml  # noqa: F401, E402, F811
-cli.add_command(ml)
-
+# we do not have the ML package on macos, causing issues if we try to import it
+# so we import inside a try except to allow the rest of the CLI to work
+try:
+    from drugforge.ml.cli import ml  # noqa: F401, E402, F811
+    cli.add_command(ml)
+except ImportError:
+    print("ML package not available, skipping ML CLI command.")
 
 from drugforge.dataviz.cli import visualization  # noqa: F401, E402, F811
 
