@@ -78,7 +78,6 @@ jobs:
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/ml.yaml
         python -m pip install -e ./drugforge-data --no-deps
         python -m pip install -e ./drugforge-docking --no-deps
-        python -m pip install -e ./drugforge-ml --no-deps
         python -m pip install -e ./drugforge-modeling --no-deps
         python -m pip install -e ./drugforge-alchemy --no-deps
         python -m pip install -e ./drugforge-workflows --no-deps
@@ -86,6 +85,11 @@ jobs:
         python -m pip install -e ./drugforge-simulation --no-deps
         python -m pip install -e ./drugforge-dataviz --no-deps
         python -m pip install -e ./drugforge-spectrum --no-deps
+        
+        #skip install of ml for macOS due to issues with dependencies
+        if [ "${{ matrix.os }}" != "macos-latest" ]; then
+          python -m pip install -e ./drugforge-ml --no-deps
+
         micromamba list
 
     - name: Test OE License & Write License to File
