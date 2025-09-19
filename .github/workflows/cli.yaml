@@ -75,6 +75,7 @@ jobs:
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
         micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
+        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/ml.yaml
         python -m pip install -e ./drugforge-data --no-deps
         python -m pip install -e ./drugforge-docking --no-deps
         python -m pip install -e ./drugforge-ml --no-deps
