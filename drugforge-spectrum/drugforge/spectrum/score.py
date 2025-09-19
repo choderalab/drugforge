@@ -26,7 +26,7 @@ import subprocess
 
 import logging
 from typing import Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 logger = logging.getLogger(__name__)
 
@@ -159,8 +159,7 @@ class ScoreSpectrumInputsBase(BaseModel):
     )
 
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed = True)
 
     @classmethod
     def from_json_file(cls, file: str | Path):
