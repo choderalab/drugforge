@@ -21,7 +21,7 @@ from openfe.protocols.openmm_utils.omm_settings import (
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
 from openff.models.types import FloatQuantity
 from openff.units import unit as OFFUnit
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, ConfigDict
 
 from ._util import check_ligand_series_uniqueness_and_names
 from .base import _SchemaBase, _SchemaBaseFrozen
@@ -433,13 +433,8 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
         None,
         description="The name of the biological target associated with this Alchemy network.",
     )
-
-    class Config:
-        """Overwrite the class config to freeze the results model"""
-
-        allow_mutation = False
-        orm_mode = True
-        arbitrary_types_allowed = True
+    """Overwrite the class config to freeze the results model"""
+    model_config = ConfigDict(frozen = True, orm_mode = True, arbitrary_types_allowed = True)
 
     def to_openfe_receptor(self) -> openfe.ProteinComponent:
 

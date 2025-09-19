@@ -17,7 +17,7 @@ from drugforge.dataviz.show_contacts import show_contacts
 from drugforge.dataviz.visualizer import VisualizerBase
 from drugforge.docking.docking_data_validation import DockingResultCols
 from drugforge.simulation.simulate import SimulationResult
-from pydantic import Field, PositiveInt
+from pydantic import Field, PositiveInt, ConfigDict
 
 logger = logging.getLogger(__name__)
 
@@ -92,8 +92,7 @@ class GIFVisualizer(VisualizerBase):
     interval: PositiveInt = Field(1, description="Interval between frames")
     debug: bool = Field(False, description="Whether to run in debug mode")
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config =  ConfigDict(arbitrary_types_allowed = True)
 
     @dask_vmap(["inputs"], has_failure_mode=True)
     @backend_wrapper("inputs")

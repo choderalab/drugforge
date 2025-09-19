@@ -3,7 +3,7 @@ import json
 from typing import Literal, Any, Callable
 from pydantic import BaseModel, ConfigDict
 
-from openff.units import Quantity
+from openff.units import Quantity, ConfigDict
 
 # the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1
 #from openff.models.models import DefaultModel
@@ -110,5 +110,4 @@ class _SchemaBase(abc.ABC, DefaultModel):
 class _SchemaBaseFrozen(_SchemaBase):
     type: Literal["_SchemaBaseFrozen"] = "_SchemaBaseFrozen"
 
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)

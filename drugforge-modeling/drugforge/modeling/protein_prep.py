@@ -23,7 +23,7 @@ from drugforge.modeling.modeling import (
     superpose_molecule,
 )
 from drugforge.data.backend.openeye import split_openeye_design_unit
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 if TYPE_CHECKING:
     from distributed import Client
@@ -49,8 +49,7 @@ class ProteinPrepperBase(BaseModel):
         "ProteinPrepperBase", description="The type of prepper to use"
     )
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed = True)
 
     @abc.abstractmethod
     def _prep(self, inputs: list[Complex]) -> list[PreppedComplex]: ...

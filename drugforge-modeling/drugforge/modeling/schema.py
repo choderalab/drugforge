@@ -45,12 +45,12 @@ class PreppedTarget(DataModelAbstractBase):
     data_format: DataStorageType = Field(
         DataStorageType.b64oedu,
         description="Enum describing the data storage method",
-        allow_mutation=False,
+        frozen=True,
     )
     target_hash: str = Field(
         ...,
         description="A unique reproducible hash based on the contents of the pdb file which created the target.",
-        allow_mutation=False,
+        frozen=True,
     )
 
     crystal_symmetry: Optional[Any] = Field(

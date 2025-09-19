@@ -14,7 +14,7 @@ from drugforge.data.backend.openeye import (
 )
 from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import Ligand
-from pydantic import BaseModel, Field, PositiveFloat, PositiveInt
+from pydantic import BaseModel, Field, PositiveFloat, PositiveInt, ConfigDict
 from rdkit import Chem, RDLogger
 
 RDLogger.DisableLog(
@@ -65,9 +65,10 @@ class _BasicConstrainedPoseGenerator(BaseModel, abc.ABC):
         description="If the main scoring function fails to descriminate between conformers the backup score will be used based on the internal energy of the molecule.",
     )
 
-    class Config:
-        allow_mutation = True
+    model_config = ConfigDict(
+        frozen = False,
         arbitrary_types_allowed = True
+    )
 
     @abc.abstractmethod
     def provenance(self) -> dict[str, Any]:

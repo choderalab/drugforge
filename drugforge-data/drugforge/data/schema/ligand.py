@@ -362,7 +362,6 @@ class Ligand(DataModelAbstractBase):
                 field = getattr(self, key)
                 print(key, field)
                 try:
-                    print("fffffff")
                     print(field.model_dump())
 
                     data[key] = field.model_dump_json()
