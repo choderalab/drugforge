@@ -77,8 +77,7 @@ def test_actual_simulation_paths(tyk2_protein, tmp_path, tyk2_lig):
     simulation_results = vs.simulate(
         [(tyk2_protein, tyk2_lig)], outpaths=[tmp_path], failure_mode="raise"
     )
-    print("sim results")
-    print(simulation_results)
+
     assert simulation_results[0].traj_path.exists()
     assert simulation_results[0].success
 

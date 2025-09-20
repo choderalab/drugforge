@@ -88,7 +88,7 @@ class Score(BaseModel):
     target_identifiers: Optional[TargetIdentifiers] = None
     complex_ligand_smiles: Optional[str] = None
     probability: Optional[float] = None
-    pose_id: Optional[int] =None
+    pose_id: Optional[int] = None
     units: ScoreUnits
     input: Optional[Any] = None
 

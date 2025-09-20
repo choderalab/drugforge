@@ -53,8 +53,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class InvalidLigandError(ValueError):
-    ...  # noqa: E701
+class InvalidLigandError(ValueError): ...  # noqa: E701
 
 
 class ChemicalRelationship(Flag):
@@ -149,7 +148,7 @@ class Ligand(DataModelAbstractBase):
     )
     data_format: Literal[DataStorageType.sdf] = DataStorageType.sdf
 
-    #add in a field validator to ensure that any values in the tags dict are converted to strings
+    # add in a field validator to ensure that any values in the tags dict are converted to strings
     @field_validator("tags", mode="before")
     def _convert_tags_to_str(cls, v):
         if not isinstance(v, dict):
@@ -360,10 +359,7 @@ class Ligand(DataModelAbstractBase):
         for key in Ligand.model_fields.keys():
             if key not in ["data", "tags", "data_format", "conf_tags"]:
                 field = getattr(self, key)
-                print(key, field)
                 try:
-                    print(field.model_dump())
-
                     data[key] = field.model_dump_json()
                 except AttributeError:
                     if field is not None:

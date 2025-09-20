@@ -97,7 +97,6 @@ class FINTScorer(ScorerBase):
 
         return results
 
-    #@_dispatch.register
     def _dispatch_complex(self, inputs: list[Complex], **kwargs):
         """
         Dispatch for Complexes
@@ -114,7 +113,6 @@ class FINTScorer(ScorerBase):
             )
         return results
 
-    #@_dispatch.register
     def _dispatch_from_path(self, inputs: list[Path], **kwargs):
         """
         Dispatch for PDB files from disk

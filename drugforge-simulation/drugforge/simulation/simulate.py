@@ -31,7 +31,7 @@ from pydantic import (
     PositiveInt,
     model_validator,
     field_validator,
-ConfigDict,
+    ConfigDict,
 )
 from rdkit import Chem
 from tqdm import tqdm
@@ -203,7 +203,7 @@ class VanillaMDSimulator(SimulatorBase):
         return v
 
     @model_validator(mode="after")
-    def check_restraint_setup(self)-> Self:
+    def check_restraint_setup(self) -> Self:
         """
         Validate RMSD restraint setup
         """
@@ -225,7 +225,7 @@ class VanillaMDSimulator(SimulatorBase):
             )
         return self
 
-    model_config = ConfigDict(arbitrary_types_allowed = True, extra = "allow")
+    model_config = ConfigDict(arbitrary_types_allowed=True, extra="allow")
 
     @model_validator(mode="after")
     def check_and_apply_truncation(self) -> Self:
@@ -244,7 +244,7 @@ class VanillaMDSimulator(SimulatorBase):
         """
         Validate num_steps and reporting_interval
         """
-        num_steps =self.num_steps
+        num_steps = self.num_steps
         reporting_interval = self.reporting_interval
         truncate_steps = self.truncate_steps
         if (num_steps % reporting_interval != 0) and truncate_steps:
@@ -297,12 +297,19 @@ class VanillaMDSimulator(SimulatorBase):
 
         return self._dispatch(inputs, outpaths=outpaths, **kwargs)
 
-
-    def _dispatch(self, inputs:  list[Union[DockingResult, tuple[Path, Path]]], outpaths: Optional[list[Path]] = None, failure_mode: str = "skip", **kwargs):
+    def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, tuple[Path, Path]]],
+        outpaths: Optional[list[Path]] = None,
+        failure_mode: str = "skip",
+        **kwargs,
+    ):
         if isinstance(inputs[0], DockingResult):
             return self._dispatch_docking(inputs, failure_mode=failure_mode, **kwargs)
         elif isinstance(inputs[0], tuple) and len(inputs[0]) == 2:
-            return self._dispatch_path(inputs, outpaths=outpaths, failure_mode=failure_mode)
+            return self._dispatch_path(
+                inputs, outpaths=outpaths, failure_mode=failure_mode
+            )
 
     def _dispatch_docking(
         self, inputs: list[DockingResult], failure_mode: str = "skip", **kwargs
