@@ -8,6 +8,7 @@ on:
     branches:
       - "main"
       - "pydantic_2"
+      - "add-split-model"
   schedule:
     # Nightly tests run on main by default:
     #   Scheduled workflows run on the latest commit on the default or base branch.
