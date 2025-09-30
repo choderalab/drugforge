@@ -301,7 +301,7 @@ def cinnabar_femap_get_largest_subnetwork(
     )
     from rich.padding import Padding
 
-    fe_map_nx = fe_map.graph
+    fe_map_nx = fe_map.to_networkx()
     subnetworks_nodenames = sorted(  # split the network into subnetworks
         nx.strongly_connected_components(fe_map_nx), key=len, reverse=True
     )
