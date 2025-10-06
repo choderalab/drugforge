@@ -1437,6 +1437,31 @@ class Trainer(BaseModel):
                         self.logger.info(f"Stopping training after epoch {epoch_idx}")
                     use_epoch = epoch_idx
                     break
+                elif (self.es_config.es_type == "progress_quotient") and self.es.check(
+                    epoch_idx, epoch_val_loss, self.model.state_dict(), epoch_train_loss
+                ):
+                    print(
+                        (
+                            f"Stopping training after epoch {epoch_idx}, "
+                            f"using weights from epoch {self.es.best_epoch}"
+                        ),
+                        flush=True,
+                    )
+                    if self.log_file:
+                        self.logger.info(
+                            f"Stopping training after epoch {epoch_idx}, "
+                            f"using weights from epoch {self.es.best_epoch}"
+                        )
+                    self.model.load_state_dict(self.es.best_wts)
+                    if self.use_wandb:
+                        wandb.log(
+                            {
+                                "best_epoch": self.es.best_epoch,
+                                "best_loss": self.es.best_loss,
+                            }
+                        )
+                    use_epoch = self.es.best_epoch
+                    break
         else:
             use_epoch = None
 
