@@ -26,6 +26,7 @@ from drugforge.ml.es import (
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,
     ThresholdEarlyStopping,
+    ProgressQuotientEarlyStopping,
 )
 from pydantic import (
     BaseModel,
@@ -171,6 +172,7 @@ class EarlyStoppingType(StringEnum):
     converged = "converged"
     patient_converged = "patient_converged"
     threshold = "threshold"
+    progress_quotient = "progress_quotient"
 
 
 class EarlyStoppingConfig(ConfigBase):
@@ -219,6 +221,11 @@ class EarlyStoppingConfig(ConfigBase):
     threshold: Optional[float] = Field(
         None, description="Loss below which to stop model training."
     )
+    # Parameters for progress quotient
+    alpha: Optional[float] = Field(None, description="Quotient threshold.")
+    k: Optional[int] = Field(
+        None, description="Length of training strip to evaluate at the end of."
+    )
 
     @model_validator(mode="after")
     def check_args(self):
@@ -252,6 +259,12 @@ class EarlyStoppingConfig(ConfigBase):
                         "Values required for threshold and patience when "
                         "using ThresholdEarlyStopping."
                     )
+            case EarlyStoppingType.progress_quotient:
+                if (self.alpha is None) or (self.k is None):
+                    raise ValueError(
+                        "Values required for alpha and k when "
+                        "using ProgressQuotientEarlyStopping."
+                    )
             case other:
                 raise ValueError(f"Unknown EarlyStoppingType: {other}")
 
@@ -277,6 +290,8 @@ class EarlyStoppingConfig(ConfigBase):
                 return ThresholdEarlyStopping(
                     self.threshold, self.patience, self.burnin
                 )
+            case EarlyStoppingType.progress_quotient:
+                return ProgressQuotientEarlyStopping(self.alpha, self.k, self.burnin)
             case other:
                 raise ValueError(f"Unknown EarlyStoppingType: {other}")
 
