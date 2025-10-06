@@ -324,20 +324,20 @@ class ThresholdEarlyStopping:
 
 
 # Losses from the Tricks of the Trade book
-class GeneralizationLoss:
+class GeneralizationLossEarlyStopping:
     """
     Class for stopping based on the relative increase of val loss at epoch t from
     lowest val loss up to epoch t. GL_alpha loss in the book.
     GL is defined as 100 * (Err_min / Err(t) - 1)
     """
 
-    def __init__(self, alpha, burnin):
+    def __init__(self, alpha, burnin=0):
         """
         Parameters
         ----------
         alpha : float
             Relative increase threshold
-        burnin : int, optional
+        burnin : int, default = 0
             If given, ensure that at least this many epochs of training have been done
             before we stop
         """
@@ -389,3 +389,84 @@ class GeneralizationLoss:
         # Calculate generalization loss and check stopping criteria
         generalization_loss = 100 * (loss / self.best_loss - 1)
         return generalization_loss > self.alpha
+
+
+class ProgressQuotientEarlyStopping:
+    """
+    Class for stopping based on quotient of generalization loss and training progress.
+    PQ_alpha in the book. This criterion is calculated after every k epochs, and
+    interstitial epochs will automatically not be stopped at.
+    """
+
+    def __init__(self, alpha, k, burnin=0):
+        """
+        Parameters
+        ----------
+        alpha : float
+            Quotient threshold
+        k : int
+            Length of training strip to evaluate at the end of
+        burnin : int, default = 0
+            If given, ensure that at least this many epochs of training have been done
+            before we stop
+        """
+        super().__init__()
+        self.alpha = alpha
+        self.k = k
+        self.burnin = burnin
+
+        # Variables to track early stopping
+        self.best_loss = None
+        self.best_wts = None
+        self.best_epoch = 0
+        self.strip_train_losses = []
+
+    def check(self, epoch, loss, wts_dict, train_loss):
+        """
+        Check if training should be stopped. Return True to stop, False to keep going.
+
+        Parameters
+        ----------
+        loss : float
+            Model loss from the current epoch of training
+        wts_dict : dict
+            Weights dict from Pytorch for keeping track of the best model
+
+        Returns
+        -------
+        bool
+            Whether to stop training
+        """
+        # Make sure we've got a reasonable value for loss
+        loss = _sanitize_loss(loss)
+        train_loss = _sanitize_loss(train_loss)
+
+        # If this is the first epoch, just set internal variables and return
+        if self.best_loss is None:
+            self.best_loss = loss
+            # Need to deepcopy so it doesn't update with the model weights
+            self.best_wts = deepcopy(wts_dict)
+            return False
+
+        # Update best loss and best weights
+        if loss < self.best_loss:
+            self.best_loss = loss
+            # Need to deepcopy so it doesn't update with the model weights
+            self.best_wts = deepcopy(wts_dict)
+            self.best_epoch = epoch
+
+            return False
+
+        # Make sure we're at the end of a training strip
+        if (epoch < self.burnin) or (epoch < self.k) or (epoch % self.k != 0):
+            self.strip_train_losses += [train_loss]
+            return False
+
+        # Calculate generalization loss and progress
+        generalization_loss = 100 * (loss / self.best_loss - 1)
+        progress = 1000 * (
+            np.mean(self.strip_train_losses) / np.min(self.strip_train_losses) - 1
+        )
+        self.strip_train_losses = []
+
+        return generalization_loss / progress > self.alpha
