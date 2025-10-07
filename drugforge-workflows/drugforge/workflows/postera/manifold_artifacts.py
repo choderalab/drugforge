@@ -81,10 +81,9 @@ class ManifoldArtifactUploader(BaseModel):
         arbitrary_types_allowed = True
 
     @model_validator(mode="after")
-    @classmethod
-    def validate_artifact_columns_and_types(cls, values):
-        artifact_columns = values.get("artifact_columns")
-        artifact_types = values.get("artifact_types")
+    def validate_artifact_columns_and_types(self):
+        artifact_columns = self.artifact_columns
+        artifact_types = self.artifact_types
         if len(artifact_columns) != len(artifact_types):
             raise ValueError(
                 "Number of artifact columns must match number of artifact types"
@@ -92,13 +91,12 @@ class ManifoldArtifactUploader(BaseModel):
         if len(artifact_columns) == len(artifact_types) == 0:
             raise ValueError("Must have at least one artifact column")
 
-        return values
+        return self
 
     @model_validator(mode="after")
-    @classmethod
-    def name_id_mutually_exclusive(cls, values):
-        molecule_set_id = values.get("molecule_set_id")
-        molecule_set_name = values.get("molecule_set_name")
+    def name_id_mutually_exclusive(self):
+        molecule_set_id = sefl.molecule_set_id
+        molecule_set_name = self.molecule_set_name
 
         if not molecule_set_id and not molecule_set_name:
             raise ValueError("Must provide molecule_set_id or molecule_set_name")
@@ -107,7 +105,7 @@ class ManifoldArtifactUploader(BaseModel):
             raise ValueError(
                 "molecule_set_id and molecule_set_name are mutually exclusive"
             )
-        return values
+        return self
 
     def generate_cloudfront_url(
         self, bucket_path, expires_delta: timedelta = timedelta(days=365 * 5)
