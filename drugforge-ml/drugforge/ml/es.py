@@ -440,6 +440,7 @@ class ProgressQuotientEarlyStopping:
         # Make sure we've got a reasonable value for loss
         loss = _sanitize_loss(loss)
         train_loss = _sanitize_loss(train_loss)
+        self.strip_train_losses += [train_loss]
 
         # If this is the first epoch, just set internal variables and return
         if self.best_loss is None:
@@ -447,7 +448,6 @@ class ProgressQuotientEarlyStopping:
             # Need to deepcopy so it doesn't update with the model weights
             self.best_wts = deepcopy(wts_dict)
 
-            self.strip_train_losses += [train_loss]
             return False
 
         # Update best loss and best weights
@@ -457,12 +457,10 @@ class ProgressQuotientEarlyStopping:
             self.best_wts = deepcopy(wts_dict)
             self.best_epoch = epoch
 
-            self.strip_train_losses += [train_loss]
             return False
 
         # Make sure we're at the end of a training strip
         if (epoch < self.burnin) or (epoch < self.k) or (epoch % self.k != 0):
-            self.strip_train_losses += [train_loss]
             return False
 
         # Calculate generalization loss and progress
