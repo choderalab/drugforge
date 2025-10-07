@@ -448,16 +448,12 @@ class ProgressQuotientEarlyStopping:
             # Need to deepcopy so it doesn't update with the model weights
             self.best_wts = deepcopy(wts_dict)
 
-            return False
-
         # Update best loss and best weights
         if loss < self.best_loss:
             self.best_loss = loss
             # Need to deepcopy so it doesn't update with the model weights
             self.best_wts = deepcopy(wts_dict)
             self.best_epoch = epoch
-
-            return False
 
         # Make sure we're at the end of a training strip
         if (epoch < self.burnin) or (epoch < self.k) or (epoch % self.k != 0):
