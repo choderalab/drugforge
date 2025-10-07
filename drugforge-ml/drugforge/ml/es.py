@@ -446,6 +446,8 @@ class ProgressQuotientEarlyStopping:
             self.best_loss = loss
             # Need to deepcopy so it doesn't update with the model weights
             self.best_wts = deepcopy(wts_dict)
+
+            self.strip_train_losses += [train_loss]
             return False
 
         # Update best loss and best weights
@@ -455,6 +457,7 @@ class ProgressQuotientEarlyStopping:
             self.best_wts = deepcopy(wts_dict)
             self.best_epoch = epoch
 
+            self.strip_train_losses += [train_loss]
             return False
 
         # Make sure we're at the end of a training strip
