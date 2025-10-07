@@ -456,7 +456,11 @@ class ProgressQuotientEarlyStopping:
             self.best_epoch = epoch
 
         # Make sure we're at the end of a training strip
-        if (epoch < self.burnin) or (epoch < self.k) or (epoch % self.k != 0):
+        if (
+            (epoch < self.burnin)
+            or ((epoch + 1) < self.k)
+            or ((epoch + 1) % self.k != 0)
+        ):
             return False
 
         # Calculate generalization loss and progress
