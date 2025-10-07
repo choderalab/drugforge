@@ -72,7 +72,7 @@ dependencies:
   - dgllife
   - mtenn >=0.7.0
   - pytorch
-  - pytorch_geometric >=2.5.0
+  - pytorch_geometric
   - pytorch_cluster
   - pytorch_scatter
   - pytorch_sparse
