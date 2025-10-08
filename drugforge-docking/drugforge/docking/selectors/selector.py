@@ -11,7 +11,7 @@ from drugforge.data.util.dask_utils import (
     actualise_dask_delayed_iterable,
 )
 from drugforge.docking.docking import DockingInputPair  # TODO: move to backend
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 
 class SelectorBase(abc.ABC, BaseModel):

@@ -4,7 +4,7 @@ from typing import Any, Literal
 
 from drugforge.alchemy.schema.base import _SchemaBase
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import Field
+from pydantic import Field
 from tqdm import tqdm
 
 
@@ -18,7 +18,7 @@ class _BaseChargeMethod(_SchemaBase, abc.ABC):
         Returns:
             A dict of the charge generation method with the software versions.
         """
-        data = {"protocol": self.dict(), "provenance": self._provenance()}
+        data = {"protocol": self.model_dump(), "provenance": self._provenance()}
         return data
 
     @abc.abstractmethod

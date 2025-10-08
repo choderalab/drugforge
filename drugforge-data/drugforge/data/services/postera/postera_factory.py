@@ -4,7 +4,7 @@ from typing import Optional
 from drugforge.data.schema.ligand import Ligand, LigandIdentifiers
 from drugforge.data.services.postera.molecule_set import MoleculeSetAPI
 from drugforge.data.services.services_config import PosteraSettings
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class PosteraFactory(BaseModel):

@@ -26,7 +26,7 @@ from drugforge.modeling.protein_prep import ProteinPrepper
 from drugforge.workflows.docking_workflows.workflows import (
     DockingWorkflowInputsBase,
 )
-from pydantic.v1 import Field, PositiveInt
+from pydantic import Field, PositiveInt
 
 
 class CrossDockingWorkflowInputs(DockingWorkflowInputsBase):

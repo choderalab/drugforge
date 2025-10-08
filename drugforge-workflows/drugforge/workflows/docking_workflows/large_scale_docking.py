@@ -41,7 +41,7 @@ from drugforge.spectrum.fitness import target_has_fitness_data
 from drugforge.workflows.docking_workflows.workflows import (
     PosteraDockingWorkflowInputs,
 )
-from pydantic.v1 import Field, PositiveInt
+from pydantic import Field, PositiveInt
 
 
 class LargeScaleDockingInputs(PosteraDockingWorkflowInputs):

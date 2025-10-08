@@ -48,7 +48,7 @@ class Target(DataModelAbstractBase):
     data_format: DataStorageType = Field(
         DataStorageType.pdb,
         description="Enum describing the data storage method",
-        allow_mutation=False,
+        frozen=True,
     )
 
     @model_validator(mode="before")
@@ -67,7 +67,7 @@ class Target(DataModelAbstractBase):
                     [not v for v in schema_dict_get_val_overload(ids)]
                 ):
                     raise ValueError(
-                        "At least one identifier must be provide, or target_name must be provided"
+                        "At least one identifier must be provided, or target_name must be provided"
                     )
         return v
 

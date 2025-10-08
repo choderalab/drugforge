@@ -53,8 +53,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class InvalidLigandError(ValueError):
-    ...  # noqa: E701
+class InvalidLigandError(ValueError): ...  # noqa: E701
 
 
 class ChemicalRelationship(Flag):
@@ -130,7 +129,8 @@ class Ligand(DataModelAbstractBase):
         None,
         description="The bespoke parameters for this ligand organised by interaction type.",
     )
-
+    # r_epik_state_penalty seems to be a float in some cases and a str in others
+    # this should resolve the issue
     tags: dict[str, str] = Field(
         {},
         description="Dictionary of SD tags. "
@@ -147,6 +147,13 @@ class Ligand(DataModelAbstractBase):
         repr=False,
     )
     data_format: Literal[DataStorageType.sdf] = DataStorageType.sdf
+
+    # add in a field validator to ensure that any values in the tags dict are converted to strings
+    @field_validator("tags", mode="before")
+    def _convert_tags_to_str(cls, v):
+        if not isinstance(v, dict):
+            raise ValueError("tags must be a dictionary")
+        return {k: str(vv) for k, vv in v.items()}
 
     @model_validator(mode="before")
     def _validate_at_least_one_id(cls, values):
@@ -167,14 +174,14 @@ class Ligand(DataModelAbstractBase):
     @classmethod
     def _validate_tags(cls, v):
         # check that tags are not reserved attribute names and format partial charges
-        reser_attr_names = cls.model_fields.keys()
+        reser_attr_names = Ligand.model_fields.keys()
         for k in v.keys():
             if k in reser_attr_names:
                 raise ValueError(f"Tag name {k} is a reserved attribute name")
         return v
 
     def __hash__(self):
-        return self.json().__hash__()
+        return self.model_dump_json().__hash__()
 
     def __eq__(self, other: "Ligand") -> bool:
         return self.data_equal(other)
@@ -266,11 +273,11 @@ class Ligand(DataModelAbstractBase):
         """
         mol = sdf_string_to_oemol(self.data)
         data = {}
-        for key in self.model_fields.keys():
+        for key in Ligand.model_fields.keys():
             if key not in ["data", "tags", "conf_tags", "data_format"]:
                 field = getattr(self, key)
                 try:
-                    data[key] = field.json()
+                    data[key] = field.model_dump_json()
                 except AttributeError:
                     if field is not None:
                         data[key] = str(getattr(self, key))
@@ -349,11 +356,11 @@ class Ligand(DataModelAbstractBase):
 
         rdkit_mol: Chem.Mol = sdf_str_to_rdkit_mol(self.data)
         data = {}
-        for key in self.model_fields.keys():
+        for key in Ligand.model_fields.keys():
             if key not in ["data", "tags", "data_format", "conf_tags"]:
                 field = getattr(self, key)
                 try:
-                    data[key] = field.json()
+                    data[key] = field.model_dump_json()
                 except AttributeError:
                     if field is not None:
                         data[key] = str(getattr(self, key))
@@ -550,7 +557,7 @@ class Ligand(DataModelAbstractBase):
         # and ensure that the length of the data matches the number of conformers
         new_data = {}
         for k, v in data.items():
-            if k in self.model_fields.keys():
+            if k in Ligand.model_fields.keys():
                 warnings.warn(f"Tag name {k} is a reserved attribute name, skipping")
             else:
                 # if list is len 1, generate a list of len N, where N is the number of conformers

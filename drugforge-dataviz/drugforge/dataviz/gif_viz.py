@@ -17,8 +17,7 @@ from drugforge.dataviz.show_contacts import show_contacts
 from drugforge.dataviz.visualizer import VisualizerBase
 from drugforge.docking.docking_data_validation import DockingResultCols
 from drugforge.simulation.simulate import SimulationResult
-from multimethod import multimethod
-from pydantic.v1 import Field, PositiveInt
+from pydantic import Field, PositiveInt, ConfigDict
 
 logger = logging.getLogger(__name__)
 
@@ -93,8 +92,7 @@ class GIFVisualizer(VisualizerBase):
     interval: PositiveInt = Field(1, description="Interval between frames")
     debug: bool = Field(False, description="Whether to run in debug mode")
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config =  ConfigDict(arbitrary_types_allowed = True)
 
     @dask_vmap(["inputs"], has_failure_mode=True)
     @backend_wrapper("inputs")
@@ -340,8 +338,26 @@ class GIFVisualizer(VisualizerBase):
 
         return path
 
-    @multimethod
     def _dispatch(
+        self,
+        inputs: list[Any],
+        outpaths: Optional[list[Path]] = None,
+        failure_mode: str = "skip",
+        **kwargs,
+    ):
+        if isinstance(inputs[0], SimulationResult):
+            return self._dispatch_simulation_result(
+                inputs, outpaths=outpaths, failure_mode=failure_mode, **kwargs
+            )
+        elif isinstance(inputs[0], tuple):
+            return self._dispatch_path(
+                inputs, outpaths=outpaths, failure_mode=failure_mode, **kwargs
+            )
+        else:
+            raise ValueError(
+                f"Unsupported input type {type(inputs[0])}, must be SimulationResult or tuple of (Optional[Path], Path)"
+            )
+    def _dispatch_simulation_result(
         self,
         inputs: list[SimulationResult],
         outpaths: Optional[list[Path]] = None,
@@ -410,8 +426,7 @@ class GIFVisualizer(VisualizerBase):
                     )
         return data
 
-    @_dispatch.register
-    def _dispatch(
+    def _dispatch_path(
         self,
         inputs: list[tuple[Optional[Path], Path]],
         outpaths: Optional[list[Path]] = None,

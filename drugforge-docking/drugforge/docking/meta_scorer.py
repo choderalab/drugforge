@@ -1,5 +1,5 @@
 import numpy as np
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.scorer import ScorerBase, Score

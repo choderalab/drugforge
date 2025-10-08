@@ -6,6 +6,7 @@ dependencies:
   # Base depends
   - pip
   - pydantic >=2.0.0a0
+  - pydantic-settings
   - typing-extensions
   - semver
 

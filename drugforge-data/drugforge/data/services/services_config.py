@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, ConfigDict
 from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
@@ -12,6 +12,7 @@ class PosteraSettings(BaseSettings):
     POSTERA_API_KEY: str
     POSTERA_API_URL: str = "https://api.asap.postera.ai"
     POSTERA_API_VERSION: str = "v1"
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class S3Settings(BaseSettings):

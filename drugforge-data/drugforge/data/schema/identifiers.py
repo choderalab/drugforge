@@ -1,9 +1,10 @@
-from typing import Any, Literal, Optional
+from typing import Any, Literal, Optional, Union, Callable
 
 from drugforge.data.schema.schema_base import DataModelAbstractBase
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from pydantic import BaseModel, Field, field_validator
 
+import pint
 
 class LigandIdentifiers(DataModelAbstractBase):
     """
@@ -91,7 +92,7 @@ class TargetIdentifiers(DataModelAbstractBase):
 class ChargeProvenance(BaseModel):
     """A simple model to record the provenance of the local charging method."""
 
-    model_config = {"frozen": True}
+    model_config = {"frozen": True, "arbitrary_types_allowed": True}
 
     type: Literal["ChargeProvenance"] = "ChargeProvenance"
 
@@ -102,6 +103,12 @@ class ChargeProvenance(BaseModel):
         ...,
         description="The versions of the software used to generate the local charges.",
     )
+    # in case the dictionary of the provenance contains int/float as values, convert them to strings
+    # as this seems to be the expected behavior
+    @field_validator("provenance", mode="before")
+    def cast_provenance_dict(cls, v):
+        return {k: str(vv) for k, vv in v.items()}
+
 
 
 class BespokeParameter(BaseModel):

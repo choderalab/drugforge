@@ -4,7 +4,7 @@ import json
 from enum import Enum
 from pathlib import Path
 
-from pydantic import BaseModel, ByteSize, Field
+from pydantic import BaseModel, ByteSize, Field, ConfigDict
 
 _SCHEMA_VERSION = "0.1.0"
 
@@ -45,30 +45,33 @@ class DataModelAbstractBase(BaseModel):
     """
 
     def __hash__(self) -> int:
-        return self.json().__hash__()
+        return self.model_dump_json().__hash__()
 
     @classmethod
     def from_dict(cls, dict):
-        return cls.parse_obj(dict)
+        return cls.model_validate(dict)
 
     @classmethod
     def from_json(cls, json_str):
-        return cls.parse_obj(json.loads(json_str))
+        return cls.model_validate(json.loads(json_str))
 
     @classmethod
     def from_json_file(cls, file: str | Path):
-        return cls.parse_file(str(file))
+        # first load the file, then use the json parser
+        contents = read_file_directly(file)
+        return cls.from_json(contents)
+        #return cls.parse_file(str(file))
 
     def to_json_file(self, file: str | Path):
-        write_file_directly(file, self.json())
+        write_file_directly(file, self.model_dump_json())
 
     @property
     def size(self) -> ByteSize:
         """Size of the resulting JSON object for this class"""
-        return ByteSize(utf8len(self.json())).human_readable()
+        return ByteSize(utf8len(self.model_dump_json())).human_readable()
 
     def full_equal(self, other: DataModelAbstractBase) -> bool:
-        return self.dict() == other.dict()
+        return self.model_dump() == other.model_dump()
 
     def data_equal(self, other: DataModelAbstractBase) -> bool:
         return self.data == other.data
@@ -88,7 +91,7 @@ class DataModelAbstractBase(BaseModel):
     def __ne__(self, other: DataModelAbstractBase) -> bool:
         return not self.__eq__(other)
 
-    model_config = {"validate_assignment": True}
+    model_config = ConfigDict(validate_assignment=True)
 
 
 def schema_dict_get_val_overload(obj: dict | BaseModel):
@@ -107,7 +110,7 @@ def schema_dict_get_val_overload(obj: dict | BaseModel):
     if isinstance(obj, dict):
         return obj.values()
     elif isinstance(obj, BaseModel):
-        return obj.dict().values()
+        return obj.model_dump().values()
     else:
         raise TypeError(f"Unsupported type {type(obj)}")
 
@@ -122,8 +125,7 @@ class MoleculeComponent(str, Enum):
 class MoleculeFilter(BaseModel):
     """Filter for selecting components of a molecule."""
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra = "forbid")
 
     protein_chains: list = Field(
         list(),

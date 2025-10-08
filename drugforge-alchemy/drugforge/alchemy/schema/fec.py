@@ -21,7 +21,7 @@ from openfe.protocols.openmm_utils.omm_settings import (
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
 from openff.models.types import FloatQuantity
 from openff.units import unit as OFFUnit
-from pydantic.v1 import Field, validator
+from pydantic import Field, field_validator, ConfigDict
 
 from ._util import check_ligand_series_uniqueness_and_names
 from .base import _SchemaBase, _SchemaBaseFrozen
@@ -299,7 +299,7 @@ class AlchemiscaleResults(_BaseResults):
         description="The alchemiscale key associated with this submited network, which is used to gather results from the client.",
     )
 
-    @validator("network_key", pre=True)
+    @field_validator("network_key", mode="before")
     def convert_to_scoped_key(cls, value: Union[Dict, ScopedKey]) -> ScopedKey:
         # if we have a dict convert it to a ScopedKey
         if isinstance(value, dict):
@@ -433,13 +433,8 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
         None,
         description="The name of the biological target associated with this Alchemy network.",
     )
-
-    class Config:
-        """Overwrite the class config to freeze the results model"""
-
-        allow_mutation = False
-        orm_mode = True
-        arbitrary_types_allowed = True
+    """Overwrite the class config to freeze the results model"""
+    model_config = ConfigDict(frozen = True, orm_mode = True, arbitrary_types_allowed = True)
 
     def to_openfe_receptor(self) -> openfe.ProteinComponent:
 

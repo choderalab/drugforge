@@ -40,7 +40,7 @@ dependencies:
   - openfe ~=1.0
   - openmm
   - openmmtools
-  - openmmforcefields >= 0.13.0
+  - openmmforcefields >= 0.15.0
   - mdtraj
   - gufe >=1.0.0
   - pymol-open-source

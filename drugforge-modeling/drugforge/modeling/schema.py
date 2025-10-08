@@ -45,12 +45,12 @@ class PreppedTarget(DataModelAbstractBase):
     data_format: DataStorageType = Field(
         DataStorageType.b64oedu,
         description="Enum describing the data storage method",
-        allow_mutation=False,
+        frozen=True,
     )
     target_hash: str = Field(
         ...,
         description="A unique reproducible hash based on the contents of the pdb file which created the target.",
-        allow_mutation=False,
+        frozen=True,
     )
 
     crystal_symmetry: Optional[Any] = Field(
@@ -68,7 +68,7 @@ class PreppedTarget(DataModelAbstractBase):
         if compound_name is None:
             if ids is None or all([not v for v in schema_dict_get_val_overload(ids)]):
                 raise ValueError(
-                    "At least one identifier must be provide, or target_name must be provided"
+                    "At least one identifier must be provided, or target_name must be provided"
                 )
         return v
 

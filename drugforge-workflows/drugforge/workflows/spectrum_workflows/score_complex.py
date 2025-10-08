@@ -18,7 +18,7 @@ import re
 
 from shutil import rmtree
 import os
-from pydantic.v1 import Field
+from pydantic import Field
 
 class ScoreInputs(ScoreSpectrumInputsBase):
     """Schema for inputs for scoring complexes

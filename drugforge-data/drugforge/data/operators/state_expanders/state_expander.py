@@ -2,7 +2,7 @@ import abc
 from typing import Literal
 
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class StateExpanderBase(abc.ABC, BaseModel):
@@ -32,7 +32,7 @@ class StateExpanderBase(abc.ABC, BaseModel):
         -------
             A dict of the expander and the software used to do the expansion.
         """
-        data = {"expander": self.dict()}
+        data = {"expander": self.model_dump()}
         data.update(self._provenance())
         return data
 
@@ -48,8 +48,7 @@ class StateExpansion(BaseModel):
         "to group the expansions.",
     )
 
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
 
     @property
     def n_expanded_states(self) -> int:
@@ -62,8 +61,8 @@ class StateExpansionSet(BaseModel):
         ..., description="Ligands that could not be assigned a parent"
     )
 
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
+
 
     @classmethod
     def from_ligands(cls, ligands: list[Ligand]) -> "StateExpansionSet":

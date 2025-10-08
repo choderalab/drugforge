@@ -74,7 +74,7 @@ def test_target_dict_roundtrip(
             target_type=ttype, fragalysis_id=fragalysis_id, pdb_code=pdb_code
         ),
     )
-    t2 = Target.from_dict(t1.dict())
+    t2 = Target.from_dict(t1.model_dump())
     assert t1 == t2
 
 
@@ -94,7 +94,7 @@ def test_target_json_roundtrip(
             target_type=ttype, fragalysis_id=fragalysis_id, pdb_code=pdb_code
         ),
     )
-    t2 = Target.from_json(t1.json())
+    t2 = Target.from_json(t1.model_dump_json())
     assert t1 == t2
 
 

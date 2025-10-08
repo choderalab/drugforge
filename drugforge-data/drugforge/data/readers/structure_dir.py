@@ -8,7 +8,7 @@ from drugforge.data.util.dask_utils import (
     FailureMode,
     actualise_dask_delayed_iterable,
 )
-from pydantic.v1 import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class StructureDirFactory(BaseModel):
         description="Regex pattern for matching PDB files in the directory.",
     )
 
-    @validator("parent_dir")
+    @field_validator("parent_dir", mode="before")
     def parent_dir_exists(cls, v):
         if not v.exists():
             raise ValueError("parent_dir does not exist.")

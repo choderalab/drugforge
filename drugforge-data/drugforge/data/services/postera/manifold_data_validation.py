@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union  # noqa: F401
 
 import pandas as pd
-import pkg_resources
 import yaml
 from drugforge.data.util.stringenum import StringEnum
 
@@ -225,9 +224,11 @@ def make_static_tags(yaml_path) -> tuple[Enum, set]:
 # OK finally we can actually make the enums
 
 # static path to the spec
-manifold_data_spec = pkg_resources.resource_filename(
-    __name__, "manifold_data_tags.yaml"
-)
+# use the get_path_string helper function that uses importlib.resources to get the path to the yaml file
+from drugforge.data.util.utils import get_path_string
+from drugforge.data.services import postera
+manifold_data_spec = get_path_string(postera) + "/manifold_data_tags.yaml"
+
 
 # make target enum and set
 (
@@ -414,3 +415,4 @@ def rename_output_columns_for_manifold(
     df = df.rename(columns=mapping)
 
     return df
+

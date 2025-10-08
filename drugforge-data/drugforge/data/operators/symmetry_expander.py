@@ -9,7 +9,7 @@ from drugforge.data.backend.openeye import oemol_to_pdb_string
 from drugforge.data.schema.complex import Complex
 from drugforge.data.util.dask_utils import FailureMode, dask_vmap
 from MDAnalysis.lib.util import NamedStream
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -102,8 +102,8 @@ class SymmetryExpander(BaseModel):
                     f.write(string)
                     cnew = Complex.from_pdb(
                         temp.name,
-                        target_kwargs=complex.target.dict(),
-                        ligand_kwargs=complex.ligand.dict(),
+                        target_kwargs=complex.target.model_dump(),
+                        ligand_kwargs=complex.ligand.model_dump(),
                     )
 
                 new_complexs.append(cnew)

@@ -23,7 +23,7 @@ from drugforge.modeling.modeling import (
     superpose_molecule,
 )
 from drugforge.data.backend.openeye import split_openeye_design_unit
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 if TYPE_CHECKING:
     from distributed import Client
@@ -49,8 +49,7 @@ class ProteinPrepperBase(BaseModel):
         "ProteinPrepperBase", description="The type of prepper to use"
     )
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed = True)
 
     @abc.abstractmethod
     def _prep(self, inputs: list[Complex]) -> list[PreppedComplex]: ...
@@ -313,7 +312,7 @@ class ProteinPrepper(ProteinPrepperBase):
                 # we need the ligand at the new translated coordinates
                 translated_oemol, _, _ = split_openeye_design_unit(du=du)
                 translated_lig = Ligand.from_oemol(
-                    translated_oemol, **complex_target.ligand.dict(exclude={"data"})
+                    translated_oemol, **complex_target.ligand.model_dump(exclude={"data"})
                 )
                 pc = PreppedComplex(target=prepped_target, ligand=translated_lig)
                 pc.target.crystal_symmetry = complex_target.target.crystal_symmetry

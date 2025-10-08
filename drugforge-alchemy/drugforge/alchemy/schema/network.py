@@ -4,7 +4,7 @@ from typing import Callable, Literal, Optional, Union
 import openfe
 from drugforge.data.schema.ligand import Ligand
 from openfe.setup import LigandNetwork
-from pydantic.v1 import Field
+from pydantic import Field, ConfigDict
 
 from ._util import check_ligand_series_uniqueness_and_names
 from .atom_mapping import KartografAtomMapper, LomapAtomMapper, PersesAtomMapper
@@ -147,11 +147,8 @@ class PlannedNetwork(_NetworkPlannerSettings):
         description="The GraphML string representation of the OpenFE LigandNetwork object. See to `to_ligand_network()`",
     )
 
-    class Config:
-        """Overwrite the class config to freeze the results model"""
-
-        allow_mutation = False
-        arbitrary_types_allowed = True
+    """Overwrite the class config to freeze the results model"""
+    model_config = ConfigDict(frozen = True, arbitrary_types_allowed = True)
 
     def to_ligand_network(self) -> openfe.LigandNetwork:
         """
