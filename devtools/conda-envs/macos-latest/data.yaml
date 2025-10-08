@@ -33,6 +33,7 @@ dependencies:
   - openeye-toolkits
   - openfe ~=1.0
   - openmm
+  - openmmforcefields >= 0.15.0
   - gufe >=1.0.0
   - pymol-open-source
   - rdkit
