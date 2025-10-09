@@ -33,6 +33,7 @@ dependencies:
   - mdanalysis
   - openeye-toolkits
   - openfe ~=1.0
+  - openff-toolkit-base>=0.17  # Added to patch openff-interchange 0.4.5_1 build deps error
   - openmm
   - openmmtools
   - openmmforcefields >= 0.15.0
