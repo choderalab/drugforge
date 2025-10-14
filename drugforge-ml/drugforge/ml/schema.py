@@ -1064,6 +1064,7 @@ def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop, verbose):
         .reset_index(level=["split", "epoch"])
         .reset_index(drop=True)
     )
+    epoch_val_idx = epoch_df["split"] == "val"
 
     for new_key, new_val in new_cols_dict.items():
         # Set cols in dfs
@@ -1085,10 +1086,10 @@ def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop, verbose):
         if epoch == -1:
             epoch = compound_df["epoch"].max()
         elif epoch == "best_loss":
-            idx = np.argmin(epoch_df["loss"])
+            idx = np.argmin(epoch_df.loc[epoch_val_idx, "loss"])
             epoch = compound_df.iloc[idx, :]["epoch"]
         elif epoch == "best_mae":
-            idx = np.argmin(epoch_df["MAE"])
+            idx = np.argmin(epoch_df.loc[epoch_val_idx, "MAE"])
             epoch = compound_df.iloc[idx, :]["epoch"]
 
         per_compound_dfs.append(compound_df.loc[compound_df["epoch"] == epoch, :])

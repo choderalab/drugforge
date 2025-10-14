@@ -98,7 +98,7 @@ def build_results_dfs(
             parsed_extract_epochs.append(epoch)
 
     s = time.time()
-    per_epoch_df, (last_epoch_df, best_mae_epoch_df) = mlschema.load_collection_df(
+    per_epoch_df, extract_epoch_dfs = mlschema.load_collection_df(
         top_level_dir=top_level_dir,
         model_dir_str=model_dir_str,
         model_spec_kwargs=model_spec_kwargs,
@@ -127,10 +127,7 @@ def build_results_dfs(
         spec_lab_to_output_lab["model"] = {"gat": "GAT"}
 
         s = time.time()
-        gat_per_epoch_df, (
-            gat_last_epoch_df,
-            gat_best_mae_epoch_df,
-        ) = mlschema.load_collection_df(
+        gat_per_epoch_df, gat_extract_epoch_dfs = mlschema.load_collection_df(
             top_level_dir=top_level_dir,
             model_dir_str=model_dir_str,
             model_spec_kwargs=model_spec_kwargs,
@@ -144,14 +141,19 @@ def build_results_dfs(
         print(f"took {(e - s) // 60} minutes", flush=True)
 
         per_epoch_df = pandas.concat([per_epoch_df, gat_per_epoch_df])
-        last_epoch_df = pandas.concat([last_epoch_df, gat_last_epoch_df])
-        best_mae_epoch_df = pandas.concat([best_mae_epoch_df, gat_best_mae_epoch_df])
+        extract_epoch_dfs = [
+            pandas.concat([df, gat_df], axis=0, ignore_index=True)
+            for df, gat_df in zip(extract_epoch_dfs, gat_extract_epoch_dfs)
+        ]
 
     # Output DFs
     output_dir.mkdir(parents=True, exist_ok=True)
     per_epoch_df.to_csv(output_dir / "per_epoch_df.csv", index=False)
-    last_epoch_df.to_csv(output_dir / "last_epoch_df.csv", index=False)
-    best_mae_epoch_df.to_csv(output_dir / "best_mae_epoch_df.csv", index=False)
+    for df, epoch in zip(extract_epoch_dfs, parsed_extract_epochs):
+        if epoch == -1:
+            epoch = "last"
+
+        df.to_csv(output_dir / f"{epoch}_epoch_df.csv", index=False)
 
 
 ################################################################################
