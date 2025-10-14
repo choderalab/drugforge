@@ -111,12 +111,12 @@ def test_vina_score(target_prepped_vina, ligand_prepped_vina):
 def test_minimize(protein_path, tmp_path):
     """Test minimization of protein PDB using OpenMM."""
     min_out = f"{tmp_path}/min_out.pdb"
-    minimize_structure(
-    pdb_complex = protein_path,
-    min_out = min_out,
-    out_dir = tmp_path,
-    md_platform = 'CPU',
-    comp_name = 'Mol',
-    target_name = 'SARS-CoV-2',)
+    min_out = minimize_structure(
+        pdb_complex=protein_path,
+        min_out=min_out,
+        out_dir=tmp_path,
+        md_platform='CPU',
+        comp_name='Mol',
+        target_name='SARS-CoV-2',)
 
     assert Path(min_out).exists()
