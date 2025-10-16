@@ -835,12 +835,8 @@ class Trainer(BaseModel):
                 if not weights_path.exists():
                     weights_path = self.output_dir / "weights.th"
                 print(f"Using weights file {weights_path.name}", flush=True)
-                self.mtenn_model_config = self.mtenn_model_config.update(
-                    {
-                        "model_weights": torch.load(
-                            weights_path, map_location=self.device
-                        )
-                    }
+                self.mtenn_model_config.model_weights = torch.load(
+                    weights_path, map_location=self.device
                 )
             except FileNotFoundError:
                 raise FileNotFoundError(
