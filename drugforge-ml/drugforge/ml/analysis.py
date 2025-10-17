@@ -1,3 +1,4 @@
+from itertools import product
 from functools import partial
 import multiprocessing as mp
 from pathlib import Path
@@ -432,6 +433,100 @@ def subset_general(in_fn, out_fn, model_strat, filters):
 
     df = df.loc[final_idx, :]
     df.to_csv(out_fn, index=False)
+
+
+################################################################################
+
+
+################################################################################
+## Check how many epochs each model has trained for
+@analysis.command()
+@click.option(
+    "--collection-args-fn",
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path),
+    required=True,
+)
+@click.option(
+    "--out-fn",
+    type=click.Path(
+        exists=False, file_okay=True, dir_okay=False, writable=True, path_type=Path
+    ),
+    required=True,
+)
+def training_progress(collection_args_fn, out_fn):
+    collection_kwargs = yaml.safe_load(collection_args_fn.read_text())
+    top_level_dir = Path(collection_kwargs["top_level_dir"])
+    print(top_level_dir, flush=True)
+    model_dir_str = collection_kwargs["model_dir_str"]
+    model_spec_kwargs = collection_kwargs["model_spec_kwargs"]
+    spec_name_to_output_name = collection_kwargs["spec_name_to_output_name"]
+    spec_lab_to_output_lab = collection_kwargs["spec_lab_to_output_lab"]
+
+    model_metadata_dict = {}
+    for full_spec in product(*model_spec_kwargs.values()):
+        d = dict(zip(model_spec_kwargs.keys(), full_spec))
+        full_model_spec = model_dir_str.format(**d)
+
+        # Dict mapping formatted model_spec key -> formatted val
+        formatted_d = {
+            spec_name_to_output_name.get(orig_k, orig_k): spec_lab_to_output_lab.get(
+                orig_k, {}
+            ).get(orig_v, orig_v)
+            for orig_k, orig_v in d.items()
+        }
+        model_metadata_dict[full_model_spec] = formatted_d
+
+    try:
+        # Just check if there's some GAT results there
+        next(iter(top_level_dir.glob("gat*")))
+
+        if r"_{strat}" in model_dir_str:
+            gat_model_dir_str = model_dir_str.replace(r"_{strat}", "")
+        elif r"{strat}_" in model_dir_str:
+            gat_model_dir_str = model_dir_str.replace(r"{strat}_", "")
+        elif r"{strat}" in model_dir_str:
+            gat_model_dir_str = model_dir_str.replace(r"{strat}", "")
+        else:
+            gat_model_dir_str = model_dir_str
+
+        model_spec_kwargs["model"] = ["gat"]
+        if "strat" in model_spec_kwargs:
+            model_spec_kwargs["strat"] = [""]
+
+        spec_lab_to_output_lab["model"]["gat"] = "GAT"
+
+        for full_spec in product(*model_spec_kwargs.values()):
+            d = dict(zip(model_spec_kwargs.keys(), full_spec))
+            full_model_spec = gat_model_dir_str.format(**d)
+
+            # Dict mapping formatted model_spec key -> formatted val
+            formatted_d = {
+                spec_name_to_output_name.get(
+                    orig_k, orig_k
+                ): spec_lab_to_output_lab.get(orig_k, {}).get(orig_v, orig_v)
+                for orig_k, orig_v in d.items()
+            }
+            model_metadata_dict[full_model_spec] = formatted_d
+    except StopIteration:
+        pass
+
+    n_epochs_df = []
+    for full_model_spec, formatted_d in model_metadata_dict.items():
+        model_wts_dir = top_level_dir / full_model_spec
+        model_wts_dir /= (model_wts_dir / "run_id").read_text()
+        model_wts = [
+            int(p.stem) for p in model_wts_dir.glob("*.th") if p.stem.isdecimal()
+        ]
+        if len(model_wts) == 0:
+            max_epoch = -1
+        else:
+            max_epoch = max(model_wts)
+        formatted_d["Epochs"] = max_epoch
+        df = pandas.DataFrame(formatted_d, index=[0])
+        n_epochs_df.append(df)
+
+    n_epochs_df = pandas.concat(n_epochs_df, axis=0, ignore_index=True)
+    n_epochs_df.to_csv(out_fn, index=False)
 
 
 ################################################################################
