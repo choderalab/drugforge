@@ -47,7 +47,7 @@ def analysis():
 @click.option("--n-workers", type=int, default=16)
 def build_results_dfs(
     collection_args_fn: Path,
-    output_dir: Path,
+    output_dir: Path = None,
     target_prop: str = "pIC50",
     extract_epochs: List[Union[str, int]] = [-1, "best_mae"],
     gat: bool = False,
@@ -147,14 +147,17 @@ def build_results_dfs(
             for df, gat_df in zip(extract_epoch_dfs, gat_extract_epoch_dfs)
         ]
 
-    # Output DFs
-    output_dir.mkdir(parents=True, exist_ok=True)
-    per_epoch_df.to_csv(output_dir / "per_epoch_df.csv", index=False)
-    for df, epoch in zip(extract_epoch_dfs, parsed_extract_epochs):
-        if epoch == -1:
-            epoch = "last"
+    if output_dir:
+        # Output DFs
+        output_dir.mkdir(parents=True, exist_ok=True)
+        per_epoch_df.to_csv(output_dir / "per_epoch_df.csv", index=False)
+        for df, epoch in zip(extract_epoch_dfs, parsed_extract_epochs):
+            if epoch == -1:
+                epoch = "last"
 
-        df.to_csv(output_dir / f"{epoch}_epoch_df.csv", index=False)
+            df.to_csv(output_dir / f"{epoch}_epoch_df.csv", index=False)
+
+    return per_epoch_df, extract_epoch_dfs
 
 
 ################################################################################
