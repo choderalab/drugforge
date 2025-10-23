@@ -1106,12 +1106,19 @@ class DatasetSplitterConfig(ConfigBase):
             Test split
         """
         all_subset_idxs = {}
-        for i, (compound, _) in enumerate(ds):
-            if compound in self.split_dict["train"]:
+        # If we have a grouped dataset, we want to iterate through compound_ids, which will
+        #  allow us to access a group of structures. Otherwise, loop through the structures
+        #  directly
+        if self.grouped:
+            iter_list = ds.structures.values()
+        else:
+            iter_list = ds.structures
+        for i, iter_item in enumerate(iter_list):
+            if iter_item["compound"] in self.split_dict["train"]:
                 split = "train"
-            elif compound in self.split_dict["val"]:
+            elif iter_item["compound"] in self.split_dict["val"]:
                 split = "val"
-            elif compound in self.split_dict["test"]:
+            elif iter_item["compound"] in self.split_dict["test"]:
                 split = "test"
             else:
                 continue
