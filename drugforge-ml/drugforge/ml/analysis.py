@@ -1,3 +1,4 @@
+import datetime
 from itertools import product
 from functools import partial
 import multiprocessing as mp
@@ -45,6 +46,11 @@ def analysis():
 )
 @click.option("--gat", is_flag=True)
 @click.option("--n-workers", type=int, default=16)
+@click.option(
+    "--filter-date",
+    type=click.DateTime(),
+    help="Don't load results from before this date.",
+)
 def build_results_dfs(
     collection_args_fn: Path,
     output_dir: Path = None,
@@ -52,6 +58,7 @@ def build_results_dfs(
     extract_epochs: List[Union[str, int]] = [-1, "best_mae"],
     gat: bool = False,
     n_workers: int = 16,
+    filter_date: datetime.date = None,
 ):
     """
     Build and save results df CSV files for an experiment, combining results from all
@@ -107,6 +114,7 @@ def build_results_dfs(
         spec_lab_to_output_lab=spec_lab_to_output_lab,
         extract_epochs=parsed_extract_epochs,
         target_prop=target_prop,
+        run_date=filter_date,
         n_workers=16,
     )
     e = time.time()
@@ -136,16 +144,18 @@ def build_results_dfs(
             spec_lab_to_output_lab=spec_lab_to_output_lab,
             extract_epochs=parsed_extract_epochs,
             target_prop=target_prop,
+            run_date=filter_date,
             n_workers=16,
         )
         e = time.time()
         print(f"took {(e - s) // 60} minutes", flush=True)
 
-        per_epoch_df = pandas.concat([per_epoch_df, gat_per_epoch_df])
-        extract_epoch_dfs = [
-            pandas.concat([df, gat_df], axis=0, ignore_index=True)
-            for df, gat_df in zip(extract_epoch_dfs, gat_extract_epoch_dfs)
-        ]
+        if gat_per_epoch_df is not None:
+            per_epoch_df = pandas.concat([per_epoch_df, gat_per_epoch_df])
+            extract_epoch_dfs = [
+                pandas.concat([df, gat_df], axis=0, ignore_index=True)
+                for df, gat_df in zip(extract_epoch_dfs, gat_extract_epoch_dfs)
+            ]
 
     if output_dir:
         # Output DFs
