@@ -1223,6 +1223,8 @@ def load_collection_df(
 
     # Get rid of any failed runs
     res = [r for r in res if r is not None]
+    if len(res) == 0:
+        return None, [None]
 
     # Extract the results into lists of DFs to concatenate
     per_epoch_df = [r[0] for r in res]
