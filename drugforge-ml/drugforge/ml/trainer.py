@@ -749,12 +749,6 @@ class Trainer(BaseModel):
                 except Exception as e:
                     raise ValueError(f"Error loading S3 settings: {e}")
 
-        # Build dataset and split
-        self.ds = self.ds_config.build()
-        self.ds_train, self.ds_val, self.ds_test = self.ds_splitter_config.split(
-            self.ds
-        )
-
         # Adjust output_dir and make sure it exists
         self.output_dir.mkdir(parents=True, exist_ok=True)
         # Start the W&B process
@@ -795,39 +789,12 @@ class Trainer(BaseModel):
             # Get splits directly from pred_tracker, if available (otherwise will fall
             #  back to splits from self.ds_splitter_config)
             if len(self.pred_tracker) > 0:
-                subset_idxs = {"train": [], "val": [], "test": []}
+                split_dict = self.pred_tracker.get_compounds()
 
-                # First build a dict mapping compound_id: idx in ds
-                compound_idx_dict = {}
-                for i, (compound, _) in enumerate(self.ds):
-                    if self.mtenn_model_config.grouped:
-                        compound_id = compound
-                    else:
-                        compound_id = compound[1]
-                    if compound_id in compound_idx_dict:
-                        raise ValueError(
-                            f"Found multiple entries in ds for compound {compound_id}"
-                        )
-                    compound_idx_dict[compound_id] = i
-
-                for _, tp in self.pred_tracker:
-                    if tp.compound_id not in compound_idx_dict:
-                        raise ValueError(
-                            f"Found compound {tp.compound_id} in pred_tracker "
-                            "but not in ds"
-                        )
-
-                subset_idxs = {
-                    sp: [
-                        compound_idx_dict[compound_id]
-                        for compound_id in compound_id_list
-                    ]
-                    for sp, compound_id_list in self.pred_tracker.get_compound_ids().items()
-                }
-
-                self.ds_train = torch.utils.data.Subset(self.ds, subset_idxs["train"])
-                self.ds_val = torch.utils.data.Subset(self.ds, subset_idxs["val"])
-                self.ds_test = torch.utils.data.Subset(self.ds, subset_idxs["test"])
+                self.ds_splitter_config = DatasetSplitterConfig(
+                    split_type="manual", split_dict=split_dict
+                )
+                print("Using pred_tracker compounds for manual splitting.", flush=True)
 
             # Load model weights
             try:
@@ -845,6 +812,11 @@ class Trainer(BaseModel):
                     "file."
                 )
 
+        # Build dataset and split
+        self.ds = self.ds_config.build()
+        self.ds_train, self.ds_val, self.ds_test = self.ds_splitter_config.split(
+            self.ds
+        )
         print(
             "ds lengths",
             len(self.ds_train),
