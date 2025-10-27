@@ -722,8 +722,10 @@ class Trainer(BaseModel):
             else:
                 run_id_fn.write_text(run_id)
 
-        for split, table in zip(["train", "val", "test"], self._make_wandb_ds_tables()):
-            wandb.log({f"dataset_splits/{split}": table})
+            for split, table in zip(
+                ["train", "val", "test"], self._make_wandb_ds_tables()
+            ):
+                wandb.log({f"dataset_splits/{split}": table})
 
         return run_id
 
