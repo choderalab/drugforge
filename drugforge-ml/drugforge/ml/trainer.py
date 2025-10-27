@@ -751,6 +751,12 @@ class Trainer(BaseModel):
                 except Exception as e:
                     raise ValueError(f"Error loading S3 settings: {e}")
 
+        # Build dataset and split
+        self.ds = self.ds_config.build()
+        self.ds_train, self.ds_val, self.ds_test = self.ds_splitter_config.split(
+            self.ds
+        )
+
         # Adjust output_dir and make sure it exists
         self.output_dir.mkdir(parents=True, exist_ok=True)
         # Start the W&B process
@@ -797,6 +803,11 @@ class Trainer(BaseModel):
                     split_type="manual", split_dict=split_dict
                 )
                 print("Using pred_tracker compounds for manual splitting.", flush=True)
+                (
+                    self.ds_train,
+                    self.ds_val,
+                    self.ds_test,
+                ) = self.ds_splitter_config.split(self.ds)
 
             # Load model weights
             try:
@@ -814,11 +825,6 @@ class Trainer(BaseModel):
                     "file."
                 )
 
-        # Build dataset and split
-        self.ds = self.ds_config.build()
-        self.ds_train, self.ds_val, self.ds_test = self.ds_splitter_config.split(
-            self.ds
-        )
         print(
             "ds lengths",
             len(self.ds_train),
