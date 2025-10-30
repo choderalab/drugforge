@@ -151,11 +151,18 @@ def build_results_dfs(
         print(f"took {(e - s) // 60} minutes", flush=True)
 
         if gat_per_epoch_df is not None:
-            per_epoch_df = pandas.concat([per_epoch_df, gat_per_epoch_df])
-            extract_epoch_dfs = [
-                pandas.concat([df, gat_df], axis=0, ignore_index=True)
-                for df, gat_df in zip(extract_epoch_dfs, gat_extract_epoch_dfs)
-            ]
+            if per_epoch_df is None:
+                per_epoch_df = gat_per_epoch_df
+                extract_epoch_dfs = gat_extract_epoch_dfs
+            else:
+                per_epoch_df = pandas.concat([per_epoch_df, gat_per_epoch_df])
+                extract_epoch_dfs = [
+                    pandas.concat([df, gat_df], axis=0, ignore_index=True)
+                    for df, gat_df in zip(extract_epoch_dfs, gat_extract_epoch_dfs)
+                ]
+
+    if per_epoch_df is None:
+        raise RuntimeError("No pred trackers were loaded")
 
     if output_dir:
         # Output DFs
