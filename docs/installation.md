@@ -53,17 +53,17 @@ Note that the Docker image assumes that your OpenEye license is located at `~/.O
 Developer installation from source
 ----------------------------------
 
-To install `drugforge` from source, you will need to clone the repository, create a compatible base environment with mamba (or conda), we recommend using the `data` subpackage for this. 
-Then you can update the current environment with the rest of the environment files. This will update all the dependencies for all subpackages.
+To install `drugforge` from source, you will need to clone the repository, create a compatible base environment with mamba (or conda), we recommend using only the dependencies for `drugforge` for this step. 
+Install the development dependencies/utils (such as openeye-toolkits, pytest, ipython, etc.).
 And finally, install all the subpackages with `pip` using an editable install (so changes get automatically updated).
 You can do this using the following commands:
 
 ```bash
 git clone git@github.com:choderalab/drugforge.git
 cd drugforge
-mamba env create --name drugforge-dev --file devtools/conda-envs/ubuntu-latest/data.yaml  # choose relevant file for your platform/OS 
+mamba create --name drugforge-dev --only-deps drugforge  # Install ONLY dependencies of drugforge
 mamba activate drugforge-dev
-for ENVFILE in $( ls devtools/conda-envs/ubuntu-latest/*.yaml ); do mamba env update --file $ENVFILE; done
+mamba install -c conda-forge -c openeye pytest-xdist ipython notebook openeye-toolkits
 python -m pip install --no-deps -e drugforge-*/
 ```
 
