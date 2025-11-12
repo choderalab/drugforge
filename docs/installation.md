@@ -55,16 +55,16 @@ Developer installation from source
 
 To install `drugforge` from source, you will need to clone the repository, create a compatible base environment with mamba (or conda), we recommend using only the dependencies for `drugforge` for this step. 
 Install the development dependencies/utils (such as openeye-toolkits, pytest, ipython, etc.).
-And finally, install all the subpackages with `pip` using an editable install (so changes get automatically updated).
+And finally, install all the subpackages with `pip` using an editable install (so changes get automatically updated). This needs a for loop and compatibility config mode.
 You can do this using the following commands:
 
 ```bash
 git clone git@github.com:choderalab/drugforge.git
 cd drugforge
-mamba create --name drugforge-dev --only-deps drugforge  # Install ONLY dependencies of drugforge
+mamba create --name drugforge-dev --only-deps drugforge-*  # Install ONLY dependencies of drugforge and subpkgs
 mamba activate drugforge-dev
 mamba install -c conda-forge -c openeye pytest-xdist ipython notebook openeye-toolkits
-python -m pip install --no-deps -e drugforge-*/
+for DIR in $( ls -d drugforge-*/ ); do pip install -e $DIR --config-settings editable_mode=compat; done
 ```
 
 Please note that this can take several minutes (~20 mins in a modern machine), solving the environments is a costly step.
