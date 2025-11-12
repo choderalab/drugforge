@@ -64,7 +64,7 @@ cd drugforge
 mamba create --name drugforge-dev --only-deps drugforge-*  # Install ONLY dependencies of drugforge and subpkgs
 mamba activate drugforge-dev
 mamba install -c conda-forge -c openeye pytest-xdist ipython notebook openeye-toolkits
-for DIR in $( ls -d drugforge-*/ ); do pip install -e $DIR --config-settings editable_mode=compat; done
+for DIR in $( ls -d drugforge-*/ ); do pip install --no-deps -e $DIR --config-settings editable_mode=compat; done
 ```
 
 Please note that this can take several minutes (~20 mins in a modern machine), solving the environments is a costly step.
