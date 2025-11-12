@@ -9,8 +9,8 @@ There are three ways to install `drugforge`:
 2. Use the provided Docker image
 3. Developer installation from source
 
-Installation from conda-forge (WIP)
------------------------------------
+Installation from conda-forge
+-----------------------------
 
 The easiest way to install `drugforge` is to use the mamba (or conda) package manager. You can install `drugforge` from the `conda-forge` channel using the following command:
 The openeye package is not available in the conda-forge channel, so you need to install it from the openeye channel. You will need to have an OpenEye license to use some functionality in the package.
@@ -19,9 +19,15 @@ You can request a free academic license from the [OpenEye website](https://docs.
 ```bash
 mamba create -n drugforge python=3.10
 mamba activate drugforge
-mamba install -c conda-forge drugforge
-mamba install -c openeye openeye-toolkits
+mamba install -c conda-forge -c openeye drugforge openeye-toolkits
+```
 
+This would install the whole suite of packages available in `drugforge`. In case you only want one or a subset of the subpackages, you can always use `drugforge-<subpkg>` instead. For example, installing alchemy and docking would be
+
+```bash
+mamba create -n drugforge python=3.10
+mamba activate drugforge-sub
+mamba install -c conda-forge -c openeye drugforge-alchemy drugforge-docking openeye-toolkits
 ```
 
 Installation from Docker (WIP)
@@ -47,14 +53,20 @@ Note that the Docker image assumes that your OpenEye license is located at `~/.O
 Developer installation from source
 ----------------------------------
 
-To install `drugforge` from source, you will need to clone the repository, setup a compatible environment with mamba (or conda) and install the package using `pip`. You can do this using the following commands:
+To install `drugforge` from source, you will need to clone the repository, create a compatible base environment with mamba (or conda), we recommend using the `data` subpackage for this. 
+Then you can update the current environment with the rest of the environment files. This will update all the dependencies for all subpackages.
+And finally, install all the subpackages with `pip` using an editable install (so changes get automatically updated).
+You can do this using the following commands:
 
 ```bash
 git clone git@github.com:choderalab/drugforge.git
 cd drugforge
-mamba env create -f devtools/conda-envs/drugforge-ubuntu-latest.yml # chose relevant file for your platform
-mamba activate drugforge
-cp devtools/repo_installer.sh . && chmod +x repo_installer.sh && ./repo_installer.sh
+mamba env create --name drugforge-dev --file devtools/conda-envs/ubuntu-latest/data.yaml  # choose relevant file for your platform/OS 
+mamba activate drugforge-dev
+for ENVFILE in $( ls devtools/conda-envs/ubuntu-latest/*.yaml ); do mamba env update --file $ENVFILE; done
+python -m pip install --no-deps -e drugforge-*/
 ```
 
-This will install the package in editable mode, so you can make changes to the code and see the changes reflected in the package. You can also run the tests using the following command:
+Please note that this can take several minutes (~20 mins in a modern machine), solving the environments is a costly step.
+
+This will install the package in editable mode, so you can make changes to the code and see the changes reflected in the package.
