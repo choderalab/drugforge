@@ -38,7 +38,7 @@ dependencies:
   - mdanalysis
   - openeye-toolkits
   - openff-forcefields >=2024.04.0
-  - openff-toolkit
+  - openff-toolkit-base >=0.17
   - openfe ~=1.0
   - openmm
   - openmmtools
