@@ -58,7 +58,7 @@ extensions = [
     "myst_parser",
     "nbsphinx",
     "nbsphinx_link",
-    "sphinxcontrib.collections",
+    "sphinx_collections",
 ]
 
 collections = {
