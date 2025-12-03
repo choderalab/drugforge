@@ -383,30 +383,24 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
     ),
     help="Output csv file.",
 )
-# @click.option(
-#     "--group-cols",
-#     type=str,
-#     required=True,
-#     help=(
-#         "Comma-separated list of columns to group by (ie each combination of values "
-#         "for these columns will be considered a separate experiment)."
-#     ),
-# )
 @click.option(
-    "--cond-cols",
+    "--group-cols",
     type=str,
     required=True,
     help=(
-        "Comma-separated list of columns to compare among (ie each column gives a "
-        "different group)."
+        "Comma-separated list of columns to group by (ie each combination of values "
+        "for these columns will be considered a separate experiment)."
     ),
 )
-def stats_comp(in_fn, out_fn, cond_cols):
-    # group_cols = group_cols.split(",")
-    cond_cols = cond_cols.split(",")
+@click.option("--comp-col", type=str, required=True, help="Column to compare within.")
+def stats_comp(in_fn, out_fn, group_cols, comp_col):
+    group_cols = group_cols.split(",")
+    comp_col = [comp_col]
+    # cond_cols = cond_cols.split(",")
     # full_gb_keys = group_cols + cond_cols
+    full_gb_keys = group_cols + [comp_col]
 
-    dtypes = {k: str for k in cond_cols}
+    dtypes = {k: str for k in full_gb_keys}
     df = pandas.read_csv(in_fn, dtype=dtypes)
     df = df.fillna({"Strategy": ""})
 
@@ -427,7 +421,7 @@ def stats_comp(in_fn, out_fn, cond_cols):
     idx = df["Split"] == "Test"
     all_test_cpds = {
         tuple(sorted(g["compound_id"].values))
-        for _, g in df.loc[idx, :].groupby(cond_cols)
+        for _, g in df.loc[idx, :].groupby(full_gb_keys)
     }
     all_test_cpds = list(map(set, all_test_cpds))
     keep_test_cpds = all_test_cpds[0]
@@ -444,56 +438,50 @@ def stats_comp(in_fn, out_fn, cond_cols):
     df = df.loc[keep_idx, :]
 
     # AnovaRM doesn't like having space in the column names
-    cond_cols_renamed = [c.replace(" ", "_") for c in cond_cols]
-    for orig_col, new_col in zip(cond_cols, cond_cols_renamed):
+    comp_col_renamed = [c.replace(" ", "_") for c in comp_col]
+    for orig_col, new_col in zip(comp_col, comp_col_renamed):
         df[new_col] = df[orig_col].copy()
 
     anova_dfs = []
-    for i in range(len(cond_cols)):
-        comp_col = cond_cols[i]
-        group_cols = cond_cols[:i] + cond_cols[i + 1 :]
+    for group_keys, exp_df in df.groupby(group_cols):
+        # Debugging math
+        factor_levels = np.product(
+            [len(exp_df[col].unique()) for col in comp_col_renamed]
+        )
+        all_within_combs = [
+            tuple(r.values) for _, r in exp_df[comp_col_renamed].iterrows()
+        ]
+        all_within_combs = Counter(all_within_combs)
 
-        for group_keys, exp_df in df.groupby(group_cols):
-            # Debugging math
-            factor_levels = np.product(
-                [len(exp_df[col].unique()) for col in cond_cols_renamed]
-            )
-            all_within_combs = [
-                tuple(r.values) for _, r in exp_df[cond_cols_renamed].iterrows()
-            ]
-            all_within_combs = Counter(all_within_combs)
-
-            print(group_keys, flush=True)
-            print(
-                f"factor_levels: {factor_levels},",
-                f"unique_within_combs: {len(all_within_combs)},",
-                f"unique_combs_counts: {len(set(all_within_combs.values()))}",
-                flush=True,
-            )
-            if factor_levels != len(all_within_combs):
-                for comb in product(
-                    *[exp_df[col].unique() for col in cond_cols_renamed]
-                ):
-                    if comb not in all_within_combs:
-                        print(f"missing {comb}", flush=True)
-                print("dataset unbalanced, skipping")
-                print(flush=True)
-                continue
-
+        print(group_keys, flush=True)
+        print(
+            f"factor_levels: {factor_levels},",
+            f"unique_within_combs: {len(all_within_combs)},",
+            f"unique_combs_counts: {len(set(all_within_combs.values()))}",
+            flush=True,
+        )
+        if factor_levels != len(all_within_combs):
+            for comb in product(*[exp_df[col].unique() for col in comp_col_renamed]):
+                if comb not in all_within_combs:
+                    print(f"missing {comb}", flush=True)
+            print("dataset unbalanced, skipping")
             print(flush=True)
+            continue
 
-            anova = AnovaRM(
-                data=exp_df,
-                depvar="Adjusted Absolute Error",
-                subject="compound_id",
-                within=cond_cols_renamed,
-            )
-            res = anova.fit()
+        print(flush=True)
 
-            res_df = res.anova_table
-            for c, k in zip(group_cols, group_keys):
-                res_df[c] = k
-            anova_dfs.append(res_df)
+        anova = AnovaRM(
+            data=exp_df,
+            depvar="Adjusted Absolute Error",
+            subject="compound_id",
+            within=comp_col_renamed,
+        )
+        res = anova.fit()
+
+        res_df = res.anova_table
+        for c, k in zip(group_cols, group_keys):
+            res_df[c] = k
+        anova_dfs.append(res_df)
 
     anova_dfs = pandas.concat(anova_dfs, axis=0, ignore_index=True)
     anova_dfs.to_csv(out_fn, index=False)
