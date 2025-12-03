@@ -12,8 +12,8 @@ from drugforge.data.backend.openeye import (
     set_SD_data,
     smiles_to_oemol,
 )
-from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import Ligand
+from drugforge.modeling.schema import PreppedComplex
 from pydantic.v1 import BaseModel, Field, PositiveFloat, PositiveInt
 from rdkit import Chem, RDLogger
 

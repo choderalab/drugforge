@@ -1,26 +1,27 @@
 import os
 
 import pytest
-from pydantic.v1 import ValidationError
-
+from drugforge.data.backend.openeye import load_openeye_design_unit
 from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.identifiers import TargetIdentifiers
 from drugforge.data.sequence import seqres_by_target
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.modeling.protein_prep import ProteinPrepper
 from drugforge.modeling.schema import PreppedComplex, PreppedTarget
-from drugforge.data.backend.openeye import load_openeye_design_unit
-from drugforge.data.schema.identifiers import TargetIdentifiers
+from pydantic.v1 import ValidationError
 
 
 @pytest.fixture
 def loop_db():
     return fetch_test_file("fragalysis-mpro_spruce.loop_db")
 
+
 @pytest.fixture(scope="session")
 def complex_pdb():
     pdb = fetch_test_file("Mpro-P2660_0A_bound.pdb")
     return pdb
+
 
 @pytest.fixture(scope="session")
 def cmplx():
@@ -38,6 +39,7 @@ def prep_complex():
         target_kwargs={"target_name": "test"},
         ligand_kwargs={"compound_name": "test2"},
     )
+
 
 @pytest.fixture(scope="session")
 def complex_oedu():
@@ -58,10 +60,12 @@ def structure_dir(all_structure_dir_fns):
     all_paths = [fetch_test_file(f) for f in all_structure_dir_fns]
     return all_paths[0].parent, all_paths
 
+
 @pytest.fixture(scope="session")
 def oedu_file():
     oedu = fetch_test_file("Mpro-P0008_0A_ERI-UCB-ce40166b-17_prepped_receptor_0.oedu")
     return oedu
+
 
 @pytest.fixture(scope="session")
 def du_cache_files():

@@ -1,11 +1,7 @@
 import pytest
 from drugforge.data.backend.openeye import oe_smiles_roundtrip
-from drugforge.data.operators.state_expanders.protomer_expander import (
-    ProtomerExpander,
-)
-from drugforge.data.operators.state_expanders.state_expander import (
-    StateExpansionSet,
-)
+from drugforge.data.operators.state_expanders.protomer_expander import ProtomerExpander
+from drugforge.data.operators.state_expanders.state_expander import StateExpansionSet
 from drugforge.data.operators.state_expanders.stereo_expander import StereoExpander
 from drugforge.data.schema.ligand import Ligand
 

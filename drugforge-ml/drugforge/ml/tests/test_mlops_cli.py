@@ -3,9 +3,9 @@ import traceback
 from unittest.mock import Mock, patch
 
 import pandas as pd
+from click.testing import CliRunner
 from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.ml.cli_mlops import mlops as cli
-from click.testing import CliRunner
 
 
 def click_success(result):

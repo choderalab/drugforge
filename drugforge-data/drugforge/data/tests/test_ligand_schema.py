@@ -1,11 +1,7 @@
 from uuid import uuid4
 
 import pytest
-from drugforge.data.backend.openeye import (
-    get_SD_data,
-    load_openeye_sdf,
-    set_SD_data,
-)
+from drugforge.data.backend.openeye import get_SD_data, load_openeye_sdf, set_SD_data
 from drugforge.data.schema.experimental import ExperimentalCompoundData
 from drugforge.data.schema.identifiers import LigandIdentifiers, LigandProvenance
 from drugforge.data.schema.ligand import Ligand

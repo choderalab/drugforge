@@ -17,6 +17,7 @@ class _SchemaBase(abc.ABC, DefaultModel):
         Write the model to JSON file.
         """
         from gufe.tokenization import JSON_HANDLER
+
         from ._util import SCOPEDKEY_CODEC
 
         JSON_HANDLER.add_codec(SCOPEDKEY_CODEC)
@@ -30,6 +31,7 @@ class _SchemaBase(abc.ABC, DefaultModel):
         Load the model from a JSON file
         """
         from gufe.tokenization import JSON_HANDLER
+
         from ._util import SCOPEDKEY_CODEC
 
         JSON_HANDLER.add_codec(SCOPEDKEY_CODEC)

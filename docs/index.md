@@ -2,7 +2,7 @@ Welcome to drugforge's documentation!
 =========================================
 <img src="_static/drugforge_logo.png" width="200">
 
-All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools. 
+All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools.
 
 The toolkit in this repo is a batteries-included drug discovery pipeline being actively developed in a transparent open-source way, with a focus on computational chemistry and informatics support for medicinal chemistry.
 
@@ -15,7 +15,7 @@ drugforge is not designed as a one size fits all solution for drug discovery, ra
 ```
 
 ```{warning}
-The implementation of drugforge-ML is still in the works and will be available in the next release. If you want to use ML scoring please refer to the original version of this code under [asapdiscovery](https://github.com/asapdiscovery/asapdiscovery). 
+The implementation of drugforge-ML is still in the works and will be available in the next release. If you want to use ML scoring please refer to the original version of this code under [asapdiscovery](https://github.com/asapdiscovery/asapdiscovery).
 ```
 
 The `drugforge` toolkit is focused around the following core competencies, organised into submodules:
