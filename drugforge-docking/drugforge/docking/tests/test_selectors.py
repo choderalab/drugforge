@@ -1,22 +1,20 @@
 import pytest
-from drugforge.docking.selectors.mcs_selector import (
-    MCSSelector,
-    RascalMCESSelector,
-)
+from drugforge.data.schema.complex import Complex
+from drugforge.data.schema.ligand import Ligand
+from drugforge.data.schema.pairs import CompoundStructurePair
+from drugforge.data.services.cdd.cdd_api import CDDAPI
+from drugforge.data.services.services_config import CDDSettings
+from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.docking.docking import DockingInputPair  # TODO: move to data
+from drugforge.docking.selectors.mcs_selector import MCSSelector, RascalMCESSelector
 from drugforge.docking.selectors.pairwise_selector import (
     LeaveOneOutSelector,
     LeaveSimilarOutSelector,
     PairwiseSelector,
     SelfDockingSelector,
 )
-from drugforge.data.schema.pairs import CompoundStructurePair
-from drugforge.docking.docking import DockingInputPair  # TODO: move to data
-from drugforge.data.schema.complex import Complex
-from drugforge.data.schema.ligand import Ligand
-from drugforge.data.services.cdd.cdd_api import CDDAPI
-from drugforge.data.services.services_config import CDDSettings
-from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.modeling.schema import PreppedComplex
+
 
 @pytest.fixture(scope="session")
 def all_mpro_fns():
@@ -45,6 +43,7 @@ def complexes(all_mpro_fns):
         )
         for struct in all_pdbs
     ]
+
 
 @pytest.fixture(scope="session")
 def prepped_complexes(complexes):

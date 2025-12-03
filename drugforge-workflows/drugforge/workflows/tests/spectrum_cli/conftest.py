@@ -6,6 +6,7 @@ from drugforge.data.testing.test_resources import fetch_test_file
 def blast_xml_path():
     return fetch_test_file("SARS_blast_results.xml")
 
+
 @pytest.fixture(scope="session")
 def blast_csv_path():
     return fetch_test_file("SARS_blast_results.csv")

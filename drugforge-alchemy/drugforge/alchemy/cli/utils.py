@@ -5,9 +5,9 @@ import pandas as pd
 import rich
 
 if TYPE_CHECKING:
+    from cinnabar import FEMap
     from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
     from drugforge.data.schema.ligand import Ligand
-    from cinnabar import FEMap
 
 
 def print_header(console: "rich.Console"):
@@ -68,8 +68,8 @@ def upload_to_postera(
     from drugforge.data.services.postera.manifold_data_validation import (
         rename_output_columns_for_manifold,
     )
-    from drugforge.workflows.postera.postera_uploader import PosteraUploader
     from drugforge.data.services.services_config import PosteraSettings
+    from drugforge.workflows.postera.postera_uploader import PosteraUploader
 
     # mock an enum to specify which columns are allowed
     class AlchemyResults(str, Enum):

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union  # noqa: F401
 from warnings import warn
 
+from drugforge.data.schema.schema_base import MoleculeFilter
 from openeye import (  # noqa: F401
     oechem,
     oedepict,
@@ -17,7 +18,6 @@ from openeye import (  # noqa: F401
     oespruce,
     oeszybki,
 )
-from drugforge.data.schema.schema_base import MoleculeFilter
 
 # exec on module import
 
