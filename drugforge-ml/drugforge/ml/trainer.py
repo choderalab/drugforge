@@ -1330,6 +1330,12 @@ class Trainer(BaseModel):
                 torch.save(
                     self.optimizer.state_dict(), self.output_dir / "optimizer.th"
                 )
+            # Keep a backup of pred_tracker in case job gets killed while it's being
+            #  written
+            if (self.output_dir / "pred_tracker.json").is_file():
+                (self.output_dir / "pred_tracker.json.bak").write_text(
+                    (self.output_dir / "pred_tracker.json").read_text()
+                )
             (self.output_dir / "pred_tracker.json").write_text(
                 self.pred_tracker.model_dump_json()
             )
