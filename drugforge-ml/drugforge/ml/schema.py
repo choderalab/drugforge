@@ -1046,13 +1046,32 @@ def _load_one_df(fn, new_cols_dict, extract_epochs, target_prop, verbose):
         print(fn, flush=True)
     try:
         pred_tracker = TrainingPredictionTracker(**json.loads(fn.read_text()))
+        try_backup = False
     except json.JSONDecodeError:
         if verbose:
-            print("failed to read", fn, flush=True)
-        return None
+            print("failed to read", fn, "trying backup file", flush=True)
+        try_backup = True
     except pydantic.ValidationError:
-        print("pydantic error parsing", fn, flush=True)
-        return None
+        if verbose:
+            print("pydantic error parsing", fn, "trying backup file", flush=True)
+        try_backup = True
+
+    if try_backup:
+        fn = fn.with_suffix(f"{fn.suffix}.bak")
+        if not (fn.exists() and fn.is_file()):
+            if verbose:
+                print("backup file", fn, "not found", flush=True)
+            return None
+        try:
+            pred_tracker = TrainingPredictionTracker(**json.loads(fn.read_text()))
+        except json.JSONDecodeError:
+            if verbose:
+                print("failed to read backup file", fn, flush=True)
+            return None
+        except pydantic.ValidationError:
+            if verbose:
+                print("pydantic error parsing backup file", fn, flush=True)
+            return None
 
     # DF with each compound's pred for each epoch
     compound_df = pred_tracker.to_plot_df(
