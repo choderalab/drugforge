@@ -2,12 +2,12 @@ import json
 import pickle as pkl
 
 import pytest
+from click.testing import CliRunner
 from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.ml.cli import ml as cli
 from drugforge.ml.config import DatasetConfig
 from drugforge.ml.schema import TrainingPredictionTracker
 from drugforge.ml.trainer import Trainer
-from click.testing import CliRunner
 
 
 @pytest.fixture(scope="session")

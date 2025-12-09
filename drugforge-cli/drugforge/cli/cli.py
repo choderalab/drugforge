@@ -5,9 +5,7 @@ import click
 def cli(help="Command-line interface for drugforge"): ...
 
 
-from drugforge.workflows.docking_workflows.cli import (  # noqa: F401, E402, F811
-    docking,
-)
+from drugforge.workflows.docking_workflows.cli import docking  # noqa: F401, E402, F811
 
 cli.add_command(docking)
 

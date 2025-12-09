@@ -6,14 +6,10 @@ from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import dask
 import yaml
-from drugforge.data.backend.openeye import oechem
+from drugforge.data.backend.openeye import oechem, split_openeye_design_unit
 from drugforge.data.schema.complex import Complex
-from drugforge.modeling.schema import PreppedComplex, PreppedTarget
 from drugforge.data.schema.ligand import Ligand
-from drugforge.data.util.dask_utils import (
-    FailureMode,
-    actualise_dask_delayed_iterable,
-)
+from drugforge.data.util.dask_utils import FailureMode, actualise_dask_delayed_iterable
 from drugforge.data.util.stringenum import StringEnum
 from drugforge.data.util.utils import seqres_to_res_list
 from drugforge.modeling.modeling import (
@@ -22,7 +18,7 @@ from drugforge.modeling.modeling import (
     spruce_protein,
     superpose_molecule,
 )
-from drugforge.data.backend.openeye import split_openeye_design_unit
+from drugforge.modeling.schema import PreppedComplex, PreppedTarget
 from pydantic.v1 import BaseModel, Field
 
 if TYPE_CHECKING:
