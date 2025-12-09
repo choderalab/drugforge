@@ -60,9 +60,21 @@ There are a range of workflows and tooling to use split into several namespace s
 **Note**: currently all `drugforge` packages support Python <=3.11 only.
 
 
-### Installing from conda-forge (WIP)
+### Installing from conda-forge
 
-You can install the package from the wonderful `conda-forge` with `mamba install -c conda-forge drugforge`.
+Our packages are now distributed through `conda-forge`. If you want to install the full suite of packages you can use the following command
+
+```bash
+mamba install -c conda-forge -c openeye drugforge openeye-toolkits
+```
+
+Please note that we depend on a working OpenEye install for our software. If you want a specific subpackage you can do something like `drugforge-<subpkg>`, for example for the `alchemy` subpackage you would do
+
+```bash
+mamba install -c conda-forge -c openeye drugforge-alchemy openeye-toolkits
+```
+
+We recommend using `mamba` to manage conda packages, but you could achieve the same using `conda`, `micromamba` or `pixi` package managers.
 
 ### Developer install
 
