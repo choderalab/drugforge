@@ -53,7 +53,7 @@ Note that the Docker image assumes that your OpenEye license is located at `~/.O
 Developer installation from source
 ----------------------------------
 
-To install `drugforge` from source, you will need to clone the repository, create a compatible base environment with mamba (or conda), we recommend using only the dependencies for `drugforge` for this step. 
+To install `drugforge` from source, you will need to clone the repository, create a compatible base environment with mamba (or conda), we recommend using only the dependencies for `drugforge` for this step.
 Install the development dependencies/utils (such as openeye-toolkits, pytest, ipython, etc.).
 And finally, install all the subpackages with `pip` using an editable install (so changes get automatically updated). This needs a for loop and compatibility config mode.
 You can do this using the following commands:
