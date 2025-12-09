@@ -9,15 +9,13 @@ from drugforge.data.operators.state_expanders.protomer_expander import (
     ProtomerExpander,
 )
 from drugforge.data.operators.state_expanders.stereo_expander import StereoExpander
-from drugforge.data.operators.state_expanders.tautomer_expander import (
-    TautomerExpander,
-)
-from drugforge.modeling.schema import PreppedComplex
+from drugforge.data.operators.state_expanders.tautomer_expander import TautomerExpander
 from drugforge.data.schema.ligand import Ligand
 from drugforge.docking.schema.pose_generation import (
     OpenEyeConstrainedPoseGenerator,
     RDKitConstrainedPoseGenerator,
 )
+from drugforge.modeling.schema import PreppedComplex
 from pydantic import Field
 from rich import pretty
 from rich.padding import Padding

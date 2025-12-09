@@ -1,24 +1,23 @@
 from pathlib import Path
-from typing import ClassVar, Optional, Any, Union
+from typing import Any, ClassVar, Optional, Union
 
-from mtenn.config import ModelType
-from pydantic import Field
-
-from drugforge.docking.docking import DockingResult
-from drugforge.docking.scorer import (
-    ScoreType,
-    ScorerBase,
-    ScoreUnits,
-    logger,
-    Score,
-    _get_disk_path_from_docking_result,
-)
-from drugforge.ml.inference import InferenceBase, get_inference_cls_from_model_type
-from drugforge.ml.models import MLModelSpecBase
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
-from drugforge.data.util.dask_utils import dask_vmap, backend_wrapper
+from drugforge.data.util.dask_utils import backend_wrapper, dask_vmap
+from drugforge.docking.docking import DockingResult
+from drugforge.docking.scorer import (
+    Score,
+    ScorerBase,
+    ScoreType,
+    ScoreUnits,
+    _get_disk_path_from_docking_result,
+    logger,
+)
+from drugforge.ml.inference import InferenceBase, get_inference_cls_from_model_type
+from drugforge.ml.models import MLModelSpecBase
+from mtenn.config import ModelType
+from pydantic import Field
 
 
 def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> ScoreType:
@@ -197,7 +196,12 @@ class GATScorer(MLModelScorer):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
-    def _dispatch(self, inputs: list[Union[DockingResult, str, Ligand]], return_for_disk_backend: bool = False, **kwargs) -> list[Score]:
+    def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, str, Ligand]],
+        return_for_disk_backend: bool = False,
+        **kwargs,
+    ) -> list[Score]:
         if isinstance(inputs[0], DockingResult):
             return self._dispatch_docking(
                 inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
@@ -290,7 +294,12 @@ class E3MLModelScorer(MLModelScorer):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
-    def _dispatch(self, inputs: list[Union[DockingResult, Complex, Path]], return_for_disk_backend: bool = False, **kwargs) -> list[Score]:
+    def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, Complex, Path]],
+        return_for_disk_backend: bool = False,
+        **kwargs,
+    ) -> list[Score]:
         if isinstance(inputs[0], DockingResult):
             return self._dispatch_docking(
                 inputs, return_for_disk_backend=return_for_disk_backend, **kwargs

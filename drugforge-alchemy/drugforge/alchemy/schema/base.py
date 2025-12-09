@@ -1,9 +1,9 @@
 import abc
 import json
-from typing import Literal, Any, Callable
-from pydantic import BaseModel
+from typing import Any, Callable, Literal
 
 from openff.units import Quantity
+from pydantic import BaseModel
 
 # the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1
 # from openff.models.models import DefaultModel
@@ -88,6 +88,7 @@ class _SchemaBase(abc.ABC, DefaultModel):
         Write the model to JSON file.
         """
         from gufe.tokenization import JSON_HANDLER
+
         from ._util import SCOPEDKEY_CODEC
 
         JSON_HANDLER.add_codec(SCOPEDKEY_CODEC)
@@ -101,6 +102,7 @@ class _SchemaBase(abc.ABC, DefaultModel):
         Load the model from a JSON file
         """
         from gufe.tokenization import JSON_HANDLER
+
         from ._util import SCOPEDKEY_CODEC
 
         JSON_HANDLER.add_codec(SCOPEDKEY_CODEC)

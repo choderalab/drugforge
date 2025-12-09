@@ -1,12 +1,11 @@
 import click
 
+
 @click.group()
 def cli(help="Command-line interface for drugforge"): ...
 
 
-from drugforge.workflows.docking_workflows.cli import (  # noqa: F401, E402, F811
-    docking,
-)
+from drugforge.workflows.docking_workflows.cli import docking  # noqa: F401, E402, F811
 
 cli.add_command(docking)
 
@@ -30,6 +29,7 @@ cli.add_command(spectrum)
 # so we import inside a try except to allow the rest of the CLI to work
 try:
     from drugforge.ml.cli import ml  # noqa: F401, E402, F811
+
     cli.add_command(ml)
 except ImportError:
     print("ML package not available, skipping ML CLI command.")

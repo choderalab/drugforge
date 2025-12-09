@@ -6,14 +6,10 @@ from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import dask
 import yaml
-from drugforge.data.backend.openeye import oechem
+from drugforge.data.backend.openeye import oechem, split_openeye_design_unit
 from drugforge.data.schema.complex import Complex
-from drugforge.modeling.schema import PreppedComplex, PreppedTarget
 from drugforge.data.schema.ligand import Ligand
-from drugforge.data.util.dask_utils import (
-    FailureMode,
-    actualise_dask_delayed_iterable,
-)
+from drugforge.data.util.dask_utils import FailureMode, actualise_dask_delayed_iterable
 from drugforge.data.util.stringenum import StringEnum
 from drugforge.data.util.utils import seqres_to_res_list
 from drugforge.modeling.modeling import (
@@ -22,8 +18,8 @@ from drugforge.modeling.modeling import (
     spruce_protein,
     superpose_molecule,
 )
-from drugforge.data.backend.openeye import split_openeye_design_unit
-from pydantic import BaseModel, Field, ConfigDict
+from drugforge.modeling.schema import PreppedComplex, PreppedTarget
+from pydantic import BaseModel, ConfigDict, Field
 
 if TYPE_CHECKING:
     from distributed import Client
@@ -49,7 +45,7 @@ class ProteinPrepperBase(BaseModel):
         "ProteinPrepperBase", description="The type of prepper to use"
     )
 
-    model_config = ConfigDict(arbitrary_types_allowed = True)
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @abc.abstractmethod
     def _prep(self, inputs: list[Complex]) -> list[PreppedComplex]: ...
@@ -312,7 +308,8 @@ class ProteinPrepper(ProteinPrepperBase):
                 # we need the ligand at the new translated coordinates
                 translated_oemol, _, _ = split_openeye_design_unit(du=du)
                 translated_lig = Ligand.from_oemol(
-                    translated_oemol, **complex_target.ligand.model_dump(exclude={"data"})
+                    translated_oemol,
+                    **complex_target.ligand.model_dump(exclude={"data"}),
                 )
                 pc = PreppedComplex(target=prepped_target, ligand=translated_lig)
                 pc.target.crystal_symmetry = complex_target.target.crystal_symmetry

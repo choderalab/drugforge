@@ -6,6 +6,9 @@ from typing import ClassVar, List, Optional, Set, Union
 import mtenn
 import numpy as np
 import torch
+
+# static import of models from base yaml here
+from dgllife.utils import CanonicalAtomFeaturizer
 from drugforge.data.backend.openeye import oechem
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
@@ -19,9 +22,6 @@ from drugforge.ml.models import (
     MLModelSpec,
     MLModelSpecBase,
 )
-
-# static import of models from base yaml here
-from dgllife.utils import CanonicalAtomFeaturizer
 from mtenn.config import (
     LigandOnlyModelConfig,
     ModelConfig,
@@ -42,7 +42,7 @@ each model and store in S3 to use during testing.
 class InferenceBase(abc.ABC, BaseModel):
     model_config = {"frozen": True, "arbitrary_types_allowed": True}
 
-    targets: Optional[Set[TargetTags]] = Field(
+    targets: Optional[set[TargetTags]] = Field(
         None,
         description="Targets that them model can predict for",  # FIXME: should be Optional[Set[TargetTags]] but this causes issues with pydantic
     )
@@ -70,7 +70,7 @@ class InferenceBase(abc.ABC, BaseModel):
         ..., description="Local model spec used to create Model to use"
     )
     device: str = Field("cpu", description="Device to use for inference")
-    models: Optional[List[torch.nn.Module]] = Field(..., description="PyTorch model(s)")
+    models: Optional[list[torch.nn.Module]] = Field(..., description="PyTorch model(s)")
 
     @property
     def is_ensemble(self):
@@ -453,7 +453,7 @@ class ModelInference(InferenceBase):
 
     def predict_from_smiles(
         self,
-        smiles: Union[str, List[str]],
+        smiles: Union[str, list[str]],
         node_featurizer=None,
         edge_featurizer=None,
         return_err=False,
@@ -500,7 +500,7 @@ class ModelInference(InferenceBase):
         return self.predict_ds(ds, return_err)
 
     def predict_from_structure_file(
-        self, pose: Union[Path, List[Path]], return_err=False
+        self, pose: Union[Path, list[Path]], return_err=False
     ) -> Union[np.ndarray, float]:
         """Predict on a list of poses or a single pose.
 
@@ -536,7 +536,7 @@ class ModelInference(InferenceBase):
         return self.predict_ds(ds, return_err)
 
     def predict_from_oemol(
-        self, pose: Union[oechem.OEMol, List[oechem.OEMol]], return_err=False
+        self, pose: Union[oechem.OEMol, list[oechem.OEMol]], return_err=False
     ) -> Union[np.ndarray, float]:
         """
         Predict on a (list of) OEMol objects.
@@ -627,7 +627,7 @@ class SplitModelInference(InferenceBase):
         return True
 
     def predict_from_structure_file(
-        self, pose: Union[Path, List[Path]], return_err=False
+        self, pose: Union[Path, list[Path]], return_err=False
     ) -> Union[np.ndarray, float]:
         """Predict on a list of poses or a single pose.
 
@@ -663,7 +663,7 @@ class SplitModelInference(InferenceBase):
         return self.predict_ds(ds, return_err)
 
     def predict_from_oemol(
-        self, pose: Union[oechem.OEMol, List[oechem.OEMol]], return_err=False
+        self, pose: Union[oechem.OEMol, list[oechem.OEMol]], return_err=False
     ) -> Union[np.ndarray, float]:
         """
         Predict on a (list of) OEMol objects.

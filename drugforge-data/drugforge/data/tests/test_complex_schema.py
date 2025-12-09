@@ -109,5 +109,3 @@ def test_complex_json_file_roundtrip(complex_pdb, tmp_path):
     c2 = Complex.from_json_file(path)
 
     assert c1 == c2
-
-

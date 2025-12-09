@@ -12,9 +12,8 @@ from drugforge.data.backend.openeye import (
     split_openeye_mol,
 )
 from drugforge.data.schema.ligand import Ligand
-from drugforge.data.schema.schema_base import DataModelAbstractBase
+from drugforge.data.schema.schema_base import DataModelAbstractBase, MoleculeFilter
 from drugforge.data.schema.target import Target
-from drugforge.data.schema.schema_base import MoleculeFilter
 from pydantic import Field, field_validator
 
 logger = logging.getLogger(__name__)
@@ -51,7 +50,7 @@ class Complex(ComplexBase):
     target: Target = Field(description="Target schema object")
     ligand: Ligand = Field(description="Ligand schema object")
     # this needs to be marked as optional to allow it to be set to None in cases where this is not defined
-    ligand_chain: Optional[str] = Field(
+    ligand_chain: str | None = Field(
         None, description="Chain ID of ligand in complex"
     )
 

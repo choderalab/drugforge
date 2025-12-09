@@ -19,11 +19,6 @@ from drugforge.data.backend.openeye import (
     oemol_to_sdf_string,
     openeye_perceive_residues,
 )
-from drugforge.dataviz.plip import (
-    get_interactions_plip,
-    make_color_res_fitness,
-    make_color_res_subpockets,
-)
 from drugforge.data.metadata.resources import active_site_chains, master_structures
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
@@ -34,6 +29,11 @@ from drugforge.data.services.postera.manifold_data_validation import (
 from drugforge.data.util.dask_utils import backend_wrapper, dask_vmap
 from drugforge.data.util.logging import HiddenPrint
 from drugforge.dataviz._html_blocks import HTMLBlockData
+from drugforge.dataviz.plip import (
+    get_interactions_plip,
+    make_color_res_fitness,
+    make_color_res_subpockets,
+)
 from drugforge.dataviz.visualizer import VisualizerBase
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.docking_data_validation import DockingResultCols
@@ -178,7 +178,13 @@ class HTMLVisualizer(VisualizerBase):
     def provenance(self):
         return {}
 
-    def _dispatch(self, inputs:list[Union[DockingResult, Path, Complex, tuple[Complex, list[Ligand]]]], outpaths: Optional[list[Path]] = None, failure_mode: str = "skip", **kwargs) -> Union[list[dict[str, str]], list[str]]:
+    def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, Path, Complex, tuple[Complex, list[Ligand]]]],
+        outpaths: Optional[list[Path]] = None,
+        failure_mode: str = "skip",
+        **kwargs,
+    ) -> Union[list[dict[str, str]], list[str]]:
         """
         Dispatch to the appropriate method based on the input type.
 
@@ -226,7 +232,6 @@ class HTMLVisualizer(VisualizerBase):
             raise ValueError(
                 f"Unsupported input type: {type(first_input)}, must be DockingResult, Path, Complex or tuple of Complex and list of Ligand"
             )
-
 
     def _dispatch_docking_result(
         self,

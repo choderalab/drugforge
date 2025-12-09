@@ -223,10 +223,12 @@ def make_static_tags(yaml_path) -> tuple[Enum, set]:
 
 # OK finally we can actually make the enums
 
+from drugforge.data.services import postera
+
 # static path to the spec
 # use the get_path_string helper function that uses importlib.resources to get the path to the yaml file
 from drugforge.data.util.utils import get_path_string
-from drugforge.data.services import postera
+
 manifold_data_spec = get_path_string(postera) + "/manifold_data_tags.yaml"
 
 
@@ -415,4 +417,3 @@ def rename_output_columns_for_manifold(
     df = df.rename(columns=mapping)
 
     return df
-

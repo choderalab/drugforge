@@ -11,9 +11,10 @@ that can then be used to fetch test files.
 """
 
 
-from drugforge.data.util.utils import get_path_string
 from drugforge.data import testing
-test_files = get_path_string(testing) +  "/test_files.yaml"
+from drugforge.data.util.utils import get_path_string
+
+test_files = get_path_string(testing) + "/test_files.yaml"
 
 
 def make_test_file_pooch_repo(test_files: str) -> pooch.Pooch:

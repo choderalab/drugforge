@@ -10,22 +10,20 @@ from drugforge.data.backend.openeye import (
     split_openeye_mol,
 )
 from drugforge.data.schema.identifiers import TargetIdentifiers
-from pydantic import Field, model_validator
-
 from drugforge.data.schema.schema_base import (
     DataModelAbstractBase,
     DataStorageType,
+    MoleculeFilter,
     check_strings_for_equality_with_exclusion,
     schema_dict_get_val_overload,
     write_file_directly,
-    MoleculeFilter,
 )
+from pydantic import Field, model_validator
 
 logger = logging.getLogger(__name__)
 
 
-class InvalidTargetError(ValueError):
-    ...  # noqa: E701
+class InvalidTargetError(ValueError): ...  # noqa: E701
 
 
 class Target(DataModelAbstractBase):

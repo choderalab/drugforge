@@ -8,10 +8,7 @@ from typing import List  # noqa: F401
 import dask
 import pandas
 from drugforge.data.schema.complex import Complex
-from drugforge.data.util.dask_utils import (
-    FailureMode,
-    actualise_dask_delayed_iterable,
-)
+from drugforge.data.util.dask_utils import FailureMode, actualise_dask_delayed_iterable
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
@@ -37,7 +34,6 @@ class FragalysisFactory(BaseModel):
     metadata_csv_name: str = Field(
         "metadata.csv", description="Name of the metadata file."
     )
-
 
     @field_validator("parent_dir", mode="before")
     @classmethod

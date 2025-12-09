@@ -21,7 +21,7 @@ class SzybkiFreeformResult(BaseModel):
     szybki_conformer_strain: float
     units: unit.Unit = unit.kilocalories_per_mole
 
-    model_config = ConfigDict(frozen = True, arbitrary_types_allowed = True)
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     def as_result_cols(self):
         dict = {

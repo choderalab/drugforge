@@ -13,15 +13,15 @@ from drugforge.data.backend.openeye import (
     combine_protein_ligand,
     oechem,
     save_openeye_pdb,
-    split_openeye_design_unit
+    split_openeye_design_unit,
 )
 from drugforge.data.schema.complex import Complex
-from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.pairs import CompoundStructurePair
 from drugforge.data.schema.sets import MultiStructureBase
 from drugforge.data.schema.target import Target
 from drugforge.data.util.dask_utils import BackendType, FailureMode
+from drugforge.modeling.schema import PreppedComplex
 from pydantic import BaseModel, Field, PositiveFloat
 
 logger = logging.getLogger(__name__)
@@ -186,7 +186,9 @@ class DockingResult(BaseModel):
     probability: Optional[PositiveFloat] = Field(
         description="Probability", default=None
     )  # not easy to get the probability from rescoring
-    pose_id: Optional[int] = Field(description="Nth returned pose from docking", default=None)
+    pose_id: Optional[int] = Field(
+        description="Nth returned pose from docking", default=None
+    )
     num_poses: Optional[int] = Field(
         description="Total number of poses returned from docking", default=None
     )

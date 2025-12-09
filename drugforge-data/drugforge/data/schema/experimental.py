@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ExperimentalCompoundData(BaseModel):
@@ -53,7 +53,6 @@ class ExperimentalCompoundData(BaseModel):
         if isinstance(value, int):
             value = f"{value}-12-31"
         return value
-
 
     def to_SD_tags(self) -> tuple[dict[str, str], dict[str, float]]:
         """

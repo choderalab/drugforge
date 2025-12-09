@@ -16,9 +16,9 @@ This fork is now developed and maintained independently by the [Chodera Lab](htt
 
 ## Intro
 
-All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools. 
+All pandemics are global health threats. Our best defense is a healthy global antiviral discovery community with a robust pipeline of open discovery tools.
 
-The toolkit in this repo is a batteries-included drug discovery pipeline being actively developed in a transparent open-source way, with a focus on computational chemistry and informatics support for medicinal chemistry. 
+The toolkit in this repo is a batteries-included drug discovery pipeline being actively developed in a transparent open-source way, with a focus on computational chemistry and informatics support for medicinal chemistry.
 
 
 ## Getting Started
@@ -27,7 +27,7 @@ Install the `drugforge` subpackages and begin to explore! The drugforge [documen
 
 There are a range of workflows and tooling to use split into several namespace subpackages by theme.
 
-**Warning:** The implementation of drugforge-ML is still in the works and will be available in the next release. If you want to use ML scoring please refer to the original version of this code under [asapdiscovery](https://github.com/asapdiscovery/asapdiscovery). 
+**Warning:** The implementation of drugforge-ML is still in the works and will be available in the next release. If you want to use ML scoring please refer to the original version of this code under [asapdiscovery](https://github.com/asapdiscovery/asapdiscovery).
 
 `drugforge-alchemy`: Free energy calculations using [OpenFE](https://openfree.energy/) and [Alchemiscale](https://docs.alchemiscale.org/en/latest/). See [tutorial](https://drugforge.readthedocs.io/en/latest/tutorials/running_alchemical_free_energy_calculations.html) and CLI [guide](https://asapdiscovery.readthedocs.io/en/latest/guides/using_asap_alchemy_cli.html)
 

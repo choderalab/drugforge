@@ -6,7 +6,7 @@ from drugforge.data.readers.structure_dir import StructureDirFactory
 from drugforge.data.schema.complex import Complex
 from drugforge.data.services.fragalysis.fragalysis_reader import FragalysisFactory
 from drugforge.data.util.dask_utils import FailureMode
-from pydantic import BaseModel, Field,model_validator
+from pydantic import BaseModel, Field, model_validator
 
 logger = logging.getLogger(__name__)
 

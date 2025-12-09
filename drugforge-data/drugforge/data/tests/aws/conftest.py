@@ -1,8 +1,8 @@
 import os
 
 import pytest
-from drugforge.data.services.aws.s3 import S3
 from boto3.session import Session
+from drugforge.data.services.aws.s3 import S3
 from moto.server import ThreadedMotoServer
 
 

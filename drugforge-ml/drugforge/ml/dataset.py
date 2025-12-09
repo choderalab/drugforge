@@ -1,13 +1,13 @@
+import random
+
 import numpy as np
 import pandas as pd
-import random
 import torch
+from dgllife.utils import CanonicalAtomFeaturizer, SMILESToBigraph
 from drugforge.data.backend.openeye import oechem
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
 from torch.utils.data import Dataset
-
-from dgllife.utils import CanonicalAtomFeaturizer, SMILESToBigraph
 
 
 class DockedDataset(Dataset):

@@ -1,9 +1,9 @@
+import os
 import traceback
 
 import pytest
-import os
-from drugforge.cli.cli import cli
 from click.testing import CliRunner
+from drugforge.cli.cli import cli
 
 
 def click_success(result):
@@ -20,6 +20,7 @@ def test_toplevel_runnable():
     result = runner.invoke(cli, args)
     assert click_success(result)
 
+
 @pytest.mark.parametrize(
     "subcommand",
     [
@@ -29,7 +30,10 @@ def test_toplevel_runnable():
         "spectrum",
         pytest.param(
             "ml",
-            marks=pytest.mark.xfail(condition=os.getenv("RUNNER_OS") == "macOS", reason="ML package is not currently available."),
+            marks=pytest.mark.xfail(
+                condition=os.getenv("RUNNER_OS") == "macOS",
+                reason="ML package is not currently available.",
+            ),
         ),
         "visualization",
         "simulation",

@@ -5,14 +5,12 @@ import pytest
 import torch
 from drugforge.data.backend.openeye import load_openeye_pdb
 from drugforge.data.testing.test_resources import fetch_test_file
-from numpy.testing import assert_allclose
-
-from drugforge.ml.inference import (
-    ModelInference,
+from drugforge.ml.inference import (  # SplitModelInference, # still need to add tests for these
     LigandOnlyModelInference,
-    # SplitModelInference, # still need to add tests for these
+    ModelInference,
 )
 from drugforge.ml.models import MLModelRegistry
+from numpy.testing import assert_allclose
 
 
 @pytest.fixture()

@@ -3,22 +3,16 @@ from shutil import rmtree
 
 from drugforge.data.metadata.resources import master_structures
 from drugforge.data.operators.deduplicator import LigandDeDuplicator
-from drugforge.docking.selectors.mcs_selector import RascalMCESSelector
 from drugforge.data.readers.meta_ligand_factory import MetaLigandFactory
 from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
 from drugforge.data.schema.complex import Complex
 from drugforge.data.services.aws.cloudfront import CloudFront
 from drugforge.data.services.aws.s3 import S3
-from drugforge.workflows.postera.manifold_artifacts import (
-    ArtifactType,
-    ManifoldArtifactUploader,
-)
 from drugforge.data.services.postera.manifold_data_validation import (
     map_output_col_to_manifold_tag,
     rename_output_columns_for_manifold,
 )
 from drugforge.data.services.postera.molecule_set import MoleculeSetAPI
-from drugforge.workflows.postera.postera_uploader import PosteraUploader
 from drugforge.data.services.services_config import (
     CloudfrontSettings,
     PosteraSettings,
@@ -30,17 +24,19 @@ from drugforge.data.util.utils import check_empty_dataframe
 from drugforge.dataviz.html_viz import ColorMethod, HTMLVisualizer
 from drugforge.docking.docking import write_results_to_multi_sdf
 from drugforge.docking.docking_data_validation import DockingResultCols
-from drugforge.docking.openeye import POSITDocker
-from drugforge.docking.scorer import (
-    ChemGauss4Scorer,
-)
 from drugforge.docking.fint_scorer import FINTScorer
 from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.docking.openeye import POSITDocker
+from drugforge.docking.scorer import ChemGauss4Scorer
+from drugforge.docking.selectors.mcs_selector import RascalMCESSelector
 from drugforge.modeling.protein_prep import ProteinPrepper
 from drugforge.spectrum.fitness import target_has_fitness_data
-from drugforge.workflows.docking_workflows.workflows import (
-    PosteraDockingWorkflowInputs,
+from drugforge.workflows.docking_workflows.workflows import PosteraDockingWorkflowInputs
+from drugforge.workflows.postera.manifold_artifacts import (
+    ArtifactType,
+    ManifoldArtifactUploader,
 )
+from drugforge.workflows.postera.postera_uploader import PosteraUploader
 from pydantic import Field, PositiveInt
 
 
@@ -292,6 +288,7 @@ def large_scale_docking_workflow(inputs: LargeScaleDockingInputs):
         logger.warning("Using ML scorer is still experimental. Fails are expected.")
         from drugforge.docking.ml_scorer import MLModelScorer  # Lazy import
         from drugforge.ml.models import ASAPMLModelRegistry
+
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         for model in models:

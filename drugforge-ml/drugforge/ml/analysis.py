@@ -1,20 +1,19 @@
-from collections import Counter
 import datetime
-from itertools import product
-from functools import partial
 import multiprocessing as mp
-from pathlib import Path
 import time
+from collections import Counter
+from functools import partial
+from itertools import product
+from pathlib import Path
 from typing import List, Union
-import yaml
 
 import click
+import drugforge.ml.schema as mlschema
 import numpy as np
 import pandas
+import yaml
 from scipy.stats import bootstrap, kendalltau, spearmanr
 from statsmodels.stats.anova import AnovaRM
-
-import drugforge.ml.schema as mlschema
 
 
 @click.group()
@@ -57,7 +56,7 @@ def build_results_dfs(
     collection_args_fn: Path,
     output_dir: Path = None,
     target_prop: str = "pIC50",
-    extract_epochs: List[Union[str, int]] = [-1, "best_mae"],
+    extract_epochs: list[Union[str, int]] = [-1, "best_mae"],
     gat: bool = False,
     n_workers: int = 16,
     filter_date: datetime.date = None,

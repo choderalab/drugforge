@@ -2,7 +2,7 @@ import abc
 from typing import Literal
 
 from drugforge.data.schema.ligand import Ligand
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class StateExpanderBase(abc.ABC, BaseModel):
@@ -62,7 +62,6 @@ class StateExpansionSet(BaseModel):
     )
 
     model_config = ConfigDict(frozen=True)
-
 
     @classmethod
     def from_ligands(cls, ligands: list[Ligand]) -> "StateExpansionSet":

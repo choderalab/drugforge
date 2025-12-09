@@ -221,8 +221,7 @@ class ScorerBase(BaseModel):
     score_units: ClassVar[ScoreUnits.INVALID] = ScoreUnits.INVALID
 
     @abc.abstractmethod
-    def _score() -> list[DockingResult]:
-        ...
+    def _score() -> list[DockingResult]: ...
 
     def score(
         self,
@@ -348,7 +347,9 @@ class ChemGauss4Scorer(ScorerBase):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
-    def _dispatch(self, inputs: list[Union[Complex, Path, DockingResult]], **kwargs) -> list[Score]:
+    def _dispatch(
+        self, inputs: list[Union[Complex, Path, DockingResult]], **kwargs
+    ) -> list[Score]:
         """
         Dispatch for Complexes or PDB files from disk
         """
@@ -359,7 +360,6 @@ class ChemGauss4Scorer(ScorerBase):
             return self._dispatch_complex(inputs, **kwargs)
         elif isinstance(inputs[0], Path):
             return self._dispatch_from_path(inputs, **kwargs)
-
 
     def _dispatch_docking_result(
         self,
@@ -400,7 +400,6 @@ class ChemGauss4Scorer(ScorerBase):
         if isinstance(inputs[0], Path):
             inputs = self._dispatch_from_path(inputs, **kwargs)
 
-
         results = []
         for inp in inputs:
             posed_mol = inp.ligand.to_oemol()
@@ -410,7 +409,10 @@ class ChemGauss4Scorer(ScorerBase):
             chemgauss_score = pose_scorer.ScoreLigand(posed_mol)
             results.append(
                 Score.from_score_and_complex(
-                    score=chemgauss_score, score_type=self.score_type, units=self.units, complex=inp
+                    score=chemgauss_score,
+                    score_type=self.score_type,
+                    units=self.units,
+                    complex=inp,
                 )
             )
         return results

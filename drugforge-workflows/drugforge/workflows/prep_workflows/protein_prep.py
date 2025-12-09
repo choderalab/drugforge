@@ -10,7 +10,7 @@ from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.util.dask_utils import DaskType, make_dask_client_meta
 from drugforge.data.util.logging import FileLogger
 from drugforge.modeling.protein_prep import ProteinPrepper
-from pydantic import BaseModel, Field, PositiveInt, model_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt, model_validator
 
 
 class ProteinPrepInputs(BaseModel):

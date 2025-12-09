@@ -1,21 +1,20 @@
 from pathlib import Path
 from typing import ClassVar, Union
 
-from pydantic import Field, field_validator
-
+from drugforge.data.schema.complex import Complex
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.util.dask_utils import backend_wrapper, dask_vmap
 from drugforge.dataviz.plip import compute_fint_score
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.scorer import (
+    Score,
     ScorerBase,
     ScoreType,
     ScoreUnits,
-    Score,
     _get_disk_path_from_docking_result,
 )
 from drugforge.spectrum.fitness import target_has_fitness_data
-from drugforge.data.schema.complex import Complex
-from drugforge.data.services.postera.manifold_data_validation import TargetTags
-from drugforge.data.util.dask_utils import dask_vmap, backend_wrapper
+from pydantic import Field, field_validator
 
 
 class FINTScorer(ScorerBase):

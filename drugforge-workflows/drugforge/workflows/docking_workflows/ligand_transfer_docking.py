@@ -14,27 +14,21 @@ from pathlib import Path
 from shutil import rmtree
 from typing import Optional
 
-from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
-from drugforge.data.util.dask_utils import (
-    BackendType,
-    DaskType,
-    make_dask_client_meta,
-)
+from drugforge.data.util.dask_utils import BackendType, DaskType, make_dask_client_meta
 from drugforge.data.util.logging import FileLogger
 from drugforge.data.util.utils import check_empty_dataframe
 from drugforge.dataviz.gif_viz import GIFVisualizer
 from drugforge.dataviz.html_viz import ColorMethod, HTMLVisualizer
 from drugforge.docking.docking import write_results_to_multi_sdf
 from drugforge.docking.docking_data_validation import DockingResultCols
+from drugforge.docking.meta_scorer import MetaScorer
 from drugforge.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
 from drugforge.docking.scorer import ChemGauss4Scorer
-from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.modeling.protein_prep import LigandTransferProteinPrepper
 from drugforge.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
-from drugforge.workflows.docking_workflows.workflows import (
-    DockingWorkflowInputsBase,
-)
+from drugforge.workflows.docking_workflows.workflows import DockingWorkflowInputsBase
 from pydantic import Field, PositiveInt, model_validator
 
 
@@ -342,6 +336,7 @@ def ligand_transfer_docking_workflow(inputs: LigandTransferDockingWorkflowInputs
         logger.warning("Using ML scorer is still experimental. Fails are expected.")
         from drugforge.docking.ml_scorer import MLModelScorer  # Lazy import
         from drugforge.ml.models import ASAPMLModelRegistry
+
         # check which endpoints are availabe for the target
         models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
         ml_scorers = MLModelScorer.load_model_specs(models=models)

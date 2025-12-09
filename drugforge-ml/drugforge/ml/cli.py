@@ -6,6 +6,10 @@ from pathlib import Path
 import click
 import torch
 from drugforge.data.util.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
+
+# from drugforge.ml.cli_mlops import mlops
+# from drugforge.ml.cli_sweep import sweep
+from drugforge.ml.analysis import analysis
 from drugforge.ml.cli_args import (
     ds_cache_overwrite,
     ds_config_cache_overwrite,
@@ -31,10 +35,6 @@ from drugforge.ml.cli_args import (
     wandb_args,
     weights_path,
 )
-
-# from drugforge.ml.cli_mlops import mlops
-# from drugforge.ml.cli_sweep import sweep
-from drugforge.ml.analysis import analysis
 from drugforge.ml.config import (
     DatasetConfig,
     DatasetSplitterType,

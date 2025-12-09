@@ -1,28 +1,27 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, Any, Union
+from typing import Any, Optional, Union
 
-from openeye import oechem
-from pydantic import Field, model_validator
-
-from drugforge.data.schema.complex import ComplexBase, Complex
-from drugforge.data.schema.ligand import Ligand
 from drugforge.data.backend.openeye import (
-    oedu_to_bytes64,
     bytes64_to_oedu,
     load_openeye_design_unit,
-    save_openeye_design_unit,
-    split_openeye_design_unit,
+    oedu_to_bytes64,
     openeye_perceive_residues,
+    save_openeye_design_unit,
     save_openeye_pdb,
+    split_openeye_design_unit,
 )
+from drugforge.data.schema.complex import Complex, ComplexBase
 from drugforge.data.schema.identifiers import TargetIdentifiers
+from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.schema_base import (
     DataModelAbstractBase,
     DataStorageType,
     schema_dict_get_val_overload,
 )
+from openeye import oechem
+from pydantic import Field, model_validator
 
 
 class PreppedTarget(DataModelAbstractBase):
@@ -32,7 +31,7 @@ class PreppedTarget(DataModelAbstractBase):
 
     target_name: str = Field(None, description="The name of the target")
 
-    ids: Optional[TargetIdentifiers] = Field(
+    ids: TargetIdentifiers | None = Field(
         None,
         description="TargetIdentifiers Schema for identifiers associated with this target",
     )
@@ -53,7 +52,7 @@ class PreppedTarget(DataModelAbstractBase):
         frozen=True,
     )
 
-    crystal_symmetry: Optional[Any] = Field(
+    crystal_symmetry: Any | None = Field(
         None,
         description="bounding box of the target, lost in oedu conversion so can be saved as attribute.",
     )
@@ -73,7 +72,7 @@ class PreppedTarget(DataModelAbstractBase):
         return v
 
     @classmethod
-    def from_oedu(cls, oedu: oechem.OEDesignUnit, **kwargs) -> "PreppedTarget":
+    def from_oedu(cls, oedu: oechem.OEDesignUnit, **kwargs) -> PreppedTarget:
         kwargs.pop("data", None)
         oedu_bytes = oedu_to_bytes64(oedu)
         return cls(data=oedu_bytes, **kwargs)
@@ -82,12 +81,12 @@ class PreppedTarget(DataModelAbstractBase):
         return bytes64_to_oedu(self.data)
 
     @classmethod
-    def from_oedu_file(cls, oedu_file: Union[str, Path], **kwargs) -> "PreppedTarget":
+    def from_oedu_file(cls, oedu_file: str | Path, **kwargs) -> PreppedTarget:
         kwargs.pop("data", None)
         oedu = load_openeye_design_unit(oedu_file)
         return cls.from_oedu(oedu=oedu, **kwargs)
 
-    def to_oedu_file(self, filename: Union[str, Path]) -> None:
+    def to_oedu_file(self, filename: str | Path) -> None:
         oedu = self.to_oedu()
         save_openeye_design_unit(oedu, filename)
 

@@ -1,5 +1,5 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union, Dict
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union
 
 import gufe
 import openfe
@@ -21,7 +21,7 @@ from openfe.protocols.openmm_utils.omm_settings import (
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
 from openff.models.types import FloatQuantity
 from openff.units import unit as OFFUnit
-from pydantic import Field, field_validator, ConfigDict
+from pydantic import ConfigDict, Field, field_validator
 
 from ._util import check_ligand_series_uniqueness_and_names
 from .base import _SchemaBase, _SchemaBaseFrozen
@@ -300,7 +300,7 @@ class AlchemiscaleResults(_BaseResults):
     )
 
     @field_validator("network_key", mode="before")
-    def convert_to_scoped_key(cls, value: Union[Dict, ScopedKey]) -> ScopedKey:
+    def convert_to_scoped_key(cls, value: Union[dict, ScopedKey]) -> ScopedKey:
         # if we have a dict convert it to a ScopedKey
         if isinstance(value, dict):
             return ScopedKey(**value)
@@ -434,7 +434,7 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
         description="The name of the biological target associated with this Alchemy network.",
     )
     """Overwrite the class config to freeze the results model"""
-    model_config = ConfigDict(frozen = True, orm_mode = True, arbitrary_types_allowed = True)
+    model_config = ConfigDict(frozen=True, orm_mode=True, arbitrary_types_allowed=True)
 
     def to_openfe_receptor(self) -> openfe.ProteinComponent:
 

@@ -1235,6 +1235,7 @@ def check_empty_dataframe(
         else:
             raise ValueError(f"fail argument {fail} not recognised")
 
+
 def get_path_string(module) -> str:
     """
     Get the absolute path as a string to an imported module.

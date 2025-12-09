@@ -158,7 +158,7 @@ class POSITDocker(DockingBase):
     )
 
     @model_validator(mode="after")
-    def omega_dense_check(self)->Self:
+    def omega_dense_check(self) -> Self:
         """
         Validate omega_dense
         """

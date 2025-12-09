@@ -2,9 +2,9 @@ import json
 
 import pandas
 import pytest
+from click.testing import CliRunner
 from drugforge.data.cli.cli import data as cli
 from drugforge.data.testing.test_resources import fetch_test_file
-from click.testing import CliRunner
 
 
 @pytest.fixture(scope="session")
@@ -61,6 +61,7 @@ def test_cdd_to_schema(cdd_to_schema_files, tmp_path):
     # If the entry is not equivalent, it will dig down into the individual elements or subelements
     # It will also treat nan and None as equivalent
     import math
+
     def compare_vals_in_dict(d1, d2):
         if d1 == d2:
             return True

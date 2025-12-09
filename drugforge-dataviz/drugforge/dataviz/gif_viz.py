@@ -17,7 +17,7 @@ from drugforge.dataviz.show_contacts import show_contacts
 from drugforge.dataviz.visualizer import VisualizerBase
 from drugforge.docking.docking_data_validation import DockingResultCols
 from drugforge.simulation.simulate import SimulationResult
-from pydantic import Field, PositiveInt, ConfigDict
+from pydantic import ConfigDict, Field, PositiveInt
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ class GIFVisualizer(VisualizerBase):
     interval: PositiveInt = Field(1, description="Interval between frames")
     debug: bool = Field(False, description="Whether to run in debug mode")
 
-    model_config =  ConfigDict(arbitrary_types_allowed = True)
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @dask_vmap(["inputs"], has_failure_mode=True)
     @backend_wrapper("inputs")
@@ -357,6 +357,7 @@ class GIFVisualizer(VisualizerBase):
             raise ValueError(
                 f"Unsupported input type {type(inputs[0])}, must be SimulationResult or tuple of (Optional[Path], Path)"
             )
+
     def _dispatch_simulation_result(
         self,
         inputs: list[SimulationResult],

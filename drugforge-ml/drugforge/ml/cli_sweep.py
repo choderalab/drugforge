@@ -32,11 +32,7 @@ from drugforge.ml.cli_args import (
     wandb_args,
     weights_path,
 )
-from drugforge.ml.config import (
-    DatasetSplitterType,
-    EarlyStoppingType,
-    OptimizerType,
-)
+from drugforge.ml.config import DatasetSplitterType, EarlyStoppingType, OptimizerType
 from drugforge.ml.sweep import Sweeper
 from drugforge.ml.trainer import Trainer
 from mtenn.config import CombinationConfig, ModelType, ReadoutConfig, StrategyConfig

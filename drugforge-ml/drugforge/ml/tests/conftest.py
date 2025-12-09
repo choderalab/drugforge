@@ -1,9 +1,9 @@
 import os
 
 import pytest
+from dgllife.utils import CanonicalAtomFeaturizer
 from drugforge.data.schema.experimental import ExperimentalCompoundData
 from drugforge.ml.dataset import GraphDataset
-from dgllife.utils import CanonicalAtomFeaturizer
 from rdkit import Chem
 
 
@@ -110,4 +110,6 @@ def test_data(graph_dataset):
 
 @pytest.fixture()
 def remote_ensemble_manifest_url():
-    return "https://d1ibwnbvfa7iey.cloudfront.net/test_manifest/asap_ensemble_models.yaml"
+    return (
+        "https://d1ibwnbvfa7iey.cloudfront.net/test_manifest/asap_ensemble_models.yaml"
+    )

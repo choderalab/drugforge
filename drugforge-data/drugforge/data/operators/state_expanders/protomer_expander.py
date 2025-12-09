@@ -9,9 +9,7 @@ from drugforge.data.backend.openeye import (
     oequacpac,
     save_openeye_sdfs,
 )
-from drugforge.data.operators.state_expanders.state_expander import (
-    StateExpanderBase,
-)
+from drugforge.data.operators.state_expanders.state_expander import StateExpanderBase
 from drugforge.data.schema.ligand import Ligand
 from pydantic import Field
 
@@ -146,7 +144,6 @@ class EpikExpander(StateExpanderBase):
         oe_mols = load_openeye_sdfs(sdf_fn="output.sdf")
         # parse into ligand objects
         expanded_ligands = [Ligand.from_oemol(oemol) for oemol in oe_mols]
-
 
         return expanded_ligands
 

@@ -1,11 +1,11 @@
 import os
-import pytest
 import traceback
 from unittest.mock import Mock, patch
 
 import pandas as pd
-from drugforge.data.testing.test_resources import fetch_test_file
+import pytest
 from click.testing import CliRunner
+from drugforge.data.testing.test_resources import fetch_test_file
 
 try:
     from drugforge.ml.cli_mlops import mlops as cli

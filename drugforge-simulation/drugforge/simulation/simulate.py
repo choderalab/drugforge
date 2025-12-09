@@ -26,12 +26,12 @@ from openmmforcefields.generators import SystemGenerator
 from openmmtools.utils import get_fastest_platform
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field,
     PositiveFloat,
     PositiveInt,
-    model_validator,
     field_validator,
-    ConfigDict,
+    model_validator,
 )
 from rdkit import Chem
 from tqdm import tqdm

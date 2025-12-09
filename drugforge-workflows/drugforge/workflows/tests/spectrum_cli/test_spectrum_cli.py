@@ -2,8 +2,8 @@ import os
 import traceback
 
 import pytest
-from drugforge.workflows.spectrum_workflows.cli import spectrum as cli
 from click.testing import CliRunner
+from drugforge.workflows.spectrum_workflows.cli import spectrum as cli
 
 
 def click_success(result):
@@ -49,12 +49,13 @@ def test_seq_alignment_multimer(blast_xml_path, tmp_path):
             "",
             "--multimer",
             "--n-chains",
-            '2',
+            "2",
             "--output-dir",
             tmp_path,
         ],
     )
     assert click_success(result)
+
 
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_struct_alignment_single_pdb(blast_csv_path, protein_path, tmp_path):
@@ -215,7 +216,9 @@ def test_fitness_alignment_fasta(
 
 
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
-def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_csv_path):  
+def test_score_docking_only(
+    structure_dir, pdb_file, tmp_path, docking_results_csv_path
+):
     runner = CliRunner()
     struct_dir, _ = structure_dir
     csv_save = tmp_path / "scores.csv"
@@ -224,7 +227,7 @@ def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_c
         [
             "score",
             "-d",
-            struct_dir, 
+            struct_dir,
             "-f",
             pdb_file,
             "-o",
@@ -236,7 +239,7 @@ def test_score_docking_only(structure_dir, pdb_file, tmp_path, docking_results_c
             "--dock-chain",
             "A",
             "--ref-chain",
-            "A"
+            "A",
         ],
     )
     assert csv_save.exists()

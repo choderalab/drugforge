@@ -4,7 +4,7 @@ import json
 from enum import Enum
 from pathlib import Path
 
-from pydantic import BaseModel, ByteSize, Field, ConfigDict
+from pydantic import BaseModel, ByteSize, ConfigDict, Field
 
 _SCHEMA_VERSION = "0.1.0"
 
@@ -60,7 +60,7 @@ class DataModelAbstractBase(BaseModel):
         # first load the file, then use the json parser
         contents = read_file_directly(file)
         return cls.from_json(contents)
-        #return cls.parse_file(str(file))
+        # return cls.parse_file(str(file))
 
     def to_json_file(self, file: str | Path):
         write_file_directly(file, self.model_dump_json())
@@ -125,7 +125,7 @@ class MoleculeComponent(str, Enum):
 class MoleculeFilter(BaseModel):
     """Filter for selecting components of a molecule."""
 
-    model_config = ConfigDict(extra = "forbid")
+    model_config = ConfigDict(extra="forbid")
 
     protein_chains: list = Field(
         list(),

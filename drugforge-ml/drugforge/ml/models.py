@@ -17,8 +17,8 @@ from pydantic import (
     BaseModel,
     Field,
     HttpUrl,
-    field_validator,
     field_serializer,
+    field_validator,
     model_validator,
 )
 from semver import Version
@@ -51,7 +51,7 @@ class MLModelBase(BaseModel):
         description="Representation type of protein in the underlying split model(s).",
     )
     last_updated: date = Field(..., description="Last updated datetime")
-    targets: Set[TargetTags] = Field(..., description="Biological targets of the model")
+    targets: set[TargetTags] = Field(..., description="Biological targets of the model")
     mtenn_lower_pin: Version | None = Field(
         None, description="Lower bound on compatible mtenn versions (inclusive)."
     )

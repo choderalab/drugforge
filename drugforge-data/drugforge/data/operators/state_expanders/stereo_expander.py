@@ -1,9 +1,7 @@
 from typing import Literal
 
 from drugforge.data.backend.openeye import clear_SD_data, oechem, oeomega
-from drugforge.data.operators.state_expanders.state_expander import (
-    StateExpanderBase,
-)
+from drugforge.data.operators.state_expanders.state_expander import StateExpanderBase
 from drugforge.data.schema.ligand import Ligand
 from pydantic import Field
 
@@ -67,7 +65,8 @@ class StereoExpander(StateExpanderBase):
                     enantiomer
                 )  # a single conformer needs to be built to fully define stereochemistry
                 enantiomer_ligand = Ligand.from_oemol(
-                    enantiomer, **parent_ligand.model_dump(exclude={"provenance", "data"})
+                    enantiomer,
+                    **parent_ligand.model_dump(exclude={"provenance", "data"})
                 )
                 # if the ligand is the parent ie no possible expansions don't tag it
                 if enantiomer_ligand.fixed_inchikey == parent_ligand.fixed_inchikey:

@@ -1,15 +1,14 @@
+import logging
 from pathlib import Path
+from typing import Union
 
+import MDAnalysis as mda
 import numpy as np
 import pymol2
-import MDAnalysis as mda
 from Bio import pairwise2
 from drugforge.data.backend.openeye import load_openeye_pdb, save_openeye_pdb
 from drugforge.modeling.modeling import superpose_molecule
 from drugforge.spectrum.blast import pdb_to_seq
-
-from typing import Union
-import logging
 
 
 def rmsd_alignment(

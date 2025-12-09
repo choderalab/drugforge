@@ -25,8 +25,8 @@ from drugforge.ml.es import (
     BestEarlyStopping,
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,
-    ThresholdEarlyStopping,
     ProgressQuotientEarlyStopping,
+    ThresholdEarlyStopping,
 )
 from pydantic import (
     BaseModel,
@@ -218,12 +218,12 @@ class EarlyStoppingConfig(ConfigBase):
         ),
     )
     # Paremeters for threshold
-    threshold: Optional[float] = Field(
+    threshold: float | None = Field(
         None, description="Loss below which to stop model training."
     )
     # Parameters for progress quotient
-    alpha: Optional[float] = Field(None, description="Quotient threshold.")
-    k: Optional[int] = Field(
+    alpha: float | None = Field(None, description="Quotient threshold.")
+    k: int | None = Field(
         None, description="Length of training strip to evaluate at the end of."
     )
 
