@@ -58,7 +58,7 @@ extensions = [
     "myst_parser",
     "nbsphinx",
     "nbsphinx_link",
-    "sphinxcontrib.collections",
+    "sphinx_collections",
 ]
 
 collections = {
@@ -81,6 +81,47 @@ templates_path = ["_templates"]
 
 # don't execute notebooks
 nbsphinx_execute = 'never'
+
+
+autodoc_mock_imports = [
+    # GPU/CUDA
+    'cudatoolkit',
+    'dask',
+    'dask-cuda',
+    'dask-jobqueue',
+
+    # Deep Learning
+    'torch',  # pytorch
+    'dgl',
+    'dgllife',
+    'pytorch_cluster',
+    'pytorch_geometric',
+    'pytorch_scatter',
+    'pytorch_sparse',
+    'mtenn',
+
+    # Molecular dynamics/simulation
+    'openmm',
+    'openmmtools',
+    'openmmforcefields',
+    'mdtraj',
+    'mdanalysis',
+    'perses',
+    'pymol2',
+
+    # Chemistry toolkits
+    'openeye',  # openeye-toolkits
+    'pymol',  # pymol-open-source
+    'rdkit',
+    'vina',
+    'plip',
+
+    # Bioinformatics tools
+    'mafft',
+
+    # ML tracking
+    'wandb',
+]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
