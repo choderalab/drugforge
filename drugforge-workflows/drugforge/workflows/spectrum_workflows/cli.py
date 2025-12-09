@@ -200,7 +200,7 @@ def seq_alignment(
         # Generate PDB file for template if requested (only for the reference structure)
         if gen_ref_pdb:
             pdb_entry = PDBEntry(seq=alignment_out.select_file, type="fasta")
-            __ = pdb_entry.retrieve_pdb(
+            _ = pdb_entry.retrieve_pdb(
                 results_folder=results_folder, min_id_match=99.9, ref_only=True
             )
 
