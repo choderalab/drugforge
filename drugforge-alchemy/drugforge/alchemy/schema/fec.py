@@ -1,5 +1,5 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union
 
 import gufe
 import openfe
