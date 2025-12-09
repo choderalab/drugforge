@@ -200,11 +200,9 @@ def seq_alignment(
         # Generate PDB file for template if requested (only for the reference structure)
         if gen_ref_pdb:
             pdb_entry = PDBEntry(seq=alignment_out.select_file, type="fasta")
-            pdb_file_record = pdb_entry.retrieve_pdb(
+            __ = pdb_entry.retrieve_pdb(
                 results_folder=results_folder, min_id_match=99.9, ref_only=True
             )
-
-            record = pdb_file_record[0]
 
 
 @spectrum.command()
