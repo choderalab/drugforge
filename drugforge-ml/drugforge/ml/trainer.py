@@ -292,7 +292,6 @@ class Trainer(BaseModel):
         config_file = config_kwargs.pop("cache", None)
         overwrite = config_kwargs.pop("overwrite_cache", False)
 
-        ## still need to figure out how to get config_cls
         return Trainer._build_arbitrary_config(
             config_cls=config_cls,
             config_file=config_file,
