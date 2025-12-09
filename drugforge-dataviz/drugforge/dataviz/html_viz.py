@@ -19,11 +19,6 @@ from drugforge.data.backend.openeye import (
     oemol_to_sdf_string,
     openeye_perceive_residues,
 )
-from drugforge.dataviz.plip import (
-    get_interactions_plip,
-    make_color_res_fitness,
-    make_color_res_subpockets,
-)
 from drugforge.data.metadata.resources import active_site_chains, master_structures
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
@@ -34,6 +29,11 @@ from drugforge.data.services.postera.manifold_data_validation import (
 from drugforge.data.util.dask_utils import backend_wrapper, dask_vmap
 from drugforge.data.util.logging import HiddenPrint
 from drugforge.dataviz._html_blocks import HTMLBlockData
+from drugforge.dataviz.plip import (
+    get_interactions_plip,
+    make_color_res_fitness,
+    make_color_res_subpockets,
+)
 from drugforge.dataviz.visualizer import VisualizerBase
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.docking_data_validation import DockingResultCols

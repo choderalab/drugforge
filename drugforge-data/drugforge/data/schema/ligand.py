@@ -197,9 +197,7 @@ class Ligand(DataModelAbstractBase):
         Create a Ligand from an OEMol extracting all SD tags into the internal model
         """
         from drugforge.data.backend.openeye import get_SD_data
-        from drugforge.data.util.data_conversion import (
-            get_first_value_of_dict_of_lists,
-        )
+        from drugforge.data.util.data_conversion import get_first_value_of_dict_of_lists
 
         # work with a copy as we change the state of the molecule
         input_mol = oechem.OEMol(mol)
@@ -395,7 +393,9 @@ class Ligand(DataModelAbstractBase):
         return gufe.components.SmallMoleculeComponent.from_rdkit(self.to_rdkit())
 
     @classmethod
-    def from_openfe(cls, mol: "gufe.components.SmallMoleculeComponent", **kwargs) -> "Ligand":
+    def from_openfe(
+        cls, mol: "gufe.components.SmallMoleculeComponent", **kwargs
+    ) -> "Ligand":
         """
         Create a Ligand from an openfe SmallMoleculeComponent
         """
@@ -568,9 +568,7 @@ class Ligand(DataModelAbstractBase):
                 new_data[k] = v
 
         # update tags and conf_tags!
-        from drugforge.data.util.data_conversion import (
-            get_first_value_of_dict_of_lists,
-        )
+        from drugforge.data.util.data_conversion import get_first_value_of_dict_of_lists
 
         self.conf_tags.update(new_data)
         self.tags.update(get_first_value_of_dict_of_lists(new_data))

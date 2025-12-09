@@ -7,9 +7,7 @@ from drugforge.data.operators.state_expanders.protomer_expander import (
     ProtomerExpander,
 )
 from drugforge.data.operators.state_expanders.stereo_expander import StereoExpander
-from drugforge.data.operators.state_expanders.tautomer_expander import (
-    TautomerExpander,
-)
+from drugforge.data.operators.state_expanders.tautomer_expander import TautomerExpander
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.testing.test_resources import fetch_test_file
 

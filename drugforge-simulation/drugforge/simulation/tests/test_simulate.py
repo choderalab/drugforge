@@ -3,11 +3,11 @@ import traceback
 from unittest import mock
 
 import pytest
+from click.testing import CliRunner
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.openeye import POSITDockingResults
 from drugforge.simulation.cli import simulation as cli
 from drugforge.simulation.simulate import SimulationResult, VanillaMDSimulator
-from click.testing import CliRunner
 from openmm import unit
 
 

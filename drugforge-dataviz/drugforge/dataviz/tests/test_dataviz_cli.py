@@ -1,8 +1,8 @@
 import traceback
 
 import pytest
-from drugforge.dataviz.cli import visualization
 from click.testing import CliRunner
+from drugforge.dataviz.cli import visualization
 
 
 def click_success(result):

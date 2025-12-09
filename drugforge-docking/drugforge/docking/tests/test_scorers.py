@@ -1,12 +1,10 @@
 import pytest
-from drugforge.docking.scorer import (
-    ChemGauss4Scorer,
-)
 from drugforge.docking.fint_scorer import FINTScorer
 
 # TODO: undo this comment when xfail is removed
 # from drugforge.docking.ml_scorer import GATScorer, SchnetScorer, E3NNScorer
 from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.docking.scorer import ChemGauss4Scorer
 
 
 # parametrize over fixtures

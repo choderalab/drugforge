@@ -64,4 +64,3 @@ dependencies:
   - moto
   - boto3
   - multimethod
-

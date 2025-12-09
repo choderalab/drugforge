@@ -1,8 +1,8 @@
 import traceback
 
 import pytest
-from drugforge.cli.cli import cli
 from click.testing import CliRunner
+from drugforge.cli.cli import cli
 
 
 def click_success(result):

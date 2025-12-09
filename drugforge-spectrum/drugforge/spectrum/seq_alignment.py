@@ -1,6 +1,6 @@
+import logging
 import subprocess
 from pathlib import Path
-import logging
 
 import numpy as np
 import pandas as pd
@@ -464,7 +464,9 @@ def do_MSA(
         select_file = alignment.select_checkbox()
     elif "host" in select_mode or "organism" in select_mode:
         if alignment.hosts[0] is None:
-            raise NameError("The csv input file provided does not have host information, you have to use the 'keyword' mode.")
+            raise NameError(
+                "The csv input file provided does not have host information, you have to use the 'keyword' mode."
+            )
         else:
             select_file = alignment.select_taxonomy(select_mode, f"{save_file}.fasta")
     else:
@@ -486,7 +488,9 @@ def do_MSA(
     clean_csv = alignment.csv_align_data(
         alignment.select_file, f"{save_file}.csv", n_chains
     )
-    logging.info(f"A csv file {clean_csv} have been generated with the selected sequences")
+    logging.info(
+        f"A csv file {clean_csv} have been generated with the selected sequences"
+    )
 
     p, align_html = alignment.view_alignment(
         plot_width=plot_width,
@@ -496,7 +500,9 @@ def do_MSA(
         max_mismatch=max_mismatch,
         reorder=custom_order.split(","),
     )
-    logging.info(f"A html file {align_html} have been generated with the aligned sequences")
+    logging.info(
+        f"A html file {align_html} have been generated with the aligned sequences"
+    )
 
     alignment.sucess = True
     return alignment
