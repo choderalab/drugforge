@@ -1,5 +1,12 @@
+import warnings
+
 import click
 
+# Check for Openeye and suggest to install it if not
+try:
+    import openeye.oechem as oechem
+except ImportError:
+    warnings.warn("Cannot import openeye oechem. OpenEye toolkits are required for this software to work, please install them using `mamba install -c openeye openeye-toolkits`")
 
 @click.group()
 def cli(help="Command-line interface for drugforge"): ...
