@@ -103,9 +103,7 @@ def get_SD_data(mol: Chem.Mol) -> dict[str, list]:
 
         return get_dict_of_lists_from_dict_of_str(_get_SD_data(mol))
 
-    from drugforge.data.util.data_conversion import (
-        get_dict_of_lists_from_list_of_dicts,
-    )
+    from drugforge.data.util.data_conversion import get_dict_of_lists_from_list_of_dicts
 
     data_list = [_get_SD_data(conf) for conf in mol.GetConformers()]
     return get_dict_of_lists_from_list_of_dicts(data_list)

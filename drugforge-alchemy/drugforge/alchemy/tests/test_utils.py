@@ -378,9 +378,7 @@ def test_get_cdd_molecules_util(monkeypatch, defined_only, n_ligands, remove_cov
         ]
         return pandas.DataFrame(data)
 
-    monkeypatch.setattr(
-        drugforge.alchemy.predict, "download_cdd_data", get_cdd_data
-    )
+    monkeypatch.setattr(drugforge.alchemy.predict, "download_cdd_data", get_cdd_data)
 
     molecules = get_cdd_molecules(
         protocol_name="my-protocol",
@@ -410,9 +408,7 @@ def test_cdd_download_remove_radicals(monkeypatch):
         ]
         return pandas.DataFrame(data)
 
-    monkeypatch.setattr(
-        drugforge.alchemy.predict, "download_cdd_data", get_cdd_data
-    )
+    monkeypatch.setattr(drugforge.alchemy.predict, "download_cdd_data", get_cdd_data)
 
     molecules = get_cdd_molecules(
         protocol_name="my-protocol",
