@@ -20,7 +20,6 @@ from drugforge.cli.cli_args import (
     seq_type,
     target,
 )
-from drugforge.data.util.logging import FileLogger
 from drugforge.simulation.simulate import OpenMMPlatform
 from drugforge.spectrum.align_seq_match import (
     fasta_alignment,
@@ -206,9 +205,6 @@ def seq_alignment(
             )
 
             record = pdb_file_record[0]
-            logger.info(
-                f"A PDB template for {record.label} was saved as {record.pdb_file}"
-            )
 
 
 @spectrum.command()
