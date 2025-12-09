@@ -6,14 +6,11 @@ from typing import Optional, Union
 
 import dask
 import psutil
-from drugforge.data.util.execution_utils import (
-    get_platform,
-    hyperthreading_is_enabled,
-)
-from drugforge.data.util.stringenum import StringEnum
 from dask import config as cfg
 from dask.utils import parse_timedelta
 from distributed import Client, LocalCluster
+from drugforge.data.util.execution_utils import get_platform, hyperthreading_is_enabled
+from drugforge.data.util.stringenum import StringEnum
 
 logger = logging.getLogger(__name__)
 

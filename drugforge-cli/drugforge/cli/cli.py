@@ -6,15 +6,16 @@ import click
 try:
     import openeye.oechem as oechem
 except ImportError:
-    warnings.warn("Cannot import openeye oechem. OpenEye toolkits are required for this software to work, please install them using `mamba install -c openeye openeye-toolkits`")
+    warnings.warn(
+        "Cannot import openeye oechem. OpenEye toolkits are required for this software to work, please install them using `mamba install -c openeye openeye-toolkits`"
+    )
+
 
 @click.group()
 def cli(help="Command-line interface for drugforge"): ...
 
 
-from drugforge.workflows.docking_workflows.cli import (  # noqa: F401, E402, F811
-    docking,
-)
+from drugforge.workflows.docking_workflows.cli import docking  # noqa: F401, E402, F811
 
 cli.add_command(docking)
 

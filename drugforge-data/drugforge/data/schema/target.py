@@ -10,15 +10,15 @@ from drugforge.data.backend.openeye import (
     split_openeye_mol,
 )
 from drugforge.data.schema.identifiers import TargetIdentifiers
-from pydantic.v1 import Field, root_validator
-
 from drugforge.data.schema.schema_base import (
     DataModelAbstractBase,
     DataStorageType,
+    MoleculeFilter,
     check_strings_for_equality_with_exclusion,
     schema_dict_get_val_overload,
-    write_file_directly, MoleculeFilter,
+    write_file_directly,
 )
+from pydantic.v1 import Field, root_validator
 
 logger = logging.getLogger(__name__)
 
@@ -125,5 +125,3 @@ class Target(DataModelAbstractBase):
         Get the crystal symmetry of the target
         """
         return oechem.OEGetCrystalSymmetry(self.to_oemol())
-
-

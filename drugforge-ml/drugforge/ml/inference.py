@@ -6,6 +6,9 @@ import dgl
 import mtenn
 import numpy as np
 import torch
+
+# static import of models from base yaml here
+from dgllife.utils import CanonicalAtomFeaturizer
 from drugforge.data.backend.openeye import oechem
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
@@ -19,9 +22,6 @@ from drugforge.ml.models import (
     MLModelSpec,
     MLModelSpecBase,
 )
-
-# static import of models from base yaml here
-from dgllife.utils import CanonicalAtomFeaturizer
 from mtenn.config import E3NNModelConfig, GATModelConfig, ModelType, SchNetModelConfig
 from pydantic.v1 import BaseModel, Field
 

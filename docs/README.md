@@ -1,12 +1,12 @@
 # Compiling drugforge's Documentation
 
-For the docs to compile properly, you will need to have the full drugforge environment installed. 
+For the docs to compile properly, you will need to have the full drugforge environment installed.
 
 The docs for this project are built with [Sphinx](http://www.sphinx-doc.org/en/master/).
 To install the needed dependencies, you can run:
 
 ```bash
- mamba env update -f docs/requirements.yaml -n YOUR_DRUGFORGE_ENVIRONMENT_NAME 
+ mamba env update -f docs/requirements.yaml -n YOUR_DRUGFORGE_ENVIRONMENT_NAME
 ```
 
 You can then build the docs with:

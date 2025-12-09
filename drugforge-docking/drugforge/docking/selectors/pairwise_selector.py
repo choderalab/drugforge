@@ -2,11 +2,11 @@ import logging
 from itertools import product
 from typing import ClassVar, Union
 
-from drugforge.docking.selectors.selector import SelectorBase
 from drugforge.data.schema.complex import Complex, ComplexBase
-from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import ChemicalRelationship, Ligand
 from drugforge.data.schema.pairs import CompoundStructurePair
+from drugforge.docking.selectors.selector import SelectorBase
+from drugforge.modeling.schema import PreppedComplex
 
 logger = logging.getLogger(__name__)
 

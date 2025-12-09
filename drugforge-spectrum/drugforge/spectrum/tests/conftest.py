@@ -6,13 +6,16 @@ from drugforge.data.testing.test_resources import fetch_test_file
 def protein_path():
     return fetch_test_file("Mpro-P2660_0A_bound.pdb")
 
+
 @pytest.fixture(scope="session")
 def prepped_target_path():
     return fetch_test_file("Mpro-P2660_0A_bound-prepped_protein.pdb")
 
+
 @pytest.fixture(scope="session")
 def prepped_ligand_path():
     return fetch_test_file("Mpro-P2660_0A_bound-prepped_ligand.sdf")
+
 
 @pytest.fixture(scope="session")
 def blast_xml_path():
@@ -33,17 +36,21 @@ def fasta_alignment_path():
 def pdb_file():
     return fetch_test_file("Mpro-P2660_0A_bound_oe_processed.pdb")
 
+
 @pytest.fixture(scope="session")
 def docking_results_csv_path():
     return fetch_test_file("lt_docking_scores.csv")
+
 
 @pytest.fixture(scope="session")
 def ligand_prepped_vina():
     return fetch_test_file("SARS_model_ligand_prepped.pdbqt")
 
+
 @pytest.fixture(scope="session")
 def target_prepped_vina():
     return fetch_test_file("SARS_model_target_prepped.pdbqt")
+
 
 @pytest.fixture()
 def protein_apo_path():

@@ -1,7 +1,7 @@
 import pytest
 from drugforge.data.backend.openeye import load_openeye_pdb, oechem, split_openeye_mol
-from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.data.schema.schema_base import MoleculeFilter
+from drugforge.data.testing.test_resources import fetch_test_file
 
 
 @pytest.fixture()
