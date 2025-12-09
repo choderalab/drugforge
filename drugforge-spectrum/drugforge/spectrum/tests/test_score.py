@@ -66,7 +66,7 @@ def test_dock_score(protein_path):
         align_chain_ref="A",
     )
     assert scores_df["docking-score-POSIT"].values[0]
-    assert type(ligand_pose) == Ligand
+    assert isinstance(ligand_pose, Ligand)
     assert Path(aligned).exists()
 
 
