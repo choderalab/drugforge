@@ -236,7 +236,9 @@ def get_interactions_plip(protein, pose, color_method, target) -> dict:
 
         # load the XML produced by PLIP that contains all the interaction data.
         intn_dict_xml = xmltodict.parse(
-            ET.tostring(ET.parse(os.path.join(tmpdirname, "tmp_complex_report.xml")).getroot())
+            ET.tostring(
+                ET.parse(os.path.join(tmpdirname, "tmp_complex_report.xml")).getroot()
+            )
         )
 
     intn_dict = {}

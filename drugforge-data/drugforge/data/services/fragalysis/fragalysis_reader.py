@@ -8,10 +8,7 @@ from typing import List  # noqa: F401
 import dask
 import pandas
 from drugforge.data.schema.complex import Complex
-from drugforge.data.util.dask_utils import (
-    FailureMode,
-    actualise_dask_delayed_iterable,
-)
+from drugforge.data.util.dask_utils import FailureMode, actualise_dask_delayed_iterable
 from pydantic.v1 import BaseModel, Field, root_validator, validator
 
 logger = logging.getLogger(__name__)

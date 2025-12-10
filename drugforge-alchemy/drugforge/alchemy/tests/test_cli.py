@@ -8,18 +8,15 @@ import pytest
 import rich
 from alchemiscale import AlchemiscaleClient
 from alchemiscale.models import ScopedKey
+from click.testing import CliRunner
 from drugforge.alchemy.cli.cli import alchemy
 from drugforge.alchemy.schema.fec import (
     FreeEnergyCalculationFactory,
     FreeEnergyCalculationNetwork,
 )
-from drugforge.alchemy.schema.prep_workflow import (
-    AlchemyDataSet,
-    AlchemyPrepWorkflow,
-)
+from drugforge.alchemy.schema.prep_workflow import AlchemyDataSet, AlchemyPrepWorkflow
 from drugforge.data.services.cdd.cdd_api import CDDAPI
 from drugforge.data.testing.test_resources import fetch_test_file
-from click.testing import CliRunner
 from openfe.setup import LigandNetwork
 from rdkit import Chem
 

@@ -471,5 +471,3 @@ def du_to_complex(du, include_solvent=False):
     complex_mol = openeye_perceive_residues(complex_mol)
 
     return complex_mol
-
-

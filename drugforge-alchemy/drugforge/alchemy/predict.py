@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 import panel
 import plotmol
-from drugforge.data.schema.ligand import Ligand
 from bokeh.models import Band, ColumnDataSource, Range1d, Whisker
 from cinnabar import stats
+from drugforge.data.schema.ligand import Ligand
 from openff.units import unit
 from rdkit import Chem
 from rdkit.Chem import Draw

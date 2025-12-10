@@ -1,7 +1,8 @@
 from collections import Counter
 from typing import TYPE_CHECKING
-from gufe.serialization.json import JSONCodec
+
 from alchemiscale import ScopedKey
+from gufe.serialization.json import JSONCodec
 
 if TYPE_CHECKING:
     from drugforge.data.schema.ligand import Ligand

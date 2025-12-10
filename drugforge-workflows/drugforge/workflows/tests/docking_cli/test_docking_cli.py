@@ -3,10 +3,10 @@ import traceback
 from unittest import mock
 
 import pytest
+from click.testing import CliRunner
 from drugforge.docking.docking import DockingResult
 from drugforge.simulation.simulate import SimulationResult, VanillaMDSimulator
 from drugforge.workflows.docking_workflows.cli import docking as cli
-from click.testing import CliRunner
 
 
 def click_success(result):

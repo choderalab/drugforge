@@ -301,11 +301,7 @@ def run(
 
     import pandas
     import rich
-    from drugforge.alchemy.cli.utils import (
-        get_cpus,
-        print_header,
-        pull_from_postera,
-    )
+    from drugforge.alchemy.cli.utils import get_cpus, print_header, pull_from_postera
     from drugforge.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
     from drugforge.data.readers.molfile import MolFileFactory
     from drugforge.modeling.schema import PreppedComplex
