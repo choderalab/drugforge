@@ -10,7 +10,7 @@ from Bio import AlignIO, SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from bokeh.layouts import column
-from bokeh.models import ColumnDataSource, LinearAxis, Range1d, LabelSet
+from bokeh.models import ColumnDataSource, LabelSet, LinearAxis, Range1d
 from bokeh.models.glyphs import Rect, Text
 
 # Bokeh imports
@@ -311,18 +311,30 @@ class Alignment:
 
         # Custom right-side labels
         right_labels1 = [f"{round(score,1)}%" for score in self.scores][::-1]
-        x_offsets=N
+        x_offsets = N
         # y values should match desc (in reversed order if needed)
-        source2 = ColumnDataSource(data=dict(
-            x=[x_offsets]*len(desc),  # Position labels just outside the plot (adjust as needed)
-            y=desc,
-            labels=right_labels1
-        ))
+        source2 = ColumnDataSource(
+            data=dict(
+                x=[x_offsets]
+                * len(desc),  # Position labels just outside the plot (adjust as needed)
+                y=desc,
+                labels=right_labels1,
+            )
+        )
 
-        labels = LabelSet(x='x', y='y', text='labels', level='glyph',
-                        x_offset=0, y_offset=0, source=source2,
-                        text_align='left', text_baseline='middle', text_font_size=str(int(fontsize[:-2]) - 2) + "pt")
-        
+        labels = LabelSet(
+            x="x",
+            y="y",
+            text="labels",
+            level="glyph",
+            x_offset=0,
+            y_offset=0,
+            source=source2,
+            text_align="left",
+            text_baseline="middle",
+            text_font_size=str(int(fontsize[:-2]) - 2) + "pt",
+        )
+
         # entire sequence view (no text, with zoom)
         p1 = figure(
             title=None,
@@ -354,7 +366,7 @@ class Alignment:
         p1.add_layout(labels)
 
         plot_height = len(seqs) * 20 + 30
-        
+
         # sequence text view with ability to scroll along x axis
         p2 = figure(
             title=None,
@@ -365,7 +377,7 @@ class Alignment:
             tools=tools,
             min_border=0,
             toolbar_location="below",
-        ) 
+        )
         # Text does the same thing as rectangles but placing letter (or words) instead, aligned accordingly
         text_source = ColumnDataSource(
             dict(x=gx, y=gy, recty=recty, text=text, colors=font_colors)
@@ -387,7 +399,7 @@ class Alignment:
             line_color=None,
             fill_alpha=0.4,
         )
-    
+
         # Blank plot to hold the position labels
         p_blank = figure(
             width=plot_width,
