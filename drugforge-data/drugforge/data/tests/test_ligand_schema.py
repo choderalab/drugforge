@@ -1,11 +1,7 @@
 from uuid import uuid4
 
 import pytest
-from drugforge.data.backend.openeye import (
-    get_SD_data,
-    load_openeye_sdf,
-    set_SD_data,
-)
+from drugforge.data.backend.openeye import get_SD_data, load_openeye_sdf, set_SD_data
 from drugforge.data.schema.experimental import ExperimentalCompoundData
 from drugforge.data.schema.identifiers import LigandIdentifiers, LigandProvenance
 from drugforge.data.schema.ligand import Ligand
@@ -584,9 +580,6 @@ def test_to_rdkit(smiles):
 
 def test_partial_charge_conversion(tmpdir):
     """Make sure we can convert molecules with partial charges to other formats."""
-    from gufe.components import SmallMoleculeComponent
-
-    charge_warn = "Partial charges have been provided, these will preferentially be used instead of generating new partial charges"
 
     with tmpdir.as_cwd():
         molecule = Ligand.from_smiles("C", compound_name="test")
@@ -635,6 +628,8 @@ def test_partial_charge_conversion(tmpdir):
         assert m2.charge_provenance == molecule.charge_provenance
 
         # TODO: add this warning back (if needed) and move to alchemy
+        # from gufe.components import SmallMoleculeComponent
+        # charge_warn = "Partial charges have been provided, these will preferentially be used instead of generating new partial charges"
         # make sure openfe picks up the user charges from sdf
         # with pytest.warns(UserWarning, match=charge_warn):
         #     _ = SmallMoleculeComponent.from_sdf_file("test.sdf")

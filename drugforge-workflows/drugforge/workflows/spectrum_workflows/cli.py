@@ -1,9 +1,25 @@
+import logging
 from pathlib import Path
 from typing import Optional
 
 import click
 import pandas as pd
-from drugforge.data.util.logging import FileLogger
+from drugforge.cli.cli_args import (
+    blast_json,
+    email,
+    gen_ref_pdb,
+    input_json,
+    loglevel,
+    max_mismatches,
+    multimer,
+    n_chains,
+    output_dir,
+    pdb_file,
+    pymol_save,
+    seq_file,
+    seq_type,
+    target,
+)
 from drugforge.simulation.simulate import OpenMMPlatform
 from drugforge.spectrum.align_seq_match import (
     fasta_alignment,
@@ -15,27 +31,11 @@ from drugforge.spectrum.calculate_rmsd import (
     save_alignment_pymol,
     select_best_colabfold,
 )
-from drugforge.cli.cli_args import (
-    output_dir, 
-    pdb_file, 
-    target, 
-    input_json,
-    blast_json,
-    email,
-    gen_ref_pdb,
-    max_mismatches,
-    multimer,
-    n_chains,
-    pymol_save,
-    seq_file,
-    seq_type,
-    loglevel,
-)
 from drugforge.spectrum.seq_alignment import Alignment, do_MSA
-
-from drugforge.workflows.spectrum_workflows.score_complex import ScoreInputs, score_complex_workflow
-
-import logging
+from drugforge.workflows.spectrum_workflows.score_complex import (
+    ScoreInputs,
+    score_complex_workflow,
+)
 
 
 @click.group()
@@ -203,12 +203,9 @@ def seq_alignment(
         # Generate PDB file for template if requested (only for the reference structure)
         if gen_ref_pdb:
             pdb_entry = PDBEntry(seq=alignment_out.select_file, type="fasta")
-            pdb_file_record = pdb_entry.retrieve_pdb(
+            _ = pdb_entry.retrieve_pdb(
                 results_folder=results_folder, min_id_match=99.9, ref_only=True
             )
-
-            record = pdb_file_record[0]
-            logging.info(f"A PDB template for {record.label} was saved as {record.pdb_file}")
 
 
 @spectrum.command()
@@ -482,10 +479,10 @@ def fitness_alignment(
 
 @spectrum.command()
 @click.option(
-    "-d", 
-    "--docking-dir", 
-    type=click.Path(exists=True), 
-    help="Path to directory where docked structures are stored."
+    "-d",
+    "--docking-dir",
+    type=click.Path(exists=True),
+    help="Path to directory where docked structures are stored.",
 )
 @click.option(
     "-f",
@@ -501,10 +498,10 @@ def fitness_alignment(
     help="Path to directory where scoring results will be stored.",
 )
 @click.option(
-    "--docking-csv", 
-    type=click.Path(), 
-    default="", 
-    help="Path to csv files with docking results."
+    "--docking-csv",
+    type=click.Path(),
+    default="",
+    help="Path to csv files with docking results.",
 )
 @target
 @click.option(
@@ -529,10 +526,11 @@ def fitness_alignment(
     help="coordinate z of vina box.",
 )
 @click.option(
-    "--path-to-grid-prep", 
-    type=click.Path(), 
-    default="./", 
-    help="Path to .py file that calculates grid for Vina.")
+    "--path-to-grid-prep",
+    type=click.Path(),
+    default="./",
+    help="Path to .py file that calculates grid for Vina.",
+)
 @click.option(
     "--docking-vina",
     is_flag=True,
@@ -561,7 +559,7 @@ def fitness_alignment(
     "--md-openmm-platform",
     type=str,
     default="Fastest",
-    help="The OpenMM platform to use for MD minimization. [CPU|CUDA|OpenCL|Reference|Fastest]", 
+    help="The OpenMM platform to use for MD minimization. [CPU|CUDA|OpenCL|Reference|Fastest]",
 )
 @click.option(
     "--ml-score",
@@ -607,23 +605,17 @@ def fitness_alignment(
 )
 @click.option(
     "--gnina-out-dir",
-    type=click.Path(), 
-    default="./", 
-    help="Directory for gnina output."
+    type=click.Path(),
+    default="./",
+    help="Directory for gnina output.",
 )
-@click.option(
-    "--log-level", 
-    type=str, 
-    default="INFO", 
-    help="Logging level."
-)
+@click.option("--log-level", type=str, default="INFO", help="Logging level.")
 @input_json
-
 def score(
     docking_dir: str,
     pdb_ref: str,
     docking_csv: str,
-    out_dir:str,
+    out_dir: str,
     target: str,
     ligand_regex: str,
     protein_regex: str,
@@ -637,7 +629,7 @@ def score(
     docking_vina: bool = False,
     path_to_grid_prep: str = "./",
     minimize: bool = False,
-    md_openmm_platform:OpenMMPlatform = OpenMMPlatform.Fastest,
+    md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
     ml_score: bool = False,
     bsite_rmsd: bool = False,
     gnina_score: bool = False,
@@ -645,7 +637,7 @@ def score(
     gnina_out_dir: Optional[str] = None,
     log_level: str = "info",
     input_json: Optional[str] = None,
-) ->None:
+) -> None:
     """Run scoring workflow on docked and minimized poses"""
 
     loglevel = getattr(logging, log_level.upper(), logging.INFO)
@@ -682,6 +674,7 @@ def score(
         )
 
     score_complex_workflow(inputs)
+
 
 if __name__ == "__main__":
     spectrum()

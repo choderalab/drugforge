@@ -40,7 +40,7 @@ dependencies:
   - gufe >=1.0.0
   - pymol-open-source
   - rdkit
-  - plip
+  - plip ~=3.0.0
 
   # Math
   - numpy

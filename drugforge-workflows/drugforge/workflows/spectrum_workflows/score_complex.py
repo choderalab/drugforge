@@ -1,24 +1,24 @@
+import os
+import re
+from pathlib import Path
+from shutil import rmtree
+
+import pandas as pd
 from drugforge.data.schema.complex import Complex
 from drugforge.data.util.logging import FileLogger
-from drugforge.simulation.simulate import OpenMMPlatform
 from drugforge.docking.scorer import ChemGauss4Scorer
+from drugforge.simulation.simulate import OpenMMPlatform
+from drugforge.spectrum.calculate_rmsd import get_binding_site_rmsd
 from drugforge.spectrum.score import (
     ScoreSpectrumInputsBase,
     dock_and_score,
     get_ligand_rmsd,
-    score_autodock_vina,
     minimize_structure,
+    score_autodock_vina,
     score_gnina,
 )
-from drugforge.spectrum.calculate_rmsd import get_binding_site_rmsd
-
-import pandas as pd
-from pathlib import Path
-import re
-
-from shutil import rmtree
-import os
 from pydantic.v1 import Field
+
 
 class ScoreInputs(ScoreSpectrumInputsBase):
     """Schema for inputs for scoring complexes
@@ -29,7 +29,7 @@ class ScoreInputs(ScoreSpectrumInputsBase):
         Path to docking output csv file, from previous drugforge-docking step.
     ligand_regex : str
         Pattern for extracting ligand ID from file string.
-    protein_regex : str        
+    protein_regex : str
         Pattern for extracting protein ID from file string.
     bsite_rmsd : bool
         Whether to calculate binding site RMSD.
@@ -57,16 +57,15 @@ class ScoreInputs(ScoreSpectrumInputsBase):
         Path to directory to save gnina output.
     """
 
-    docking_csv: Path = Field(
-        None, description="Path to docking output csv file."
-    )
+    docking_csv: Path = Field(None, description="Path to docking output csv file.")
 
     ligand_regex: str = Field(
         "ASAP-[0-9]+", description="Pattern for extracting ligand ID from file string."
     )
 
     protein_regex: str = Field(
-        "YP_[0-9]+_[0-9]+|NP_[0-9]+_[0-9]+", description="Pattern for extracting protein ID from file string."
+        "YP_[0-9]+_[0-9]+|NP_[0-9]+_[0-9]+",
+        description="Pattern for extracting protein ID from file string.",
     )
 
     bsite_rmsd: bool = Field(
@@ -85,6 +84,7 @@ class ScoreInputs(ScoreSpectrumInputsBase):
     md_openmm_platform: OpenMMPlatform = Field(
         OpenMMPlatform.Fastest, description="OpenMM platform to use for MD minimization"
     )
+
 
 def score_complex_workflow(inputs: ScoreInputs):
     """Run scoring workflow for a set of docked complexes according to spectrum.
@@ -115,8 +115,8 @@ def score_complex_workflow(inputs: ScoreInputs):
             new_directory = False
 
     output_dir.mkdir(exist_ok=True, parents=True)
-    output_csv = output_dir/"scores.csv"
-    if output_csv.exists(): # Delete existing csv file because we are appending to it
+    output_csv = output_dir / "scores.csv"
+    if output_csv.exists():  # Delete existing csv file because we are appending to it
         os.remove(output_csv)
 
     logger = FileLogger(
@@ -141,7 +141,7 @@ def score_complex_workflow(inputs: ScoreInputs):
 
     if inputs.docking_csv.exists():
         df_dock = pd.read_csv(inputs.docking_csv)
-        
+
         if "input" in df_dock.columns:
             # Match the protein and ligand regex on docking output file
             logger.info("Reading docking CSV file: %s", inputs.docking_csv)
@@ -256,15 +256,16 @@ def score_complex_workflow(inputs: ScoreInputs):
                     inputs.target,
                     comp_name,
                 )
-                chain_dock = "1"  # Standard in OpenMM output file
             except FileNotFoundError as error:
-                logger.error(f"File not found during minimization of {file_min}: {error}")
+                logger.error(
+                    f"File not found during minimization of {file_min}: {error}"
+                )
                 continue
             except ValueError as error:
                 logger.error(f"Value error during minimization of {file_min}: {error}")
                 continue
             except Exception as error:
-                logger.exception(f"Unexpected error minimizing {file_min}")
+                logger.exception(f"Unexpected error {error}, minimizing {file_min}")
                 continue
             file_min = min_out
 
@@ -275,8 +276,9 @@ def score_complex_workflow(inputs: ScoreInputs):
         scorers = [ChemGauss4Scorer()]
         # load addtional ml scorers
         if inputs.ml_score:
-            from drugforge.ml.models import ASAPMLModelRegistry
             from drugforge.docking.scorer import MLModelScorer
+            from drugforge.ml.models import ASAPMLModelRegistry
+
             logger.info("Loading additional ML scorers")
             # check which endpoints are availabe for the target
             models = ASAPMLModelRegistry.reccomend_models_for_target(inputs.target)
@@ -297,12 +299,10 @@ def score_complex_workflow(inputs: ScoreInputs):
             align_chain=inputs.dock_chain,
             align_chain_ref=inputs.ref_chain,
         )
-        logger.debug(
-            "Columns of scoring dataset from drugforge: %s", scores_df.columns
-        )
+        logger.debug("Columns of scoring dataset from drugforge: %s", scores_df.columns)
         scores_df["premin-score-POSIT"] = pre_min_score
         df_save = scores_df[["premin-score-POSIT", "docking-score-POSIT"]]
-        if inputs.ml_score:  # Add ML scores  
+        if inputs.ml_score:  # Add ML scores
             if scores_df["docking-score-POSIT"].values:
                 df_save = scores_df[
                     [
@@ -351,7 +351,10 @@ def score_complex_workflow(inputs: ScoreInputs):
         logger.debug("The aligned file was saved in %s", aligned)
         logger.info("Calculating RMSD of the ligand")
         lig_rmsd = get_ligand_rmsd(
-            str(aligned), str(file_ref), True, rmsd_mode="oechem",
+            str(aligned),
+            str(file_ref),
+            True,
+            rmsd_mode="oechem",
         )
         df_save.insert(loc=len(df_save.columns), column="Lig-RMSD", value=lig_rmsd)
         pout = f"Calculated RMSD of POSIT ligand pose = {lig_rmsd} with ref {file_ref.stem}"
@@ -379,7 +382,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                 bsite_rmsd = get_binding_site_rmsd(
                     aligned,
                     file_ref,
-                   bsite_dist=5.0,
+                    bsite_dist=5.0,
                     ligres=inputs.lig_resname,
                     chain_mob=inputs.dock_chain,
                     chain_ref=inputs.ref_chain,
@@ -387,13 +390,17 @@ def score_complex_workflow(inputs: ScoreInputs):
                     aligned_temp=aligned,
                 )
             except FileNotFoundError as e:
-                logger.error(f"Reference or aligned file not found for RMSD calculation: {e}")
+                logger.error(
+                    f"Reference or aligned file not found for RMSD calculation: {e}"
+                )
                 bsite_rmsd = -1
             except ValueError as e:
                 logger.error(f"Value error during binding site RMSD calculation: {e}")
                 bsite_rmsd = -1
             except Exception as e:
-                logger.exception(f"Unexpected error while computing binding site RMSD: {e}")
+                logger.exception(
+                    f"Unexpected error while computing binding site RMSD: {e}"
+                )
                 bsite_rmsd = -1
 
             df_save.insert(
@@ -428,16 +435,22 @@ def score_complex_workflow(inputs: ScoreInputs):
                         rmsd_mode="oechem",
                         overlay=False,
                     )
-                    logger.info(f"The RMSD of the vina pose was: {lig_rmsd}",)
+                    logger.info(
+                        f"The RMSD of the vina pose was: {lig_rmsd}",
+                    )
                 except FileNotFoundError as e:
-                    logger.error(f"Reference or pose file not found for RMSD calculation: {e}")
+                    logger.error(
+                        f"Reference or pose file not found for RMSD calculation: {e}"
+                    )
                     lig_rmsd = -1
                 except ValueError as e:
                     logger.error(f"Value error during ligand RMSD calculation: {e}")
                     lig_rmsd = -1
                 except Exception as e:
-                    logger.exception(f"Unexpected error while computing Vina ligand RMSD: {e}")
-                    lig_rmsd = -1        
+                    logger.exception(
+                        f"Unexpected error while computing Vina ligand RMSD: {e}"
+                    )
+                    lig_rmsd = -1
 
                 df_vina["Vina-pose-RMSD"] = lig_rmsd
             df_save = pd.concat([df_save, df_vina], axis=1, join="inner")
@@ -461,5 +474,5 @@ def score_complex_workflow(inputs: ScoreInputs):
                 logger.error(
                     "A gnina bash script must be provided to calculate gnina scores. Won't calculate."
                 )
-        df_save.to_csv(output_csv, mode='a', index=False, header=first_write)
+        df_save.to_csv(output_csv, mode="a", index=False, header=first_write)
         first_write = False

@@ -22,10 +22,10 @@ from drugforge.cli.cli_args import (
     target,
     use_only_cache,
 )
-from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.util.dask_utils import DaskType, FailureMode
 from drugforge.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE
+from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.simulation.simulate import OpenMMPlatform
 from drugforge.workflows.docking_workflows.cross_docking import (
     CrossDockingWorkflowInputs,

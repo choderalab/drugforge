@@ -3,11 +3,7 @@ from pathlib import Path
 import click
 import torch
 from drugforge.data.util.utils import MOONSHOT_CDD_ID_REGEX, MPRO_ID_REGEX
-from drugforge.ml.config import (
-    DatasetSplitterType,
-    EarlyStoppingType,
-    OptimizerType,
-)
+from drugforge.ml.config import DatasetSplitterType, EarlyStoppingType, OptimizerType
 from mtenn.config import CombinationConfig, ReadoutConfig, StrategyConfig
 
 

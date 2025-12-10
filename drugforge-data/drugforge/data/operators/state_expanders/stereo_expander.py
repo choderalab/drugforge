@@ -1,9 +1,7 @@
 from typing import Literal
 
 from drugforge.data.backend.openeye import clear_SD_data, oechem, oeomega
-from drugforge.data.operators.state_expanders.state_expander import (
-    StateExpanderBase,
-)
+from drugforge.data.operators.state_expanders.state_expander import StateExpanderBase
 from drugforge.data.schema.ligand import Ligand
 from pydantic.v1 import Field
 
