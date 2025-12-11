@@ -23,6 +23,7 @@ from typing import Union
 import pandas as pd
 from pathlib import Path
 import subprocess
+from openbabel import pybel
 
 import logging
 from typing import Optional
@@ -63,8 +64,6 @@ class ScoreSpectrumInputsBase(BaseModel):
         Coordinate y of vina box
     vina_box_z : Optional[float]
         Coordinate z of vina box
-    path_to_grid_prep : Optional[Path]
-        Path to file for grid prepping
     dock_vina : bool
         Optionally run extra docking step with autodock vina
     gnina_score : bool
@@ -137,9 +136,6 @@ class ScoreSpectrumInputsBase(BaseModel):
         None,
         description="Coordinate z of vina box"
     ) 
-    path_to_grid_prep: Optional[Path] = Field(
-        None, description="Path to file for grid prepping"
-    )
     dock_vina: bool = Field(
         False,
         description="Optionally run extra docking step with autodock vina "
@@ -170,23 +166,6 @@ class ScoreSpectrumInputsBase(BaseModel):
         with open(file, "w") as f:
             f.write(self.json(indent=2))
 
-    @root_validator
-    @classmethod
-    def check_inputs_vina(cls, values):
-        """
-        Validate Vina inputs. If vina scoring is requested, either all box coordinates or a path to a grid prepper function must be provided.
-        """
-        vina_box_x = values.get("vina_box_x")
-        vina_box_y = values.get("vina_box_y")
-        vina_box_z = values.get("vina_box_z")
-        path_to_grid_prep = values.get("path_to_grid_prep")
-
-        if (not vina_box_x or not vina_box_y or not vina_box_z) and not path_to_grid_prep:
-            raise ValueError("Either especify ALL coordinates of the box, ot the path to grid prepper function")
-    
-
-        return values
-    
     @root_validator
     @classmethod
     def check_inputs_gnina(cls, values):

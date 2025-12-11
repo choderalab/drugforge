@@ -416,7 +416,6 @@ def score_complex_workflow(inputs: ScoreInputs):
                 vina_box,
                 box_size=[20, 20, 20],
                 dock=inputs.dock_vina,
-                path_to_prepare_file=str(inputs.path_to_grid_prep),
             )
             if out_pose is not None:
                 logger.info("Vina docking pose was successfully generated")
