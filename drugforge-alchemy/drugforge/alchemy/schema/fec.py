@@ -1,5 +1,5 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union, Dict
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union
 
 import gufe
 import openfe
@@ -300,7 +300,7 @@ class AlchemiscaleResults(_BaseResults):
     )
 
     @validator("network_key", pre=True)
-    def convert_to_scoped_key(cls, value: Union[Dict, ScopedKey]) -> ScopedKey:
+    def convert_to_scoped_key(cls, value: Union[dict, ScopedKey]) -> ScopedKey:
         # if we have a dict convert it to a ScopedKey
         if isinstance(value, dict):
             return ScopedKey(**value)

@@ -9,9 +9,7 @@ from drugforge.data.backend.openeye import (
     oequacpac,
     save_openeye_sdfs,
 )
-from drugforge.data.operators.state_expanders.state_expander import (
-    StateExpanderBase,
-)
+from drugforge.data.operators.state_expanders.state_expander import StateExpanderBase
 from drugforge.data.schema.ligand import Ligand
 from pydantic.v1 import Field
 

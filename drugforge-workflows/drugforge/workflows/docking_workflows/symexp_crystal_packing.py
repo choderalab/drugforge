@@ -2,22 +2,16 @@ from pathlib import Path
 from shutil import rmtree
 
 from drugforge.data.operators.deduplicator import LigandDeDuplicator
-from drugforge.docking.selectors.mcs_selector import RascalMCESSelector
 from drugforge.data.operators.symmetry_expander import SymmetryExpander
 from drugforge.data.readers.meta_ligand_factory import MetaLigandFactory
 from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
 from drugforge.data.services.aws.cloudfront import CloudFront
 from drugforge.data.services.aws.s3 import S3
-from drugforge.workflows.postera.manifold_artifacts import (
-    ArtifactType,
-    ManifoldArtifactUploader,
-)
 from drugforge.data.services.postera.manifold_data_validation import (
     map_output_col_to_manifold_tag,
     rename_output_columns_for_manifold,
 )
 from drugforge.data.services.postera.molecule_set import MoleculeSetAPI
-from drugforge.workflows.postera.postera_uploader import PosteraUploader
 from drugforge.data.services.services_config import (
     CloudfrontSettings,
     PosteraSettings,
@@ -30,10 +24,14 @@ from drugforge.docking.docking import write_results_to_multi_sdf
 from drugforge.docking.docking_data_validation import DockingResultCols
 from drugforge.docking.openeye import POSITDocker
 from drugforge.docking.scorer import ChemGauss4Scorer, SymClashScorer
+from drugforge.docking.selectors.mcs_selector import RascalMCESSelector
 from drugforge.modeling.protein_prep import ProteinPrepper
-from drugforge.workflows.docking_workflows.workflows import (
-    PosteraDockingWorkflowInputs,
+from drugforge.workflows.docking_workflows.workflows import PosteraDockingWorkflowInputs
+from drugforge.workflows.postera.manifold_artifacts import (
+    ArtifactType,
+    ManifoldArtifactUploader,
 )
+from drugforge.workflows.postera.postera_uploader import PosteraUploader
 from pydantic.v1 import Field
 
 

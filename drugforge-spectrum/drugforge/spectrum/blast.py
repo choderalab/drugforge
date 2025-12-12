@@ -1,19 +1,21 @@
+import logging
 import subprocess
 from pathlib import Path
+from typing import Union
 
 import pandas as pd
-from typing import Union
-import logging
 
 # BioPython
-from Bio import SeqIO
+from Bio import SeqIO, pairwise2
 from Bio.Blast import NCBIWWW, NCBIXML
 from pydantic.v1 import BaseModel, Field
-from Bio import pairwise2
 
 
 def parse_blast(
-    results_file: Union[str, Path], e_val_thresh: float, user_email: str, verbose: bool = False
+    results_file: Union[str, Path],
+    e_val_thresh: float,
+    user_email: str,
+    verbose: bool = False,
 ) -> pd.DataFrame:
     """Parse data from BLAST xml file
 
@@ -145,9 +147,13 @@ def get_blast_seqs(
         elif input_type == "pdb":
             # Input is a PDB file
             seq_source = Path(seq_source)
-            seq, fasta_out = pdb_to_seq(seq_source, fasta_out=f"{seq_source.stem}.fasta")
+            seq, fasta_out = pdb_to_seq(
+                seq_source, fasta_out=f"{seq_source.stem}.fasta"
+            )
             sequence = open(fasta_out).read()
-            logging.info(f"Sequence was extracted from PDB file and saved as {fasta_out}")
+            logging.info(
+                f"Sequence was extracted from PDB file and saved as {fasta_out}"
+            )
 
         else:  # Another source?
             raise ValueError("unknown input type")
@@ -173,13 +179,15 @@ def get_blast_seqs(
             file.write(blast_results)
 
         matches_df = parse_blast(save_file, e_val_thresh, email, verbose)
-    
-    # Add Binding site similarity score if pdb file was provided 
-    if input_type=='pdb' and not pdb_file:
+
+    # Add Binding site similarity score if pdb file was provided
+    if input_type == "pdb" and not pdb_file:
         pdb_file = seq_source
     if pdb_file:
-        logging.info('Calculating (approximated) binding pocket similarity score')
-        matches_df = bsite_similarity(matches_df, pdb_file, ref_chain='A', lig_resname='LIG')
+        logging.info("Calculating (approximated) binding pocket similarity score")
+        matches_df = bsite_similarity(
+            matches_df, pdb_file, ref_chain="A", lig_resname="LIG"
+        )
 
     if save_csv:
         matches_df.to_csv(save_folder / save_csv, index=False)
@@ -328,6 +336,7 @@ class PDBEntry(BaseModel):
     @staticmethod
     def request_rcsb_pdbid(pdb_id):
         import requests
+
         """A function to request a protein entry from the rcsb API with a pdb ID"""
         requestURL = f"https://data.rcsb.org/rest/v1/core/entry/{pdb_id}"
         r = requests.get(requestURL, headers={"Accept": "application/json"})
@@ -435,32 +444,35 @@ def search_host(hit_id, user_email):
                 break
     return host, organism
 
-def get_bsite(pdb_ref: Union[str, Path], 
-              chain_ref: str = "A", 
-              lig_ref: str = "LIG", 
-              bs_dist: Union[float, int] = 4.5,
-    ):
-    from MDAnalysis.lib.util import convert_aa_code
+
+def get_bsite(
+    pdb_ref: Union[str, Path],
+    chain_ref: str = "A",
+    lig_ref: str = "LIG",
+    bs_dist: Union[float, int] = 4.5,
+):
     import MDAnalysis as mda
+    from MDAnalysis.lib.util import convert_aa_code
+
     u_ref = mda.Universe(pdb_ref)
-    res_ref = u_ref.select_atoms(f"protein and chainid {chain_ref} and not name H* and around {bs_dist} resname {lig_ref} and not resname ACE and not resname NME and not resname NMA").residues
+    res_ref = u_ref.select_atoms(
+        f"protein and chainid {chain_ref} and not name H* and around {bs_dist} resname {lig_ref} and not resname ACE and not resname NME and not resname NMA"
+    ).residues
     bs_ref = []
     bs_ref_num = []
     ref_len = len(res_ref)
-    
+
     for i in range(ref_len):
-        ref = convert_aa_code(res_ref[i].resname) if i < ref_len else '-'
-        ref_n = res_ref[i].resid if i < ref_len else '-'
+        ref = convert_aa_code(res_ref[i].resname) if i < ref_len else "-"
+        ref_n = res_ref[i].resid if i < ref_len else "-"
         bs_ref.append(ref)
         bs_ref_num.append(ref_n)
     return bs_ref, bs_ref_num
 
+
 def bsite_similarity(
-        df: pd.DataFrame, 
-        pdb_file: str, 
-        ref_chain: str = "A", 
-        lig_resname: str = 'LIG'
-    ) -> pd.DataFrame: 
+    df: pd.DataFrame, pdb_file: str, ref_chain: str = "A", lig_resname: str = "LIG"
+) -> pd.DataFrame:
     """Calculate similarity score for the residues in the binding pocket
 
     Parameters
@@ -475,23 +487,26 @@ def bsite_similarity(
         Identifier for ligand, by default 'LIG'
     """
     import numpy as np
+
     df_new = df.copy()
     bs_ref, bs_ref_num = get_bsite(pdb_file, ref_chain, lig_resname)
     seq_ref = "".join(bs_ref)
-    df_new['bsite_score'] = None
-    df_new['bsite_sequence'] = None
+    df_new["bsite_score"] = None
+    df_new["bsite_sequence"] = None
     for i, row in df_new.iterrows():
         # Find matching residues for each alignment
-        seq = row['sequence']
-        alignment_pw = pairwise2.align.globalms(seq, seq_ref, 1, -1, -1, -.5)[0]
+        seq = row["sequence"]
+        alignment_pw = pairwise2.align.globalms(seq, seq_ref, 1, -1, -1, -0.5)[0]
         formatted_alignment = pairwise2.format_alignment(*alignment_pw)
         seq_ref_aligned, _, _, _, _ = alignment_pw
 
         alignment_lines = formatted_alignment.split("\n")
-        alignment_symbols = alignment_lines[1] 
-        matched_ref = ([
-            (i, res) for i, (res, sym) in enumerate(zip(seq_ref_aligned, alignment_symbols)) if sym == "|" and res != '-'
-            ])
+        alignment_symbols = alignment_lines[1]
+        matched_ref = [
+            (i, res)
+            for i, (res, sym) in enumerate(zip(seq_ref_aligned, alignment_symbols))
+            if sym == "|" and res != "-"
+        ]
         try:
             matches_mob = []
             matches_mob_res = []
@@ -499,14 +514,13 @@ def bsite_similarity(
                 matches_mob_res.append(str(seq)[j])
                 r = min(bs_ref_num, key=lambda x: abs(j - x))
                 matches_mob.append(str(seq)[j] == res if abs(j - r) < 10 else False)
-                
 
             total_match = np.count_nonzero(matches_mob)
             total_res = len(matched_ref)
-            match_score = round(100*total_match/total_res,2)
-            df_new.loc[i, 'bsite_score'] = match_score
-            df_new.loc[i, 'bsite_sequence'] = "".join(matches_mob_res)
+            match_score = round(100 * total_match / total_res, 2)
+            df_new.loc[i, "bsite_score"] = match_score
+            df_new.loc[i, "bsite_sequence"] = "".join(matches_mob_res)
         except IndexError:
             logging.debug(f"The binding site search was not succesful for {row['ID']}")
-    
+
     return df_new

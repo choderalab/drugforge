@@ -1,10 +1,10 @@
 import pytest
 from drugforge.data.schema.complex import Complex
-from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.pairs import CompoundStructurePair
 from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.docking.docking import DockingInputPair  # TODO: move to data
+from drugforge.modeling.schema import PreppedComplex
 
 
 @pytest.fixture(scope="session")

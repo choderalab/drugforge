@@ -6,9 +6,7 @@ import argparse
 import logging
 import os
 
-from drugforge.data.services.cdd.cdd_download import (  # noqa: E402
-    download_molecules,
-)
+from drugforge.data.services.cdd.cdd_download import download_molecules  # noqa: E402
 
 
 ################################################################################

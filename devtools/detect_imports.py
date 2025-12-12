@@ -14,7 +14,7 @@ import click
 from pathlib import Path
 
 
-def get_imports_from_file(file_path: str) -> Set[Tuple[str, str]]:
+def get_imports_from_file(file_path: str) -> set[tuple[str, str]]:
     """
     Extract import names and their submodules from a Python file.
     Returns set of tuples (package, submodule).
@@ -22,7 +22,7 @@ def get_imports_from_file(file_path: str) -> Set[Tuple[str, str]]:
     imports = set()
 
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, encoding='utf-8') as f:
             tree = ast.parse(f.read())
 
         for node in ast.walk(tree):
@@ -49,7 +49,7 @@ def get_imports_from_file(file_path: str) -> Set[Tuple[str, str]]:
     return imports
 
 
-def find_all_imports_with_files(directory: str) -> Dict[str, Dict[str, Set[str]]]:
+def find_all_imports_with_files(directory: str) -> dict[str, dict[str, set[str]]]:
     """
     Find all unique imports and their submodules in Python files.
 

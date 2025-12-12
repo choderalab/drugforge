@@ -7,10 +7,10 @@ from drugforge.alchemy.schema.fec import FreeEnergyCalculationNetwork
 from drugforge.alchemy.schema.prep_workflow import AlchemyPrepWorkflow
 from drugforge.alchemy.utils import AlchemiscaleHelper
 from drugforge.data.readers.molfile import MolFileFactory
-from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import Ligand, write_ligands_to_multi_sdf
 from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.docking.schema.pose_generation import OpenEyeConstrainedPoseGenerator
+from drugforge.modeling.schema import PreppedComplex
 from gufe.protocols import Context, ProtocolUnit, ProtocolUnitFailure
 
 
