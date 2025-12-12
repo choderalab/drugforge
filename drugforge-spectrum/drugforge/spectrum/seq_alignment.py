@@ -311,7 +311,7 @@ class Alignment:
 
         # Custom right-side labels
         right_labels1 = [f"{round(score, 1)}%" for score in self.scores][::-1]
-        x_offsets=N
+        x_offsets = N
         # y values should match desc (in reversed order if needed)
         source2 = ColumnDataSource(
             data=dict(

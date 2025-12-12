@@ -94,7 +94,7 @@ def test_lig_rmsd_rdkit(protein_path, tmp_path):
     assert lig_rmsd == 0
 
 
-def test_vina_score(prepped_target_path,  prepped_ligand_path):
+def test_vina_score(prepped_target_path, prepped_ligand_path):
     """Test AutoDock Vina scoring workflow of a protein-ligand complex."""
     df_vina, out_pose = score_autodock_vina(
         receptor_pdb=prepped_target_path,
@@ -104,6 +104,7 @@ def test_vina_score(prepped_target_path,  prepped_ligand_path):
         dock=False,
     )
     assert df_vina["Vina-score-premin"].values[0] < 0
+
 
 def test_vina_score_pdbqt(target_prepped_vina, ligand_prepped_vina):
     """Test AutoDock Vina scoring workflow of a protein-ligand complex."""
@@ -115,6 +116,7 @@ def test_vina_score_pdbqt(target_prepped_vina, ligand_prepped_vina):
         dock=False,
     )
     assert df_vina["Vina-score-premin"].values[0] < 0
+
 
 @pytest.mark.skipif(os.getenv("SKIP_EXPENSIVE_TESTS"), reason="Expensive tests skipped")
 def test_minimize(protein_path, tmp_path):

@@ -22,9 +22,9 @@ from drugforge.docking.openeye import POSITDocker
 from drugforge.modeling.schema import PreppedComplex
 from drugforge.simulation.simulate import VanillaMDSimulator
 from drugforge.spectrum.calculate_rmsd import rmsd_alignment
+from openbabel import pybel
 from pydantic.v1 import BaseModel, Field, root_validator
 from rdkit import Chem
-from openbabel import pybel
 
 logger = logging.getLogger(__name__)
 
@@ -369,13 +369,13 @@ def get_ligand_rmsd(
 def score_autodock_vina(
     receptor_pdb: Union[str, Path],
     ligand_sdf: Path,
-    box_center = None,
-    box_size = [20, 20, 20],
-    dock = False,
+    box_center=None,
+    box_size=[20, 20, 20],
+    dock=False,
 ):
     """Score ligand pose with AutoDock Vina.
     This function will take a receptor PDB and a ligand SDF, and prepare them to pdbqt files with the MGLTools, which are needed for Vina.
-    If the receptor and/or ligand is already in pdbqt format, it will be used as is. 
+    If the receptor and/or ligand is already in pdbqt format, it will be used as is.
     The dimensions of the grid box for Vina can be specified or calculated.
     A dataframe with the scores will be returned, including the scores before and after minimization, as well as the path to a Vina docked pose if dock=True.
 
@@ -442,7 +442,7 @@ def score_autodock_vina(
     if box_center is None:
         ligand_pdbqt = ligand_pdbqt.resolve()
         receptor_pdbqt = receptor_pdbqt.resolve()
-        parent_dir = ligand_pdbqt.parents[0]    
+        parent_dir = ligand_pdbqt.parents[0]
         # Calculate center of geometry of ligand
         try:
             mol = next(pybel.readfile("pdbqt", str(ligand_pdbqt)))
@@ -454,7 +454,11 @@ def score_autodock_vina(
         num_atoms = len(x_coords)
         if num_atoms == 0:
             raise ValueError("Ligand has no atoms to calculate center of geometry.")
-        box_center = [sum(x_coords) / num_atoms, sum(y_coords) / num_atoms, sum(z_coords) / num_atoms]
+        box_center = [
+            sum(x_coords) / num_atoms,
+            sum(y_coords) / num_atoms,
+            sum(z_coords) / num_atoms,
+        ]
 
     v.set_receptor(str(receptor_pdbqt))
 
@@ -637,11 +641,11 @@ def minimize_structure(
 
     return min_out
 
-def convert_to_pdbqt(prepped_path: str,
-    charge_method:str = "gasteiger",
-    ligand = False
+
+def convert_to_pdbqt(
+    prepped_path: str, charge_method: str = "gasteiger", ligand=False
 ) -> str:
-    """Convert pdb or sdf files to pdbqt 
+    """Convert pdb or sdf files to pdbqt
 
     Parameters
     ----------
@@ -662,7 +666,7 @@ def convert_to_pdbqt(prepped_path: str,
     NotImplementedError
         Incorrect charge method provided
     """
-    
+
     basename, fext = os.path.splitext(prepped_path)
     try:
         mol = next(pybel.readfile(fext[1:], str(prepped_path)))
@@ -685,23 +689,23 @@ def convert_to_pdbqt(prepped_path: str,
         forcefield.GetAtomTypes(mol.OBMol)
         forcefield.GetPartialCharges(mol.OBMol)
     else:
-        raise NotImplementedError("Only available options to calculate charge are 'gasteiger' and 'GAFF'")
+        raise NotImplementedError(
+            "Only available options to calculate charge are 'gasteiger' and 'GAFF'"
+        )
     filename = f"{basename}.pdbqt"
- 
+
     # Specify receptor options for AutoDock Vina
     if ligand:
+        write_opts = {"n": True}  # Preserve atom names
+    else:  # receptor
         write_opts = {
-            "n": True  # Preserve atom names
+            "r": True,  # Output as a rigid molecule (i.e. no branches or torsion tree)
+            "n": True,  # Preserve atom names
+            "p": True,  # Preserve atom indices from input file
         }
-    else: # receptor
-        write_opts = {
-            "r": True, # Output as a rigid molecule (i.e. no branches or torsion tree)
-            "n": True, # Preserve atom names
-            "p":True, # Preserve atom indices from input file
-        }
- 
+
     try:
-        mol.write(format='pdbqt', filename=filename, overwrite=True, opt=write_opts)
+        mol.write(format="pdbqt", filename=filename, overwrite=True, opt=write_opts)
         return filename
     except Exception as e:
         print(f"Failed to write PDBQT file: {e}")
