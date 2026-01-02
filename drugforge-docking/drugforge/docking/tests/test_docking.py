@@ -119,7 +119,7 @@ class TestDocking:
     @pytest.mark.parametrize("num_poses", [1, 5, 10, 20, 50])
     @pytest.mark.parametrize("use_omega", [True, False])
     def test_multipose_docking_speed(
-            self, docking_input_pair, tmp_path, num_poses, use_omega
+        self, docking_input_pair, tmp_path, num_poses, use_omega
     ):
         """Test how docking time scales with number of poses requested."""
         import time

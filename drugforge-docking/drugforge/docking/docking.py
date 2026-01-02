@@ -368,6 +368,10 @@ def write_results_to_multi_sdf(
         else:
             raise ValueError(f"Unknown backend type {backend}")
 
-        lig.set_SD_data({"ReferenceStructureName": res.input_pair.complex.target.target_name,
-                         "ReferenceLigandName": res.input_pair.complex.ligand.compound_name})
+        lig.set_SD_data(
+            {
+                "ReferenceStructureName": res.input_pair.complex.target.target_name,
+                "ReferenceLigandName": res.input_pair.complex.ligand.compound_name,
+            }
+        )
         lig.to_sdf(sdf_file, allow_append=True)

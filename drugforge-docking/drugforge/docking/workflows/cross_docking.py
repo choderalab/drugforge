@@ -5,25 +5,30 @@ Removes all the additional layers in the other workflows and adds some features 
 
 import logging
 from pathlib import Path
-from typing import Optional, Union
-from pydantic.v1 import BaseModel, Field, PositiveInt, root_validator
 from shutil import rmtree
-from drugforge.docking.selectors.selector_list import StructureSelector
+from typing import Optional, Union
+
+from drugforge.data.metadata.resources import active_site_chains
 from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
 from drugforge.data.readers.molfile import MolFileFactory
-from drugforge.data.util.dask_utils import BackendType, make_dask_client_meta
+from drugforge.data.services.postera.manifold_data_validation import TargetTags
+from drugforge.data.util.dask_utils import (
+    BackendType,
+    DaskType,
+    FailureMode,
+    make_dask_client_meta,
+)
 from drugforge.data.util.logging import FileLogger
 from drugforge.docking.docking import (
     DockingInputMultiStructure,
     write_results_to_multi_sdf,
 )
-from drugforge.data.metadata.resources import active_site_chains
-from drugforge.data.services.postera.manifold_data_validation import TargetTags
-from drugforge.data.util.dask_utils import DaskType, FailureMode
+from drugforge.docking.meta_scorer import MetaScorer
 from drugforge.docking.openeye import POSIT_METHOD, POSIT_RELAX_MODE, POSITDocker
 from drugforge.docking.scorer import ChemGauss4Scorer
-from drugforge.docking.meta_scorer import MetaScorer
+from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.modeling.protein_prep import ProteinPrepper
+from pydantic.v1 import BaseModel, Field, PositiveInt, root_validator
 
 
 class DockingWorkflowInputsBase(BaseModel):
