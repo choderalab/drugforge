@@ -1,6 +1,7 @@
 import pytest
 from drugforge.modeling.schema import PreppedComplex
 
+
 @pytest.fixture(scope="session")
 def prepped_complexes(complexes):
     # kinda expensive to make, so let's just do the first 2

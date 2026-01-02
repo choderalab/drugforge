@@ -12,11 +12,9 @@ from drugforge.alchemy.schema.fec import (
 from drugforge.alchemy.schema.forcefield import ForceFieldParams
 from openmm.app import ForceField, Modeller, PDBFile
 
-
 if TYPE_CHECKING:
-    from drugforge.modeling.schema import PreppedComplex, PreppedTarget
     from drugforge.data.schema.ligand import Ligand
-    from drugforge.data.schema.target import PreppedTarget
+    from drugforge.modeling.schema import PreppedComplex, PreppedTarget
 
 
 def create_protein_only_system(input_pdb_path: str, ff_params: ForceFieldParams):

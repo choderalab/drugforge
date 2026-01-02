@@ -3,11 +3,10 @@ import warnings
 from typing import Dict, Optional, Tuple, Union  # noqa: F401
 
 import pandas as pd
+from drugforge.data.services.postera.manifold_data_validation import ManifoldAllowedTags
 from drugforge.data.services.web_utils import _BaseWebAPI
 from drugforge.data.util.stringenum import StringEnum
 from typing_extensions import TypedDict
-
-from drugforge.data.services.postera.manifold_data_validation import ManifoldAllowedTags
 
 logger = logging.getLogger(__name__)
 

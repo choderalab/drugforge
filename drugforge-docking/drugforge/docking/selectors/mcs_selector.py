@@ -3,18 +3,15 @@ import warnings
 from typing import ClassVar, Union
 
 import numpy as np
+from dask import delayed
 from drugforge.data.backend.openeye import oechem
-from drugforge.docking.selectors.selector import SelectorBase
 from drugforge.data.schema.complex import Complex, ComplexBase
-from drugforge.modeling.schema import PreppedComplex
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.pairs import CompoundStructurePair
-from drugforge.data.util.dask_utils import (
-    FailureMode,
-    actualise_dask_delayed_iterable,
-)
+from drugforge.data.util.dask_utils import FailureMode, actualise_dask_delayed_iterable
 from drugforge.docking.docking import DockingInputPair  # TODO: move to backend
-from dask import delayed
+from drugforge.docking.selectors.selector import SelectorBase
+from drugforge.modeling.schema import PreppedComplex
 from pydantic.v1 import Field
 from rdkit import Chem, rdBase
 from rdkit.Chem import rdRascalMCES

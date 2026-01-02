@@ -4,9 +4,9 @@ from typing import Union
 
 import numpy as np
 import pymol2
+from Bio import Align, AlignIO, pairwise2
 from drugforge.spectrum.blast import pdb_to_seq
 from drugforge.spectrum.seq_alignment import get_colors_by_aa_group
-from Bio import Align, AlignIO, pairwise2
 
 
 def pairwise_alignment(pdb_file, pdb_align, start_idxA, start_idxB):

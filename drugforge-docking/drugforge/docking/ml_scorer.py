@@ -1,25 +1,24 @@
 from pathlib import Path
-from typing import ClassVar, Optional, Any, Union
+from typing import Any, ClassVar, Optional, Union
 
-from mtenn.config import ModelType
-from multimethod import multimethod
-from pydantic.v1 import Field
-
-from drugforge.docking.docking import DockingResult
-from drugforge.docking.scorer import (
-    ScoreType,
-    ScorerBase,
-    ScoreUnits,
-    logger,
-    Score,
-    _get_disk_path_from_docking_result,
-)
-from drugforge.ml.inference import InferenceBase, get_inference_cls_from_model_type
-from drugforge.ml.models import MLModelSpecBase
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
-from drugforge.data.util.dask_utils import dask_vmap, backend_wrapper
+from drugforge.data.util.dask_utils import backend_wrapper, dask_vmap
+from drugforge.docking.docking import DockingResult
+from drugforge.docking.scorer import (
+    Score,
+    ScorerBase,
+    ScoreType,
+    ScoreUnits,
+    _get_disk_path_from_docking_result,
+    logger,
+)
+from drugforge.ml.inference import InferenceBase, get_inference_cls_from_model_type
+from drugforge.ml.models import MLModelSpecBase
+from mtenn.config import ModelType
+from multimethod import multimethod
+from pydantic.v1 import Field
 
 
 def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> ScoreType:

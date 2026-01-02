@@ -383,7 +383,7 @@ files:
   - resource: spectrum_dir/YP_009944273_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: 32b5758b7c12e02fd52177c3ebd323bbf5c8bd06dcbcd82ef89042df10ae346d
   - resource: spectrum_dir/YP_010229075_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
-    sha256hash: 5fb77395f9d65add9d52c4d8ba83195a771fd4ea5c6020b6f9b8d5eaf446f274 
+    sha256hash: 5fb77395f9d65add9d52c4d8ba83195a771fd4ea5c6020b6f9b8d5eaf446f274
   - resource: spectrum_dir/YP_009725295_1_unrelaxed_rank_001_alphafold2_multimer_v3_model_1_seed_000.pdb
     sha256hash: 5eadcaa47f507281f80eb3cd8a84453dbd5012e549ef6151c808f56bad1dfc7b
 

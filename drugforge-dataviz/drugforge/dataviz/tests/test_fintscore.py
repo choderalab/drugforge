@@ -1,9 +1,9 @@
 from pathlib import Path
 
 from drugforge.data.backend.openeye import load_openeye_pdb
-from drugforge.dataviz.plip import compute_fint_score
 from drugforge.data.readers.molfile import MolFileFactory
 from drugforge.data.testing.test_resources import fetch_test_file
+from drugforge.dataviz.plip import compute_fint_score
 
 
 def test_fint_score():
