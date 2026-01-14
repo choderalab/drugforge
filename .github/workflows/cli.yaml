@@ -53,6 +53,12 @@ jobs:
       id: date
       run: echo "date=$(date +%Y-%m-%d)" >> "${GITHUB_OUTPUT}"
 
+    # Taken from https://github.com/actions/runner-images/issues/2840#issuecomment-1284059930
+    - name: Freeing up space
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
     # More info on options: https://github.com/mamba-org/provision-with-micromamba
     - name: Setup Conda Environment
       uses: mamba-org/setup-micromamba@v2
