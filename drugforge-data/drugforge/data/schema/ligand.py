@@ -243,7 +243,7 @@ class Ligand(DataModelAbstractBase):
 
         # if there aren't any, copy the tags to the conformers
         if len(conf_tags_list) == 0:
-            conf_tags_list = [(k,[v] * mol.NumConfs()) for k,v in tags]
+            conf_tags_list = [(k, [v] * mol.NumConfs()) for k, v in tags]
 
         kwargs["conf_tags"] = conf_tags_list
 

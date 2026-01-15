@@ -18,6 +18,7 @@ def moonshot_sdf():
     sdf = fetch_test_file("Mpro-P0008_0A_ERI-UCB-ce40166b-17.sdf")
     return sdf
 
+
 @pytest.fixture(scope="session")
 def ligand_with_tags():
     lig = Ligand.from_smiles(
@@ -25,8 +26,10 @@ def ligand_with_tags():
     )
     return lig
 
+
 def test_ligand_has_tags(ligand_with_tags):
     assert ligand_with_tags.tags["test_tag"] == "test_value"
+
 
 def test_ligand_from_smiles(smiles):
     lig = Ligand.from_smiles(smiles, compound_name="test_name")
@@ -461,6 +464,7 @@ def test_ligand_json_file_roundtrip(
     l2 = Ligand.from_json_file(tmp_path / "test.json")
     assert l1 == l2
 
+
 def test_ligand_oemol_roundtrip(moonshot_sdf):
     mol = load_openeye_sdf(str(moonshot_sdf))
     l1 = Ligand.from_oemol(mol, compound_name="blahblah")
@@ -470,12 +474,14 @@ def test_ligand_oemol_roundtrip(moonshot_sdf):
     # check all internal fields as well
     assert l2.dict() == l1.dict()
 
+
 def test_ligand_oemol_roundtrip_tags(ligand_with_tags):
     oemol = ligand_with_tags.to_oemol()
     roundtrip_ligand = Ligand.from_oemol(oemol)
     roundtrip_ligand_v2 = Ligand.from_oemol(roundtrip_ligand.to_oemol())
     assert roundtrip_ligand_v2 == ligand_with_tags
     assert roundtrip_ligand_v2.dict() == ligand_with_tags.dict()
+
 
 def test_ligand_oemol_roundtrip_data_only(moonshot_sdf):
     mol = load_openeye_sdf(str(moonshot_sdf))
