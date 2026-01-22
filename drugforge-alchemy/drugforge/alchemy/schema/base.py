@@ -3,7 +3,7 @@ import json
 from typing import Any, Callable, Literal
 
 from openff.units import Quantity
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 # the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1
 # from openff.models.models import DefaultModel
@@ -57,6 +57,7 @@ def json_loader(data: str) -> dict:
         unit_ = Unit(v["unit"])
         val = v["val"]
         out[key] = unit_ * val
+
     return out
 
 

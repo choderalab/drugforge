@@ -434,7 +434,9 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
         description="The name of the biological target associated with this Alchemy network.",
     )
     """Overwrite the class config to freeze the results model"""
-    model_config = ConfigDict(frozen=True, orm_mode=True, arbitrary_types_allowed=True)
+    model_config = ConfigDict(
+        frozen=True, from_attributes=True, arbitrary_types_allowed=True
+    )
 
     def to_openfe_receptor(self) -> openfe.ProteinComponent:
 

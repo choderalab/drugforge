@@ -1105,7 +1105,7 @@ def clean_result_network(network, console=None, ddg_outlier_threshold=15):
     ).dict()
     data["results"] = results
 
-    fec = FreeEnergyCalculationNetwork.parse_obj(data)
+    fec = FreeEnergyCalculationNetwork.model_validate(data)
 
     return fec
 

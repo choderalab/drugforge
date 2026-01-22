@@ -38,6 +38,7 @@ from drugforge.data.schema.identifiers import (
 )
 from drugforge.data.schema.schema_base import DataStorageType
 from pydantic import Field, field_validator, model_validator
+from pydantic_core import PydanticSerializationError
 
 from .experimental import ExperimentalCompoundData
 from .schema_base import (
@@ -359,7 +360,9 @@ class Ligand(DataModelAbstractBase):
                 field = getattr(self, key)
                 try:
                     data[key] = field.model_dump_json()
-                except AttributeError:
+                # with changing to pydantic v2, model_dump_json may PydanticSerializationError or AttributeError
+                # so we need to catch both to do the proper parsing
+                except (AttributeError, PydanticSerializationError):
                     if field is not None:
                         data[key] = str(getattr(self, key))
         # dump the enum using value to get the str repr
