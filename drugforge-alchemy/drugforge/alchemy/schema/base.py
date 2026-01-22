@@ -69,12 +69,9 @@ class DefaultModel(BaseModel):
         arbitrary_types_allowed=True,
         validate_assignment=True,
         extra="forbid",
+        json_encoders={Quantity: custom_quantity_encoder},
+        json_loads=json_loader,
     )
-
-    json_encoders: dict[Any, Callable] = {
-        Quantity: custom_quantity_encoder,
-    }
-    json_loads: Callable = json_loader
 
 
 class _SchemaBase(abc.ABC, DefaultModel):

@@ -90,6 +90,7 @@ class CustomNetworkPlanner(_NetworkPlannerMethod):
         def _plan_from_names(ligands, mappers, *args, **kwargs):
             # format the data to fit the planing method
             data = {"ligands": ligands, "mapper": mappers[0], "names": self.edges}
+
             return openfe.ligand_network_planning.generate_network_from_names(**data)
 
         return _plan_from_names
@@ -255,7 +256,7 @@ class NetworkPlanner(_NetworkPlannerSettings):
         ligand_network = network_method(**planner_data)
 
         return PlannedNetwork(
-            **self.dict(exclude={"type"}),
+            **self.model_dump(exclude={"type"}),
             ligands=ligands,
             central_ligand=central_ligand,
             graphml=ligand_network.to_graphml(),
