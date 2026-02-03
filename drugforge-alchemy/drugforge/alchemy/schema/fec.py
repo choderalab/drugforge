@@ -19,7 +19,14 @@ from openfe.protocols.openmm_utils.omm_settings import (
     OpenMMSolvationSettings,
 )
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
-from openff.models.types import FloatQuantity
+from gufe.settings.typing import KCalPerMolQuantity, GufeQuantity, NanometerQuantity, specify_quantity_units
+
+from typing import Annotated, TypeAlias
+
+MolarQuantity:TypeAlias = Annotated[GufeQuantity, specify_quantity_units("molar")]
+
+
+
 from openff.units import unit as OFFUnit
 from pydantic import ConfigDict, Field, field_validator
 
@@ -52,7 +59,7 @@ class SolventSettings(_SchemaBase):
         True,
         description="If the net charge of the chemical system should be neutralized by the ions defined by `positive_ion` and `negative_ion`.",
     )
-    ion_concentration: FloatQuantity["molar"] = Field(  # noqa: F821
+    ion_concentration: MolarQuantity = Field(  # noqa: F821
         0.15 * OFFUnit.molar,
         description="The ionic concentration required in molar units.",
     )
@@ -83,11 +90,12 @@ class AdaptiveSettings(_SchemaBase):
         True,
         description="Whether or not to use adaptive solvent padding; typically the complex phase can handle smaller padding size.",
     )
-    solvent_padding_complex: FloatQuantity["nanometer"] = Field(  # noqa: F821
+
+    solvent_padding_complex: NanometerQuantity = Field(  # noqa: F821
         1.5 * OFFUnit.nanometer,
         description="The solvent padding (in nm) to use for the complex phase of each edge.",
     )
-    solvent_padding_solvated: FloatQuantity["nanometer"] = Field(  # noqa: F821
+    solvent_padding_solvated: NanometerQuantity = Field(  # noqa: F821
         1.5 * OFFUnit.nanometer,
         description="The solvent padding (in nm) to use for the solvated phase of each edge.",
     )
@@ -97,7 +105,7 @@ class AdaptiveSettings(_SchemaBase):
         scorer_method: str,
         mapping: "LigandAtomMapping",
         protocol: openfe.protocols.openmm_rfe.RelativeHybridTopologyProtocol,
-        base_sampling_length: FloatQuantity["nanometer"],  # noqa: F821
+        base_sampling_length: NanometerQuantity,  # noqa: F821
     ) -> openfe.protocols.openmm_rfe.RelativeHybridTopologyProtocol:
         """
         It's advisable to increase simulation time on edges that are expected to be less reliable. There
@@ -194,10 +202,10 @@ class TransformationResult(_SchemaBaseFrozen):
     phase: Literal["complex", "solvent"] = Field(
         ..., description="The phase of the transformation."
     )
-    estimate: FloatQuantity["kcal/mol"] = Field(  # noqa: F821
+    estimate: KCalPerMolQuantity = Field(  # noqa: F821
         ..., description="The average estimate of this transformation in kcal/mol"
     )
-    uncertainty: FloatQuantity["kcal/mol"] = Field(  # noqa: F821
+    uncertainty: KCalPerMolQuantity = Field(  # noqa: F821
         ...,
         description="The standard deviation of the estimates of this transform in kcal/mol",
     )
