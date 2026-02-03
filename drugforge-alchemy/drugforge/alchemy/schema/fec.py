@@ -1,10 +1,25 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union
+from typing import (
+    TYPE_CHECKING,
+    Annotated,
+    Any,
+    Dict,
+    Literal,
+    Optional,
+    TypeAlias,
+    Union,
+)
 
 import gufe
 import openfe
 from alchemiscale import ScopedKey
 from gufe import settings
+from gufe.settings.typing import (
+    GufeQuantity,
+    KCalPerMolQuantity,
+    NanometerQuantity,
+    specify_quantity_units,
+)
 from gufe.tokenization import GufeKey
 from openfe.protocols.openmm_rfe.equil_rfe_settings import (
     AlchemicalSettings,
@@ -19,12 +34,8 @@ from openfe.protocols.openmm_utils.omm_settings import (
     OpenMMSolvationSettings,
 )
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
-from gufe.settings.typing import KCalPerMolQuantity, GufeQuantity, NanometerQuantity, specify_quantity_units
 
-from typing import Annotated, TypeAlias
-
-MolarQuantity:TypeAlias = Annotated[GufeQuantity, specify_quantity_units("molar")]
-
+MolarQuantity: TypeAlias = Annotated[GufeQuantity, specify_quantity_units("molar")]
 
 
 from openff.units import unit as OFFUnit
