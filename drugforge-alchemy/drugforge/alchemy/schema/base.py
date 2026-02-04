@@ -105,8 +105,6 @@ class _SchemaBase(abc.ABC, DefaultModel):
 
         JSON_HANDLER.add_codec(SCOPEDKEY_CODEC)
         with open(filename) as f:
-            contents = json.load(f, cls=JSON_HANDLER.decoder)
-            print(type(contents))
             return cls.model_validate(json.load(f, cls=JSON_HANDLER.decoder))
 
 
