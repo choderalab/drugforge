@@ -1037,8 +1037,9 @@ def clean_result_network(network, console=None, ddg_outlier_threshold=15):
         if len(results) > 1:
             # take the arithmetic mean of DG and dDG and add the replaced first result,
             # all provenance data is constant between these repeats anyway
-            mean_DG = np.mean([result.estimate.magnitude for result in results])
-            mean_dDG = np.mean([result.uncertainty.magnitude for result in results])
+            mean_DG = np.mean([result.estimate.magnitude for result in results]) * unit.kilocalorie_per_mole
+            # FIXME: Uncertainty of the mean is not mean of uncertainties. This is probably incorrect.
+            mean_dDG = np.mean([result.uncertainty.magnitude for result in results]) * unit.kilocalorie_per_mole
             result_data = results[0].dict(exclude={"estimate", "uncertainty"})
 
             tf_res = TransformationResult(
