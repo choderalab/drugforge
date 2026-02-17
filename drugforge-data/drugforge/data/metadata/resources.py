@@ -3,7 +3,7 @@ from importlib import resources
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 
 # SEQRES in YAML format
-RESOURCE_BASE_PATH = resources.files(__name__)
+RESOURCE_BASE_PATH = resources.files("drugforge.data.metadata")
 MERS_CoV_Mpro_SEQRES = RESOURCE_BASE_PATH / "master_seqres/mers_cov_mpro_seqres.yaml"
 SARS_CoV_2_Mpro_SEQRES = (
     RESOURCE_BASE_PATH / "master_seqres/sars_cov_2_mpro_seqres.yaml"
