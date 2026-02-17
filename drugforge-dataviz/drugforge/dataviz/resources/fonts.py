@@ -1,3 +1,3 @@
-import pkg_resources
+from importlib import resources
 
-opensans_regular = pkg_resources.resource_filename(__name__, "OpenSans-Regular.ttf")
+opensans_regular = resources.files(__name__) / "OpenSans-Regular.ttf"
