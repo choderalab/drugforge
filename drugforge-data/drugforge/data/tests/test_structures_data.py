@@ -6,7 +6,7 @@ That is downloading, processing and storing PDB/CIF or similar structure files.
 
 import pathlib
 
-import pkg_resources
+from importlib import resources
 import pytest
 from drugforge.data.services.rcsb.rcsb_download import download_pdb_structure
 
@@ -69,9 +69,7 @@ class TestLigands:
             if data.smiles
         }
 
-        smarts_queries_csv = pkg_resources.resource_filename(
-            "drugforge.data", "data/smarts_queries.csv"
-        )
+        smarts_queries_csv = resources.files("drugforge.data") / "data/smarts_queries.csv"
 
         # Filter based on the smiles using this OpenEye function
         filtered_inputs = utils.filter_docking_inputs(
