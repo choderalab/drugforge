@@ -1,7 +1,7 @@
 import pathlib
+from importlib import resources
 from typing import List, Union  # noqa: F401
 
-from importlib import resources
 import pooch
 import yaml
 

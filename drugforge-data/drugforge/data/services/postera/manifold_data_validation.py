@@ -4,9 +4,10 @@ import warnings
 from collections import defaultdict
 from collections.abc import Iterable
 from enum import Enum
+from importlib import resources
 from pathlib import Path
 from typing import List, Optional, Tuple, Union  # noqa: F401
-from importlib import resources
+
 import pandas as pd
 import yaml
 from drugforge.data.util.stringenum import StringEnum
