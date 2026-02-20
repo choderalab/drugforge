@@ -1046,7 +1046,7 @@ def clean_result_network(network, console=None, ddg_outlier_threshold=15):
                 np.mean([result.uncertainty.magnitude for result in results])
                 * unit.kilocalorie_per_mole
             )
-            result_data = results[0].dict(exclude={"estimate", "uncertainty"})
+            result_data = results[0].model_dump(exclude={"estimate", "uncertainty"})
 
             tf_res = TransformationResult(
                 estimate=mean_DG, uncertainty=mean_dDG, **result_data
@@ -1105,11 +1105,11 @@ def clean_result_network(network, console=None, ddg_outlier_threshold=15):
             (1, 0, 1, 0),
         )
         console.print(message)
-    data = network_schema.dict(exclude={"results"})
+    data = network_schema.model_dump(exclude={"results"})
     # unpack the deduped results into dicts
     results = AlchemiscaleResults(
         results=results_not_overly_large, network_key=network_schema.results.network_key
-    ).dict()
+    ).model_dump()
     data["results"] = results
 
     fec = FreeEnergyCalculationNetwork.model_validate(data)

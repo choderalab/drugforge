@@ -662,7 +662,7 @@ class FreeEnergyCalculationFactory(_FreeEnergyBase):
             receptor=receptor.to_json(),
             experimental_protocol=experimental_protocol,
             target=target,
-            **self.dict(exclude={"type", "network_planner"}),
+            **self.model_dump(exclude={"type", "network_planner"}),
         )
         return planned_fec_network
 
