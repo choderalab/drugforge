@@ -11,7 +11,7 @@ test file repository. We instantiate a pooch repository for the test files on im
 that can then be used to fetch test files.
 """
 
-test_files = resources.files(__name__) / "test_files.yaml"
+test_files = resources.files("drugforge.data.testing") / "test_files.yaml"
 
 
 def make_test_file_pooch_repo(test_files: str) -> pooch.Pooch:
