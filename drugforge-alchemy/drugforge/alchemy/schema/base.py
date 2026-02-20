@@ -1,6 +1,6 @@
 import abc
 import json
-from typing import Any, Callable, Literal, Annotated
+from typing import Annotated, Any, Callable, Literal
 
 from openff.units import Quantity
 from pydantic import BaseModel, ConfigDict
@@ -69,8 +69,8 @@ class DefaultModel(BaseModel):
         arbitrary_types_allowed=True,
         validate_assignment=True,
         extra="forbid",
-        #json_encoders={Quantity: custom_quantity_encoder},
-        #json_loads=json_loader,
+        # json_encoders={Quantity: custom_quantity_encoder},
+        # json_loads=json_loader,
     )
 
 

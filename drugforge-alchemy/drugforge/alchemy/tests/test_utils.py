@@ -92,7 +92,9 @@ def test_action_tasks(monkeypatch, tyk2_fec_network, alchemiscale_helper):
     def create_tasks(transformation, count):
         "Mock creating tasks for a transform"
         return [
-            ScopedKey(gufe_key=f"blah-{uuid4().hex}", **transformation.scope.model_dump())
+            ScopedKey(
+                gufe_key=f"blah-{uuid4().hex}", **transformation.scope.model_dump()
+            )
             for _ in range(count)
         ]
 
