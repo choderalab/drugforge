@@ -225,7 +225,9 @@ def make_static_tags(yaml_path) -> tuple[Enum, set]:
 # OK finally we can actually make the enums
 
 # static path to the spec
-manifold_data_spec = resources.files("drugforge.data.services.postera") / "manifold_data_tags.yaml"
+manifold_data_spec = (
+    resources.files("drugforge.data.services.postera") / "manifold_data_tags.yaml"
+)
 
 # make target enum and set
 (
