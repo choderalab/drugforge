@@ -114,10 +114,6 @@ def test_plan_from_names(tyk2_ligands, tyk2_small_custom_network):
     planner = NetworkPlanner(network_planning_method=CustomNetworkPlanner(edges=edges))
     network = planner.generate_network(ligands=tyk2_ligands).to_ligand_network()
 
-    lig = tyk2_ligands[0].to_openfe().to_dict()
-    for key in lig.keys():
-        print(key, lig[key])
-
     # make sure the edges are as we expect
     for edge in network.edges:
         assert (edge.componentA.name, edge.componentB.name) in edges
