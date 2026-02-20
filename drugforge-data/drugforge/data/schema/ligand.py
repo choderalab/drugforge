@@ -395,7 +395,7 @@ class Ligand(DataModelAbstractBase):
         """
         import gufe
 
-        return gufe.components.SmallMoleculeComponent.from_rdkit(self.to_rdkit())
+        return gufe.components.SmallMoleculeComponent.from_rdkit(self.to_rdkit(), name=self.compound_name)
 
     @classmethod
     def from_openfe(
