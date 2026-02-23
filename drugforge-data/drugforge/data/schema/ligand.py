@@ -294,7 +294,8 @@ class Ligand(DataModelAbstractBase):
 
         mol = set_SD_data(mol, data)
 
-        mol.SetTitle(self.compound_name)
+        if self.compound_name is not None:
+            mol.SetTitle(self.compound_name)
 
         return mol
 
