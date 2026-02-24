@@ -11,7 +11,6 @@ from .atom_mapping import KartografAtomMapper, LomapAtomMapper, PersesAtomMapper
 from .base import _SchemaBase
 
 
-
 class _NetworkPlannerMethod(_SchemaBase, abc.ABC):
     """
     The network planner method and settings which control the type of network produced.
