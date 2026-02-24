@@ -254,6 +254,10 @@ class NetworkPlanner(_NetworkPlannerSettings):
             planner_data["central_ligand"] = central_ligand.to_openfe()
 
         network_method = self.network_planning_method.get_planning_function()
+        from rdkit import Chem
+
+        # This is needed to ensure that we write all the molprops, which includes names when writing to graph ml
+        Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.AllProps)
         ligand_network = network_method(**planner_data)
 
         return PlannedNetwork(
