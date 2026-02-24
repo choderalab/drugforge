@@ -145,11 +145,16 @@ class ScoreSpectrumInputsBase(BaseModel):
 
     @classmethod
     def from_json_file(cls, file: str | Path):
-        return cls.parse_file(str(file))
+        from drugforge.data.schema.schema_base import read_file_directly
+
+        # first load the file, then use the json parser
+        contents = read_file_directly(file)
+        return cls.from_json(contents)
+        #return cls.parse_file(str(file))
 
     def to_json_file(self, file: str | Path):
         with open(file, "w") as f:
-            f.write(self.json(indent=2))
+            f.write(self.model_dump_json(indent=2))
 
     @model_validator(mode="before")
     def check_inputs_vina(cls, values):
@@ -165,7 +170,7 @@ class ScoreSpectrumInputsBase(BaseModel):
             not vina_box_x or not vina_box_y or not vina_box_z
         ) and not path_to_grid_prep:
             raise ValueError(
-                "Either especify ALL coordinates of the box, ot the path to grid prepper function"
+                "Either specify ALL coordinates of the box, ot the path to grid prepper function"
             )
 
         return values

@@ -289,7 +289,7 @@ def run(
     dataset_name: The name which should be given to the AlchemyDataset all results will be saved in a folder with the same name.
     ligands: The name of the local file which contains the input ligands to be prepared in the workflow.
     receptor_complex: The name of the local file which contains the prepared complex including the crystal ligand.
-    structure_dir: The name of the folder which contains the prepared complexs that we should select the best reference from.
+    structure_dir: The name of the folder which contains the prepared complexes that we should select the best reference from.
     factory_file: The name of the JSON file with the configured AlchemyPrepWorkflow, if not supplied the default will be
         used.
     core_smarts: The SMARTS string used to identify the atoms in each ligand to be constrained.
@@ -367,7 +367,7 @@ def run(
 
     else:
         # always expect the JSON file
-        ref_complex = PreppedComplex.parse_file(receptor_complex)
+        ref_complex = PreppedComplex.from_json_file(receptor_complex)
 
         message = Padding(
             f"Loaded a prepared complex from [repr.filename]{receptor_complex}[/repr.filename]",

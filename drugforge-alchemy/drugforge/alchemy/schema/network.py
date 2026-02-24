@@ -10,6 +10,8 @@ from ._util import check_ligand_series_uniqueness_and_names
 from .atom_mapping import KartografAtomMapper, LomapAtomMapper, PersesAtomMapper
 from .base import _SchemaBase
 
+from rdkit import Chem
+Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.AllProps)
 
 class _NetworkPlannerMethod(_SchemaBase, abc.ABC):
     """
