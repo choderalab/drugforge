@@ -9,7 +9,6 @@ from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.modeling.protein_prep import ProteinPrepper
 from drugforge.modeling.schema import PreppedComplex, PreppedTarget
-from pydantic import ValidationError
 
 
 @pytest.fixture

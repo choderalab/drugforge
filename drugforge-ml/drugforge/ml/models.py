@@ -3,7 +3,7 @@ import warnings
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
-from typing import Optional, Set, Union
+from typing import Optional, Union
 from urllib.parse import urljoin
 
 import mtenn

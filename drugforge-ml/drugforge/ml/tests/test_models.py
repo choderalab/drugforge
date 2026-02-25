@@ -2,14 +2,14 @@ import os
 
 import pytest
 
-# from drugforge.ml.models import (
-#     ASAPMLModelRegistry,
-#     LocalMLModelSpec,
-#     MLModelBase,
-#     MLModelRegistry,
-#     MLModelSpec,
-#     RemoteEnsembleHelper,
-# )
+from drugforge.ml.models import (
+    ASAPMLModelRegistry,
+    LocalMLModelSpec,
+    MLModelBase,
+    MLModelRegistry,
+    MLModelSpec,
+    RemoteEnsembleHelper,
+)
 
 pytest.skip(
     "skipping models tests until they are updated to split-model mtenn",

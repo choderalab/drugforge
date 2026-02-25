@@ -5,7 +5,7 @@ from collections import Counter
 from functools import partial
 from itertools import product
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 import click
 import drugforge.ml.schema as mlschema
@@ -21,8 +21,7 @@ def analysis():
     pass
 
 
-################################################################################
-## build_results_dfs
+# build_results_dfs
 @analysis.command()
 @click.option(
     "--collection-args-fn",
@@ -178,10 +177,8 @@ def build_results_dfs(
     return per_epoch_df, extract_epoch_dfs
 
 
-################################################################################
 
 
-################################################################################
 ## calc_stats
 # Function to calculate a statistic (for multiprocessing)
 def calc_one_stat(stat_func, target_vals, preds, in_range):
@@ -361,7 +358,6 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         in_range_stats_df.to_csv(in_range_out_fn, index=False)
 
 
-################################################################################
 
 
 ################################################################################
@@ -487,9 +483,6 @@ def stats_comp(in_fn, out_fn, group_cols, comp_col):
 
 
 ################################################################################
-
-
-################################################################################
 ## subset_by_strat
 @analysis.command()
 @click.option(
@@ -527,9 +520,6 @@ def subset_by_strat(in_fn, out_fn, model_strat):
 
     df = df.loc[idx, :]
     df.to_csv(out_fn, index=False)
-
-
-################################################################################
 
 
 ################################################################################
@@ -579,9 +569,6 @@ def subset_general(in_fn, out_fn, model_strat, filters):
 
     df = df.loc[final_idx, :]
     df.to_csv(out_fn, index=False)
-
-
-################################################################################
 
 
 ################################################################################
@@ -675,4 +662,3 @@ def training_progress(collection_args_fn, out_fn):
     n_epochs_df.to_csv(out_fn, index=False)
 
 
-################################################################################

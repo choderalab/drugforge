@@ -261,7 +261,7 @@ def dock_and_score(
             )
         else:
             logging.warning(
-                f"A folder to store aligned PDB must be provided if target is to be aligned to ref_pdb. Alignment won't be made."
+                "A folder to store aligned PDB must be provided if target is to be aligned to ref_pdb. Alignment won't be made."
             )
             aligned = pdb_complex
     else:
@@ -305,7 +305,7 @@ def ligand_rmsd_rdkit(target_sdf, ref_sdf):
         except Exception:
             # TODO: Specify exception type
             rmsd = -1
-            logger.warning(f"RMSD calculation failed")
+            logger.warning("RMSD calculation failed")
     return rmsd
 
 
@@ -448,7 +448,7 @@ def score_autodock_vina(
 
     elif receptor_pdb.suffix == ".pdbqt":
         receptor_pdbqt = receptor_pdb
-        logger.info(f"Prepped target provided")
+        logger.info("Prepped target provided")
     else:
         raise ValueError("Only allowed formats are .pdb and .pdbqt")
     # Prepare ligand
@@ -462,7 +462,7 @@ def score_autodock_vina(
             logger.warning(f"Ligand prep failed on {ligand_sdf}")
     elif ligand_sdf.suffix == ".pdbqt":
         ligand_pdbqt = ligand_sdf
-        logger.info(f"Prepped ligand provided")
+        logger.info("Prepped ligand provided")
     else:
         raise ValueError("Only allowed formats are .pdb and .pdbqt")
     v = Vina(sf_name="vina")
@@ -492,7 +492,7 @@ def score_autodock_vina(
         p.wait()
         gpf_file = parent_dir / f"{receptor_pdb.stem}.gpf"
         if not gpf_file.exists():
-            logger.warning(f".gpf file was not generated.")
+            logger.warning(".gpf file was not generated.")
         else:
             with gpf_file.open("r") as f:
                 for line in f:
@@ -510,7 +510,7 @@ def score_autodock_vina(
         # Check if box_center was set sucessfully
         if box_center is None:
             logger.warning(
-                f"Could not generate grid box for Vina calculation because .gpf file was incorrect."
+                "Could not generate grid box for Vina calculation because .gpf file was incorrect."
             )
             df_scores["Vina-score-premin"] = None
             df_scores["Vina-score-min"] = None

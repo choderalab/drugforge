@@ -1,7 +1,7 @@
 import abc
 import json
 from pathlib import Path
-from typing import ClassVar, List, Optional, Set, Union
+from typing import ClassVar, List, Optional, Union
 
 import mtenn
 import numpy as np
