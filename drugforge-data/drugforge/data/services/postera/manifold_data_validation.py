@@ -9,8 +9,8 @@ from typing import List, Optional, Tuple, Union  # noqa: F401
 
 import pandas as pd
 import yaml
-from drugforge.data.util.stringenum import StringEnum
 from drugforge.data.services import postera
+from drugforge.data.util.stringenum import StringEnum
 
 # static path to the spec
 # use the get_path_string helper function that uses importlib.resources to get the path to the yaml file
@@ -227,7 +227,6 @@ def make_static_tags(yaml_path) -> tuple[Enum, set]:
 
 
 # OK finally we can actually make the enums
-
 
 
 manifold_data_spec = get_path_string(postera) + "/manifold_data_tags.yaml"
