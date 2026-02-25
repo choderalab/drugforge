@@ -21,7 +21,8 @@ from drugforge.cli.cli_args import (
     target,
 )
 
-# from drugforge.data.util.logging import FileLogger
+from drugforge.data.util.logging import FileLogger as logger
+
 from drugforge.simulation.simulate import OpenMMPlatform
 from drugforge.spectrum.align_seq_match import (
     fasta_alignment,

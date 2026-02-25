@@ -28,7 +28,7 @@ class QuantityEncoder(json.JSONEncoder):
             else:
                 # This shouldn't ever be hit if our object models
                 # behave in ways we expect?
-                raise UnsupportedExportError(
+                raise ValueError(
                     f"trying to serialize unsupported type {type(obj.magnitude)}"
                 )
             return {

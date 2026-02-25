@@ -177,7 +177,7 @@ def build_results_dfs(
     return per_epoch_df, extract_epoch_dfs
 
 
-## calc_stats
+# calc_stats
 # Function to calculate a statistic (for multiprocessing)
 def calc_one_stat(stat_func, target_vals, preds, in_range):
     val = stat_func(target_vals, preds, in_range)
@@ -357,7 +357,7 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
 
 
 ################################################################################
-## Run statistical analysis
+# Run statistical analysis
 @analysis.command()
 @click.option(
     "--in-fn",
@@ -479,7 +479,7 @@ def stats_comp(in_fn, out_fn, group_cols, comp_col):
 
 
 ################################################################################
-## subset_by_strat
+# subset_by_strat
 @analysis.command()
 @click.option(
     "--in-fn",
@@ -519,7 +519,7 @@ def subset_by_strat(in_fn, out_fn, model_strat):
 
 
 ################################################################################
-## subset_general
+# subset_general
 @analysis.command()
 @click.option(
     "--in-fn",
@@ -568,7 +568,7 @@ def subset_general(in_fn, out_fn, model_strat, filters):
 
 
 ################################################################################
-## Check how many epochs each model has trained for
+# Check how many epochs each model has trained for
 @analysis.command()
 @click.option(
     "--collection-args-fn",
