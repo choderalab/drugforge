@@ -1,5 +1,5 @@
 import functools
-
+import os
 import openfe
 import pytest
 from alchemiscale import Scope, ScopedKey
@@ -27,6 +27,8 @@ from drugforge.alchemy.utils import extract_custom_ligand_network
 from drugforge.data.schema.identifiers import BespokeParameter, BespokeParameters
 from openff.toolkit import ForceField
 from openff.units import unit as OFFUnit
+
+
 
 
 @pytest.mark.parametrize(
@@ -106,13 +108,25 @@ def test_network_planner_get_network(network_planner, openfe_func):
     else:
         assert openfe_func in planning_func.__name__
 
-
+# xskip this on mac os because a strange rdkit failure to retain mol properties when pickled
+# even when setting Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.AllProps) inside of
+# drugforge
+# an issue has been raised on gufe: https://github.com/OpenFreeEnergy/gufe/issues/750
+@pytest.mark.skipif(
+    os.getenv("RUNNER_OS") == "macOS", reason="RDKIT fails to retain mol properties when pickled on mac os"
+)
 def test_plan_from_names(tyk2_ligands, tyk2_small_custom_network):
     """Make sure we can plan a network using the names of the ligands."""
+
     edges = extract_custom_ligand_network(tyk2_small_custom_network)
 
     planner = NetworkPlanner(network_planning_method=CustomNetworkPlanner(edges=edges))
     network = planner.generate_network(ligands=tyk2_ligands).to_ligand_network()
+    from rdkit import Chem
+
+    # let us ensure that we are pickling all properties
+    # if not generating the  network from names will fail
+    assert Chem.GetDefaultPickleProperties() == Chem.PropertyPickleOptions.AllProps
 
     # make sure the edges are as we expect
     for edge in network.edges:
