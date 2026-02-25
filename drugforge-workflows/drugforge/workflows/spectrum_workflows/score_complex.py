@@ -256,7 +256,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                     inputs.target,
                     comp_name,
                 )
-                #chain_dock = "1"  # Standard in OpenMM output file
+                # chain_dock = "1"  # Standard in OpenMM output file
             except FileNotFoundError as error:
                 logger.error(
                     f"File not found during minimization of {file_min}: {error}"
