@@ -1,7 +1,6 @@
 import os
 
 import pytest
-
 from drugforge.ml.models import (
     ASAPMLModelRegistry,
     LocalMLModelSpec,

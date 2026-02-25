@@ -177,8 +177,6 @@ def build_results_dfs(
     return per_epoch_df, extract_epoch_dfs
 
 
-
-
 ## calc_stats
 # Function to calculate a statistic (for multiprocessing)
 def calc_one_stat(stat_func, target_vals, preds, in_range):
@@ -356,8 +354,6 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         in_range_out_fn = out_fn.with_stem(f"{out_fn.stem}_in_range")
         in_range_stats_df = pandas.concat(in_range_stats_df, axis=0, ignore_index=True)
         in_range_stats_df.to_csv(in_range_out_fn, index=False)
-
-
 
 
 ################################################################################
@@ -660,5 +656,3 @@ def training_progress(collection_args_fn, out_fn):
 
     n_epochs_df = pandas.concat(n_epochs_df, axis=0, ignore_index=True)
     n_epochs_df.to_csv(out_fn, index=False)
-
-
