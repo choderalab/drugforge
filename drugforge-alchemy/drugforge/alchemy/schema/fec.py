@@ -3,7 +3,6 @@ from typing import (
     TYPE_CHECKING,
     Annotated,
     Any,
-    Dict,
     Literal,
     Optional,
     TypeAlias,
@@ -35,7 +34,6 @@ from openfe.protocols.openmm_utils.omm_settings import (
 )
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
 
-MolarQuantity: TypeAlias = Annotated[GufeQuantity, specify_quantity_units("molar")]
 
 
 from openff.units import unit as OFFUnit
@@ -49,6 +47,7 @@ if TYPE_CHECKING:
     from drugforge.data.schema.ligand import Ligand
     from gufe.mapping import LigandAtomMapping
 
+MolarQuantity: TypeAlias = Annotated[GufeQuantity, specify_quantity_units("molar")]
 
 class SolventSettings(_SchemaBase):
     """

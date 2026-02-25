@@ -1,9 +1,10 @@
 import abc
 import json
-from typing import Annotated, Any, Callable, Literal
+from typing import  Literal
 
-from openff.units import Quantity
+from openff.units import Quantity, Unit
 from pydantic import BaseModel, ConfigDict
+import numpy as np
 
 # the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1
 # from openff.models.models import DefaultModel
@@ -17,12 +18,13 @@ class QuantityEncoder(json.JSONEncoder):
     This is intended to operate on FloatQuantity and ArrayQuantity objects.
     """
 
+
     def default(self, obj):
         if isinstance(obj, Quantity):
 
             if isinstance(obj.magnitude, (float, int)):
                 data = obj.magnitude
-            elif isinstance(obj.magnitude, numpy.ndarray):
+            elif isinstance(obj.magnitude, np.ndarray):
                 data = obj.magnitude.tolist()
             else:
                 # This shouldn't ever be hit if our object models

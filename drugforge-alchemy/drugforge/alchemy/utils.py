@@ -14,7 +14,7 @@ from openmm.app import ForceField, Modeller, PDBFile
 
 if TYPE_CHECKING:
     from drugforge.data.schema.ligand import Ligand
-    from drugforge.data.schema.target import PreppedTarget
+    #from drugforge.data.schema.target import PreppedTarget
     from drugforge.modeling.schema import PreppedComplex, PreppedTarget
 
 
