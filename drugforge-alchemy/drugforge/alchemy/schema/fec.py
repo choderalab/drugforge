@@ -65,7 +65,10 @@ class SolventSettings(_SchemaBase):
     )
 
     def to_solvent_component(self) -> gufe.SolventComponent:
+        # note, we cannot just use self.model_dump(exclude="type") here because it would
+        # convert quantities to dicts; SolventComponent expects quantities
         return gufe.SolventComponent(**{k: v for k, v in self if k != "type"})
+
 
 
 class AdaptiveSettings(_SchemaBase):

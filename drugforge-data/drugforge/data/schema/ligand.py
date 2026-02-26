@@ -277,7 +277,7 @@ class Ligand(DataModelAbstractBase):
                 field = getattr(self, key)
                 try:
                     data[key] = field.model_dump_json()
-                except AttributeError:
+                except (AttributeError, PydanticSerializationError):
                     if field is not None:
                         data[key] = str(getattr(self, key))
         # dump the enum using value to get the str repr
@@ -352,9 +352,6 @@ class Ligand(DataModelAbstractBase):
         """
         from drugforge.data.backend.rdkit import sdf_str_to_rdkit_mol, set_SD_data
         from rdkit import Chem
-
-        # This is needed to ensure that we write all the molprops, which includes names when writing to graph ml
-        # Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.AllProps)
 
         rdkit_mol: Chem.Mol = sdf_str_to_rdkit_mol(self.data)
         data = {}
