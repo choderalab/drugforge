@@ -1,4 +1,4 @@
-name: alchemy
+name: drugforge
 channels:
   - openeye
   - conda-forge
