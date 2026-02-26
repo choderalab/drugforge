@@ -70,7 +70,6 @@ class SolventSettings(_SchemaBase):
         return gufe.SolventComponent(**{k: v for k, v in self if k != "type"})
 
 
-
 class AdaptiveSettings(_SchemaBase):
     """
     A settings class to encode settings for adaptive settings. These were recommended by OpenFE.
