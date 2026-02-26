@@ -59,7 +59,6 @@ dependencies:
   - openmm
   - openmmtools
   - openmmforcefields >= 0.15.0
-  - gufe >=1.0.0
   - rdkit
   - plip ~=3.0.0
   - mdtraj
