@@ -314,7 +314,7 @@ def run(
 
     # load the factory and set the core smarts if supplied
     if factory_file is not None:
-        factory = AlchemyPrepWorkflow.parse_file(factory_file)
+        factory = AlchemyPrepWorkflow.from_file(factory_file)
         if core_smarts is not None:
             factory.core_smarts = core_smarts
     else:

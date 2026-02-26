@@ -295,7 +295,7 @@ class AlchemiscaleHelper:
 
         if planned_network:
             network_with_results = FreeEnergyCalculationNetwork(
-                **planned_network.dict(exclude={"results"}), results=alchem_results
+                **planned_network.model_dump(exclude={"results"}), results=alchem_results
             )
 
         return network_with_results

@@ -208,7 +208,7 @@ def test_alchemy_prep_create(tmpdir):
             alchemy, ["prep", "create", "-f", "prep-workflow.json", "-cs", "CC"]
         )
         assert result.exit_code == 0
-        prep_workflow = AlchemyPrepWorkflow.parse_file("prep-workflow.json")
+        prep_workflow = AlchemyPrepWorkflow.from_file("prep-workflow.json")
         assert prep_workflow.core_smarts == "CC"
 
 
