@@ -6,7 +6,7 @@ from collections.abc import Iterator
 from copy import deepcopy
 from glob import glob
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import torch

@@ -1,9 +1,10 @@
 import abc
 import json
-from typing import Any, Callable, Literal
+from typing import Literal
 
-from openff.units import Quantity
-from pydantic import BaseModel
+import numpy as np
+from openff.units import Quantity, Unit
+from pydantic import BaseModel, ConfigDict
 
 # the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1
 # from openff.models.models import DefaultModel
@@ -22,12 +23,12 @@ class QuantityEncoder(json.JSONEncoder):
 
             if isinstance(obj.magnitude, (float, int)):
                 data = obj.magnitude
-            elif isinstance(obj.magnitude, numpy.ndarray):
+            elif isinstance(obj.magnitude, np.ndarray):
                 data = obj.magnitude.tolist()
             else:
                 # This shouldn't ever be hit if our object models
                 # behave in ways we expect?
-                raise UnsupportedExportError(
+                raise ValueError(
                     f"trying to serialize unsupported type {type(obj.magnitude)}"
                 )
             return {
@@ -57,6 +58,7 @@ def json_loader(data: str) -> dict:
         unit_ = Unit(v["unit"])
         val = v["val"]
         out[key] = unit_ * val
+
     return out
 
 
@@ -69,11 +71,6 @@ class DefaultModel(BaseModel):
         validate_assignment=True,
         extra="forbid",
     )
-
-    json_encoders: dict[Any, Callable] = {
-        Quantity: custom_quantity_encoder,
-    }
-    json_loads: Callable = json_loader
 
 
 class _SchemaBase(abc.ABC, DefaultModel):

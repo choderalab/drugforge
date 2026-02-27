@@ -100,7 +100,7 @@ class PersesAtomMapper(_BaseAtomMapper):
     def _get_mapper(self):
         from openfe import PersesAtomMapper
 
-        return PersesAtomMapper(**self.dict(exclude={"type"}))
+        return PersesAtomMapper(**self.model_dump(exclude={"type"}))
 
     def provenance(self) -> dict[str, str]:
         import openeye.oechem

@@ -95,7 +95,7 @@ class ManifoldArtifactUploader(BaseModel):
 
     @model_validator(mode="after")
     def name_id_mutually_exclusive(self):
-        molecule_set_id = sefl.molecule_set_id
+        molecule_set_id = self.molecule_set_id
         molecule_set_name = self.molecule_set_name
 
         if not molecule_set_id and not molecule_set_name:

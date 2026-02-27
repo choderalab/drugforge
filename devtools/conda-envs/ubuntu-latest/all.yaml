@@ -1,21 +1,37 @@
-name: ml
+name: drugforge
 channels:
   - openeye
   - conda-forge
 dependencies:
-  # Base depends
-  - pip
   - python >=3.10,<3.12
+  - pydantic-settings
+  - pydantic >=2.0.0a0
+  - alchemiscale-client>=0.7.2
+  - bokeh
+  - cinnabar
+  - click
+  - gufe >= 1.7.1
+  - kartograf
+  - lomap2
+  - networkx
+  - openff-toolkit
+  - openff-models
+  - openff-qcsubmit
+  - openff-units
+  - openff-utilities
+  - panel
+  - perses
+  - plotmol
+  - rich <14.1.0
+  - tqdm
+  - pip
   - pydantic >=2.0.0a0
   - pydantic-settings
   - typing-extensions
+  - pyyaml
+  - netifaces
   - semver
 
-  # drugforge-alchemy
-  # drugforge-cli
-  # drugforge-data
-  # drugforge-docking
-  # drugforge-ml
 
   # Command Line Tools & Scripting
   - rich <14.1.0
@@ -38,23 +54,27 @@ dependencies:
   - openeye-toolkits
   - openff-forcefields >=2024.04.0
   - openff-toolkit
-  - openfe ~=1.0
+  - openff-toolkit-base >=0.17
+  - openfe >=1.8.0
   - openmm
   - openmmtools
   - openmmforcefields >= 0.15.0
+  - rdkit
+  - plip ~=3.0.0
   - mdtraj
   - cudatoolkit
-  - gufe >=1.0.0
-  - pymol-open-source
-  - rdkit
-  - plip
+  - mafft
+
+  # Services
+  - requests
+  - moto
+  - boto3
+
 
   # Math
   - numpy
   - pandas
   - sigfig
-  - matplotlib
-  - seaborn
 
   # Execution
   - netifaces
@@ -63,10 +83,18 @@ dependencies:
   - dask-cuda
   - distributed
 
-  # Services
-  - requests
-  - moto
-  - boto3
+  #viz
+  - logomaker
+  - airium
+  - pillow  # This is the correct package name for PIL
+  - imageio
+  - matplotlib
+  - mdtraj
+  - multimethod
+  - pandas
+  - pygifsicle
+  - pymol-open-source  # The correct package name for PyMOL
+  - seaborn
 
   # ML
   - dgl

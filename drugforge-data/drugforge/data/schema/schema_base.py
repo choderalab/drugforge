@@ -60,7 +60,6 @@ class DataModelAbstractBase(BaseModel):
         # first load the file, then use the json parser
         contents = read_file_directly(file)
         return cls.from_json(contents)
-        # return cls.parse_file(str(file))
 
     def to_json_file(self, file: str | Path):
         write_file_directly(file, self.model_dump_json())

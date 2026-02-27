@@ -1,6 +1,5 @@
-from typing import Any, Callable, Literal, Optional, Union
+from typing import Any, Literal, Optional
 
-import pint
 from drugforge.data.schema.schema_base import DataModelAbstractBase
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from pydantic import BaseModel, Field, field_validator

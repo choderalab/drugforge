@@ -2,7 +2,6 @@ import pytest
 from drugforge.data.backend.openeye import load_openeye_pdb
 from drugforge.data.schema.complex import Complex
 from drugforge.data.testing.test_resources import fetch_test_file
-from pydantic import ValidationError
 
 
 @pytest.fixture(scope="session")

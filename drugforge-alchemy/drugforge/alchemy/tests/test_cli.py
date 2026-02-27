@@ -208,7 +208,7 @@ def test_alchemy_prep_create(tmpdir):
             alchemy, ["prep", "create", "-f", "prep-workflow.json", "-cs", "CC"]
         )
         assert result.exit_code == 0
-        prep_workflow = AlchemyPrepWorkflow.parse_file("prep-workflow.json")
+        prep_workflow = AlchemyPrepWorkflow.from_file("prep-workflow.json")
         assert prep_workflow.core_smarts == "CC"
 
 
@@ -303,7 +303,7 @@ def test_alchemy_prep_run_all_pass(tmpdir, mac1_complex, openeye_prep_workflow):
         # complex to a local file
         mac1_complex.to_json_file("complex.json")
         # create a new prep workflow which allows incorrect stereo
-        workflow = openeye_prep_workflow.copy(deep=True)
+        workflow = openeye_prep_workflow.model_copy(deep=True)
         workflow.strict_stereo = False
         workflow.to_file("workflow.json")
 
@@ -424,7 +424,7 @@ def test_alchemy_prep_receptor_pick(tmpdir, mac1_complex, openeye_prep_workflow)
 
         mac1_complex.to_json_file(receptor_cache.joinpath("complex.json"))
         # create a new prep workflow with no expansion and only valid stereo
-        workflow = openeye_prep_workflow.copy(deep=True)
+        workflow = openeye_prep_workflow.model_copy(deep=True)
         workflow.strict_stereo = True
         workflow.stereo_expander = None
         workflow.to_file("workflow.json")

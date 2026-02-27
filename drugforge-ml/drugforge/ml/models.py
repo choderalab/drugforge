@@ -3,7 +3,7 @@ import warnings
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
-from typing import Optional, Set, Union
+from typing import Optional, Union
 from urllib.parse import urljoin
 
 import mtenn
@@ -563,7 +563,7 @@ class MLModelRegistry(BaseModel):
     models: dict[str, MLModelSpecBase] = Field(
         ..., description="Models in the model registry, keyed by name"
     )
-    source_yaml: Optional[str] = Field(
+    source_yaml: Optional[Union[str, Path]] = Field(
         None, description="Source yaml file for model registry"
     )
     time_updated: datetime = Field(datetime.utcnow(), description="Time last updated")

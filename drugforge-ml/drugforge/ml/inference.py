@@ -1,7 +1,7 @@
 import abc
 import json
 from pathlib import Path
-from typing import ClassVar, List, Optional, Set, Union
+from typing import ClassVar, Optional, Union
 
 import mtenn
 import numpy as np
@@ -462,7 +462,7 @@ class ModelInference(InferenceBase):
 
         Parameters
         ----------
-        smiles : Union[str, List[str]]
+        smiles : Union[str, list[str]]
             SMILES string or list of SMILES strings.
         node_featurizer : BaseAtomFeaturizer, optional
             Featurizer for node data
@@ -506,7 +506,7 @@ class ModelInference(InferenceBase):
 
         Parameters
         ----------
-        pose : Union[Path, List[Path]]
+        pose : Union[Path, list[Path]]
             Path to pose file or list of paths to pose files.
         return_err: bool, default=False
 
@@ -543,8 +543,8 @@ class ModelInference(InferenceBase):
 
         Parameters
         ----------
-        pose : Union[oechem.OEMol, List[oechem.OEMol]]
-            (List of) OEMol pose(s)
+        pose : Union[oechem.OEMol, list[oechem.OEMol]]
+            (list of) OEMol pose(s)
         return_err: bool, default=False
 
         Returns
@@ -633,7 +633,7 @@ class SplitModelInference(InferenceBase):
 
         Parameters
         ----------
-        pose : Union[Path, List[Path]]
+        pose : Union[Path, list[Path]]
             Path to pose file or list of paths to pose files.
         return_err: bool, default=False
 
@@ -670,7 +670,7 @@ class SplitModelInference(InferenceBase):
 
         Parameters
         ----------
-        pose : Union[oechem.OEMol, List[oechem.OEMol]]
+        pose : Union[oechem.OEMol, list[oechem.OEMol]]
             (List of) OEMol pose(s)
         return_err: bool, default=False
 

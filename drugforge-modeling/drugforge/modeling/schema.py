@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 from drugforge.data.backend.openeye import (
     bytes64_to_oedu,

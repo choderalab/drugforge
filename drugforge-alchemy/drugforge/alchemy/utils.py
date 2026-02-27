@@ -14,7 +14,6 @@ from openmm.app import ForceField, Modeller, PDBFile
 
 if TYPE_CHECKING:
     from drugforge.data.schema.ligand import Ligand
-    from drugforge.data.schema.target import PreppedTarget
     from drugforge.modeling.schema import PreppedComplex, PreppedTarget
 
 
@@ -87,7 +86,7 @@ class AlchemiscaleHelper:
             A copy of the network submit with the results object updated.
         """
         # store a copy of the input data so we can add the results holder
-        network_data = planned_network.dict()
+        network_data = planned_network.model_dump()
 
         # build the network which we can submit
         fec_network = planned_network.to_alchemical_network()
@@ -296,7 +295,8 @@ class AlchemiscaleHelper:
 
         if planned_network:
             network_with_results = FreeEnergyCalculationNetwork(
-                **planned_network.dict(exclude={"results"}), results=alchem_results
+                **planned_network.model_dump(exclude={"results"}),
+                results=alchem_results,
             )
 
         return network_with_results
