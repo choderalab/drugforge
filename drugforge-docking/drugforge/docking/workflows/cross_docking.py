@@ -155,7 +155,6 @@ class DockingWorkflowInputsBase(BaseModel):
 
 
 class CrossDockingWorkflowInputs(DockingWorkflowInputsBase):
-    logname: str = Field("", description="Name of the log file.")
     structure_selector: StructureSelector = Field(
         StructureSelector.LEAVE_SIMILAR_OUT,
         description="Structure selector to use for docking",
@@ -192,11 +191,17 @@ class CrossDockingWorkflowInputs(DockingWorkflowInputsBase):
 
 def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
     """
-    Run cross docking on a set of ligands, against multiple targets
+    Runs docking on the specified target pdb files and ligands.
+    Uses the specified structure selector to select with protein-ligand combinations to run.
+    By default, uses the LeaveSimilarOutSelector, which excludes query-reference pairs where the ligands are
+        identical or stereoisomers, protonation states isomers, or tautomers. All other query-reference pairs
+        are docked. If no similar ligands are present in a dataset of N structures with N ligands,
+        N * (N-1) pairs will be docked.
+    By default, each poses is scored with the ChemGauss4 scorer.
     Parameters
     ----------
     inputs : CrossDockingWorkflowInputs
-        Inputs to cross docking
+        Input settings to cross docking
     Returns
     -------
     None
