@@ -130,7 +130,7 @@ def cross_docking(
     """
 
     if input_json is not None:
-        print("Loading inputs from json file... Will override all other inputs.")
+        logging.info(f"Loading inputs from {input_json}...Will override all other inputs.")
         inputs = CrossDockingWorkflowInputs.from_json_file(input_json)
 
     else:
