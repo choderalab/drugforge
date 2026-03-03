@@ -19,6 +19,18 @@ def moonshot_sdf():
     return sdf
 
 
+@pytest.fixture(scope="session")
+def ligand_with_tags():
+    lig = Ligand.from_smiles(
+        "CCCCCCC", compound_name="test_name", **{"test_tag": "test_value"}
+    )
+    return lig
+
+
+def test_ligand_has_tags(ligand_with_tags):
+    assert ligand_with_tags.tags["test_tag"] == "test_value"
+
+
 def test_ligand_from_smiles(smiles):
     lig = Ligand.from_smiles(smiles, compound_name="test_name")
     assert lig.smiles == smiles
@@ -461,6 +473,14 @@ def test_ligand_oemol_roundtrip(moonshot_sdf):
     assert l2 == l1
     # check all internal fields as well
     assert l2.dict() == l1.dict()
+
+
+def test_ligand_oemol_roundtrip_tags(ligand_with_tags):
+    oemol = ligand_with_tags.to_oemol()
+    roundtrip_ligand = Ligand.from_oemol(oemol)
+    roundtrip_ligand_v2 = Ligand.from_oemol(roundtrip_ligand.to_oemol())
+    assert roundtrip_ligand_v2 == ligand_with_tags
+    assert roundtrip_ligand_v2.dict() == ligand_with_tags.dict()
 
 
 def test_ligand_oemol_roundtrip_data_only(moonshot_sdf):
