@@ -345,4 +345,4 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
     del results
 
     scores_df.to_csv(output_dir / "docking_scores_raw.csv", index=False)
-    logger.info("Finished successfully!")
+    logger.info("Cross docking workflow finished successfully!")
