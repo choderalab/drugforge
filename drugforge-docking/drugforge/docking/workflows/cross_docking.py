@@ -328,6 +328,7 @@ def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
             results,
             backend=BackendType.IN_MEMORY,
             reconstruct_cls=docker.result_cls,
+            include_reference_data=True,
         )
 
     logger.info("Running scoring")
