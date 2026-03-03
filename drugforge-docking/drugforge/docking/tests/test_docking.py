@@ -141,14 +141,14 @@ class TestDocking:
         # Check that we get the expected number of poses
         # these are the actual numbers of poses we get with the current implementation
         expected_num_poses_map = {
-            True:  {1: 1, 5: 4, 10: 7, 20: 10, 50: 29},
-            False: {1: 1, 5: 3, 10: 6, 20:  9, 50: 26},
+            True: {1: 1, 5: 4, 10: 7, 20: 10, 50: 29},
+            False: {1: 1, 5: 3, 10: 6, 20: 9, 50: 26},
         }
         expected_num_poses = expected_num_poses_map[use_omega][num_poses]
 
-        assert len(results) == expected_num_poses, (
-            f"Expected {expected_num_poses} poses but got {len(results)} for num_poses={num_poses} and use_omega={use_omega}"
-        )
+        assert (
+            len(results) == expected_num_poses
+        ), f"Expected {expected_num_poses} poses but got {len(results)} for num_poses={num_poses} and use_omega={use_omega}"
 
         # Store timing info in the test report
         timing = end_time - start_time
