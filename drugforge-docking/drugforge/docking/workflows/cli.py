@@ -126,7 +126,13 @@ def cross_docking(
     loglevel: Union[int, str] = logging.INFO,
 ):
     """
-    Run cross docking on a set of ligands, against a set of targets.
+    Runs docking on the provided set of targets and ligands.
+    Uses the specified structure selector to select with protein-ligand combinations to run.
+    By default, uses the LeaveSimilarOutSelector, which excludes query-reference pairs where the ligands are
+        identical or stereoisomers, protonation states isomers, or tautomers. All other query-reference pairs
+        are docked. If no similar ligands are present in a dataset of N structures with N ligands,
+        N * (N-1) pairs will be docked.
+    By default, each poses is scored with the ChemGauss4 scorer.
     """
 
     if input_json is not None:

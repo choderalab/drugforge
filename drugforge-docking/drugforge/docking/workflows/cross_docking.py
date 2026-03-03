@@ -191,7 +191,7 @@ class CrossDockingWorkflowInputs(DockingWorkflowInputsBase):
 
 def cross_docking_workflow(inputs: CrossDockingWorkflowInputs):
     """
-    Runs docking on the specified target pdb files and ligands.
+    Runs docking on the provided set of targets and ligands.
     Uses the specified structure selector to select with protein-ligand combinations to run.
     By default, uses the LeaveSimilarOutSelector, which excludes query-reference pairs where the ligands are
         identical or stereoisomers, protonation states isomers, or tautomers. All other query-reference pairs
