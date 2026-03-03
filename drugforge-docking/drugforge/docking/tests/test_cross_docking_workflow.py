@@ -44,6 +44,7 @@ def test_cross_docking_cli_structure_directory_du_cache(
     )
     assert click_success(result)
 
+
 @pytest.fixture()
 def tyk2_complex():
     return fetch_test_file("tyk2_lig_ejm_54.pdb")
@@ -52,6 +53,7 @@ def tyk2_complex():
 @pytest.fixture()
 def tyk2_ligands():
     return fetch_test_file("tyk2_ligands.sdf")
+
 
 @pytest.mark.skipif(
     os.getenv("RUNNER_OS") == "macOS", reason="Docking tests slow on GHA on macOS"
