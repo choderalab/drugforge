@@ -37,6 +37,7 @@ dependencies:
   - openmm
   - openmmtools
   - openmmforcefields >= 0.13.0
+  - openbabel # used for pybel
   - gufe >=1.0.0
   - pymol-open-source
   - rdkit
