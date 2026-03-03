@@ -1026,7 +1026,7 @@ def clear_SD_data(mol: oechem.OEMolBase) -> oechem.OEMol:
         OpenEye OEMol with SD data cleared
     """
     oechem.OEClearSDData(mol)
-
+    mol.SetTitle("")
     if isinstance(mol, oechem.OEMCMolBase):
         for conf in mol.GetConfs():
             oechem.OEClearSDData(conf)
