@@ -138,6 +138,18 @@ class TestDocking:
         assert len(results) > 0
         assert results[0].probability > 0.0
 
+        # Check that we get the expected number of poses
+        # these are the actual numbers of poses we get with the current implementation
+        expected_num_poses_map = {
+            True:  {1: 1, 5: 4, 10: 7, 20: 10, 50: 29},
+            False: {1: 1, 5: 3, 10: 6, 20:  9, 50: 26},
+        }
+        expected_num_poses = expected_num_poses_map[use_omega][num_poses]
+
+        assert len(results) == expected_num_poses, (
+            f"Expected {expected_num_poses} poses but got {len(results)} for num_poses={num_poses} and use_omega={use_omega}"
+        )
+
         # Store timing info in the test report
         timing = end_time - start_time
         poses_generated = len(results)
@@ -145,6 +157,7 @@ class TestDocking:
             f"Docking with {num_poses} poses took {timing:.2f}s "
             f"and generated {poses_generated} poses"
         )
+        assert timing < 25, f"Docking took longer than expected (25s): {timing:.2f}s"
 
     def test_results_to_df(self, results_simple):
         df = results_simple[0].to_df()
