@@ -13,6 +13,17 @@ from drugforge.data.backend.openeye import (
     split_openeye_design_unit,
 )
 from drugforge.data.schema.complex import Complex, ComplexBase
+from drugforge.data.backend.openeye import (
+    bytes64_to_oedu,
+    load_openeye_design_unit,
+    oechem,
+    oedu_to_bytes64,
+    openeye_perceive_residues,
+    save_openeye_design_unit,
+    save_openeye_pdb,
+    split_openeye_design_unit,
+)
+from drugforge.data.schema.complex import Complex, ComplexBase
 from drugforge.data.schema.identifiers import TargetIdentifiers
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.schema_base import (
@@ -99,7 +110,7 @@ class PreppedTarget(DataModelAbstractBase):
         """
         oedu = self.to_oedu()
         _, oe_receptor, _ = split_openeye_design_unit(du=oedu)
-        # As advised by Alex <https://github.com/choderalab/drugforge/pull/608#discussion_r1388067468>
+        # As advised by Alex <https://github.com/asapdiscovery/asapdiscovery/pull/608#discussion_r1388067468>
         openeye_perceive_residues(oe_receptor)
         save_openeye_pdb(oe_receptor, pdb_fn=filename)
 
