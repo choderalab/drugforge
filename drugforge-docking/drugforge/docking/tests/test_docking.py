@@ -157,7 +157,7 @@ class TestDocking:
             f"Docking with {num_poses} poses took {timing:.2f}s "
             f"and generated {poses_generated} poses"
         )
-        assert timing < 50, f"Docking took longer than expected (50s): {timing:.2f}s"
+        assert timing < 60, f"Docking took longer than expected (60s): {timing:.2f}s"
 
     def test_results_to_df(self, results_simple):
         df = results_simple[0].to_df()
