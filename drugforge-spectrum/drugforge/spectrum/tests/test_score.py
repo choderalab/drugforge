@@ -101,8 +101,11 @@ class TestConvertToPDBQT:
 
         with pytest.raises(TypeError):
             from vina import Vina
-            v = Vina(sf_name='vina')
-            v.set_receptor(prepped_target_path)  # Should raise error since not in PDBQT format
+
+            v = Vina(sf_name="vina")
+            v.set_receptor(
+                prepped_target_path
+            )  # Should raise error since not in PDBQT format
 
         from drugforge.spectrum.score import convert_to_pdbqt
 
@@ -110,23 +113,30 @@ class TestConvertToPDBQT:
         assert os.path.exists(vina_prepped_target_path)
 
         from vina import Vina
-        v = Vina(sf_name='vina')
+
+        v = Vina(sf_name="vina")
         v.set_receptor(vina_prepped_target_path)
 
     def test_ligand_convert_to_pdbqt(self, prepped_ligand_path, ligand_prepped_vina):
         """Test conversion of ligand sdf to PDBQT format for AutoDock Vina."""
         with pytest.raises(TypeError):
             from vina import Vina
-            v = Vina(sf_name='vina')
-            v.set_ligand_from_file(prepped_ligand_path)  # Should raise error since not in PDBQT format
+
+            v = Vina(sf_name="vina")
+            v.set_ligand_from_file(
+                prepped_ligand_path
+            )  # Should raise error since not in PDBQT format
 
         from drugforge.spectrum.score import convert_to_pdbqt
 
-        vina_prepped_ligand_path = convert_to_pdbqt(prepped_path=prepped_ligand_path, ligand=True)
+        vina_prepped_ligand_path = convert_to_pdbqt(
+            prepped_path=prepped_ligand_path, ligand=True
+        )
         assert os.path.exists(vina_prepped_ligand_path)
 
         from vina import Vina
-        v = Vina(sf_name='vina')
+
+        v = Vina(sf_name="vina")
         v.set_ligand_from_file(vina_prepped_ligand_path)
 
 
