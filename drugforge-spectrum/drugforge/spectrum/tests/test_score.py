@@ -98,12 +98,14 @@ class TestConvertToPDBQT:
     def test_target_convert_to_pdbqt(self, prepped_target_path, target_prepped_vina):
         """Test conversion of target pdb to PDBQT format for AutoDock Vina."""
         from drugforge.spectrum.score import convert_to_pdbqt
+
         vina_prepped_target_path = convert_to_pdbqt(prepped_path=prepped_target_path)
         assert os.path.exists(vina_prepped_target_path)
 
     def test_ligand_convert_to_pdbqt(self, prepped_ligand_path, ligand_prepped_vina):
         """Test conversion of ligand sdf to PDBQT format for AutoDock Vina."""
         from drugforge.spectrum.score import convert_to_pdbqt
+
         vina_prepped_ligand_path = convert_to_pdbqt(prepped_path=prepped_ligand_path)
         assert os.path.exists(vina_prepped_ligand_path)
 
