@@ -675,6 +675,7 @@ from drugforge.spectrum.workflows.cli import (
     fold_input,
     af3_struct_alignment,
     make_boltz_input,
+    ligand_transfer_docking_cmd,
 )
 
 spectrum.add_command(align_fasta, name="align-fasta")
@@ -683,6 +684,7 @@ spectrum.add_command(msa_input, name="msa-input")
 spectrum.add_command(fold_input, name="fold-input")
 spectrum.add_command(af3_struct_alignment, name="af3-struct-alignment")
 spectrum.add_command(make_boltz_input, name="make-boltz-input")
+spectrum.add_command(ligand_transfer_docking_cmd, name="ligand-transfer-docking")
 
 if __name__ == "__main__":
     spectrum()

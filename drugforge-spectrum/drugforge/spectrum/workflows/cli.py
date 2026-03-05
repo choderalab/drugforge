@@ -8,6 +8,7 @@ from drugforge.spectrum.alphafold import (
 )
 from drugforge.spectrum.boltz import make_boltz_inputs
 from drugforge.spectrum.calculate_rmsd import save_alignment_pymol
+from drugforge.spectrum.docking import ligand_transfer_docking
 from drugforge.spectrum.schema import (
     SequenceList,
     find_bsite_resids,
@@ -373,6 +374,106 @@ def make_boltz_input(fasta, output_dir, ligand_smiles, ligand_id):
         logger.info(f"Wrote {out_path}")
         click.echo(f"  Wrote {out_path}")
     click.secho(f"\nWrote {len(inputs)} Boltz YAML(s) to {output_dir}", fg="green")
+
+
+@cli.command("ligand-transfer-docking")
+@click.argument(
+    "target_structure_dir",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+)
+@click.argument(
+    "reference_fragalysis_dir",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+)
+@click.argument("output_dir", type=click.Path(file_okay=False, path_type=Path))
+@click.option(
+    "--ref-chain",
+    default="A",
+    show_default=True,
+    help="Chain ID in the reference complex used for structural alignment.",
+)
+@click.option(
+    "--active-site-chain",
+    default="A",
+    show_default=True,
+    help="Chain ID in the target structure used for structural alignment.",
+)
+@click.option(
+    "--posit-confidence-cutoff",
+    default=0.1,
+    show_default=True,
+    type=float,
+    help="Minimum POSIT confidence score to keep a docking result.",
+)
+@click.option(
+    "--num-poses",
+    default=1,
+    show_default=True,
+    type=int,
+    help="Number of docked poses to return per pair.",
+)
+@click.option(
+    "--use-omega",
+    is_flag=True,
+    default=False,
+    help="Enumerate conformers with OEOmega before docking (slower, more accurate).",
+)
+@click.option(
+    "--allow-final-clash/--no-allow-final-clash",
+    default=True,
+    show_default=True,
+    help="Keep poses that clash in the final docking stage.",
+)
+@click.option(
+    "--no-overwrite",
+    is_flag=True,
+    default=False,
+    help="Do not overwrite output_dir if it already exists.",
+)
+def ligand_transfer_docking_cmd(
+    target_structure_dir,
+    reference_fragalysis_dir,
+    output_dir,
+    ref_chain,
+    active_site_chain,
+    posit_confidence_cutoff,
+    num_poses,
+    use_omega,
+    allow_final_clash,
+    no_overwrite,
+):
+    """Run POSIT ligand transfer docking for predicted protein structures.
+
+    Aligns each PDB in TARGET_STRUCTURE_DIR to every reference complex in
+    REFERENCE_FRAGALYSIS_DIR, transfers the reference ligand coordinates, and
+    runs POSIT self-docking on each pair.  No target tag or ML models required.
+
+    TARGET_STRUCTURE_DIR: directory of predicted PDB files (one per sequence).
+
+    REFERENCE_FRAGALYSIS_DIR: Fragalysis-format directory of crystal complexes
+    (<ID>/<ID>.pdb + <ID>/<ID>.sdf).
+
+    OUTPUT_DIR: directory to write docking results.
+    """
+    import logging
+
+    df = ligand_transfer_docking(
+        target_structure_dir=target_structure_dir,
+        reference_fragalysis_dir=reference_fragalysis_dir,
+        output_dir=output_dir,
+        ref_chain=ref_chain,
+        active_site_chain=active_site_chain,
+        posit_confidence_cutoff=posit_confidence_cutoff,
+        num_poses=num_poses,
+        use_omega=use_omega,
+        allow_final_clash=allow_final_clash,
+        overwrite=not no_overwrite,
+        loglevel=logging.INFO,
+    )
+    click.secho(
+        f"\nDocking complete: {len(df)} results → {output_dir / 'docking_results_final.csv'}",
+        fg="green",
+    )
 
 
 if __name__ == "__main__":
