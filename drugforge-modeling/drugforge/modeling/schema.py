@@ -16,7 +16,6 @@ from drugforge.data.schema.complex import Complex, ComplexBase
 from drugforge.data.backend.openeye import (
     bytes64_to_oedu,
     load_openeye_design_unit,
-    oechem,
     oedu_to_bytes64,
     openeye_perceive_residues,
     save_openeye_design_unit,
