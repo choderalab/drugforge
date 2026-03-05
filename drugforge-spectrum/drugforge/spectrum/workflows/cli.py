@@ -161,6 +161,7 @@ def msa_input(fasta, output_dir, seeds, description_prefix):
     OUTPUT_DIR: directory to write per-sequence JSON files.
     """
     output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
     logger = FileLogger(
         logname="msa_input", path=output_dir, logfile="msa_input.log"
     ).getLogger()
@@ -207,6 +208,7 @@ def fold_input(msa_output_dir, output_dir, seeds, fasta):
     OUTPUT_DIR: directory to write per-sequence fold-input JSON files.
     """
     output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
     logger = FileLogger(
         logname="fold_input", path=output_dir, logfile="fold_input.log"
     ).getLogger()
