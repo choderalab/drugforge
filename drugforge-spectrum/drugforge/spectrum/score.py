@@ -22,6 +22,7 @@ from drugforge.docking.openeye import POSITDocker
 from drugforge.modeling.schema import PreppedComplex
 from drugforge.simulation.simulate import VanillaMDSimulator
 from drugforge.spectrum.calculate_rmsd import rmsd_alignment
+from openbabel import pybel
 from pydantic.v1 import BaseModel, Field, root_validator
 from rdkit import Chem
 
@@ -61,8 +62,6 @@ class ScoreSpectrumInputsBase(BaseModel):
         Coordinate y of vina box
     vina_box_z : Optional[float]
         Coordinate z of vina box
-    path_to_grid_prep : Optional[Path]
-        Path to file for grid prepping
     dock_vina : bool
         Optionally run extra docking step with autodock vina
     gnina_score : bool
@@ -122,9 +121,6 @@ class ScoreSpectrumInputsBase(BaseModel):
     vina_box_x: Optional[float] = Field(None, description="Coordinate x of vina box")
     vina_box_y: Optional[float] = Field(None, description="Coordinate y of vina box")
     vina_box_z: Optional[float] = Field(None, description="Coordinate z of vina box")
-    path_to_grid_prep: Optional[Path] = Field(
-        None, description="Path to file for grid prepping"
-    )
     dock_vina: bool = Field(
         False, description="Optionally run extra docking step with autodock vina "
     )
@@ -151,26 +147,6 @@ class ScoreSpectrumInputsBase(BaseModel):
     def to_json_file(self, file: str | Path):
         with open(file, "w") as f:
             f.write(self.json(indent=2))
-
-    @root_validator
-    @classmethod
-    def check_inputs_vina(cls, values):
-        """
-        Validate Vina inputs. If vina scoring is requested, either all box coordinates or a path to a grid prepper function must be provided.
-        """
-        vina_box_x = values.get("vina_box_x")
-        vina_box_y = values.get("vina_box_y")
-        vina_box_z = values.get("vina_box_z")
-        path_to_grid_prep = values.get("path_to_grid_prep")
-
-        if (
-            not vina_box_x or not vina_box_y or not vina_box_z
-        ) and not path_to_grid_prep:
-            raise ValueError(
-                "Either especify ALL coordinates of the box, ot the path to grid prepper function"
-            )
-
-        return values
 
     @root_validator
     @classmethod
@@ -210,7 +186,7 @@ def dock_and_score(
     comp_name: str,
     target_name: str,
     scorers: list,
-    label: str,
+    label: str = "complex",
     pdb_ref: Union[Path, str] = None,
     aligned_folder: Path = None,
     allow_clashes: bool = True,
@@ -230,6 +206,8 @@ def dock_and_score(
         Name of reference target (see drugforge documentation).
     scorers : List
         List with scorer objects. For ChemGauss use ChemGauss4Scorer().
+    label: str
+        Label to name aligned files, by default "complex"
     pdb_ref : Union[Path, str], optional
         PDB of reference structure that will be used to align pdb_complex, by default None
     aligned_folder : Path, optional
@@ -394,12 +372,11 @@ def score_autodock_vina(
     box_center=None,
     box_size=[20, 20, 20],
     dock=False,
-    path_to_prepare_file="./",
 ):
     """Score ligand pose with AutoDock Vina.
     This function will take a receptor PDB and a ligand SDF, and prepare them to pdbqt files with the MGLTools, which are needed for Vina.
     If the receptor and/or ligand is already in pdbqt format, it will be used as is.
-    The dimensions of the grid box for Vina can be specified or calculated, provided a path to a grid file (which can be downloaded from Vina).
+    The dimensions of the grid box for Vina can be specified or calculated.
     A dataframe with the scores will be returned, including the scores before and after minimization, as well as the path to a Vina docked pose if dock=True.
 
     Parameters
@@ -414,8 +391,6 @@ def score_autodock_vina(
         Size of docking box, by default [20, 20, 20]
     dock : bool, optional
         Whether to redock ligand with AutoDock Vina, by default False
-    path_to_prepare_file : str, optional
-        Path to Python file which prepares ligand box if not provided (copied from AutoDock Vina repo), by default "./"
 
     Returns
     -------
@@ -437,13 +412,8 @@ def score_autodock_vina(
     ligand_sdf = Path(ligand_sdf)
     if receptor_pdb.suffix == ".pdb":
         # Prepare receptor
-        receptor_pdbqt = receptor_pdb.with_suffix(".pdbqt")
-        result = subprocess.run(
-            f"prepare_receptor -r {receptor_pdb} -o {receptor_pdbqt}", shell=True
-        )
-        if result.returncode != 0:
-            logger.warning(f"Receptor prep failed on {receptor_pdb}")
-
+        receptor_pdbqt = convert_to_pdbqt(str(receptor_pdb))
+        receptor_pdbqt = Path(receptor_pdbqt)
     elif receptor_pdb.suffix == ".pdbqt":
         receptor_pdbqt = receptor_pdb
         logger.info("Prepped target provided")
@@ -451,13 +421,8 @@ def score_autodock_vina(
         raise ValueError("Only allowed formats are .pdb and .pdbqt")
     # Prepare ligand
     if ligand_sdf.suffix == ".sdf":
-        ligand_pdbqt = ligand_sdf.with_suffix(".pdbqt")
-        result = subprocess.run(
-            f"mk_prepare_ligand.py -i {ligand_sdf} -o {ligand_pdbqt}",
-            shell=True,
-        )
-        if result.returncode != 0:
-            logger.warning(f"Ligand prep failed on {ligand_sdf}")
+        ligand_pdbqt = convert_to_pdbqt(str(ligand_sdf), ligand=True)
+        ligand_pdbqt = Path(ligand_pdbqt)
     elif ligand_sdf.suffix == ".pdbqt":
         ligand_pdbqt = ligand_sdf
         logger.info("Prepped ligand provided")
@@ -473,48 +438,28 @@ def score_autodock_vina(
             df_scores["Vina-dock-score"] = None
         return df_scores, None
 
-    # get coordinates of box
+    # calculate coordinates of docking box
     if box_center is None:
         ligand_pdbqt = ligand_pdbqt.resolve()
         receptor_pdbqt = receptor_pdbqt.resolve()
         parent_dir = ligand_pdbqt.parents[0]
-        path_to_prepare_file = Path(path_to_prepare_file).resolve()
-        p = subprocess.Popen(
-            f"pythonsh {path_to_prepare_file}/prepare_gpf.py -l {ligand_pdbqt} -r {receptor_pdbqt} -y",
-            cwd=parent_dir,
-            shell=True,
-            stdout=subprocess.PIPE,
-        )
-        (output, err) = p.communicate()
-        # The grid needs some time to compute
-        p.wait()
-        gpf_file = parent_dir / f"{receptor_pdb.stem}.gpf"
-        if not gpf_file.exists():
-            logger.warning(".gpf file was not generated.")
-        else:
-            with gpf_file.open("r") as f:
-                for line in f:
-                    if line.startswith("gridcenter"):
-                        # Split the line into columns
-                        comps = line.split()
-                        try:
-                            x = float(comps[1])
-                            y = float(comps[2])
-                            z = float(comps[3])
-                            box_center = [x, y, z]
-                        except (IndexError, ValueError):
-                            logger.warning(f"Malformed 'gridcenter' line in {gpf_file}")
-                        break
-        # Check if box_center was set sucessfully
-        if box_center is None:
-            logger.warning(
-                "Could not generate grid box for Vina calculation because .gpf file was incorrect."
-            )
-            df_scores["Vina-score-premin"] = None
-            df_scores["Vina-score-min"] = None
-            if dock:
-                df_scores["Vina-dock-score"] = None
-            return df_scores, None
+        # Calculate center of geometry of ligand
+        try:
+            mol = next(pybel.readfile("pdbqt", str(ligand_pdbqt)))
+        except StopIteration:
+            raise ValueError(f"Could not read ligand from {ligand_pdbqt}")
+        x_coords = [atom.coords[0] for atom in mol.atoms]
+        y_coords = [atom.coords[1] for atom in mol.atoms]
+        z_coords = [atom.coords[2] for atom in mol.atoms]
+        num_atoms = len(x_coords)
+        if num_atoms == 0:
+            raise ValueError("Ligand has no atoms to calculate center of geometry.")
+        box_center = [
+            sum(x_coords) / num_atoms,
+            sum(y_coords) / num_atoms,
+            sum(z_coords) / num_atoms,
+        ]
+
     v.set_receptor(str(receptor_pdbqt))
 
     v.set_ligand_from_file(str(ligand_pdbqt))
@@ -695,3 +640,73 @@ def minimize_structure(
             pass
 
     return min_out
+
+
+def convert_to_pdbqt(
+    prepped_path: str, charge_method: str = "gasteiger", ligand=False
+) -> str:
+    """Convert pdb or sdf files to pdbqt
+
+    Parameters
+    ----------
+    prepped_path : str
+        Path to prepped and docked receptor/ligand
+    charge_method : str, optional
+        Which method to use to calculate charges ['gasteiger','GAFF'], by default "gasteiger"
+    ligand : bool, optional
+        If the input is a ligand, by default False
+
+    Returns
+    -------
+    str
+        Path to created pdbqt file
+
+    Raises
+    ------
+    NotImplementedError
+        Incorrect charge method provided
+    """
+
+    basename, fext = os.path.splitext(prepped_path)
+    try:
+        mol = next(pybel.readfile(fext[1:], str(prepped_path)))
+    except StopIteration:
+        print("Error: Could not read a molecule from the file.")
+        return ""
+    if charge_method == "gasteiger":
+        # compute charges with gasteiger
+        ob_charge_model = pybel.ob.OBChargeModel.FindType("gasteiger")
+        ob_charge_model.ComputeCharges(mol.OBMol)
+        gasteiger_charges = ob_charge_model.GetPartialCharges()
+        # Add to object
+        for i, atom in enumerate(mol.atoms):
+            ob_atom = atom.OBAtom
+            ob_atom.SetPartialCharge(gasteiger_charges[i])
+    elif charge_method == "GAFF":
+        # compute charges with GAFF
+        forcefield = pybel.ob.OBForceField.FindForceField("GAFF")
+        forcefield.Setup(mol.OBMol)
+        forcefield.GetAtomTypes(mol.OBMol)
+        forcefield.GetPartialCharges(mol.OBMol)
+    else:
+        raise NotImplementedError(
+            "Only available options to calculate charge are 'gasteiger' and 'GAFF'"
+        )
+    filename = f"{basename}.pdbqt"
+
+    # Specify receptor options for AutoDock Vina
+    if ligand:
+        write_opts = {"n": True}  # Preserve atom names
+    else:  # receptor
+        write_opts = {
+            "r": True,  # Output as a rigid molecule (i.e. no branches or torsion tree)
+            "n": True,  # Preserve atom names
+            "p": True,  # Preserve atom indices from input file
+        }
+
+    try:
+        mol.write(format="pdbqt", filename=filename, overwrite=True, opt=write_opts)
+        return filename
+    except Exception as e:
+        print(f"Failed to write PDBQT file: {e}")
+        return ""

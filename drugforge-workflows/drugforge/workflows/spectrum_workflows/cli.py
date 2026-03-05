@@ -100,6 +100,7 @@ def spectrum():
     default="",
     help="Custom order of aligned sequences (not including ref) can be provided as a string with comma-sep indexes.",
 )
+@pdb_file
 @loglevel
 def seq_alignment(
     seq_file: str,
@@ -120,6 +121,7 @@ def seq_alignment(
     max_mismatches: int = 2,
     custom_order: str = "",
     loglevel: str = "INFO",
+    pdb_file: Optional[str] = None,
 ):
     """
     Find similarities between reference protein and its related proteins by sequence.
@@ -179,6 +181,7 @@ def seq_alignment(
         database="refseq_protein",
         verbose=False,
         email=email,
+        pdb_file=pdb_file,
     )
 
     # Perform alignment for each entry in the FASTA file
@@ -523,12 +526,6 @@ def fitness_alignment(
     help="coordinate z of vina box.",
 )
 @click.option(
-    "--path-to-grid-prep",
-    type=click.Path(),
-    default="./",
-    help="Path to .py file that calculates grid for Vina.",
-)
-@click.option(
     "--docking-vina",
     is_flag=True,
     default=False,
@@ -624,7 +621,6 @@ def score(
     vina_box_y: Optional[float] = None,
     vina_box_z: Optional[float] = None,
     docking_vina: bool = False,
-    path_to_grid_prep: str = "./",
     minimize: bool = False,
     md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
     ml_score: bool = False,
@@ -653,7 +649,6 @@ def score(
             vina_box_x=vina_box_x,
             vina_box_y=vina_box_y,
             vina_box_z=vina_box_z,
-            path_to_grid_prep=path_to_grid_prep,
             dock_vina=docking_vina,
             ligand_regex=ligand_regex,
             protein_regex=protein_regex,
