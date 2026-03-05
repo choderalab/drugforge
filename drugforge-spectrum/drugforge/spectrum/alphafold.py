@@ -125,7 +125,11 @@ def _read_msa_output(msa_output_dir: Path, name: str) -> tuple[str, list, str]:
     tuple[str, list, str]
         ``(unpairedMsa, templates, sequence)``
     """
-    data_json = msa_output_dir / name.lower() / f"{name.lower()}_data.json"
+    # resolve() follows symlinks – Nextflow stages inputs as symlinks into
+    # the process work directory.
+    data_json = (
+        Path(msa_output_dir).resolve() / name.lower() / f"{name.lower()}_data.json"
+    )
     if not data_json.exists():
         raise FileNotFoundError(
             f"MSA output not found for '{name}': expected {data_json}"
@@ -226,12 +230,15 @@ def make_fold_inputs(
     if seeds is None:
         seeds = [1, 2, 5, 10]
 
-    msa_dir = Path(msa_output_dir)
+    # resolve() follows symlinks – important when the directory is staged
+    # by Nextflow as a symlink pointing to another process's work directory.
+    msa_dir = Path(msa_output_dir).resolve()
 
     if fasta_path is not None:
         seq_list = SequenceList.from_fasta(fasta_path, aligned=False)
         names = [seq.seq_id for seq in seq_list]
     else:
+        # is_dir() follows symlinks, so staged symlink dirs are included.
         names = sorted(p.name for p in msa_dir.iterdir() if p.is_dir())
 
     if not names:
