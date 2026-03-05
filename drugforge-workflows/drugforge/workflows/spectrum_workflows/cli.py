@@ -669,12 +669,12 @@ def score(
 
 
 from drugforge.spectrum.workflows.cli import (
-    align_fasta,
-    vizualize_alignment,
-    msa_input,
-    fold_input,
     af3_struct_alignment,
+    align_fasta,
+    fold_input,
     make_boltz_input,
+    msa_input,
+    vizualize_alignment,
     ligand_transfer_docking_cmd,
 )
 

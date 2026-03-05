@@ -2,23 +2,23 @@ import io
 import subprocess
 import tempfile
 from pathlib import Path
+from warnings import warn
 
-from pydantic import BaseModel, Field, model_validator
-from typing_extensions import Self
+import numpy as np
+import pandas as pd
 from Bio import AlignIO, SeqIO
 from Bio.Align import MultipleSeqAlignment
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-import numpy as np
-import pandas as pd
-from warnings import warn
 from bokeh.layouts import column
 from bokeh.models import ColumnDataSource, LabelSet, LinearAxis, Range1d
 from bokeh.models.glyphs import Rect, Text
 
 # Bokeh imports
 from bokeh.plotting import figure, output_file, save
-from drugforge.spectrum.seq_alignment import get_colors_protein, get_colors_by_aa_group
+from drugforge.spectrum.seq_alignment import get_colors_by_aa_group, get_colors_protein
+from pydantic import BaseModel, Field, model_validator
+from typing_extensions import Self
 
 
 class ProteinSequence(BaseModel):
@@ -198,9 +198,7 @@ def run_multiple_sequence_alignment(sequences: SequenceList) -> SequenceList:
     try:
         SeqIO.write(sequences.to_bio_seq_records(), input_path, "fasta")
         cmd = ["mafft", str(input_path)]
-        result = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True
-        )
+        result = subprocess.run(cmd, capture_output=True, check=True, text=True)
         aligned_records = list(SeqIO.parse(io.StringIO(result.stdout), "fasta"))
         aligned_sequences = [
             ProteinSequence(seq_id=rec.id, sequence=str(rec.seq), aligned=True)

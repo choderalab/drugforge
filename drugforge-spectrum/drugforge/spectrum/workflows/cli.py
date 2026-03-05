@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import click
+from drugforge.data.util.logging import FileLogger
 from drugforge.spectrum.alphafold import (
     make_fold_inputs,
     make_msa_inputs,
@@ -15,7 +16,6 @@ from drugforge.spectrum.schema import (
     run_multiple_sequence_alignment,
     view_alignment,
 )
-from drugforge.data.util.logging import FileLogger
 
 
 def _parse_seeds(ctx, param, value: str) -> list[int]:
