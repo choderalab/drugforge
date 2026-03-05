@@ -668,5 +668,10 @@ def score(
     score_complex_workflow(inputs)
 
 
+from drugforge.spectrum.workflows.cli import align_fasta, vizualize_alignment
+
+spectrum.add_command(align_fasta, name="align-fasta")
+spectrum.add_command(vizualize_alignment, name="vizualize-alignment")
+
 if __name__ == "__main__":
     spectrum()
