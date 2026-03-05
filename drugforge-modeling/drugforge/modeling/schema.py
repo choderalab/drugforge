@@ -6,16 +6,6 @@ from typing import Any
 from drugforge.data.backend.openeye import (
     bytes64_to_oedu,
     load_openeye_design_unit,
-    oedu_to_bytes64,
-    openeye_perceive_residues,
-    save_openeye_design_unit,
-    save_openeye_pdb,
-    split_openeye_design_unit,
-)
-from drugforge.data.schema.complex import Complex, ComplexBase
-from drugforge.data.backend.openeye import (
-    bytes64_to_oedu,
-    load_openeye_design_unit,
     oechem,
     oedu_to_bytes64,
     openeye_perceive_residues,

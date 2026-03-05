@@ -231,7 +231,8 @@ def make_static_tags(yaml_path) -> tuple[Enum, set]:
 
 # static path to the spec
 from drugforge.data.services import postera
-manifold_data_spec = get_path_string( postera) +"/manifold_data_tags.yaml"
+
+manifold_data_spec = get_path_string(postera) + "/manifold_data_tags.yaml"
 
 
 # make target enum and set
