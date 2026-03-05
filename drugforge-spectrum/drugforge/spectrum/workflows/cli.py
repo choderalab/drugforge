@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 from drugforge.spectrum.alphafold import make_fold_inputs, make_msa_inputs, select_best_af3
+from drugforge.spectrum.boltz import make_boltz_inputs
 from drugforge.spectrum.calculate_rmsd import save_alignment_pymol
 from drugforge.spectrum.schema import (
     SequenceList,
@@ -317,6 +318,46 @@ def af3_struct_alignment(struct_dir, ref_pdb, output_dir, chain, pymol_save, col
     )
     logger.info(f"Saved PyMOL session to {session_save}")
     click.secho(f"\nAligned {len(aligned_pdbs)} structure(s). PyMOL session → {session_save}", fg="green")
+
+
+@cli.command("make-boltz-input", help="Generate Boltz YAML inputs from a FASTA file.")
+@click.argument("fasta", type=click.Path(exists=True, dir_okay=False))
+@click.argument("output_dir", type=click.Path())
+@click.option(
+    "--ligand-smiles", "-l",
+    default=None,
+    help="SMILES string for a ligand to include in every input YAML.",
+)
+@click.option(
+    "--ligand-id",
+    default="L",
+    show_default=True,
+    help="Chain ID to assign to the ligand.",
+)
+def make_boltz_input(fasta, output_dir, ligand_smiles, ligand_id):
+    """Generate one Boltz YAML per sequence in FASTA.
+
+    Boltz uses --use_msa_server so no separate MSA step is required.
+    Run the resulting YAMLs with: boltz predict <yaml> --use_msa_server
+
+    FASTA:      path to the input FASTA file.
+
+    OUTPUT_DIR: directory to write per-sequence YAML files.
+    """
+    output_dir = Path(output_dir)
+    logger = FileLogger(
+        logname="make_boltz_input", path=output_dir, logfile="make_boltz_input.log"
+    ).getLogger()
+    inputs = make_boltz_inputs(
+        fasta_path=fasta,
+        ligand_smiles=ligand_smiles,
+        ligand_id=ligand_id,
+    )
+    for boltz_input in inputs:
+        out_path = boltz_input.write(output_dir)
+        logger.info(f"Wrote {out_path}")
+        click.echo(f"  Wrote {out_path}")
+    click.secho(f"\nWrote {len(inputs)} Boltz YAML(s) to {output_dir}", fg="green")
 
 
 if __name__ == "__main__":
