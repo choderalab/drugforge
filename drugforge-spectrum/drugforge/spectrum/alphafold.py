@@ -54,11 +54,12 @@ class Af3ProteinChain(BaseModel):
         ),
     )
 
-    def to_af3_dict(self) -> dict:
+    def to_af3_dict(self, version: int = 2) -> dict:
         """Serialise to the AF3 JSON 'protein' sub-dict."""
         d: dict = {"id": self.id, "sequence": self.sequence}
         if self.description is not None:
-            d["description"] = self.description
+            if version >= 4:
+                d["description"] = self.description
         # Always write MSA fields explicitly so AF3 interprets them correctly
         d["unpairedMsa"] = self.unpairedMsa
         d["pairedMsa"] = self.pairedMsa
