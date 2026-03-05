@@ -78,7 +78,7 @@ class Af3Input(BaseModel):
         ..., description="Protein chains to include in the folding job."
     )
     dialect: str = Field("alphafold3", description="Must be 'alphafold3'.")
-    version: int = Field(4, description="AF3 JSON format version.")
+    version: int = Field(2, description="AF3 JSON format version.")
 
     def to_af3_dict(self) -> dict:
         """Serialise to the full AF3 JSON structure."""
