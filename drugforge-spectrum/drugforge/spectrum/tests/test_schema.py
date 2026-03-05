@@ -9,9 +9,9 @@ import pytest
 
 def test_protein_sequence():
     seq = ProteinSequence(
-        id="P12345", aligned=False, sequence="MKTAYIAKQRQISFVKSHFSRQDILDLWIYHTQGYFP"
+        seq_id="P12345", aligned=False, sequence="MKTAYIAKQRQISFVKSHFSRQDILDLWIYHTQGYFP"
     )
-    assert seq.id == "P12345"
+    assert seq.seq_id == "P12345"
     assert seq.sequence == "MKTAYIAKQRQISFVKSHFSRQDILDLWIYHTQGYFP"
 
 
@@ -46,8 +46,20 @@ class TestSequenceList:
 
     def test_csv_roundtrip_unaligned(self, unaligned_fasta_file, tmpdir):
         sequences = SequenceList.from_fasta(unaligned_fasta_file, aligned=False)
+        created_path = sequences.to_csv(tmpdir / "unaligned.csv")
+        roundtripped = SequenceList.from_csv(created_path)
+        assert sequences == roundtripped
+
+    def test_fasta_roundtrip_aligned(self, fasta_alignment_path, tmpdir):
+        sequences = SequenceList.from_fasta(fasta_alignment_path, aligned=True)
         created_path = sequences.to_fasta(tmpdir / "unaligned.fasta")
-        roundtripped = SequenceList.from_fasta(created_path, aligned=False)
+        roundtripped = SequenceList.from_fasta(created_path, aligned=True)
+        assert sequences == roundtripped
+
+    def test_csv_roundtrip_aligned(self, fasta_alignment_path, tmpdir):
+        sequences = SequenceList.from_fasta(fasta_alignment_path, aligned=True)
+        created_path = sequences.to_csv(tmpdir / "unaligned.csv")
+        roundtripped = SequenceList.from_csv(created_path)
         assert sequences == roundtripped
 
 

@@ -13,7 +13,7 @@ from warnings import warn
 
 
 class ProteinSequence(BaseModel):
-    id: str = Field(..., description="Unique identifier for the protein sequence")
+    seq_id: str = Field(..., description="Unique identifier for the protein sequence")
     aligned: bool = Field(
         ...,
         description="Indicates whether the sequence is aligned (True) or unaligned (False)",
@@ -36,7 +36,9 @@ class ProteinSequence(BaseModel):
     def get_unaligned_sequence(self) -> Self:
         if self.aligned:
             return ProteinSequence(
-                id=self.id, sequence=self.sequence.replace("-", ""), aligned=False
+                seq_id=self.seq_id,
+                sequence=self.sequence.replace("-", ""),
+                aligned=False,
             )
         else:
             return self
@@ -67,16 +69,23 @@ class SequenceList(BaseModel):
     @classmethod
     def from_fasta(cls, input_fasta, aligned: bool):
         """Load sequences from a FASTA file and return a list of ProteinSequence or AlignedSequence objects."""
+        input_fasta = Path(input_fasta)
+        if not input_fasta.exists():
+            raise ValueError(f"FASTA file does not exist: {input_fasta}")
+        if not input_fasta.suffix == ".fasta":
+            raise ValueError("Fasta file must be in FASTA format")
         sequences = []
         for record in SeqIO.parse(input_fasta, "fasta"):
             sequences.append(
-                ProteinSequence(id=record.id, sequence=str(record.seq), aligned=aligned)
+                ProteinSequence(
+                    seq_id=record.id, sequence=str(record.seq), aligned=aligned
+                )
             )
         return cls(aligned=aligned, sequences=sequences)
 
     def to_bio_seq_records(self) -> list[SeqRecord]:
         seq_recs = [
-            SeqRecord(Seq(sequence.sequence), id=sequence.id)
+            SeqRecord(Seq(sequence.sequence), id=sequence.seq_id)
             for sequence in self.sequences
         ]
         return seq_recs
@@ -87,7 +96,7 @@ class SequenceList(BaseModel):
 
     @classmethod
     def from_dataframe(cls, df: pd.DataFrame) -> Self:
-        records = df.to_records(index=False)
+        records = df.to_dict(orient="records", index=True)
         sequences = [ProteinSequence(**record) for record in records]
         aligned_list = [seq.aligned for seq in sequences]
         if not all(aligned_list):
@@ -131,12 +140,12 @@ class SequenceList(BaseModel):
         return output_csv
 
     @classmethod
-    def from_csv(self, input_csv: str | Path) -> Self:
+    def from_csv(cls, input_csv: str | Path) -> Self:
         """Load sequences from a CSV file"""
         input_csv = Path(input_csv)
         if not input_csv.suffix == ".csv":
             raise ValueError("CSV file must be in .csv format")
-        df = pd.read_csv(input_csv, index_col=0)
+        df = pd.read_csv(input_csv)
         return cls.from_dataframe(df)
 
 
