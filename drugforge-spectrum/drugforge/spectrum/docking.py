@@ -21,7 +21,6 @@ from pathlib import Path
 from shutil import rmtree
 
 import pandas as pd
-
 from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
 from drugforge.data.readers.structure_dir import StructureDirFactory
 from drugforge.data.util.dask_utils import BackendType, FailureMode

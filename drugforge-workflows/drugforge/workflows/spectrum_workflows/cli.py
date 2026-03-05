@@ -672,10 +672,10 @@ from drugforge.spectrum.workflows.cli import (
     af3_struct_alignment,
     align_fasta,
     fold_input,
+    ligand_transfer_docking_cmd,
     make_boltz_input,
     msa_input,
     vizualize_alignment,
-    ligand_transfer_docking_cmd,
 )
 
 spectrum.add_command(align_fasta, name="align-fasta")
