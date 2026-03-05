@@ -339,6 +339,7 @@ def write_results_to_multi_sdf(
     results: Union[list[DockingResult], list[Path]],
     backend=BackendType.IN_MEMORY,
     reconstruct_cls=None,
+    include_reference_data=False,
 ):
     """
     Write a list of DockingResults to a single sdf file
@@ -347,12 +348,16 @@ def write_results_to_multi_sdf(
 
     Parameters
     ----------
+    sdf_file : Union[str, Path]
+        Path to output sdf file
     results : Union[list[DockingResult], list[Path]]
         List of DockingResults or paths to DockingResult json files
     backend : BackendType, optional
         Backend to use, by default BackendType.IN_MEMORY
     reconstruct_cls : Optional[DockingResult], optional
         DockingResult class to use for disk backend, by default None
+    include_reference_data : bool, optional
+        Whether to include reference structure and ligand data in the SD data, by default False
 
     Raises
     ------
@@ -363,11 +368,21 @@ def write_results_to_multi_sdf(
         raise ValueError("Must provide reconstruct_cls if using disk backend")
 
     for res in results:
-        if backend == BackendType.IN_MEMORY:
+        if backend == BackendType.DISK:
+            res = reconstruct_cls.from_json_file(res)
+        if backend in [BackendType.DISK, BackendType.IN_MEMORY]:
             lig = res.posed_ligand
-        elif backend == BackendType.DISK:
-            lig = reconstruct_cls.from_json_file(res).posed_ligand
         else:
             raise ValueError(f"Unknown backend type {backend}")
-
+        if include_reference_data:
+            # This is a nice-to-have for cross docking analysis,
+            # as it allows us to easily see which reference structure the ligand was docked into
+            # and which ligand was present in the reference structure,
+            # which can be useful for understanding the docking results.
+            lig.set_SD_data(
+                {
+                    "ReferenceStructureName": res.input_pair.complex.target.target_name,
+                    "ReferenceLigandName": res.input_pair.complex.ligand.compound_name,
+                }
+            )
         lig.to_sdf(sdf_file, allow_append=True)
