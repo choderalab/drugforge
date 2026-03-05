@@ -12,6 +12,7 @@ make_fold_inputs  – MSA output dir → list of fold-stage Af3Input objects
 """
 
 import json
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -124,7 +125,7 @@ def _read_msa_output(msa_output_dir: Path, name: str) -> tuple[str, list, str]:
     tuple[str, list, str]
         ``(unpairedMsa, templates, sequence)``
     """
-    data_json = msa_output_dir / name / f"{name}_data.json"
+    data_json = msa_output_dir / name.lower() / f"{name.lower()}_data.json"
     if not data_json.exists():
         raise FileNotFoundError(
             f"MSA output not found for '{name}': expected {data_json}"
@@ -256,3 +257,69 @@ def make_fold_inputs(
             )
         )
     return inputs
+
+
+def select_best_af3(
+    af3_output_dir: str | Path,
+    seq_name: str,
+    ref_pdb: str | Path,
+    chain: str = "A",
+    final_pdb: str | Path = "aligned_protein.pdb",
+) -> tuple[float, str]:
+    """Select the best-ranked AF3 model for a sequence and align it to a reference.
+
+    AF3 writes one subdirectory per job named after the sequence. Inside, models
+    are ranked and named ``<seq_name>_model.cif`` (rank 0 is best). This function
+    picks the rank-0 model, aligns it to *ref_pdb*, and saves the aligned
+    structure as a PDB.
+
+    Parameters
+    ----------
+    af3_output_dir:
+        Root directory of AF3 fold outputs (one sub-directory per sequence).
+    seq_name:
+        Name of the sequence / job (must match the sub-directory name).
+    ref_pdb:
+        Path to the reference PDB to align against.
+    chain:
+        Chain ID to use for alignment, by default ``"A"``.
+    final_pdb:
+        Path where the aligned PDB will be saved.
+
+    Returns
+    -------
+    tuple[float, str]
+        ``(rmsd, path_to_aligned_pdb)``
+
+    Raises
+    ------
+    FileNotFoundError
+        If the AF3 output directory or the sequence sub-directory is not found,
+        or if no CIF model files are present.
+    """
+    # Defer import to avoid circular dependency with calculate_rmsd
+    from drugforge.spectrum.calculate_rmsd import rmsd_alignment
+
+    af3_output_dir = Path(af3_output_dir)
+    seq_dir = af3_output_dir / seq_name.lower()
+    if not seq_dir.exists():
+        raise FileNotFoundError(
+            f"AF3 output directory for '{seq_name}' not found: {seq_dir}"
+        )
+
+    # AF3 lowercases job names; rank-0 model is first when sorted by name.
+    candidates = sorted(seq_dir.glob(f"{seq_name.lower()}*model*.cif"))
+    if not candidates:
+        raise FileNotFoundError(
+            f"No AF3 CIF model files found for '{seq_name}' in {seq_dir}"
+        )
+
+    best_cif = candidates[0]
+    logging.info(f"Selected AF3 model for '{seq_name}': {best_cif.name}")
+
+    rmsd, aligned_pdb = rmsd_alignment(
+        str(best_cif), str(ref_pdb), str(final_pdb), chain, chain
+    )
+    logging.info(f"RMSD for '{seq_name}' vs reference: {rmsd:.3f} Å")
+
+    return rmsd, str(aligned_pdb)

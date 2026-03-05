@@ -1,7 +1,8 @@
 from pathlib import Path
 
 import click
-from drugforge.spectrum.alphafold import make_fold_inputs, make_msa_inputs
+from drugforge.spectrum.alphafold import make_fold_inputs, make_msa_inputs, select_best_af3
+from drugforge.spectrum.calculate_rmsd import save_alignment_pymol
 from drugforge.spectrum.schema import (
     SequenceList,
     find_bsite_resids,
@@ -220,6 +221,102 @@ def fold_input(msa_output_dir, output_dir, seeds, fasta):
         logger.info(f"Wrote {out_path}")
         click.echo(f"  Wrote {out_path}")
     click.secho(f"\nWrote {len(inputs)} fold-input JSON(s) to {output_dir}", fg="green")
+
+
+@cli.command("af3-struct-alignment")
+@click.argument("struct_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.argument("ref_pdb",   type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.argument("output_dir", type=click.Path(file_okay=False, path_type=Path))
+@click.option(
+    "--chain", "-c",
+    default="A",
+    show_default=True,
+    help="Chain ID to use for structural alignment.",
+)
+@click.option(
+    "--pymol-save",
+    default="af3_aligned.pse",
+    show_default=True,
+    help="Filename for the saved PyMOL session (written inside OUTPUT_DIR).",
+)
+@click.option(
+    "--color-by-rmsd",
+    is_flag=True,
+    default=False,
+    help="Color aligned structures by per-residue RMSD in the PyMOL session.",
+)
+@click.option(
+    "--fasta", "-f",
+    default=None,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help=(
+        "Optional FASTA to control which sequences are processed and their "
+        "order. If omitted, every sub-directory in STRUCT_DIR is used."
+    ),
+)
+def af3_struct_alignment(struct_dir, ref_pdb, output_dir, chain, pymol_save, color_by_rmsd, fasta):
+    """Align AF3 fold outputs to a reference structure and save a PyMOL session.
+
+    Walks STRUCT_DIR (one sub-directory per sequence), picks the top-ranked
+    AF3 CIF model for each sequence, aligns it to REF_PDB, saves each aligned
+    structure as a PDB in OUTPUT_DIR, then saves a combined PyMOL session.
+
+    STRUCT_DIR:  root AF3 fold output directory (one sub-dir per sequence).
+
+    REF_PDB:     reference PDB to align all structures against.
+
+    OUTPUT_DIR:  directory to write aligned PDBs and the PyMOL session.
+    """
+    from drugforge.spectrum.schema import SequenceList
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    logger = FileLogger(
+        logname="af3_struct_alignment",
+        path=output_dir,
+        logfile="af3_struct_alignment.log",
+    ).getLogger()
+
+    # Determine which sequences to process and in what order
+    if fasta is not None:
+        seq_list = SequenceList.from_fasta(fasta, aligned=False)
+        names = [seq.seq_id for seq in seq_list]
+    else:
+        names = sorted(p.name for p in struct_dir.iterdir() if p.is_dir())
+
+    if not names:
+        raise click.ClickException(f"No sequence directories found in {struct_dir}")
+
+    aligned_pdbs = []
+    seq_labels = []
+
+    for name in names:
+        final_pdb = output_dir / f"{name}_aligned.pdb"
+        try:
+            rmsd, aligned_pdb = select_best_af3(
+                af3_output_dir=struct_dir,
+                seq_name=name,
+                ref_pdb=ref_pdb,
+                chain=chain,
+                final_pdb=final_pdb,
+            )
+            aligned_pdbs.append(aligned_pdb)
+            seq_labels.append(name)
+            logger.info(f"{name}: RMSD = {rmsd:.3f} Å  →  {aligned_pdb}")
+            click.echo(f"  {name}: RMSD = {rmsd:.3f} Å")
+        except FileNotFoundError as e:
+            logger.warning(str(e))
+            click.secho(f"  WARN: {e}", fg="yellow")
+
+    if not aligned_pdbs:
+        raise click.ClickException("No structures were successfully aligned.")
+
+    session_save = output_dir / pymol_save
+    save_alignment_pymol(
+        aligned_pdbs, seq_labels, str(ref_pdb), str(session_save), chain, color_by_rmsd
+    )
+    logger.info(f"Saved PyMOL session to {session_save}")
+    click.secho(f"\nAligned {len(aligned_pdbs)} structure(s). PyMOL session → {session_save}", fg="green")
 
 
 if __name__ == "__main__":
