@@ -248,7 +248,7 @@ class Ligand(DataModelAbstractBase):
         if len(conf_tags_list) == 0:
             conf_tags_list = [(k, [v] * mol.NumConfs()) for k, v in tags]
 
-        kwargs["conf_tags"] = conf_tags_list
+        kwargs["conf_tags"] = dict(conf_tags_list)
 
         # clean the sdf data for the internal model
         sdf_str = oemol_to_sdf_string(clear_SD_data(input_mol))
