@@ -1,10 +1,10 @@
+import pytest
 from Bio import SeqIO
 from drugforge.spectrum.schema import (
     ProteinSequence,
     SequenceList,
     run_multiple_sequence_alignment,
 )
-import pytest
 
 
 def test_protein_sequence():

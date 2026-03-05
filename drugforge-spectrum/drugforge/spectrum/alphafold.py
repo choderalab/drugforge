@@ -16,9 +16,8 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from pydantic import BaseModel, Field
-
 from drugforge.spectrum.schema import ProteinSequence, SequenceList
+from pydantic import BaseModel, Field
 
 # ---------------------------------------------------------------------------
 # Models
