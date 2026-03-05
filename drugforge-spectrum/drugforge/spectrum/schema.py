@@ -198,9 +198,7 @@ def run_multiple_sequence_alignment(sequences: SequenceList) -> SequenceList:
     try:
         SeqIO.write(sequences.to_bio_seq_records(), input_path, "fasta")
         cmd = ["mafft", str(input_path)]
-        result = subprocess.run(
-            cmd, capture_output=True, check=True, text=True
-        )
+        result = subprocess.run(cmd, capture_output=True, check=True, text=True)
         aligned_records = list(SeqIO.parse(io.StringIO(result.stdout), "fasta"))
         aligned_sequences = [
             ProteinSequence(seq_id=rec.id, sequence=str(rec.seq), aligned=True)
