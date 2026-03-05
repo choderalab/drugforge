@@ -1,7 +1,11 @@
 from pathlib import Path
 
 import click
-from drugforge.spectrum.alphafold import make_fold_inputs, make_msa_inputs, select_best_af3
+from drugforge.spectrum.alphafold import (
+    make_fold_inputs,
+    make_msa_inputs,
+    select_best_af3,
+)
 from drugforge.spectrum.boltz import make_boltz_inputs
 from drugforge.spectrum.calculate_rmsd import save_alignment_pymol
 from drugforge.spectrum.schema import (
@@ -225,11 +229,14 @@ def fold_input(msa_output_dir, output_dir, seeds, fasta):
 
 
 @cli.command("af3-struct-alignment")
-@click.argument("struct_dir", type=click.Path(exists=True, file_okay=False, path_type=Path))
-@click.argument("ref_pdb",   type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.argument(
+    "struct_dir", type=click.Path(exists=True, file_okay=False, path_type=Path)
+)
+@click.argument("ref_pdb", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 @click.argument("output_dir", type=click.Path(file_okay=False, path_type=Path))
 @click.option(
-    "--chain", "-c",
+    "--chain",
+    "-c",
     default="A",
     show_default=True,
     help="Chain ID to use for structural alignment.",
@@ -247,7 +254,8 @@ def fold_input(msa_output_dir, output_dir, seeds, fasta):
     help="Color aligned structures by per-residue RMSD in the PyMOL session.",
 )
 @click.option(
-    "--fasta", "-f",
+    "--fasta",
+    "-f",
     default=None,
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
     help=(
@@ -255,7 +263,9 @@ def fold_input(msa_output_dir, output_dir, seeds, fasta):
         "order. If omitted, every sub-directory in STRUCT_DIR is used."
     ),
 )
-def af3_struct_alignment(struct_dir, ref_pdb, output_dir, chain, pymol_save, color_by_rmsd, fasta):
+def af3_struct_alignment(
+    struct_dir, ref_pdb, output_dir, chain, pymol_save, color_by_rmsd, fasta
+):
     """Align AF3 fold outputs to a reference structure and save a PyMOL session.
 
     Walks STRUCT_DIR (one sub-directory per sequence), picks the top-ranked
@@ -317,14 +327,18 @@ def af3_struct_alignment(struct_dir, ref_pdb, output_dir, chain, pymol_save, col
         aligned_pdbs, seq_labels, str(ref_pdb), str(session_save), chain, color_by_rmsd
     )
     logger.info(f"Saved PyMOL session to {session_save}")
-    click.secho(f"\nAligned {len(aligned_pdbs)} structure(s). PyMOL session → {session_save}", fg="green")
+    click.secho(
+        f"\nAligned {len(aligned_pdbs)} structure(s). PyMOL session → {session_save}",
+        fg="green",
+    )
 
 
 @cli.command("make-boltz-input", help="Generate Boltz YAML inputs from a FASTA file.")
 @click.argument("fasta", type=click.Path(exists=True, dir_okay=False))
 @click.argument("output_dir", type=click.Path())
 @click.option(
-    "--ligand-smiles", "-l",
+    "--ligand-smiles",
+    "-l",
     default=None,
     help="SMILES string for a ligand to include in every input YAML.",
 )
@@ -345,6 +359,7 @@ def make_boltz_input(fasta, output_dir, ligand_smiles, ligand_id):
     OUTPUT_DIR: directory to write per-sequence YAML files.
     """
     output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
     logger = FileLogger(
         logname="make_boltz_input", path=output_dir, logfile="make_boltz_input.log"
     ).getLogger()
