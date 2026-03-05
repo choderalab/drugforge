@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import click
+from drugforge.spectrum.alphafold import make_fold_inputs, make_msa_inputs
 from drugforge.spectrum.schema import (
     SequenceList,
     find_bsite_resids,
@@ -8,6 +9,16 @@ from drugforge.spectrum.schema import (
     view_alignment,
 )
 from drugforge.data.util.logging import FileLogger
+
+
+def _parse_seeds(ctx, param, value: str) -> list[int]:
+    """Click callback – convert a comma-separated string to a list of ints."""
+    try:
+        return [int(s.strip()) for s in value.split(",")]
+    except ValueError:
+        raise click.BadParameter(
+            f"Seeds must be comma-separated integers, got: {value!r}"
+        )
 
 
 @click.group("spectrum-cli")
@@ -117,6 +128,96 @@ def vizualize_alignment(
             bsite_resids=bsite_resids,
         )
         logger.info(f"Saved alignment plot to {output_dir / file_name}.html")
+
+
+@cli.command(
+    "msa-input", help="Generate AF3 JSON inputs for the MSA (data pipeline) step."
+)
+@click.argument("fasta", type=click.Path(exists=True, dir_okay=False))
+@click.argument("output_dir", type=click.Path())
+@click.option(
+    "--seeds",
+    "-s",
+    default="1,2,5,10",
+    show_default=True,
+    callback=_parse_seeds,
+    is_eager=True,
+    help="Comma-separated integer model seeds.",
+)
+@click.option(
+    "--description-prefix",
+    default="",
+    show_default=False,
+    help="Optional string prepended to each chain description, e.g. '2A protease'.",
+)
+def msa_input(fasta, output_dir, seeds, description_prefix):
+    """Generate one AF3 JSON per sequence in FASTA for the MSA step.
+
+    MSA fields are left null so AlphaFold 3 runs its data pipeline
+    (Jackhmmer / Nhmmer). Run the resulting JSONs with --norun_inference.
+
+    FASTA: path to the input FASTA file.
+
+    OUTPUT_DIR: directory to write per-sequence JSON files.
+    """
+    output_dir = Path(output_dir)
+    logger = FileLogger(
+        logname="msa_input", path=output_dir, logfile="msa_input.log"
+    ).getLogger()
+    inputs = make_msa_inputs(
+        fasta_path=fasta, seeds=seeds, description_prefix=description_prefix
+    )
+    for af3_input in inputs:
+        out_path = af3_input.write(output_dir)
+        logger.info(f"Wrote {out_path}")
+        click.echo(f"  Wrote {out_path}")
+    click.secho(f"\nWrote {len(inputs)} MSA-input JSON(s) to {output_dir}", fg="green")
+
+
+@cli.command("fold-input", help="Generate AF3 fold-input JSONs from MSA outputs.")
+@click.argument("msa_output_dir", type=click.Path(exists=True, file_okay=False))
+@click.argument("output_dir", type=click.Path())
+@click.option(
+    "--seeds",
+    "-s",
+    default="1,2,5,10",
+    show_default=True,
+    callback=_parse_seeds,
+    is_eager=True,
+    help="Comma-separated integer model seeds.",
+)
+@click.option(
+    "--fasta",
+    "-f",
+    default=None,
+    type=click.Path(exists=True, dir_okay=False),
+    help=(
+        "Optional FASTA to control which sequences are processed and their "
+        "order. If omitted, every sub-directory in MSA_OUTPUT_DIR is used."
+    ),
+)
+def fold_input(msa_output_dir, output_dir, seeds, fasta):
+    """Generate fold-ready AF3 JSONs from pre-computed MSA outputs.
+
+    Reads each <name>/<name>_data.json written by the AF3 data pipeline and
+    embeds unpairedMsa + templates for GPU inference with --norun_data_pipeline.
+
+    MSA_OUTPUT_DIR: directory containing AF3 MSA outputs (one sub-dir per sequence).
+
+    OUTPUT_DIR: directory to write per-sequence fold-input JSON files.
+    """
+    output_dir = Path(output_dir)
+    logger = FileLogger(
+        logname="fold_input", path=output_dir, logfile="fold_input.log"
+    ).getLogger()
+    inputs = make_fold_inputs(
+        msa_output_dir=msa_output_dir, seeds=seeds, fasta_path=fasta
+    )
+    for af3_input in inputs:
+        out_path = af3_input.write(output_dir)
+        logger.info(f"Wrote {out_path}")
+        click.echo(f"  Wrote {out_path}")
+    click.secho(f"\nWrote {len(inputs)} fold-input JSON(s) to {output_dir}", fg="green")
 
 
 if __name__ == "__main__":
