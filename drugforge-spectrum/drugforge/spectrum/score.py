@@ -22,8 +22,8 @@ from drugforge.docking.openeye import POSITDocker
 from drugforge.modeling.schema import PreppedComplex
 from drugforge.simulation.simulate import VanillaMDSimulator
 from drugforge.spectrum.calculate_rmsd import rmsd_alignment
-from pydantic import BaseModel, ConfigDict, Field, model_validator
 from openbabel import pybel
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from rdkit import Chem
 
 logger = logging.getLogger(__name__)
@@ -150,7 +150,6 @@ class ScoreSpectrumInputsBase(BaseModel):
     def to_json_file(self, file: str | Path):
         with open(file, "w") as f:
             f.write(self.model_dump_json(indent=2))
-
 
     @model_validator(mode="before")
     def check_inputs_gnina(cls, values):
