@@ -151,7 +151,6 @@ class ScoreSpectrumInputsBase(BaseModel):
         with open(file, "w") as f:
             f.write(self.model_dump_json(indent=2))
 
-
     @model_validator(mode="before")
     def check_inputs_gnina(cls, values):
         """
