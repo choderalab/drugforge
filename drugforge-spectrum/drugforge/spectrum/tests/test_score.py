@@ -94,12 +94,69 @@ def test_lig_rmsd_rdkit(protein_path, tmp_path):
     assert lig_rmsd == 0
 
 
-def test_vina_score(target_prepped_vina, ligand_prepped_vina):
+class TestConvertToPDBQT:
+    def test_target_convert_to_pdbqt(self, prepped_target_path, target_prepped_vina):
+        """Test conversion of target pdb to PDBQT format for AutoDock Vina."""
+
+        with pytest.raises(TypeError):
+            from vina import Vina
+
+            v = Vina(sf_name="vina")
+            v.set_receptor(
+                prepped_target_path
+            )  # Should raise error since not in PDBQT format
+
+        from drugforge.spectrum.score import convert_to_pdbqt
+
+        vina_prepped_target_path = convert_to_pdbqt(prepped_path=prepped_target_path)
+        assert os.path.exists(vina_prepped_target_path)
+
+        from vina import Vina
+
+        v = Vina(sf_name="vina")
+        v.set_receptor(vina_prepped_target_path)
+
+    def test_ligand_convert_to_pdbqt(self, prepped_ligand_path, ligand_prepped_vina):
+        """Test conversion of ligand sdf to PDBQT format for AutoDock Vina."""
+        with pytest.raises(TypeError):
+            from vina import Vina
+
+            v = Vina(sf_name="vina")
+            v.set_ligand_from_file(
+                prepped_ligand_path
+            )  # Should raise error since not in PDBQT format
+
+        from drugforge.spectrum.score import convert_to_pdbqt
+
+        vina_prepped_ligand_path = convert_to_pdbqt(
+            prepped_path=prepped_ligand_path, ligand=True
+        )
+        assert os.path.exists(vina_prepped_ligand_path)
+
+        from vina import Vina
+
+        v = Vina(sf_name="vina")
+        v.set_ligand_from_file(vina_prepped_ligand_path)
+
+
+def test_vina_score(prepped_target_path, prepped_ligand_path):
+    """Test AutoDock Vina scoring workflow of a protein-ligand complex."""
+    df_vina, out_pose = score_autodock_vina(
+        receptor_pdb=prepped_target_path,
+        ligand_sdf=prepped_ligand_path,
+        box_center=None,
+        box_size=[20, 20, 20],
+        dock=False,
+    )
+    assert df_vina["Vina-score-premin"].values[0] < 0
+
+
+def test_vina_score_pdbqt(target_prepped_vina, ligand_prepped_vina):
     """Test AutoDock Vina scoring workflow of a protein-ligand complex."""
     df_vina, out_pose = score_autodock_vina(
         receptor_pdb=target_prepped_vina,
         ligand_sdf=ligand_prepped_vina,
-        box_center=[-22, 5, 25],
+        box_center=None,
         box_size=[20, 20, 20],
         dock=False,
     )

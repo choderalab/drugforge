@@ -10,7 +10,7 @@ from Bio import AlignIO, SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from bokeh.layouts import column
-from bokeh.models import ColumnDataSource, LinearAxis, Range1d
+from bokeh.models import ColumnDataSource, LabelSet, LinearAxis, Range1d
 from bokeh.models.glyphs import Rect, Text
 
 # Bokeh imports
@@ -41,6 +41,7 @@ class Alignment:
         self.descripts = self.query_matches["description"].to_numpy()
         self.hosts = self.query_matches["host"].to_numpy()
         self.organisms = self.query_matches["organism"].to_numpy()
+        self.scores = self.query_matches["score"].to_numpy()
 
         self.sucess = False
         return
@@ -58,6 +59,7 @@ class Alignment:
         unique_seqs = [self.seqs[i] for i in ordered_idxs]
         unique_ids = [self.ids[i] for i in ordered_idxs]
         unique_descp = [self.descripts[i] for i in ordered_idxs]
+        unique_scores = [self.scores[i] for i in ordered_idxs]
 
         # Filter sequences by keyword
         substrings = []
@@ -74,21 +76,25 @@ class Alignment:
         filtered_ids = [unique_ids[i] for i in filtered_idxs]
         filtered_seqs = [unique_seqs[i] for i in filtered_idxs]
         filtered_descp = [unique_descp[i] for i in filtered_idxs]
+        filtered_scores = [unique_scores[i] for i in filtered_idxs]
 
         if len(filtered_seqs) > 0:
             if unique_seqs[0] != filtered_seqs[0]:
                 filtered_seqs = [unique_seqs[0]] + filtered_seqs
                 filtered_descp = [unique_descp[0]] + filtered_descp
                 filtered_ids = [unique_ids[0]] + filtered_ids
+                filtered_scores = [unique_scores[0]] + filtered_scores
         else:
             logging.warning("The keyword provided didn't return any matches")
             filtered_seqs = [unique_seqs[0]]
             filtered_descp = [unique_descp[0]]
             filtered_ids = [unique_ids[0]]
+            filtered_scores = [unique_scores[0]]
 
         self.seqs = filtered_seqs
         self.ids = filtered_ids
         self.descripts = filtered_descp
+        self.scores = filtered_scores
 
         records = []
         for r in range(len(self.ids)):
@@ -131,6 +137,7 @@ class Alignment:
         filtered_descp = [self.descripts[i] for i in filtered_idxs]
         filtered_hosts = [self.hosts[i] for i in filtered_idxs]
         filtered_orgs = [self.organisms[i] for i in filtered_idxs]
+        filtered_scores = [self.scores[i] for i in filtered_idxs]
 
         if len(filtered_seqs) > 0:
             if self.seqs[0] != filtered_seqs[0]:
@@ -148,6 +155,7 @@ class Alignment:
         self.descripts = filtered_descp
         self.hosts = filtered_hosts
         self.organisms = filtered_orgs
+        self.scores = filtered_scores
 
         records = []
         for r in range(len(self.ids)):
@@ -292,7 +300,7 @@ class Alignment:
             dict(x=gx, y=gy, recty=recty, text=text, colors=colors)
         )
         plot_height = len(seqs) * 10 + 50
-        x_range = Range1d(gx[0] - 1, N + 1, bounds="auto")  # (start, end)
+        x_range = Range1d(gx[0] - 1, N + 8, bounds="auto")  # (start, end)
         if N > 150:
             viewlen = 150
         else:
@@ -300,6 +308,32 @@ class Alignment:
         # view_range is for the close up view
         view_range = (gx[0] - 1, viewlen)
         tools = "xpan, xwheel_zoom, reset, save"
+
+        # Custom right-side labels
+        right_labels1 = [f"{round(score, 1)}%" for score in self.scores][::-1]
+        x_offsets = N
+        # y values should match desc (in reversed order if needed)
+        source2 = ColumnDataSource(
+            data=dict(
+                x=[x_offsets]
+                * len(desc),  # Position labels just outside the plot (adjust as needed)
+                y=desc,
+                labels=right_labels1,
+            )
+        )
+
+        labels = LabelSet(
+            x="x",
+            y="y",
+            text="labels",
+            level="glyph",
+            x_offset=0,
+            y_offset=0,
+            source=source2,
+            text_align="left",
+            text_baseline="middle",
+            text_font_size=str(int(fontsize[:-2]) - 2) + "pt",
+        )
 
         # entire sequence view (no text, with zoom)
         p1 = figure(
@@ -329,8 +363,10 @@ class Alignment:
         p1.yaxis.major_label_text_font_size = "8pt"
         p1.yaxis.minor_tick_line_width = 0
         p1.yaxis.major_tick_line_width = 0
+        p1.add_layout(labels)
 
         plot_height = len(seqs) * 20 + 30
+
         # sequence text view with ability to scroll along x axis
         p2 = figure(
             title=None,
@@ -341,7 +377,7 @@ class Alignment:
             tools=tools,
             min_border=0,
             toolbar_location="below",
-        )  # , lod_factor=1)
+        )
         # Text does the same thing as rectangles but placing letter (or words) instead, aligned accordingly
         text_source = ColumnDataSource(
             dict(x=gx, y=gy, recty=recty, text=text, colors=font_colors)
@@ -363,6 +399,7 @@ class Alignment:
             line_color=None,
             fill_alpha=0.4,
         )
+
         # Blank plot to hold the position labels
         p_blank = figure(
             width=plot_width,
@@ -378,7 +415,7 @@ class Alignment:
         p_blank.yaxis.visible = False
         p_blank.grid.visible = False
         label_source = ColumnDataSource(dict(x=x, y=[0.05] * len(x), text=x_non_gap))
-        labels = Text(
+        labels_b = Text(
             x="x",
             y="y",
             text="text",
@@ -388,7 +425,8 @@ class Alignment:
         )
         p2.add_glyph(text_source, glyph)
         p2.add_glyph(source, rects)
-        p_blank.add_glyph(label_source, labels)
+        p_blank.add_glyph(label_source, labels_b)
+        p2.add_layout(labels)
 
         view_range = Range1d(gx[0] - 1, viewlen)
         p2.grid.visible = True

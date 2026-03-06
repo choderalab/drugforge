@@ -36,6 +36,7 @@ dependencies:
   - openff-toolkit-base>=0.17  # Added to patch openff-interchange 0.4.5_1 build deps error
   - openmm
   - openmmtools
+  - openbabel # used for pybel
   - openmmforcefields >= 0.15.0
   - gufe >=1.0.0
   - pymol-open-source
