@@ -22,8 +22,8 @@ from drugforge.docking.openeye import POSITDocker
 from drugforge.modeling.schema import PreppedComplex
 from drugforge.simulation.simulate import VanillaMDSimulator
 from drugforge.spectrum.calculate_rmsd import rmsd_alignment
-from pydantic import BaseModel, ConfigDict, Field, model_validator
 from openbabel import pybel
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from rdkit import Chem
 
 logger = logging.getLogger(__name__)
