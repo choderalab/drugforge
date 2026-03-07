@@ -4,6 +4,6 @@ channels:
   - conda-forge
 dependencies:
   # drugforge {all the other packages}
-click
-pydantic
-unittest
+ click
+ pydantic
+ unittest
