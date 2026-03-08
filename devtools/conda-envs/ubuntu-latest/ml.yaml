@@ -2,6 +2,7 @@ name: ml
 channels:
   - openeye
   - conda-forge
+  - rapidsais
 dependencies:
   # Base depends
   - pip
@@ -60,7 +61,7 @@ dependencies:
   - netifaces
   - dask
   - dask-jobqueue
-  #- dask-cuda
+  - dask-cuda
   - distributed
 
   # Services

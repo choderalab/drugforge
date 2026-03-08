@@ -2,6 +2,7 @@ name: docking
 channels:
   - openeye
   - conda-forge
+  - rapidsai
 dependencies:
   # Base depends
   - pip
@@ -53,7 +54,7 @@ dependencies:
   - netifaces
   - dask
   - dask-jobqueue
-  #- dask-cuda
+  - dask-cuda
   - distributed
 
   # Services
