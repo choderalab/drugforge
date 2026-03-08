@@ -32,9 +32,9 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe >=1.8
+  - openfe >=1.7
   - openmm
-  - gufe >= 1.7.1
+  - gufe >= 1.7.0
   - pymol-open-source
   - rdkit
   - plip
@@ -48,7 +48,7 @@ dependencies:
   - netifaces
   - dask
   - dask-jobqueue
-  - dask-cuda>=23.10
+  #- dask-cuda
   - distributed
 
   # Services
