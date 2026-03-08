@@ -71,20 +71,29 @@ jobs:
         cache-downloads-key: downloads-${{ steps.date.outputs.date }}
         create-args: >-
           python==${{ matrix.python-version }}
+          --file devtools/conda-envs/${{ matrix.os }}/data.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/workflows.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/ml.yaml
 
     - name: Install packages ubuntu-latest
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/data.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/workflows.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
-        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/ml.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/data.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/workflows.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
+#        micromamba install -n cli-ci --file devtools/conda-envs/${{ matrix.os }}/ml.yaml
         python -m pip install -e ./drugforge-data --no-deps
         python -m pip install -e ./drugforge-docking --no-deps
         python -m pip install -e ./drugforge-modeling --no-deps
