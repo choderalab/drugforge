@@ -48,7 +48,7 @@ dependencies:
   - netifaces
   - dask
   - dask-jobqueue
-  - dask-cuda
+  - dask-cuda>=25
   - distributed
 
   # Services
