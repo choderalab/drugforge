@@ -2,7 +2,7 @@ name: ml
 channels:
   - openeye
   - conda-forge
-  - rapidsais
+  - rapidsai
 dependencies:
   # Base depends
   - pip
