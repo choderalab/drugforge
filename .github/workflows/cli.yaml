@@ -38,24 +38,23 @@ jobs:
         include:
           - os: ubuntu-latest
             yaml_file_args:
-              --file devtools/conda-envs/${{ matrix.os }}/data.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/ml.yaml
+              --file devtools/conda-envs/ubuntu-latest/data.yaml
+              --file devtools/conda-envs/ubuntu-latest/docking.yaml
+              --file devtools/conda-envs/ubuntu-latest/modeling.yaml
+              --file devtools/conda-envs/ubuntu-latest/alchemy.yaml
+              --file devtools/conda-envs/ubuntu-latest/simulation.yaml
+              --file devtools/conda-envs/ubuntu-latest/dataviz.yaml
+              --file devtools/conda-envs/ubuntu-latest/spectrum.yaml
+              --file devtools/conda-envs/ubuntu-latest/ml.yaml
           - os: macOS-latest
             yaml_file_args:
-              --file devtools/conda-envs/${{ matrix.os }}/data.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/simulation.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/dataviz.yaml
-              --file devtools/conda-envs/${{ matrix.os }}/spectrum.yaml
-    env:
+              --file devtools/conda-envs/ubuntu-latest/data.yaml
+              --file devtools/conda-envs/ubuntu-latest/docking.yaml
+              --file devtools/conda-envs/ubuntu-latest/modeling.yaml
+              --file devtools/conda-envs/ubuntu-latest/alchemy.yaml
+              --file devtools/conda-envs/ubuntu-latest/simulation.yaml
+              --file devtools/conda-envs/ubuntu-latest/dataviz.yaml
+              --file devtools/conda-envs/ubuntu-latest/spectrum.yaml
       OE_LICENSE: ${{ github.workspace }}/oe_license.txt
 
     steps:
