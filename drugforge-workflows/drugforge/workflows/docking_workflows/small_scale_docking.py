@@ -406,21 +406,29 @@ def small_scale_docking_workflow(inputs: SmallScaleDockingInputs):
             reconstruct_cls=docker.result_cls,
         )
 
-        # duplicate target id column so we can join
-        fitness_visualizations[DockingResultCols.DOCKING_STRUCTURE_POSIT.value] = (
-            fitness_visualizations[DockingResultCols.TARGET_ID.value]
-        )
+        if (
+            fitness_visualizations.empty
+            or DockingResultCols.TARGET_ID.value not in fitness_visualizations.columns
+        ):
+            logger.warning(
+                "Fitness visualizer produced no results (all poses may have failed); skipping fitness merge."
+            )
+        else:
+            # duplicate target id column so we can join
+            fitness_visualizations[DockingResultCols.DOCKING_STRUCTURE_POSIT.value] = (
+                fitness_visualizations[DockingResultCols.TARGET_ID.value]
+            )
 
-        # join the two dataframes on ligand_id, target_id and smiles
-        combined_df = combined_df.merge(
-            fitness_visualizations,
-            on=[
-                DockingResultCols.LIGAND_ID.value,
-                DockingResultCols.DOCKING_STRUCTURE_POSIT.value,
-                DockingResultCols.SMILES.value,
-            ],
-            how="outer",
-        )
+            # join the two dataframes on ligand_id, target_id and smiles
+            combined_df = combined_df.merge(
+                fitness_visualizations,
+                on=[
+                    DockingResultCols.LIGAND_ID.value,
+                    DockingResultCols.DOCKING_STRUCTURE_POSIT.value,
+                    DockingResultCols.SMILES.value,
+                ],
+                how="outer",
+            )
     else:
         logger.info(
             f"Not running fitness HTML visualiser because {inputs.target} does not have fitness data"
