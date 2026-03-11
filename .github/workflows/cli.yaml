@@ -56,6 +56,7 @@ jobs:
               --file devtools/conda-envs/macOS-latest/dataviz.yaml
               --file devtools/conda-envs/macOS-latest/spectrum.yaml
 
+    env:
       OE_LICENSE: ${{ github.workspace }}/oe_license.txt
 
     steps:
