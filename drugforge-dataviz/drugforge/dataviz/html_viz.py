@@ -872,8 +872,10 @@ class HTMLVisualizer(VisualizerBase):
         )
 
         # split the mutant data into fit/unfit.
-        site_df_fit = site_df[site_df["fitness"] > 0]
-        site_df_unfit = site_df[site_df["fitness"] < 0]
+        # Exclude stop codons ('*') — logomaker's dmslogo_funcgroup color scheme
+        # does not recognise '*' as a valid character and raises a TypeError.
+        site_df_fit = site_df[(site_df["fitness"] > 0) & (site_df["mutant"] != "*")]
+        site_df_unfit = site_df[(site_df["fitness"] < 0) & (site_df["mutant"] != "*")]
 
         if len(site_df_fit) == 0:
             raise ValueError(
@@ -899,11 +901,6 @@ class HTMLVisualizer(VisualizerBase):
             )
 
         logoplot_base64s_dict = {}
-        for fit_type, fitness_df in zip(["fit", "unfit"], [site_df_fit, site_df_unfit]):
-            # pivot table to make into LogoMaker format
-            logoplot_df = pd.DataFrame(
-                [fitness_df["fitness"].values], columns=fitness_df["mutant"]
-            )
 
         # hide a shockingly large number of prints from inside logomaker
         with tempfile.TemporaryDirectory() as tmpdirname, HiddenPrint() as _:
