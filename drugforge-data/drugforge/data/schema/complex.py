@@ -49,7 +49,9 @@ class Complex(ComplexBase):
 
     target: Target = Field(description="Target schema object")
     ligand: Ligand = Field(description="Ligand schema object")
-    ligand_chain: Optional[str] = Field(None, description="Chain ID of ligand in complex")
+    ligand_chain: Optional[str] = Field(
+        None, description="Chain ID of ligand in complex"
+    )
 
     # Overload from base class to check target and ligand individually
     def data_equal(self, other: Complex):
