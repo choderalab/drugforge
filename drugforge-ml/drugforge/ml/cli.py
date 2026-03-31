@@ -155,7 +155,10 @@ def build_ds(
 
     if ds_config_cache and ds_config_cache.exists() and (not overwrite_ds_config_cache):
         print("loading from cache", flush=True)
-        return DatasetConfig(**json.loads(ds_config_cache.read_text()))
+        ds_config = DatasetConfig(**json.loads(ds_config_cache.read_text()))
+        ds_config.build()
+
+        return
 
     config_kwargs = {
         "cache_file": ds_cache,
