@@ -1,5 +1,5 @@
 from drugforge.data.schema.experimental import ExperimentalCompoundData
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class CrystalCompoundData(BaseModel):
