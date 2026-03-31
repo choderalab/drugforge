@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any, Optional
 
 from drugforge.data.schema.identifiers import LigandIdentifiers
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 if TYPE_CHECKING:
     from drugforge.data.schema.ligand import Ligand

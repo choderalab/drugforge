@@ -10,7 +10,7 @@ import pandas
 import pydantic
 import torch
 from drugforge.ml.config import LossFunctionConfig
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from scipy.stats import bootstrap, kendalltau, spearmanr
 
 

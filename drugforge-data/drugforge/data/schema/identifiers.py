@@ -2,7 +2,7 @@ from typing import Any, Literal, Optional
 
 from drugforge.data.schema.schema_base import DataModelAbstractBase
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class LigandIdentifiers(DataModelAbstractBase):
