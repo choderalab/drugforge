@@ -2,7 +2,7 @@ from typing import Any, Literal, Optional
 
 from drugforge.data.schema.schema_base import DataModelAbstractBase
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class LigandIdentifiers(DataModelAbstractBase):
@@ -36,7 +36,7 @@ class LigandIdentifiers(DataModelAbstractBase):
         None, description="Unique ID for P5 compchem reference, unused for now"
     )
 
-    model_config = {"frozen": True}
+    model_config = ConfigDict(frozen=True)
 
     @field_validator("manifold_api_id", "compchem_id", mode="before")
     def cast_uuids(cls, v):
@@ -50,7 +50,7 @@ class LigandIdentifiers(DataModelAbstractBase):
 
 
 class LigandProvenance(DataModelAbstractBase):
-    model_config = {"frozen": True}
+    model_config = ConfigDict(frozen=True)
 
     isomeric_smiles: str = Field(
         ..., description="The canonical isomeric smiles pattern for the molecule."
@@ -91,7 +91,7 @@ class TargetIdentifiers(DataModelAbstractBase):
 class ChargeProvenance(BaseModel):
     """A simple model to record the provenance of the local charging method."""
 
-    model_config = {"frozen": True, "arbitrary_types_allowed": True}
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     type: Literal["ChargeProvenance"] = "ChargeProvenance"
 

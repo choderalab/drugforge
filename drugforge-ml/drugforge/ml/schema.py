@@ -10,7 +10,7 @@ import pandas
 import pydantic
 import torch
 from drugforge.ml.config import LossFunctionConfig
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from scipy.stats import bootstrap, kendalltau, spearmanr
 
 
@@ -53,10 +53,7 @@ class TrainingPrediction(BaseModel):
         1.0, description="Contribution of this loss function to the full loss."
     )
 
-    model_config = {
-        "arbitrary_types_allowed": True,
-        "validate_assignment": True,
-    }
+    model_config = ConfigDict(validate_assignment=True, arbitrary_types_allowed=True)
 
     @field_validator("target_val", mode="before")
     def cast_target_val(cls, v):
@@ -107,10 +104,7 @@ class TrainingPredictionTracker(BaseModel):
         None, description="Internal dict storing all TrainingPredictions."
     )
 
-    model_config = {
-        "validate_assignment": True,
-        "validate_default": True,
-    }
+    model_config = ConfigDict(validate_assignment=True, validate_default=True)
 
     @field_validator("split_dict", mode="before")
     def init_split_dict(cls, split_dict):

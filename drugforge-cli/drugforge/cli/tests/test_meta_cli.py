@@ -32,7 +32,7 @@ def test_toplevel_runnable():
             "ml",
             marks=pytest.mark.xfail(
                 condition=os.getenv("RUNNER_OS") == "macOS",
-                reason="ML package is not currently available.",
+                reason="ML package is not currently available for macOS.",
             ),
         ),
         "visualization",

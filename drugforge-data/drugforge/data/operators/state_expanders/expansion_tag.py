@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any, Optional
 
 from drugforge.data.schema.identifiers import LigandIdentifiers
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 if TYPE_CHECKING:
     from drugforge.data.schema.ligand import Ligand
@@ -31,7 +31,7 @@ class StateExpansionTag(BaseModel):
         description="Provenance of the software used during the expansion and the state expander.",
     )
 
-    model_config = {"frozen": True}
+    model_config = ConfigDict(frozen=True)
 
     def __hash__(self) -> int:
         return hash(self.json())

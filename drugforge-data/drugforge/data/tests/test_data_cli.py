@@ -62,24 +62,30 @@ def test_cdd_to_schema(cdd_to_schema_files, tmp_path):
     # It will also treat nan and None as equivalent
     import math
 
-    def compare_vals_in_dict(d1, d2):
-        if d1 == d2:
+    def compare_vals(v1, v2):
+        # Handle exact equality ("pure" values)
+        if v1 == v2:
             return True
-        elif isinstance(d1, float) or isinstance(d2, float):
-            if isinstance(d1, float) and math.isnan(d1) and d2 is None:
-                return True
-            elif isinstance(d2, float) and math.isnan(d2) and d1 is None:
-                return True
-            else:
+
+        # Handle the NaN == None case
+        is_v1_nan_none = v1 is None or (isinstance(v1, float) and math.isnan(v1))
+        is_v2_nan_none = v2 is None or (isinstance(v2, float) and math.isnan(v2))
+
+        if is_v1_nan_none and is_v2_nan_none:
+            return True
+
+        # Handle dictionaries recursively
+        if isinstance(v1, dict) and isinstance(v2, dict):
+            # Ensure they have the exact same keys
+            if v1.keys() != v2.keys():
                 return False
-        elif isinstance(d1, dict) and isinstance(d2, dict):
-            for key in d1.keys():
-                if not compare_vals_in_dict(d1[key], d2[key]):
-                    return False
-            return True
+            # Recurse through values
+            return all(compare_vals(v1[k], v2[k]) for k in v1)
 
-    equalivance = []
+        return False
+
+    equivalence = []
     for d1, d2 in zip(json_check, json_test):
-        equalivance.append(compare_vals_in_dict(d1, d2))
+        equivalence.append(compare_vals(d1, d2))
 
-    assert all(equalivance)
+    assert all(equivalence)

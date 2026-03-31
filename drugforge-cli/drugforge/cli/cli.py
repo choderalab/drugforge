@@ -42,7 +42,7 @@ try:
 
     cli.add_command(ml)
 except ImportError:
-    print("ML package not available, skipping ML CLI command.")
+    warnings.warn("ML package not available, skipping ML CLI command.")
 
 from drugforge.dataviz.cli import visualization  # noqa: F401, E402, F811
 

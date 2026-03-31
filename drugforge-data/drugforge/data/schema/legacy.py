@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class CrystalCompoundData(BaseModel):
-    model_config = {"extra": "forbid"}
+    model_config = ConfigDict(extra="forbid")
 
     compound_id: str = Field(
         None, description="The unique compound identifier of the ligand."

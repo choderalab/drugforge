@@ -5,12 +5,12 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ExperimentalCompoundData(BaseModel):
-    compound_id: str | None = Field(
+    compound_id: Optional[str] = Field(
         None,
         description="The unique compound identifier (PostEra or enumerated ID)",
     )
 
-    smiles: str | None = Field(
+    smiles: Optional[str] = Field(
         None,
         description="OpenEye canonical isomeric SMILES string defining suspected SMILES of racemic mixture (with unspecified stereochemistry) or specific enantiopure compound (if racemic=False); may differ from what is registered under compound_id.",
     )
@@ -35,7 +35,7 @@ class ExperimentalCompoundData(BaseModel):
         description="If True, the compound was enantiopure, but unknown if stereochemistry recorded in SMILES is correct",
     )
 
-    date_created: date | None = Field(
+    date_created: Optional[date] = Field(
         None, description="Date the molecule was created."
     )
 

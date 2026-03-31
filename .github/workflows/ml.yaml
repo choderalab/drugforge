@@ -65,6 +65,11 @@ jobs:
         cache-downloads-key: downloads-${{ steps.date.outputs.date }}
         create-args: >-
           python==${{ matrix.python-version }}
+          --file devtools/conda-envs/${{ matrix.os }}/data.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
+          --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
 
     - name: Test OE License & Write License to File
       env:
@@ -75,11 +80,6 @@ jobs:
 
     - name: Install packages
       run: |
-        micromamba install -n drugforge --file devtools/conda-envs/${{ matrix.os }}/data.yaml
-        micromamba install -n drugforge --file devtools/conda-envs/${{ matrix.os }}/docking.yaml
-        micromamba install -n drugforge --file devtools/conda-envs/${{ matrix.os }}/modeling.yaml
-        micromamba install -n drugforge --file devtools/conda-envs/${{ matrix.os }}/alchemy.yaml
-        micromamba install -n drugforge --file devtools/conda-envs/${{ matrix.os }}/cli.yaml
         python -m pip install -e ./drugforge-data --no-deps
         python -m pip install -e ./drugforge-docking --no-deps
         python -m pip install -e ./drugforge-ml --no-deps
