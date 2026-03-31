@@ -49,7 +49,7 @@ class Complex(ComplexBase):
 
     target: Target = Field(description="Target schema object")
     ligand: Ligand = Field(description="Ligand schema object")
-    ligand_chain: Optional[str] = Field(
+    ligand_chain: str | None = Field(
         None, description="Chain ID of ligand in complex"
     )
 
