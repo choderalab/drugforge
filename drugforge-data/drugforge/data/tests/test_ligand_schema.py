@@ -353,7 +353,7 @@ def test_ligand_dict_roundtrip(
         ),
         experimental_data=exp_data,
     )
-    l2 = Ligand.from_dict(l1.dict())
+    l2 = Ligand.from_dict(l1.model_dump())
     assert l1 == l2
 
 
@@ -382,7 +382,7 @@ def test_ligand_json_roundtrip(
         ),
         experimental_data=exp_data,
     )
-    l2 = Ligand.from_json(l1.json())
+    l2 = Ligand.from_json(l1.model_dump_json())
     assert l1 == l2
 
 
@@ -472,7 +472,7 @@ def test_ligand_oemol_roundtrip(moonshot_sdf):
     l2 = Ligand.from_oemol(mol_res, compound_name="blahblah")
     assert l2 == l1
     # check all internal fields as well
-    assert l2.dict() == l1.dict()
+    assert l2.model_dump() == l1.model_dump()
 
 
 def test_ligand_oemol_roundtrip_tags(ligand_with_tags):
@@ -480,7 +480,7 @@ def test_ligand_oemol_roundtrip_tags(ligand_with_tags):
     roundtrip_ligand = Ligand.from_oemol(oemol)
     roundtrip_ligand_v2 = Ligand.from_oemol(roundtrip_ligand.to_oemol())
     assert roundtrip_ligand_v2 == ligand_with_tags
-    assert roundtrip_ligand_v2.dict() == ligand_with_tags.dict()
+    assert roundtrip_ligand_v2.model_dump() == ligand_with_tags.model_dump()
 
 
 def test_ligand_oemol_roundtrip_data_only(moonshot_sdf):
