@@ -2,8 +2,6 @@ import abc
 import json
 from typing import Literal
 
-import numpy as np
-from openff.units import Quantity, Unit
 from pydantic import BaseModel, ConfigDict
 
 # the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1

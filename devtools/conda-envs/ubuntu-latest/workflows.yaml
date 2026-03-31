@@ -3,6 +3,7 @@ channels:
   - openeye
   - conda-forge
 dependencies:
-- click
-- pydantic
-- unittest
+  - click
+  - pydantic
+
+unittest
