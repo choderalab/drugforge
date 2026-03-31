@@ -85,6 +85,57 @@ def build_ds(
     overwrite_ds_config_cache: bool = False,
     overwrite_ds_cache: bool = False,
 ):
+    """
+    CLI command to build (and cache) a Dataset object for use in the ML pipeline,
+    optionally also saving the DatsetConfig object as a JSON file. If a config JSON file
+    is passed, this function will simply construct the DatasetConfig object and build
+    the Dataset.
+
+
+    Parameters
+    ----------
+    dataset_type : DatasetType, optional
+        Which type of dataset to build. If this is not passed, a file must be passed for
+        ds_config_cache
+    export_input_data : bool, optional
+        Whether the actual data used to construct the objects in the Dataset should be
+        serialized with the config file. Note that if this is True, you will be
+        essentially saving multiple SDF/PDB files in your dataset config file. If this
+        is set to False (default), a value must be provided for ds_cache, otherwise
+        constructing the dataset in the future will be impossible
+    export_exp_data : bool, optional
+        Whether the experimental data used to construct the Dataset should be serialized
+        with the config file. If this is set to False (default), a value must be
+        provided for ds_cache, otherwise constructing the dataset in the future will be
+        impossible
+    grouped_dataset : bool, optional
+        This dataset contains multiple poses for each ligand (will build a
+        Grouped*Dataset object)
+    e3nn_dataset : bool, optional
+        This dataset will be used in an e3nn model, and the data stored will need to be
+        modified accordingly
+    ds_cache : Path, optional
+        Pickle cache file of the actual dataset object
+    ds_config_cache : Path, optional
+        JSON cache file of the DatasetConfig
+    ds_random_iter : bool, optional
+        Randomly iterate through the dataset each time
+    exp_file : Path, optional
+        JSON file giving a list of ExperimentalDataCompound objects
+    structures : str, optional
+        PDB structure files. Can be in one of two forms: either a glob that will be
+        expanded and all matching files will be taken, or a directory, in which case all
+        top-level PDB files will be taken
+    xtal_regex : str, default=MPRO_ID_REGEX
+        Regex for extracting crystal structure name from filename
+    cpd_regex : str, default=MOONSHOT_CDD_ID_REGEX
+        Regex for extracting compound id from filename
+    overwrite_ds_config_cache : bool, default=False
+        Overwrite any existing config cache file
+    overwrite_ds_cache : bool, default=False
+        Overwrite any existing pickle dataset cache file
+
+    """
     if dataset_type is None:
         raise ValueError(
             "A value must be specified for --dataset-type when building a dataset."
