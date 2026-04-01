@@ -491,6 +491,39 @@ def test_ligand_oemol_roundtrip_data_only(moonshot_sdf):
     assert l1.data_equal(l2)
 
 
+def test_ligand_oemol_from_graphmol_roundtrip(ligand_with_tags):
+    """Make sure we can make a ligand object from an OEGraphMol object in addition to an OEMol object."""
+    from drugforge.data.backend.openeye import oechem
+
+    mol = ligand_with_tags.to_oemol()
+    graphmol = oechem.OEGraphMol(mol)
+    l1 = Ligand.from_oemol(graphmol, compound_name="blahblah")
+    mol_res = l1.to_oemol()
+    l2 = Ligand.from_oemol(mol_res, compound_name="blahblah")
+    assert l2 == l1
+    # check all internal fields as well
+    assert l2.dict() == l1.dict()
+
+
+def test_ligand_oemol_from_graphmol_with_extra_tags():
+    """Regression: OEGraphMol with no SD tags + extra non-field kwargs must not raise
+    AttributeError on NumConfs. The bug path: conf_tags_list is empty (no SD data) and
+    tags is non-empty (extra kwargs), so line 246 in ligand.py falls through to the
+    `mol.NumConfs()` call — which OEGraphMol does not have.
+
+    Reproduces the crash seen in Complex.from_pdb() → Ligand.from_oemol() when loading
+    a protein-ligand PDB (e.g. 5X0R) and passing ligand_kwargs to from_oemol.
+    """
+    from drugforge.data.backend.openeye import oechem
+
+    graphmol = oechem.OEGraphMol()
+    oechem.OESmilesToMol(graphmol, "CCCCCCC")  # no SD tags, no conformer support
+
+    # "custom_tag" is not a Ligand field → ends up in `tags` → triggers the NumConfs path
+    lig = Ligand.from_oemol(graphmol, compound_name="test", custom_tag="some_value")
+    assert lig.tags.get("custom_tag") == "some_value"
+
+
 def test_clear_sd_data_reserved_fails(moonshot_sdf):
     l1 = Ligand.from_sdf(moonshot_sdf, compound_name="blahblah")
     data = {"experimental_data": "blahblah"}
