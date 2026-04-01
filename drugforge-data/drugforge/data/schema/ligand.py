@@ -200,6 +200,7 @@ class Ligand(DataModelAbstractBase):
         from drugforge.data.util.data_conversion import get_first_value_of_dict_of_lists
 
         # work with a copy as we change the state of the molecule
+        # working with input_mol also ensures that we're working with an OEMol and not an OEGraphMol
         input_mol = oechem.OEMol(mol)
         oechem.OEClearAromaticFlags(input_mol)
         oechem.OEAssignAromaticFlags(input_mol, oechem.OEAroModel_MDL)
@@ -243,7 +244,7 @@ class Ligand(DataModelAbstractBase):
 
         # if there aren't any, copy the tags to the conformers
         if len(conf_tags_list) == 0:
-            conf_tags_list = [(k, [v] * mol.NumConfs()) for k, v in tags]
+            conf_tags_list = [(k, [v] * input_mol.NumConfs()) for k, v in tags]
 
         kwargs["conf_tags"] = conf_tags_list
 
