@@ -180,6 +180,17 @@ def build_results_dfs(
 # calc_stats
 # Function to calculate a statistic (for multiprocessing)
 def calc_one_stat(stat_func, target_vals, preds, in_range):
+    """
+    Function to calculate a statistic for multiprocessing.
+
+    Parameters:
+        stat_func: function
+            Function to calculate statistic.
+        target_vals: array
+            Array of target values.
+        preds (array): Array of predicted values.
+        in_range (array): Array of indices of values in range
+    """
     val = stat_func(target_vals, preds, in_range)
     try:
         conf_interval = bootstrap(
@@ -246,6 +257,20 @@ def calc_kendalltau(target_vals, preds, _):
     help="Comma separated list of DF columns to group by when calculating stats.",
 )
 def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
+    """
+    Calculates the stats.
+
+    Parameters:
+        in_fn: Path
+            Input csv file.
+        out_fn: Path
+            Output csv file.
+        gb_keys: str
+         Comma separated list of DF columns to group by when calculating stats.
+
+    Returns:
+
+    """
     gb_keys = gb_keys.split(",")
     dtypes = {k: str for k in gb_keys} | {"Model Seed": str, "Dataset Seed": str}
 
