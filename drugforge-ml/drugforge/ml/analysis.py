@@ -86,6 +86,8 @@ def build_results_dfs(
         in it for Strategy, which will be omitted when trying to load for GAT models
     n_workers : int, default=16
         Number of concurrent processes to run when loading files
+    fiter_date : datetime.date, optional
+        Only run pred_tracker.json files that were last modified on or after this date
     """
     collection_kwargs = yaml.safe_load(collection_args_fn.read_text())
     top_level_dir = Path(collection_kwargs["top_level_dir"])
@@ -258,15 +260,21 @@ def calc_kendalltau(target_vals, preds, _):
 )
 def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
     """
-    Calculates the stats.
+    Calculate statistics witha bootstrapped 95% CI. Current statistics that are
+    calculated are:
+        - Mean absolute error
+        - MAE adjusted for semi-quant data
+        - Root mean squared error
+        - Spearman correlation coefficient
+        - Kendall tau correlation coefficient
 
     Parameters:
         in_fn: Path
-            Input csv file.
+            Input csv file
         out_fn: Path
-            Output csv file.
+            Output csv file
         gb_keys: str
-         Comma separated list of DF columns to group by when calculating stats.
+            Comma separated list of DF columns to group by when calculating stats
 
     Returns:
 
@@ -608,6 +616,32 @@ def subset_general(in_fn, out_fn, model_strat, filters):
     required=True,
 )
 def training_progress(collection_args_fn, out_fn):
+    """
+    Check how many epochs of training each model has been through by finding highest
+    numbered weights file in the output directory.
+
+    Parameters
+    ----------
+    collection_args_fn : Path
+        YAML file defining the following for the run:
+          - top_level_dir: Top-level directory containing the model directories
+          - model_dir_str: Format-style string with variables that will be filled in
+            from model_spec_kwargs
+          - model_spec_kwargs: Dict mapping from variables in model_dir_str to a list of
+            all possible values for that variable
+          - spec_name_to_output_name: Dict mapping from variable in model_dir_str to a
+            different string that will be the title of the column instead of the
+            variable name itself
+          - spec_lab_to_output_lab: Similar to spec_name_to_output_name, but instead
+            each variable in model_dir_str maps to a dict that maps each possible value
+            that variable can take to its output-friendly value
+    out_fn : Path
+        Output CSV file with formatted column names and labels, as well as the number of
+        epochs each experiment has been trained for
+
+    Returns
+    -------
+    """
     collection_kwargs = yaml.safe_load(collection_args_fn.read_text())
     top_level_dir = Path(collection_kwargs["top_level_dir"])
     print(top_level_dir, flush=True)
@@ -634,6 +668,7 @@ def training_progress(collection_args_fn, out_fn):
         # Just check if there's some GAT results there
         next(iter(top_level_dir.glob("gat*")))
 
+        # Strip out GAT strings
         if r"_{strat}" in model_dir_str:
             gat_model_dir_str = model_dir_str.replace(r"_{strat}", "")
         elif r"{strat}_" in model_dir_str:
@@ -666,6 +701,7 @@ def training_progress(collection_args_fn, out_fn):
 
     n_epochs_df = []
     for full_model_spec, formatted_d in model_metadata_dict.items():
+        # Find largest-numbered weights file for each experiment
         model_wts_dir = top_level_dir / full_model_spec
         model_wts_dir /= (model_wts_dir / "run_id").read_text()
         model_wts = [
