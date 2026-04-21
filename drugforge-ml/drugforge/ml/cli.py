@@ -321,7 +321,7 @@ def build(
     protein_representation_config_cache: Path | None = None,
     model_rand_seed: int | None = None,
     model_tag: str | None = None,
-    early_stopping_type: EarlyStoppingType | None = None,
+    es_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -499,7 +499,7 @@ def build(
         Random seed for initializing the model
     model_tag: str, optional
         Tag to name model weights files when saving
-    early_stopping_type: EarlyStoppingType, optional
+    es_type: EarlyStoppingType, optional
         Which early stopping strategy to use. Options are none, best, converged,
         patient_converged, threshold, and progress_quotient
     es_patience: int, optional
@@ -702,7 +702,7 @@ def build(
     early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "early_stopping_type": early_stopping_type,
+        "early_stopping_type": es_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
@@ -853,7 +853,7 @@ def build_and_train(
     protein_representation_config_cache: Path | None = None,
     model_rand_seed: int | None = None,
     model_tag: str | None = None,
-    early_stopping_type: EarlyStoppingType | None = None,
+    es_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -1029,7 +1029,7 @@ def build_and_train(
         Random seed for initializing the model
     model_tag: str, optional
         Tag to name model weights files when saving
-    early_stopping_type: EarlyStoppingType, optional
+    es_type: EarlyStoppingType, optional
         Which early stopping strategy to use. Options are none, best, converged,
         patient_converged, threshold, and progress_quotient
     es_patience: int, optional
@@ -1233,7 +1233,7 @@ def build_and_train(
     early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "early_stopping_type": early_stopping_type,
+        "early_stopping_type": es_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
