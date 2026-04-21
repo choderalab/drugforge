@@ -195,7 +195,9 @@ class Trainer(BaseModel):
     #  from serialization
     model: None = Field(None, description="Actual model object.", exclude=True)
     optimizer: None = Field(None, description="Actual optimizer object.", exclude=True)
-    early_stopping: None = Field(None, description="Actual EarlyStopping object.", exclude=True)
+    early_stopping: None = Field(
+        None, description="Actual EarlyStopping object.", exclude=True
+    )
     ds: None = Field(None, description="Actual Dataset object.", exclude=True)
     ds_train: None = Field(
         None, description="Actual train set Dataset object.", exclude=True
@@ -1377,8 +1379,11 @@ class Trainer(BaseModel):
                         )
                     use_epoch = self.early_stopping.best_epoch
                     break
-                elif self.es_config.es_type == "patient_converged" and self.early_stopping.check(
-                    epoch_idx, epoch_val_loss, self.model.state_dict()
+                elif (
+                    self.es_config.es_type == "patient_converged"
+                    and self.early_stopping.check(
+                        epoch_idx, epoch_val_loss, self.model.state_dict()
+                    )
                 ):
                     print(
                         (
@@ -1402,23 +1407,27 @@ class Trainer(BaseModel):
                         )
                     use_epoch = self.early_stopping.converged_epoch
                     break
-                elif self.es_config.es_type == "converged" and self.early_stopping.check(
-                    epoch_idx, epoch_val_loss
+                elif (
+                    self.es_config.es_type == "converged"
+                    and self.early_stopping.check(epoch_idx, epoch_val_loss)
                 ):
                     print(f"Stopping training after epoch {epoch_idx}", flush=True)
                     if self.log_file:
                         self.logger.info(f"Stopping training after epoch {epoch_idx}")
                     use_epoch = epoch_idx
                     break
-                elif self.es_config.es_type == "threshold" and self.early_stopping.check(
-                    epoch_idx, epoch_val_loss
+                elif (
+                    self.es_config.es_type == "threshold"
+                    and self.early_stopping.check(epoch_idx, epoch_val_loss)
                 ):
                     print(f"Stopping training after epoch {epoch_idx}", flush=True)
                     if self.log_file:
                         self.logger.info(f"Stopping training after epoch {epoch_idx}")
                     use_epoch = epoch_idx
                     break
-                elif (self.es_config.es_type == "progress_quotient") and self.early_stopping.check(
+                elif (
+                    self.es_config.es_type == "progress_quotient"
+                ) and self.early_stopping.check(
                     epoch_idx, epoch_val_loss, self.model.state_dict(), epoch_train_loss
                 ):
                     print(
