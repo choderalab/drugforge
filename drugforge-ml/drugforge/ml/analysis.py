@@ -1,7 +1,6 @@
 import datetime
 import multiprocessing as mp
 import time
-from collections import Counter
 from functools import partial
 from itertools import product
 from pathlib import Path
@@ -13,7 +12,6 @@ import numpy as np
 import pandas
 import yaml
 from scipy.stats import bootstrap, kendalltau, spearmanr
-from statsmodels.stats.anova import AnovaRM
 
 
 @click.group()
