@@ -53,7 +53,7 @@ class Trainer(BaseModel):
     mtenn_model_config: ModelConfigBase = Field(
         ..., description="Config describing the model to train."
     )
-    es_config: EarlyStoppingConfig = Field(
+    early_stopping_config: EarlyStoppingConfig = Field(
         ..., description="Config describing the early stopping check to use."
     )
     ds_config: DatasetConfig = Field(
@@ -243,7 +243,7 @@ class Trainer(BaseModel):
     @field_validator(
         "optimizer_config",
         "mtenn_model_config",
-        "es_config",
+        "early_stopping_config",
         "ds_splitter_config",
         mode="before",
     )
@@ -856,7 +856,7 @@ class Trainer(BaseModel):
             self.optimizer.load_state_dict(optimizer_state)
 
         # Build early stopping
-        self.early_stopping = self.es_config.build()
+        self.early_stopping = self.early_stopping_config.build()
 
         # Build data augmentation classes
         self.data_augs = [aug.build() for aug in self.data_aug_configs]
@@ -1354,8 +1354,11 @@ class Trainer(BaseModel):
 
             # Stop training if EarlyStopping says to
             if self.early_stopping:
-                if self.es_config.es_type == "best" and self.early_stopping.check(
-                    epoch_idx, epoch_val_loss, self.model.state_dict()
+                if (
+                    self.early_stopping_config.early_stopping_type == "best"
+                    and self.early_stopping.check(
+                        epoch_idx, epoch_val_loss, self.model.state_dict()
+                    )
                 ):
                     print(
                         (
@@ -1380,7 +1383,8 @@ class Trainer(BaseModel):
                     use_epoch = self.early_stopping.best_epoch
                     break
                 elif (
-                    self.es_config.es_type == "patient_converged"
+                    self.early_stopping_config.early_stopping_type
+                    == "patient_converged"
                     and self.early_stopping.check(
                         epoch_idx, epoch_val_loss, self.model.state_dict()
                     )
@@ -1408,7 +1412,7 @@ class Trainer(BaseModel):
                     use_epoch = self.early_stopping.converged_epoch
                     break
                 elif (
-                    self.es_config.es_type == "converged"
+                    self.early_stopping_config.early_stopping_type == "converged"
                     and self.early_stopping.check(epoch_idx, epoch_val_loss)
                 ):
                     print(f"Stopping training after epoch {epoch_idx}", flush=True)
@@ -1417,7 +1421,7 @@ class Trainer(BaseModel):
                     use_epoch = epoch_idx
                     break
                 elif (
-                    self.es_config.es_type == "threshold"
+                    self.early_stopping_config.early_stopping_type == "threshold"
                     and self.early_stopping.check(epoch_idx, epoch_val_loss)
                 ):
                     print(f"Stopping training after epoch {epoch_idx}", flush=True)
@@ -1426,7 +1430,8 @@ class Trainer(BaseModel):
                     use_epoch = epoch_idx
                     break
                 elif (
-                    self.es_config.es_type == "progress_quotient"
+                    self.early_stopping_config.early_stopping_type
+                    == "progress_quotient"
                 ) and self.early_stopping.check(
                     epoch_idx, epoch_val_loss, self.model.state_dict(), epoch_train_loss
                 ):

@@ -261,7 +261,7 @@ def test_build_trainer_graph(exp_file, tmp_path):
     assert not t._is_initialized
     assert t.model is None
     assert t.optimizer is None
-    assert t.es is None
+    assert t.early_stopping is None
     assert t.ds is None
     assert t.ds_train is None
     assert t.ds_val is None
@@ -330,7 +330,7 @@ def test_build_trainer_schnet(exp_file, docked_files, tmp_path):
     assert not t._is_initialized
     assert t.model is None
     assert t.optimizer is None
-    assert t.es is None
+    assert t.early_stopping is None
     assert t.ds is None
     assert t.ds_train is None
     assert t.ds_val is None
@@ -401,7 +401,7 @@ def test_build_trainer_e3nn(exp_file, docked_files, tmp_path):
     assert not t._is_initialized
     assert t.model is None
     assert t.optimizer is None
-    assert t.es is None
+    assert t.early_stopping is None
     assert t.ds is None
     assert t.ds_train is None
     assert t.ds_val is None

@@ -1082,7 +1082,7 @@ def derivative(func):
 # Early stopping args
 def es_args(func):
     for fn in [
-        es_type,
+        early_stopping_type,
         es_patience,
         es_n_check,
         es_divergence,
@@ -1094,7 +1094,7 @@ def es_args(func):
     return func
 
 
-def es_type(func):
+def early_stopping_type(func):
     return click.option(
         "--es-type",
         type=EarlyStoppingType,
@@ -1111,7 +1111,7 @@ def es_patience(func):
         type=int,
         help=(
             "Number of training epochs to allow with no improvement in val loss. "
-            "Used if --es_type is best or patient_converged."
+            "Used if --es-type is best or patient_converged."
         ),
     )(func)
 
@@ -1122,7 +1122,7 @@ def es_n_check(func):
         type=int,
         help=(
             "Number of past epoch losses to keep track of when determining "
-            "convergence. Used if --es_type is converged or patient_converged."
+            "convergence. Used if --es-type is converged or patient_converged."
         ),
     )(func)
 
@@ -1133,7 +1133,7 @@ def es_divergence(func):
         type=float,
         help=(
             "Max allowable difference from the mean of the losses as a fraction of the "
-            "average loss. Used if --es_type is converged or patient_converged."
+            "average loss. Used if --es-type is converged or patient_converged."
         ),
     )(func)
 

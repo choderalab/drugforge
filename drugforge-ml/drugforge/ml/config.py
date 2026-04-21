@@ -180,7 +180,7 @@ class EarlyStoppingConfig(ConfigBase):
     Class for constructing an early stopping class.
     """
 
-    es_type: EarlyStoppingType = Field(
+    early_stopping_type: EarlyStoppingType = Field(
         EarlyStoppingType.none,
         description=(
             "Type of early stopping to use. "
@@ -229,7 +229,7 @@ class EarlyStoppingConfig(ConfigBase):
 
     @model_validator(mode="after")
     def check_args(self):
-        match self.es_type:
+        match self.early_stopping_type:
             case EarlyStoppingType.none:
                 pass
             case EarlyStoppingType.best:
@@ -273,7 +273,7 @@ class EarlyStoppingConfig(ConfigBase):
     def build(
         self,
     ) -> BestEarlyStopping | ConvergedEarlyStopping | PatientConvergedEarlyStopping:
-        match self.es_type:
+        match self.early_stopping_type:
             case EarlyStoppingType.none:
                 return None
             case EarlyStoppingType.best:

@@ -321,7 +321,7 @@ def build(
     protein_representation_config_cache: Path | None = None,
     model_rand_seed: int | None = None,
     model_tag: str | None = None,
-    es_type: EarlyStoppingType | None = None,
+    early_stopping_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -499,18 +499,18 @@ def build(
         Random seed for initializing the model
     model_tag: str, optional
         Tag to name model weights files when saving
-    es_type: EarlyStoppingType, optional
+    early_stopping_type: EarlyStoppingType, optional
         Which early stopping strategy to use. Options are none, best, converged,
         patient_converged, threshold, and progress_quotient
     es_patience: int, optional
         Number of training epochs to allow with no improvement in val loss. Used if
-        --es_type is best or patient_converged
+        --es-type is best or patient_converged
     es_n_check: int, optional
         Number of past epoch losses to keep track of when determining convergence. Used
-        if --es_type is converged or patient_converged
+        if --es-type is converged or patient_converged
     es_divergence: float, optional
         Max allowable difference from the mean of the losses as a fraction of the
-        average loss. Used if --es_type is converged or patient_converged
+        average loss. Used if --es-type is converged or patient_converged
     es_burnin: int, optional
         Minimum number of epochs to train for regardless of early stopping criteria
     es_threshold: float, optional
@@ -699,10 +699,10 @@ def build(
         "comb_km": comb_km,
         "rand_seed": model_rand_seed,
     }
-    es_config = {
+    early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "es_type": es_type,
+        "early_stopping_type": early_stopping_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
@@ -758,7 +758,7 @@ def build(
     trainer_kwargs = {
         "optimizer_config": optim_config,
         "mtenn_model_config": model_config,
-        "es_config": es_config,
+        "early_stopping_config": early_stopping_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
         "loss_configs": loss_configs,
@@ -853,7 +853,7 @@ def build_and_train(
     protein_representation_config_cache: Path | None = None,
     model_rand_seed: int | None = None,
     model_tag: str | None = None,
-    es_type: EarlyStoppingType | None = None,
+    early_stopping_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -1029,18 +1029,18 @@ def build_and_train(
         Random seed for initializing the model
     model_tag: str, optional
         Tag to name model weights files when saving
-    es_type: EarlyStoppingType, optional
+    early_stopping_type: EarlyStoppingType, optional
         Which early stopping strategy to use. Options are none, best, converged,
         patient_converged, threshold, and progress_quotient
     es_patience: int, optional
         Number of training epochs to allow with no improvement in val loss. Used if
-        --es_type is best or patient_converged
+        --es-type is best or patient_converged
     es_n_check: int, optional
         Number of past epoch losses to keep track of when determining convergence. Used
-        if --es_type is converged or patient_converged
+        if --es-type is converged or patient_converged
     es_divergence: float, optional
         Max allowable difference from the mean of the losses as a fraction of the
-        average loss. Used if --es_type is converged or patient_converged
+        average loss. Used if --es-type is converged or patient_converged
     es_burnin: int, optional
         Minimum number of epochs to train for regardless of early stopping criteria
     es_threshold: float, optional
@@ -1230,10 +1230,10 @@ def build_and_train(
         "comb_km": comb_km,
         "rand_seed": model_rand_seed,
     }
-    es_config = {
+    early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "es_type": es_type,
+        "early_stopping_type": early_stopping_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
@@ -1289,7 +1289,7 @@ def build_and_train(
     trainer_kwargs = {
         "optimizer_config": optim_config,
         "mtenn_model_config": model_config,
-        "es_config": es_config,
+        "early_stopping_config": early_stopping_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
         "loss_configs": loss_configs,
