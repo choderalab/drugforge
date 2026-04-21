@@ -21,7 +21,7 @@ from drugforge.ml.dataset import (
     GroupedDockedDataset,
     SplitDockedDataset,
 )
-from drugforge.ml.es import (
+from drugforge.ml.early_stopping import (
     BestEarlyStopping,
     ConvergedEarlyStopping,
     PatientConvergedEarlyStopping,

@@ -195,7 +195,7 @@ class Trainer(BaseModel):
     #  from serialization
     model: None = Field(None, description="Actual model object.", exclude=True)
     optimizer: None = Field(None, description="Actual optimizer object.", exclude=True)
-    es: None = Field(None, description="Actual EarlyStopping object.", exclude=True)
+    early_stopping: None = Field(None, description="Actual EarlyStopping object.", exclude=True)
     ds: None = Field(None, description="Actual Dataset object.", exclude=True)
     ds_train: None = Field(
         None, description="Actual train set Dataset object.", exclude=True
@@ -854,7 +854,7 @@ class Trainer(BaseModel):
             self.optimizer.load_state_dict(optimizer_state)
 
         # Build early stopping
-        self.es = self.es_config.build()
+        self.early_stopping = self.es_config.build()
 
         # Build data augmentation classes
         self.data_augs = [aug.build() for aug in self.data_aug_configs]
@@ -1351,58 +1351,58 @@ class Trainer(BaseModel):
                 raise ValueError("Unrecoverable loss value reached.")
 
             # Stop training if EarlyStopping says to
-            if self.es:
-                if self.es_config.es_type == "best" and self.es.check(
+            if self.early_stopping:
+                if self.es_config.es_type == "best" and self.early_stopping.check(
                     epoch_idx, epoch_val_loss, self.model.state_dict()
                 ):
                     print(
                         (
                             f"Stopping training after epoch {epoch_idx}, "
-                            f"using weights from epoch {self.es.best_epoch}"
+                            f"using weights from epoch {self.early_stopping.best_epoch}"
                         ),
                         flush=True,
                     )
                     if self.log_file:
                         self.logger.info(
                             f"Stopping training after epoch {epoch_idx}, "
-                            f"using weights from epoch {self.es.best_epoch}"
+                            f"using weights from epoch {self.early_stopping.best_epoch}"
                         )
-                    self.model.load_state_dict(self.es.best_wts)
+                    self.model.load_state_dict(self.early_stopping.best_wts)
                     if self.use_wandb:
                         wandb.log(
                             {
-                                "best_epoch": self.es.best_epoch,
-                                "best_loss": self.es.best_loss,
+                                "best_epoch": self.early_stopping.best_epoch,
+                                "best_loss": self.early_stopping.best_loss,
                             }
                         )
-                    use_epoch = self.es.best_epoch
+                    use_epoch = self.early_stopping.best_epoch
                     break
-                elif self.es_config.es_type == "patient_converged" and self.es.check(
+                elif self.es_config.es_type == "patient_converged" and self.early_stopping.check(
                     epoch_idx, epoch_val_loss, self.model.state_dict()
                 ):
                     print(
                         (
                             f"Stopping training after epoch {epoch_idx}, "
-                            f"using weights from epoch {self.es.converged_epoch}"
+                            f"using weights from epoch {self.early_stopping.converged_epoch}"
                         ),
                         flush=True,
                     )
                     if self.log_file:
                         self.logger.info(
                             f"Stopping training after epoch {epoch_idx}, "
-                            f"using weights from epoch {self.es.converged_epoch}"
+                            f"using weights from epoch {self.early_stopping.converged_epoch}"
                         )
-                    self.model.load_state_dict(self.es.converged_wts)
+                    self.model.load_state_dict(self.early_stopping.converged_wts)
                     if self.use_wandb:
                         wandb.log(
                             {
-                                "converged_epoch": self.es.converged_epoch,
-                                "converged_loss": self.es.converged_loss,
+                                "converged_epoch": self.early_stopping.converged_epoch,
+                                "converged_loss": self.early_stopping.converged_loss,
                             }
                         )
-                    use_epoch = self.es.converged_epoch
+                    use_epoch = self.early_stopping.converged_epoch
                     break
-                elif self.es_config.es_type == "converged" and self.es.check(
+                elif self.es_config.es_type == "converged" and self.early_stopping.check(
                     epoch_idx, epoch_val_loss
                 ):
                     print(f"Stopping training after epoch {epoch_idx}", flush=True)
@@ -1410,7 +1410,7 @@ class Trainer(BaseModel):
                         self.logger.info(f"Stopping training after epoch {epoch_idx}")
                     use_epoch = epoch_idx
                     break
-                elif self.es_config.es_type == "threshold" and self.es.check(
+                elif self.es_config.es_type == "threshold" and self.early_stopping.check(
                     epoch_idx, epoch_val_loss
                 ):
                     print(f"Stopping training after epoch {epoch_idx}", flush=True)
@@ -1418,30 +1418,30 @@ class Trainer(BaseModel):
                         self.logger.info(f"Stopping training after epoch {epoch_idx}")
                     use_epoch = epoch_idx
                     break
-                elif (self.es_config.es_type == "progress_quotient") and self.es.check(
+                elif (self.es_config.es_type == "progress_quotient") and self.early_stopping.check(
                     epoch_idx, epoch_val_loss, self.model.state_dict(), epoch_train_loss
                 ):
                     print(
                         (
                             f"Stopping training after epoch {epoch_idx}, "
-                            f"using weights from epoch {self.es.best_epoch}"
+                            f"using weights from epoch {self.early_stopping.best_epoch}"
                         ),
                         flush=True,
                     )
                     if self.log_file:
                         self.logger.info(
                             f"Stopping training after epoch {epoch_idx}, "
-                            f"using weights from epoch {self.es.best_epoch}"
+                            f"using weights from epoch {self.early_stopping.best_epoch}"
                         )
-                    self.model.load_state_dict(self.es.best_wts)
+                    self.model.load_state_dict(self.early_stopping.best_wts)
                     if self.use_wandb:
                         wandb.log(
                             {
-                                "best_epoch": self.es.best_epoch,
-                                "best_loss": self.es.best_loss,
+                                "best_epoch": self.early_stopping.best_epoch,
+                                "best_loss": self.early_stopping.best_loss,
                             }
                         )
-                    use_epoch = self.es.best_epoch
+                    use_epoch = self.early_stopping.best_epoch
                     break
         else:
             use_epoch = None
