@@ -372,6 +372,275 @@ def build(
     s3_path: str | None = None,
     upload_to_s3: bool | None = None,
 ):
+    """
+    Build a Trainer schema object and serialize it, but don't do any actual training.
+    Useful if you want to prep a bunch of Trainers and then inspect them before
+    submitting the training runs.
+
+    Parameters
+    ----------
+    output_dir: Path, optional
+        Top-level output directory. A subdirectory with the current W&B run ID will be
+        made/searched for if W&B is being used
+    save_weights: str, optional
+        How often to save weights during training.Options are to keep every epoch
+        ("all"), only keep the most recent epoch ("recent"), or only keep the final
+        epoch ("final")
+    weights_path: Path, optional
+        Path to an existing weights file. Use this for loading pretrained weights from a
+        previous run as the starting weights
+    trainer_config_cache: Path, optional
+        Trainer Config JSON cache file. Any other CLI args that are passed will
+        supersede anything in this file
+    optimizer_type: OptimizerType, optional
+        Type of optimizer to use. Options are sgd, adam, adadelta, and adamw
+    lr: float, optional
+        Optimizer learning rate
+    weight_decay: float, optional
+        Optimizer weight decay (L2 penalty)
+    momentum: float, optional
+        Momentum for SGD optimizer
+    dampening: float, optional
+        Dampening for momentum for SGD optimizer
+    b1: float, optional
+        B1 parameter for Adam and AdamW optimizers
+    b2: float, optional
+        B2 parameter for Adam and AdamW optimizers
+    eps: float, optional
+        Epsilon parameter for Adam, AdamW, and Adadelta optimizers
+    rho: float, optional
+        Rho parameter for Adadelta optimizer
+    optimizer_config_cache: Path, optional
+        Optimizer Config JSON cache file. Other optimizer-related args that are passed
+        will supersede anything stored in this file
+    use_wandb: bool, optional
+        Use W&B to log model training
+    wandb_project: str, optional
+        W&B project name
+    wandb_name: str, optional
+        W&B run name
+    extra_config: tuple[str], optional
+        Any extra config options to log to W&B, provided as comma-separated pairs. Can
+        be provided as many times as desired (eg -e key1,val1 -e key2,val2 -e key3,val3)
+    model_type: ModelType, optional
+        What type of MTENN model to use. Options are model, grouped, ligand, and split
+    representation: str, optional
+        Single Representation to use. Should be specified as a comma separated list of
+        <key>:<value> pairs, which will be passed directly to the appropriate class
+        constructor
+    complex_representation: str, optional
+        Representation to use for the complex in a SplitModel. Should be specified as a
+        comma separated list of <key>:<value> pairs, which will be passed directly to
+        the appropriate class constructor
+    ligand_representation: str, optional
+        Representation to use for the ligand in a SplitModel. Should be specified as a
+        comma separated list of <key>:<value> pairs, which will be passed directly to
+        the appropriate class constructor
+    protein_representation: str, optional
+        Representation to use for the protein in a SplitModel. Should be specified as a
+        comma separated list of <key>:<value> pairs, which will be passed directly to
+        the appropriate class constructor
+    strategy: StrategyConfig, optional
+        Which Strategy to use for combining complex, protein, and ligand representations
+        in the MTENN Model
+    strategy_layer_norm: bool, optional
+        Apply a LayerNorm operation in the Strategy
+    pred_readout: ReadoutConfig, optional
+        Which Readout to use for the model predictions. This corresponds to the
+        individual pose predictions in the case of a GroupedModel
+    combination: CombinationConfig, optional
+        Which Combination to use for combining predictions in a GroupedModel
+    comb_readout: ReadoutConfig, optional
+        Which Readout to use for the combined model predictions. This is only relevant
+        in the case of a GroupedModel
+    max_comb_neg: bool, optional
+        Whether to take the min instead of max when combining pose predictions with
+        MaxCombination
+    max_comb_scale: float, optional
+        Scaling factor for values when taking the max/min when combining pose
+        predictions with MaxCombination. A value of 1 will approximate the Boltzmann
+        mean, while a larger value will more accurately approximate the max/min
+        operation
+    pred_substrate: float, optional
+        Substrate concentration to use when using the Cheng-Prusoff equation to convert
+        deltaG -> IC50 in PIC50Readout for pred_readout. Assumed to be in the same units
+        as pred_km
+    pred_km: float, optional
+        Km value to use when using the Cheng-Prusoff equation to convert deltaG -> IC50
+        in PIC50Readout for pred_readout. Assumed to be in the same units as
+        pred_substrate
+    comb_substrate: float, optional
+        Substrate concentration to use when using the Cheng-Prusoff equation to convert
+        deltaG -> IC50 in PIC50Readout for comb_readout. Assumed to be in the same units
+        as comb_km
+    comb_km: float, optional
+        Km value to use when using the Cheng-Prusoff equation to convert deltaG -> IC50
+        in PIC50Readout for comb_readout. Assumed to be in the same units as
+        comb_substrate
+    model_config_cache: Path, optional
+        Model Config JSON cache file. Other model-related args that are passed will
+        supersede anything stored in this file
+    representation_config_cache: Path, optional
+        Config JSON cache file for a single representation. Other representation-related
+        args that are passed will supersede anything stored in this file
+    complex_representation_config_cache: Path, optional
+        Config JSON cache file for the representation to be used for the complex in a
+        SplitModel. Other representation-related args that are passed will supersede
+        anything stored in this file
+    ligand_representation_config_cache: Path, optional
+        Config JSON cache file for the representation to be used for the ligand in a
+        SplitModel. Other representation-related args that are passed will supersede
+        anything stored in this file
+    protein_representation_config_cache: Path, optional
+        Config JSON cache file for the representation to be used for the protein in a
+        SplitModel. Other representation-related args that are passed will supersede
+        anything stored in this file
+    model_rand_seed: int, optional
+        Random seed for initializing the model
+    model_tag: str, optional
+        Tag to name model weights files when saving
+    es_type: EarlyStoppingType, optional
+        Which early stopping strategy to use. Options are none, best, converged,
+        patient_converged, threshold, and progress_quotient
+    es_patience: int, optional
+        Number of training epochs to allow with no improvement in val loss. Used if
+        --es_type is best or patient_converged
+    es_n_check: int, optional
+        Number of past epoch losses to keep track of when determining convergence. Used
+        if --es_type is converged or patient_converged
+    es_divergence: float, optional
+        Max allowable difference from the mean of the losses as a fraction of the
+        average loss. Used if --es_type is converged or patient_converged
+    es_burnin: int, optional
+        Minimum number of epochs to train for regardless of early stopping criteria
+    es_threshold: float, optional
+        Loss below which to stop model training
+    es_config_cache: Path, optional
+        EarlyStoppingConfig JSON cache file. Other early stopping-related args that are
+        passed will supersede anything stored in this file
+    dataset_type : DatasetType, optional
+        Which type of dataset to build. If this is not passed, a file must be passed for
+        ds_config_cache
+    export_input_data : bool, optional
+        Whether the actual data used to construct the objects in the Dataset should be
+        serialized with the config file. Note that if this is True, you will be
+        essentially saving multiple SDF/PDB files in your dataset config file. If this
+        is set to False (default), a value must be provided for ds_cache, otherwise
+        constructing the dataset in the future will be impossible
+    export_exp_data : bool, optional
+        Whether the experimental data used to construct the Dataset should be serialized
+        with the config file. If this is set to False (default), a value must be
+        provided for ds_cache, otherwise constructing the dataset in the future will be
+        impossible
+    grouped_dataset : bool, optional
+        This dataset contains multiple poses for each ligand (will build a
+        Grouped*Dataset object)
+    e3nn_dataset : bool, optional
+        This dataset will be used in an e3nn model, and the data stored will need to be
+        modified accordingly
+    ds_cache : Path, optional
+        Pickle cache file of the actual dataset object
+    ds_config_cache : Path, optional
+        JSON cache file of the DatasetConfig
+    ds_random_iter : bool, optional
+        Randomly iterate through the dataset each time
+    exp_file : Path, optional
+        JSON file giving a list of ExperimentalDataCompound objects
+    structures : str, optional
+        PDB structure files. Can be in one of two forms: either a glob that will be
+        expanded and all matching files will be taken, or a directory, in which case all
+        top-level PDB files will be taken
+    xtal_regex : str, default=MPRO_ID_REGEX
+        Regex for extracting crystal structure name from filename
+    cpd_regex : str, default=MOONSHOT_CDD_ID_REGEX
+        Regex for extracting compound id from filename
+    ds_split_type: DatasetSplitterType, optional
+        Method to use for splitting. Options are random, temporal, and manual
+    train_frac: float, optional
+        Fraction of dataset to put in the train split
+    val_frac: float, optional
+        Fraction of dataset to put in the val split
+    test_frac: float, optional
+        Fraction of dataset to put in the test split
+    enforce_one: bool, optional
+        Make sure that all split fractions add up to 1
+    ds_rand_seed: int, optional
+        Random seed to use if randomly splitting data
+    ds_split_dict: Path, optional
+        JSON file containing the split dict to use in the case of manual splitting. The
+        dict should map the keys ["train", "val", "test"] to lists containing the
+        compounds that belong in each split
+    ds_split_config_cache: Path, optional
+        DatasetSplitterConfig JSON cache file. Other dataset splitter-related args that
+        are passed will supersede anything stored in this file
+    loss: tuple[str] = ()
+        Specifications for loss function(s) to use. Multiple can be passed, and they
+        will be weighted as specified with --loss-weights. Each individual loss function
+        should be specified as a comma separated list of <key>:<value> pairs, which will
+        be passed directly to the LossFunctionConfig class. For example, to add a loss
+        term that penalizes predictions for being outside a normal pIC50 range, you
+        could pass --loss loss_type:range,range_lower_lim:0,range_upper_lim:10
+    loss_weights: tuple[float] = ()
+        Weights for each loss function. If no weights values are passed, each loss term
+        will be weighted equally. These args are assumed to be in the same order as the
+        --loss args that they correspond to
+    eval_loss_weights: tuple[float] = ()
+        Weights for each loss function for val and test sets. If no values are passed,
+        will reuse the values from --loss-weights. These args are assumed to be in the
+        same order as the --loss args that they correspond to
+    auto_init: bool, optional
+        Automatically initialize the Trainer object if it hasn't been when .train is
+        called
+    start_epoch: int, optional
+        Which epoch to start training at (used for continuing training runs)
+    n_epochs: int, optional
+        Which epoch to stop training at. For non-continuation runs, this will be the
+        total number of epochs to train for
+    batch_size: int, optional
+        Number of samples to predict on before performing backprop
+    target_prop: str, optional
+        Target property to train against
+    cont: bool, optional
+        This is a continuation of a previous training run
+    loss_dict: dict, optional
+        JSON file storing the dict of losses. Use in continuation runs. If not given
+        during a continuation run, loss_dict.json will be loaded from the provided
+        output-dir
+    device: torch.device, optional
+        Device to train on
+    data_aug: tuple[str] = ()
+        Specifications for data augmentations to do. Multiple can be passed, and they
+        will be applied in the order they are specified on the command line. Each
+        individual aug config should be specified as a comma separated list of
+        <key>:<value> pairs, which will be passed directly to the DataAugConfig class.
+        For example, to add positional jittering that draws noise from a fixed Gaussian
+        with a std of 0.05, you would pass
+        --data-aug aug_type:jitter_fixed,jitter_fixed_std:0.05
+    trainer_weight_decay: float, optional
+        Weight decay weighting for training. This will add a term of
+        weight_decay / 2 * the square of the L2-norm of the model weights, excluding any
+        bias terms
+    batch_norm: bool, optional
+        Normalize batch gradient by batch size
+    overwrite_trainer_config_cache: bool = False
+        Overwrite any existing Trainer JSON cache file
+    overwrite_optimizer_config_cache: bool = False
+        Overwrite any existing OptimzerConfig JSON cache file
+    overwrite_model_config_cache: bool = False
+        Overwrite any existing ModelConfig JSON cache file
+    overwrite_es_config_cache: bool = False
+        Overwrite any existing EarlyStoppingConfig JSON cache file
+    overwrite_ds_config_cache: bool = False
+        Overwrite any existing DatasetConfig JSON cache file
+    overwrite_ds_cache: bool = False
+        Overwrite any existing Dataset pkl cache file
+    overwrite_ds_split_config_cache: bool = False
+        Overwrite any existing DatasetSplitterConfig JSON cache file
+    s3_path: str, optional
+        S3 path to store the results
+    upload_to_s3: bool, optional
+        Whether to upload the results to S3
+    """
     # Build each dict and pass to Trainer
     optim_config = {
         "cache": optimizer_config_cache,
@@ -591,10 +860,6 @@ def build_and_train(
     es_burnin: int | None = None,
     es_threshold: float | None = None,
     es_config_cache: Path | None = None,
-    exp_file: Path | None = None,
-    structures: str | None = None,
-    xtal_regex: str = MPRO_ID_REGEX,
-    cpd_regex: str = MOONSHOT_CDD_ID_REGEX,
     dataset_type: DatasetType | None = None,
     export_input_data: bool | None = None,
     export_exp_data: bool | None = None,
@@ -603,6 +868,10 @@ def build_and_train(
     ds_cache: Path | None = None,
     ds_config_cache: Path | None = None,
     ds_random_iter: bool | None = None,
+    exp_file: Path | None = None,
+    structures: str | None = None,
+    xtal_regex: str = MPRO_ID_REGEX,
+    cpd_regex: str = MOONSHOT_CDD_ID_REGEX,
     ds_split_type: DatasetSplitterType | None = None,
     train_frac: float | None = None,
     val_frac: float | None = None,
@@ -635,6 +904,274 @@ def build_and_train(
     s3_path: str | None = None,
     upload_to_s3: bool | None = None,
 ):
+    """
+    Build a Trainer schema object and begin training, serializing as requested.
+
+    Parameters
+    ----------
+    output_dir: Path, optional
+        Top-level output directory. A subdirectory with the current W&B run ID will be
+        made/searched for if W&B is being used
+    save_weights: str, optional
+        How often to save weights during training.Options are to keep every epoch
+        ("all"), only keep the most recent epoch ("recent"), or only keep the final
+        epoch ("final")
+    weights_path: Path, optional
+        Path to an existing weights file. Use this for loading pretrained weights from a
+        previous run as the starting weights
+    trainer_config_cache: Path, optional
+        Trainer Config JSON cache file. Any other CLI args that are passed will
+        supersede anything in this file
+    optimizer_type: OptimizerType, optional
+        Type of optimizer to use. Options are sgd, adam, adadelta, and adamw
+    lr: float, optional
+        Optimizer learning rate
+    weight_decay: float, optional
+        Optimizer weight decay (L2 penalty)
+    momentum: float, optional
+        Momentum for SGD optimizer
+    dampening: float, optional
+        Dampening for momentum for SGD optimizer
+    b1: float, optional
+        B1 parameter for Adam and AdamW optimizers
+    b2: float, optional
+        B2 parameter for Adam and AdamW optimizers
+    eps: float, optional
+        Epsilon parameter for Adam, AdamW, and Adadelta optimizers
+    rho: float, optional
+        Rho parameter for Adadelta optimizer
+    optimizer_config_cache: Path, optional
+        Optimizer Config JSON cache file. Other optimizer-related args that are passed
+        will supersede anything stored in this file
+    use_wandb: bool, optional
+        Use W&B to log model training
+    wandb_project: str, optional
+        W&B project name
+    wandb_name: str, optional
+        W&B run name
+    extra_config: tuple[str], optional
+        Any extra config options to log to W&B, provided as comma-separated pairs. Can
+        be provided as many times as desired (eg -e key1,val1 -e key2,val2 -e key3,val3)
+    model_type: ModelType, optional
+        What type of MTENN model to use. Options are model, grouped, ligand, and split
+    representation: str, optional
+        Single Representation to use. Should be specified as a comma separated list of
+        <key>:<value> pairs, which will be passed directly to the appropriate class
+        constructor
+    complex_representation: str, optional
+        Representation to use for the complex in a SplitModel. Should be specified as a
+        comma separated list of <key>:<value> pairs, which will be passed directly to
+        the appropriate class constructor
+    ligand_representation: str, optional
+        Representation to use for the ligand in a SplitModel. Should be specified as a
+        comma separated list of <key>:<value> pairs, which will be passed directly to
+        the appropriate class constructor
+    protein_representation: str, optional
+        Representation to use for the protein in a SplitModel. Should be specified as a
+        comma separated list of <key>:<value> pairs, which will be passed directly to
+        the appropriate class constructor
+    strategy: StrategyConfig, optional
+        Which Strategy to use for combining complex, protein, and ligand representations
+        in the MTENN Model
+    strategy_layer_norm: bool, optional
+        Apply a LayerNorm operation in the Strategy
+    pred_readout: ReadoutConfig, optional
+        Which Readout to use for the model predictions. This corresponds to the
+        individual pose predictions in the case of a GroupedModel
+    combination: CombinationConfig, optional
+        Which Combination to use for combining predictions in a GroupedModel
+    comb_readout: ReadoutConfig, optional
+        Which Readout to use for the combined model predictions. This is only relevant
+        in the case of a GroupedModel
+    max_comb_neg: bool, optional
+        Whether to take the min instead of max when combining pose predictions with
+        MaxCombination
+    max_comb_scale: float, optional
+        Scaling factor for values when taking the max/min when combining pose
+        predictions with MaxCombination. A value of 1 will approximate the Boltzmann
+        mean, while a larger value will more accurately approximate the max/min
+        operation
+    pred_substrate: float, optional
+        Substrate concentration to use when using the Cheng-Prusoff equation to convert
+        deltaG -> IC50 in PIC50Readout for pred_readout. Assumed to be in the same units
+        as pred_km
+    pred_km: float, optional
+        Km value to use when using the Cheng-Prusoff equation to convert deltaG -> IC50
+        in PIC50Readout for pred_readout. Assumed to be in the same units as
+        pred_substrate
+    comb_substrate: float, optional
+        Substrate concentration to use when using the Cheng-Prusoff equation to convert
+        deltaG -> IC50 in PIC50Readout for comb_readout. Assumed to be in the same units
+        as comb_km
+    comb_km: float, optional
+        Km value to use when using the Cheng-Prusoff equation to convert deltaG -> IC50
+        in PIC50Readout for comb_readout. Assumed to be in the same units as
+        comb_substrate
+    model_config_cache: Path, optional
+        Model Config JSON cache file. Other model-related args that are passed will
+        supersede anything stored in this file
+    representation_config_cache: Path, optional
+        Config JSON cache file for a single representation. Other representation-related
+        args that are passed will supersede anything stored in this file
+    complex_representation_config_cache: Path, optional
+        Config JSON cache file for the representation to be used for the complex in a
+        SplitModel. Other representation-related args that are passed will supersede
+        anything stored in this file
+    ligand_representation_config_cache: Path, optional
+        Config JSON cache file for the representation to be used for the ligand in a
+        SplitModel. Other representation-related args that are passed will supersede
+        anything stored in this file
+    protein_representation_config_cache: Path, optional
+        Config JSON cache file for the representation to be used for the protein in a
+        SplitModel. Other representation-related args that are passed will supersede
+        anything stored in this file
+    model_rand_seed: int, optional
+        Random seed for initializing the model
+    model_tag: str, optional
+        Tag to name model weights files when saving
+    es_type: EarlyStoppingType, optional
+        Which early stopping strategy to use. Options are none, best, converged,
+        patient_converged, threshold, and progress_quotient
+    es_patience: int, optional
+        Number of training epochs to allow with no improvement in val loss. Used if
+        --es_type is best or patient_converged
+    es_n_check: int, optional
+        Number of past epoch losses to keep track of when determining convergence. Used
+        if --es_type is converged or patient_converged
+    es_divergence: float, optional
+        Max allowable difference from the mean of the losses as a fraction of the
+        average loss. Used if --es_type is converged or patient_converged
+    es_burnin: int, optional
+        Minimum number of epochs to train for regardless of early stopping criteria
+    es_threshold: float, optional
+        Loss below which to stop model training
+    es_config_cache: Path, optional
+        EarlyStoppingConfig JSON cache file. Other early stopping-related args that are
+        passed will supersede anything stored in this file
+    dataset_type : DatasetType, optional
+        Which type of dataset to build. If this is not passed, a file must be passed for
+        ds_config_cache
+    export_input_data : bool, optional
+        Whether the actual data used to construct the objects in the Dataset should be
+        serialized with the config file. Note that if this is True, you will be
+        essentially saving multiple SDF/PDB files in your dataset config file. If this
+        is set to False (default), a value must be provided for ds_cache, otherwise
+        constructing the dataset in the future will be impossible
+    export_exp_data : bool, optional
+        Whether the experimental data used to construct the Dataset should be serialized
+        with the config file. If this is set to False (default), a value must be
+        provided for ds_cache, otherwise constructing the dataset in the future will be
+        impossible
+    grouped_dataset : bool, optional
+        This dataset contains multiple poses for each ligand (will build a
+        Grouped*Dataset object)
+    e3nn_dataset : bool, optional
+        This dataset will be used in an e3nn model, and the data stored will need to be
+        modified accordingly
+    ds_cache : Path, optional
+        Pickle cache file of the actual dataset object
+    ds_config_cache : Path, optional
+        JSON cache file of the DatasetConfig
+    ds_random_iter : bool, optional
+        Randomly iterate through the dataset each time
+    exp_file : Path, optional
+        JSON file giving a list of ExperimentalDataCompound objects
+    structures : str, optional
+        PDB structure files. Can be in one of two forms: either a glob that will be
+        expanded and all matching files will be taken, or a directory, in which case all
+        top-level PDB files will be taken
+    xtal_regex : str, default=MPRO_ID_REGEX
+        Regex for extracting crystal structure name from filename
+    cpd_regex : str, default=MOONSHOT_CDD_ID_REGEX
+        Regex for extracting compound id from filename
+    ds_split_type: DatasetSplitterType, optional
+        Method to use for splitting. Options are random, temporal, and manual
+    train_frac: float, optional
+        Fraction of dataset to put in the train split
+    val_frac: float, optional
+        Fraction of dataset to put in the val split
+    test_frac: float, optional
+        Fraction of dataset to put in the test split
+    enforce_one: bool, optional
+        Make sure that all split fractions add up to 1
+    ds_rand_seed: int, optional
+        Random seed to use if randomly splitting data
+    ds_split_dict: Path, optional
+        JSON file containing the split dict to use in the case of manual splitting. The
+        dict should map the keys ["train", "val", "test"] to lists containing the
+        compounds that belong in each split
+    ds_split_config_cache: Path, optional
+        DatasetSplitterConfig JSON cache file. Other dataset splitter-related args that
+        are passed will supersede anything stored in this file
+    loss: tuple[str] = ()
+        Specifications for loss function(s) to use. Multiple can be passed, and they
+        will be weighted as specified with --loss-weights. Each individual loss function
+        should be specified as a comma separated list of <key>:<value> pairs, which will
+        be passed directly to the LossFunctionConfig class. For example, to add a loss
+        term that penalizes predictions for being outside a normal pIC50 range, you
+        could pass --loss loss_type:range,range_lower_lim:0,range_upper_lim:10
+    loss_weights: tuple[float] = ()
+        Weights for each loss function. If no weights values are passed, each loss term
+        will be weighted equally. These args are assumed to be in the same order as the
+        --loss args that they correspond to
+    eval_loss_weights: tuple[float] = ()
+        Weights for each loss function for val and test sets. If no values are passed,
+        will reuse the values from --loss-weights. These args are assumed to be in the
+        same order as the --loss args that they correspond to
+    auto_init: bool, optional
+        Automatically initialize the Trainer object if it hasn't been when .train is
+        called
+    start_epoch: int, optional
+        Which epoch to start training at (used for continuing training runs)
+    n_epochs: int, optional
+        Which epoch to stop training at. For non-continuation runs, this will be the
+        total number of epochs to train for
+    batch_size: int, optional
+        Number of samples to predict on before performing backprop
+    target_prop: str, optional
+        Target property to train against
+    cont: bool, optional
+        This is a continuation of a previous training run
+    loss_dict: dict, optional
+        JSON file storing the dict of losses. Use in continuation runs. If not given
+        during a continuation run, loss_dict.json will be loaded from the provided
+        output-dir
+    device: torch.device, optional
+        Device to train on
+    data_aug: tuple[str] = ()
+        Specifications for data augmentations to do. Multiple can be passed, and they
+        will be applied in the order they are specified on the command line. Each
+        individual aug config should be specified as a comma separated list of
+        <key>:<value> pairs, which will be passed directly to the DataAugConfig class.
+        For example, to add positional jittering that draws noise from a fixed Gaussian
+        with a std of 0.05, you would pass
+        --data-aug aug_type:jitter_fixed,jitter_fixed_std:0.05
+    trainer_weight_decay: float, optional
+        Weight decay weighting for training. This will add a term of
+        weight_decay / 2 * the square of the L2-norm of the model weights, excluding any
+        bias terms
+    batch_norm: bool, optional
+        Normalize batch gradient by batch size
+    overwrite_trainer_config_cache: bool = False
+        Overwrite any existing Trainer JSON cache file
+    overwrite_optimizer_config_cache: bool = False
+        Overwrite any existing OptimzerConfig JSON cache file
+    overwrite_model_config_cache: bool = False
+        Overwrite any existing ModelConfig JSON cache file
+    overwrite_es_config_cache: bool = False
+        Overwrite any existing EarlyStoppingConfig JSON cache file
+    overwrite_ds_config_cache: bool = False
+        Overwrite any existing DatasetConfig JSON cache file
+    overwrite_ds_cache: bool = False
+        Overwrite any existing Dataset pkl cache file
+    overwrite_ds_split_config_cache: bool = False
+        Overwrite any existing DatasetSplitterConfig JSON cache file
+    s3_path: str, optional
+        S3 path to store the results
+    upload_to_s3: bool, optional
+        Whether to upload the results to S3
+    -------
+    """
     # Build each dict and pass to Trainer
     optim_config = {
         "cache": optimizer_config_cache,
