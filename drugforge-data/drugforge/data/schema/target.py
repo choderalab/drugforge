@@ -18,7 +18,7 @@ from drugforge.data.schema.schema_base import (
     schema_dict_get_val_overload,
     write_file_directly,
 )
-from pydantic.v1 import Field, root_validator
+from pydantic import Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -46,10 +46,10 @@ class Target(DataModelAbstractBase):
     data_format: DataStorageType = Field(
         DataStorageType.pdb,
         description="Enum describing the data storage method",
-        allow_mutation=False,
+        frozen=True,
     )
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     @classmethod
     def _validate_at_least_one_id(cls, v):
         # check if skip validation
@@ -65,7 +65,7 @@ class Target(DataModelAbstractBase):
                     [not v for v in schema_dict_get_val_overload(ids)]
                 ):
                     raise ValueError(
-                        "At least one identifier must be provide, or target_name must be provided"
+                        "At least one identifier must be provided, or target_name must be provided"
                     )
         return v
 

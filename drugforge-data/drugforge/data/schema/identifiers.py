@@ -2,7 +2,7 @@ from typing import Any, Literal, Optional
 
 from drugforge.data.schema.schema_base import DataModelAbstractBase
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
-from pydantic.v1 import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class LigandIdentifiers(DataModelAbstractBase):
@@ -36,10 +36,9 @@ class LigandIdentifiers(DataModelAbstractBase):
         None, description="Unique ID for P5 compchem reference, unused for now"
     )
 
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
 
-    @validator("manifold_api_id", "compchem_id", pre=True)
+    @field_validator("manifold_api_id", "compchem_id", mode="before")
     def cast_uuids(cls, v):
         """
         Cast UUIDS to string
@@ -51,8 +50,7 @@ class LigandIdentifiers(DataModelAbstractBase):
 
 
 class LigandProvenance(DataModelAbstractBase):
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
 
     isomeric_smiles: str = Field(
         ..., description="The canonical isomeric smiles pattern for the molecule."
@@ -93,8 +91,7 @@ class TargetIdentifiers(DataModelAbstractBase):
 class ChargeProvenance(BaseModel):
     """A simple model to record the provenance of the local charging method."""
 
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     type: Literal["ChargeProvenance"] = "ChargeProvenance"
 
@@ -105,6 +102,12 @@ class ChargeProvenance(BaseModel):
         ...,
         description="The versions of the software used to generate the local charges.",
     )
+
+    # in case the dictionary of the provenance contains int/float as values, convert them to strings
+    # as this seems to be the expected behavior
+    @field_validator("provenance", mode="before")
+    def cast_provenance_dict(cls, v):
+        return {k: str(vv) for k, vv in v.items()}
 
 
 class BespokeParameter(BaseModel):

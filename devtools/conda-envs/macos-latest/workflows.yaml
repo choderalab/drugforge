@@ -4,6 +4,6 @@ channels:
   - conda-forge
 dependencies:
 # drugforge {all the other packages}name: workflows
-  click
-  pydantic
-  unittest
+ click
+ pydantic
+ unittest

@@ -1,9 +1,4 @@
 import pytest
-from drugforge.docking.fint_scorer import FINTScorer
-
-# TODO: undo this comment when xfail is removed
-from drugforge.docking.meta_scorer import MetaScorer
-from drugforge.docking.scorer import ChemGauss4Scorer
 
 
 # parametrize over fixtures
@@ -13,7 +8,10 @@ from drugforge.docking.scorer import ChemGauss4Scorer
 @pytest.mark.parametrize("return_df", [True, False])
 @pytest.mark.parametrize("use_dask", [True, False])
 def test_chemgauss_scorer(use_dask, return_df, data_fixture, request):
+    from drugforge.docking.scorer import ChemGauss4Scorer
+
     data = request.getfixturevalue(data_fixture)
+
     scorer = ChemGauss4Scorer()
     scores = scorer.score([data], use_dask=use_dask, return_df=return_df)
     assert len(scores) == 1
@@ -65,7 +63,9 @@ def test_e3nn_scorer(use_dask, return_df, data_fixture, request):
 @pytest.mark.xfail(reason="ml imports are currently broken")
 @pytest.mark.parametrize("use_dask", [True, False])
 def test_meta_scorer(results, use_dask):
+    from drugforge.docking.meta_scorer import MetaScorer
     from drugforge.docking.ml_scorer import GATScorer, SchnetScorer
+    from drugforge.docking.scorer import ChemGauss4Scorer
 
     scorer = MetaScorer(
         scorers=[
@@ -81,7 +81,9 @@ def test_meta_scorer(results, use_dask):
 
 @pytest.mark.xfail(reason="ml imports are currently broken")
 def test_meta_scorer_df(results_multi):
+    from drugforge.docking.meta_scorer import MetaScorer
     from drugforge.docking.ml_scorer import E3NNScorer, GATScorer, SchnetScorer
+    from drugforge.docking.scorer import ChemGauss4Scorer
 
     scorer = MetaScorer(
         scorers=[
@@ -102,6 +104,8 @@ def test_meta_scorer_df(results_multi):
 @pytest.mark.parametrize("return_df", [True, False])
 @pytest.mark.parametrize("use_dask", [True, False])
 def test_FINT_scorer(use_dask, return_df, data_fixture, request):
+    from drugforge.docking.fint_scorer import FINTScorer
+
     data = request.getfixturevalue(data_fixture)
     scorer = FINTScorer(target="SARS-CoV-2-Mpro")
     scores = scorer.score([data], use_dask=use_dask, return_df=return_df)

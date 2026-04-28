@@ -10,7 +10,7 @@ from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.util.dask_utils import DaskType, make_dask_client_meta
 from drugforge.data.util.logging import FileLogger
 from drugforge.modeling.protein_prep import ProteinPrepper
-from pydantic.v1 import BaseModel, Field, PositiveInt, root_validator
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt, model_validator
 
 
 class ProteinPrepInputs(BaseModel):
@@ -109,19 +109,17 @@ class ProteinPrepInputs(BaseModel):
         description="Output directory where newly prepped structures and log files will be saved to.",
     )
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
     def from_json_file(cls, file: str | Path):
-        return cls.parse_file(str(file))
+        return cls.model_validate_json(str(file))
 
     def to_json_file(self, file: str | Path):
         with open(file, "w") as f:
-            f.write(self.json(indent=2))
+            f.write(self.model_dump_json(indent=2))
 
-    @root_validator
-    @classmethod
+    @model_validator(mode="before")
     def check_inputs(cls, values):
         """
         Validate inputs

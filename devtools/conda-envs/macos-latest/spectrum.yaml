@@ -32,13 +32,13 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe ~=1.0
+  - openfe >=1.7.0
   - openff-toolkit-base>=0.17  # Added to patch openff-interchange 0.4.5_1 build deps error
   - openmm
   - openmmtools
-  - openmmforcefields >= 0.13.0
   - openbabel # used for pybel
-  - gufe >=1.0.0
+  - openmmforcefields >= 0.15.0
+  - gufe >= 1.7.1
   - pymol-open-source
   - rdkit
   - plip

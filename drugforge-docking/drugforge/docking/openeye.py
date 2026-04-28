@@ -19,7 +19,8 @@ from drugforge.docking.docking import (
     DockingResult,
 )
 from drugforge.docking.docking_data_validation import DockingResultCols
-from pydantic.v1 import Field, PositiveInt, root_validator
+from pydantic import Field, PositiveInt, model_validator
+from typing_extensions import Self
 
 logger = logging.getLogger(__name__)
 
@@ -156,17 +157,16 @@ class POSITDocker(DockingBase):
         False, description="Use pure FRED docking as a last ditch effort"
     )
 
-    @root_validator
-    @classmethod
-    def omega_dense_check(cls, values):
+    @model_validator(mode="after")
+    def omega_dense_check(self) -> Self:
         """
         Validate omega_dense
         """
-        omega_dense = values.get("omega_dense")
-        use_omega = values.get("use_omega")
+        omega_dense = self.omega_dense
+        use_omega = self.use_omega
         if omega_dense and not use_omega:
             raise ValueError("Cannot use omega_dense without use_omega")
-        return values
+        return self
 
     @staticmethod
     def to_result_type():
@@ -350,7 +350,7 @@ class POSITDocker(DockingBase):
                             prob = result.GetProbability()
 
                             posed_ligand = Ligand.from_oemol(
-                                posed_mol, **set.ligand.dict()
+                                posed_mol, **set.ligand.model_dump()
                             )
                             # set SD tags
                             sd_data = {

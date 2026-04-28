@@ -1,10 +1,16 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union
+from typing import TYPE_CHECKING, Annotated, Any, Literal, Optional, TypeAlias, Union
 
 import gufe
 import openfe
 from alchemiscale import ScopedKey
 from gufe import settings
+from gufe.settings.typing import (
+    GufeQuantity,
+    KCalPerMolQuantity,
+    NanometerQuantity,
+    specify_quantity_units,
+)
 from gufe.tokenization import GufeKey
 from openfe.protocols.openmm_rfe.equil_rfe_settings import (
     AlchemicalSettings,
@@ -19,9 +25,8 @@ from openfe.protocols.openmm_utils.omm_settings import (
     OpenMMSolvationSettings,
 )
 from openfe.setup.atom_mapping import lomap_scorers, perses_scorers
-from openff.models.types import FloatQuantity
 from openff.units import unit as OFFUnit
-from pydantic.v1 import Field, validator
+from pydantic import ConfigDict, Field, field_validator
 
 from ._util import check_ligand_series_uniqueness_and_names
 from .base import _SchemaBase, _SchemaBaseFrozen
@@ -30,6 +35,8 @@ from .network import NetworkPlanner, PlannedNetwork
 if TYPE_CHECKING:
     from drugforge.data.schema.ligand import Ligand
     from gufe.mapping import LigandAtomMapping
+
+MolarQuantity: TypeAlias = Annotated[GufeQuantity, specify_quantity_units("molar")]
 
 
 class SolventSettings(_SchemaBase):
@@ -52,13 +59,15 @@ class SolventSettings(_SchemaBase):
         True,
         description="If the net charge of the chemical system should be neutralized by the ions defined by `positive_ion` and `negative_ion`.",
     )
-    ion_concentration: FloatQuantity["molar"] = Field(  # noqa: F821
+    ion_concentration: MolarQuantity = Field(  # noqa: F821
         0.15 * OFFUnit.molar,
         description="The ionic concentration required in molar units.",
     )
 
     def to_solvent_component(self) -> gufe.SolventComponent:
-        return gufe.SolventComponent(**self.dict(exclude={"type"}))
+        # note, we cannot just use self.model_dump(exclude="type") here because it would
+        # convert quantities to dicts; SolventComponent expects quantities
+        return gufe.SolventComponent(**{k: v for k, v in self if k != "type"})
 
 
 class AdaptiveSettings(_SchemaBase):
@@ -83,11 +92,12 @@ class AdaptiveSettings(_SchemaBase):
         True,
         description="Whether or not to use adaptive solvent padding; typically the complex phase can handle smaller padding size.",
     )
-    solvent_padding_complex: FloatQuantity["nanometer"] = Field(  # noqa: F821
+
+    solvent_padding_complex: NanometerQuantity = Field(  # noqa: F821
         1.5 * OFFUnit.nanometer,
         description="The solvent padding (in nm) to use for the complex phase of each edge.",
     )
-    solvent_padding_solvated: FloatQuantity["nanometer"] = Field(  # noqa: F821
+    solvent_padding_solvated: NanometerQuantity = Field(  # noqa: F821
         1.5 * OFFUnit.nanometer,
         description="The solvent padding (in nm) to use for the solvated phase of each edge.",
     )
@@ -97,7 +107,7 @@ class AdaptiveSettings(_SchemaBase):
         scorer_method: str,
         mapping: "LigandAtomMapping",
         protocol: openfe.protocols.openmm_rfe.RelativeHybridTopologyProtocol,
-        base_sampling_length: FloatQuantity["nanometer"],  # noqa: F821
+        base_sampling_length: NanometerQuantity,  # noqa: F821
     ) -> openfe.protocols.openmm_rfe.RelativeHybridTopologyProtocol:
         """
         It's advisable to increase simulation time on edges that are expected to be less reliable. There
@@ -194,10 +204,10 @@ class TransformationResult(_SchemaBaseFrozen):
     phase: Literal["complex", "solvent"] = Field(
         ..., description="The phase of the transformation."
     )
-    estimate: FloatQuantity["kcal/mol"] = Field(  # noqa: F821
+    estimate: KCalPerMolQuantity = Field(  # noqa: F821
         ..., description="The average estimate of this transformation in kcal/mol"
     )
-    uncertainty: FloatQuantity["kcal/mol"] = Field(  # noqa: F821
+    uncertainty: KCalPerMolQuantity = Field(  # noqa: F821
         ...,
         description="The standard deviation of the estimates of this transform in kcal/mol",
     )
@@ -299,7 +309,7 @@ class AlchemiscaleResults(_BaseResults):
         description="The alchemiscale key associated with this submited network, which is used to gather results from the client.",
     )
 
-    @validator("network_key", pre=True)
+    @field_validator("network_key", mode="before")
     def convert_to_scoped_key(cls, value: Union[dict, ScopedKey]) -> ScopedKey:
         # if we have a dict convert it to a ScopedKey
         if isinstance(value, dict):
@@ -433,13 +443,10 @@ class FreeEnergyCalculationNetwork(_FreeEnergyBase):
         None,
         description="The name of the biological target associated with this Alchemy network.",
     )
-
-    class Config:
-        """Overwrite the class config to freeze the results model"""
-
-        allow_mutation = False
-        orm_mode = True
-        arbitrary_types_allowed = True
+    """Overwrite the class config to freeze the results model"""
+    model_config = ConfigDict(
+        frozen=True, from_attributes=True, arbitrary_types_allowed=True
+    )
 
     def to_openfe_receptor(self) -> openfe.ProteinComponent:
 
@@ -646,7 +653,7 @@ class FreeEnergyCalculationFactory(_FreeEnergyBase):
             receptor=receptor.to_json(),
             experimental_protocol=experimental_protocol,
             target=target,
-            **self.dict(exclude={"type", "network_planner"}),
+            **self.model_dump(exclude={"type", "network_planner"}),
         )
         return planned_fec_network
 

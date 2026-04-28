@@ -17,7 +17,7 @@ from drugforge.spectrum.score import (
     score_autodock_vina,
     score_gnina,
 )
-from pydantic.v1 import Field
+from pydantic import Field
 
 
 class ScoreInputs(ScoreSpectrumInputsBase):
@@ -256,6 +256,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                     inputs.target,
                     comp_name,
                 )
+                # chain_dock = "1"  # Standard in OpenMM output file
             except FileNotFoundError as error:
                 logger.error(
                     f"File not found during minimization of {file_min}: {error}"
@@ -265,7 +266,7 @@ def score_complex_workflow(inputs: ScoreInputs):
                 logger.error(f"Value error during minimization of {file_min}: {error}")
                 continue
             except Exception as error:
-                logger.exception(f"Unexpected error {error}, minimizing {file_min}")
+                logger.exception(f"Unexpected error minimizing {file_min}: {error}")
                 continue
             file_min = min_out
 

@@ -44,8 +44,7 @@ from drugforge.spectrum.fitness import (
     parse_fitness_json,
     target_has_fitness_data,
 )
-from multimethod import multimethod
-from pydantic.v1 import Field, root_validator
+from pydantic import Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -102,11 +101,11 @@ class HTMLVisualizer(VisualizerBase):
     active_site_chain: Optional[str] = Field(
         None, description="Mobile chain ID to align."
     )
-    fitness_data: Optional[Any]
-    fitness_data_logoplots: Optional[Any]
-    reference_protein: Optional[Any]
+    fitness_data: Optional[Any] = None
+    fitness_data_logoplots: Optional[Any] = None
+    reference_protein: Optional[Any] = None
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     def check_and_set_chains(cls, values):
         active_site_chain = values.get("active_site_chain")
         ref_chain = values.get("ref_chain")
@@ -127,8 +126,7 @@ class HTMLVisualizer(VisualizerBase):
             )
         self.reference_protein = load_openeye_pdb(master_structures[self.target])
 
-    @root_validator
-    @classmethod
+    @model_validator(mode="before")
     def must_have_fitness_data(cls, values):
         target = values.get("target")
         color_method = values.get("color_method")
@@ -180,8 +178,62 @@ class HTMLVisualizer(VisualizerBase):
     def provenance(self):
         return {}
 
-    @multimethod
     def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, Path, Complex, tuple[Complex, list[Ligand]]]],
+        outpaths: Optional[list[Path]] = None,
+        failure_mode: str = "skip",
+        **kwargs,
+    ) -> Union[list[dict[str, str]], list[str]]:
+        """
+        Dispatch to the appropriate method based on the input type.
+
+        Parameters
+        ----------
+        inputs : list[Union[DockingResult, Path, Complex, tuple[Complex, list[Ligand]]]]
+            List of inputs to visualize
+        outpaths : Optional[list[Path]], optional
+            List of output paths, by default None
+        failure_mode : str, optional
+            Failure mode, by default "skip"
+
+        Returns
+        -------
+        Union[list[dict[str, str]], list[str]]
+            List of metadata dictionaries or list of HTML strings if write_to_disk is False
+        """
+        if not inputs:
+            return []
+
+        first_input = inputs[0]
+        if isinstance(first_input, DockingResult):
+            return self._dispatch_docking_result(
+                inputs, outpaths=outpaths, failure_mode=failure_mode, **kwargs
+            )
+        elif isinstance(first_input, Path):
+            return self._dispatch_path(
+                inputs, outpaths=outpaths, failure_mode=failure_mode, **kwargs
+            )
+        elif isinstance(first_input, Complex):
+            return self._dispatch_complex(
+                inputs, outpaths=outpaths, failure_mode=failure_mode, **kwargs
+            )
+        elif (
+            isinstance(first_input, tuple)
+            and len(first_input) == 2
+            and isinstance(first_input[0], Complex)
+            and isinstance(first_input[1], list)
+            and all(isinstance(lig, Ligand) for lig in first_input[1])
+        ):
+            return self._dispatch_complex_ligand(
+                inputs, outpaths=outpaths, failure_mode=failure_mode, **kwargs
+            )
+        else:
+            raise ValueError(
+                f"Unsupported input type: {type(first_input)}, must be DockingResult, Path, Complex or tuple of Complex and list of Ligand"
+            )
+
+    def _dispatch_docking_result(
         self,
         inputs: list[DockingResult],
         outpaths: Optional[list[Path]] = None,
@@ -252,8 +304,7 @@ class HTMLVisualizer(VisualizerBase):
         else:
             return viz_data
 
-    @_dispatch.register
-    def _dispatch(
+    def _dispatch_path(
         self, inputs: list[Path], outpaths: Optional[list[Path]] = None, **kwargs
     ) -> Union[list[dict[str, str]], list[str]]:
         """
@@ -283,8 +334,7 @@ class HTMLVisualizer(VisualizerBase):
         # dispatch to complex version
         return self._dispatch(complexes, outpaths=outpaths, **kwargs)
 
-    @_dispatch.register
-    def _dispatch(
+    def _dispatch_complex(
         self,
         inputs: list[Complex],
         outpaths: Optional[list[Path]] = None,
@@ -354,8 +404,7 @@ class HTMLVisualizer(VisualizerBase):
             # if we are not writing to disk, return the HTML strings
             return viz_data
 
-    @_dispatch.register
-    def _dispatch(
+    def _dispatch_complex_ligand(
         self,
         inputs: list[tuple[Complex, list[Ligand]]],
         outpaths: Optional[list[Path]] = None,
@@ -823,8 +872,10 @@ class HTMLVisualizer(VisualizerBase):
         )
 
         # split the mutant data into fit/unfit.
-        site_df_fit = site_df[site_df["fitness"] > 0]
-        site_df_unfit = site_df[site_df["fitness"] < 0]
+        # Exclude stop codons ('*') — logomaker's dmslogo_funcgroup color scheme
+        # does not recognise '*' as a valid character and raises a TypeError.
+        site_df_fit = site_df[(site_df["fitness"] > 0) & (site_df["mutant"] != "*")]
+        site_df_unfit = site_df[(site_df["fitness"] < 0) & (site_df["mutant"] != "*")]
 
         if len(site_df_fit) == 0:
             raise ValueError(
@@ -850,11 +901,6 @@ class HTMLVisualizer(VisualizerBase):
             )
 
         logoplot_base64s_dict = {}
-        for fit_type, fitness_df in zip(["fit", "unfit"], [site_df_fit, site_df_unfit]):
-            # pivot table to make into LogoMaker format
-            logoplot_df = pd.DataFrame(
-                [fitness_df["fitness"].values], columns=fitness_df["mutant"]
-            )
 
         # hide a shockingly large number of prints from inside logomaker
         with tempfile.TemporaryDirectory() as tmpdirname, HiddenPrint() as _:

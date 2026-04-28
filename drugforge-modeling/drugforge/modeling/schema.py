@@ -6,7 +6,6 @@ from typing import Any
 from drugforge.data.backend.openeye import (
     bytes64_to_oedu,
     load_openeye_design_unit,
-    oechem,
     oedu_to_bytes64,
     openeye_perceive_residues,
     save_openeye_design_unit,
@@ -21,7 +20,8 @@ from drugforge.data.schema.schema_base import (
     DataStorageType,
     schema_dict_get_val_overload,
 )
-from pydantic.v1 import Field, root_validator
+from openeye import oechem
+from pydantic import Field, model_validator
 
 
 class PreppedTarget(DataModelAbstractBase):
@@ -44,12 +44,12 @@ class PreppedTarget(DataModelAbstractBase):
     data_format: DataStorageType = Field(
         DataStorageType.b64oedu,
         description="Enum describing the data storage method",
-        allow_mutation=False,
+        frozen=True,
     )
     target_hash: str = Field(
         ...,
         description="A unique reproducible hash based on the contents of the pdb file which created the target.",
-        allow_mutation=False,
+        frozen=True,
     )
 
     crystal_symmetry: Any | None = Field(
@@ -57,7 +57,7 @@ class PreppedTarget(DataModelAbstractBase):
         description="bounding box of the target, lost in oedu conversion so can be saved as attribute.",
     )
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     @classmethod
     def _validate_at_least_one_id(cls, v):
         # simpler as we never need to pop attrs off the serialised representation.
@@ -67,7 +67,7 @@ class PreppedTarget(DataModelAbstractBase):
         if compound_name is None:
             if ids is None or all([not v for v in schema_dict_get_val_overload(ids)]):
                 raise ValueError(
-                    "At least one identifier must be provide, or target_name must be provided"
+                    "At least one identifier must be provided, or target_name must be provided"
                 )
         return v
 

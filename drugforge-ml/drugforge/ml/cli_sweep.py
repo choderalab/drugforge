@@ -36,7 +36,7 @@ from drugforge.ml.config import DatasetSplitterType, EarlyStoppingType, Optimize
 from drugforge.ml.sweep import Sweeper
 from drugforge.ml.trainer import Trainer
 from mtenn.config import CombinationConfig, ModelType, ReadoutConfig, StrategyConfig
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 
 @click.group()
@@ -111,7 +111,7 @@ def sweep_gat(
     agg_modes: str | None = None,
     biases: str | None = None,
     allow_zero_in_degree: bool | None = None,
-    es_type: EarlyStoppingType | None = None,
+    early_stopping_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -196,10 +196,10 @@ def sweep_gat(
         "biases": biases,
         "allow_zero_in_degree": allow_zero_in_degree,
     }
-    es_config = {
+    early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "es_type": es_type,
+        "early_stopping_type": early_stopping_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
@@ -235,7 +235,7 @@ def sweep_gat(
     trainer_kwargs = {
         "optimizer_config": optim_config,
         "model_config": model_config,
-        "es_config": es_config,
+        "early_stopping_config": early_stopping_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
         "loss_configs": loss_configs,
@@ -344,7 +344,7 @@ def sweep_schnet(
     dipole: bool | None = None,
     mean: float | None = None,
     std: float | None = None,
-    es_type: EarlyStoppingType | None = None,
+    early_stopping_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -431,10 +431,10 @@ def sweep_schnet(
         "mean": mean,
         "std": std,
     }
-    es_config = {
+    early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "es_type": es_type,
+        "early_stopping_type": early_stopping_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
@@ -475,7 +475,7 @@ def sweep_schnet(
     trainer_kwargs = {
         "optimizer_config": optim_config,
         "model_config": model_config,
-        "es_config": es_config,
+        "early_stopping_config": early_stopping_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
         "loss_configs": loss_configs,
@@ -585,7 +585,7 @@ def sweep_e3nn(
     num_radial_neurons: int | None = None,
     num_neighbors: float | None = None,
     num_nodes: float | None = None,
-    es_type: EarlyStoppingType | None = None,
+    early_stopping_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -673,10 +673,10 @@ def sweep_e3nn(
         "num_neighbors": num_neighbors,
         "num_nodes": num_nodes,
     }
-    es_config = {
+    early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "es_type": es_type,
+        "early_stopping_type": early_stopping_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
@@ -717,7 +717,7 @@ def sweep_e3nn(
     trainer_kwargs = {
         "optimizer_config": optim_config,
         "model_config": model_config,
-        "es_config": es_config,
+        "early_stopping_config": early_stopping_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
         "loss_configs": loss_configs,
@@ -832,7 +832,7 @@ def sweep_visnet(
     mean: float | None = None,
     std: float | None = None,
     derivative: bool | None = None,
-    es_type: EarlyStoppingType | None = None,
+    early_stopping_type: EarlyStoppingType | None = None,
     es_patience: int | None = None,
     es_n_check: int | None = None,
     es_divergence: float | None = None,
@@ -925,10 +925,10 @@ def sweep_visnet(
         "std": std,
         "derivative": derivative,
     }
-    es_config = {
+    early_stopping_config = {
         "cache": es_config_cache,
         "overwrite_cache": overwrite_es_config_cache,
-        "es_type": es_type,
+        "early_stopping_type": early_stopping_type,
         "patience": es_patience,
         "n_check": es_n_check,
         "divergence": es_divergence,
@@ -969,7 +969,7 @@ def sweep_visnet(
     trainer_kwargs = {
         "optimizer_config": optim_config,
         "model_config": model_config,
-        "es_config": es_config,
+        "early_stopping_config": early_stopping_config,
         "ds_config": ds_config,
         "ds_splitter_config": ds_splitter_config,
         "loss_configs": loss_configs,

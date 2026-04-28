@@ -24,7 +24,7 @@ from drugforge.docking.scorer import ChemGauss4Scorer
 from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.modeling.protein_prep import ProteinPrepper
 from drugforge.workflows.docking_workflows.workflows import DockingWorkflowInputsBase
-from pydantic.v1 import Field, PositiveInt
+from pydantic import Field, PositiveInt
 
 
 class CrossDockingWorkflowInputs(DockingWorkflowInputsBase):

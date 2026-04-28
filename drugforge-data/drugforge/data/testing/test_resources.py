@@ -1,5 +1,4 @@
 import pathlib
-from importlib import resources
 from typing import List, Union  # noqa: F401
 
 import pooch
@@ -11,7 +10,11 @@ test file repository. We instantiate a pooch repository for the test files on im
 that can then be used to fetch test files.
 """
 
-test_files = resources.files("drugforge.data.testing") / "test_files.yaml"
+
+from drugforge.data import testing
+from drugforge.data.util.utils import get_path_string
+
+test_files = get_path_string(testing) + "/test_files.yaml"
 
 
 def make_test_file_pooch_repo(test_files: str) -> pooch.Pooch:

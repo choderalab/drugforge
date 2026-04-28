@@ -29,7 +29,7 @@ from drugforge.docking.selectors.selector_list import StructureSelector
 from drugforge.modeling.protein_prep import LigandTransferProteinPrepper
 from drugforge.simulation.simulate import OpenMMPlatform, VanillaMDSimulator
 from drugforge.workflows.docking_workflows.workflows import DockingWorkflowInputsBase
-from pydantic.v1 import Field, PositiveInt, root_validator
+from pydantic import Field, PositiveInt, model_validator
 
 
 class LigandTransferDockingWorkflowInputs(DockingWorkflowInputsBase):
@@ -133,7 +133,7 @@ class LigandTransferDockingWorkflowInputs(DockingWorkflowInputsBase):
         OpenMMPlatform.Fastest, description="OpenMM platform to use for MD"
     )
 
-    @root_validator
+    @model_validator(mode="after")
     @classmethod
     def check_inputs(cls, values):
         """

@@ -6,6 +6,7 @@ dependencies:
   # Base depends
   - pip
   - pydantic >=2.0.0a0
+  - pydantic-settings
   - typing-extensions
   - semver
 
@@ -34,10 +35,10 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe ~=1.0
+  - openfe >=1.7.0
   - openff-toolkit
   - openmm
-  - gufe >=1.0.0
+  - gufe >= 1.7.1
   - pymol-open-source
   - rdkit
   - plip ~=3.0.0

@@ -1,4 +1,5 @@
 import functools
+import os
 
 import openfe
 import pytest
@@ -107,11 +108,27 @@ def test_network_planner_get_network(network_planner, openfe_func):
         assert openfe_func in planning_func.__name__
 
 
+# xskip this on mac os because a strange rdkit failure to retain mol properties when pickled
+# even when setting Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.AllProps) inside of
+# drugforge
+# an issue has been raised on gufe: https://github.com/OpenFreeEnergy/gufe/issues/750
+@pytest.mark.skipif(
+    os.getenv("RUNNER_OS") == "macOS",
+    reason="RDKIT fails to retain mol properties when pickled on mac os",
+)
 def test_plan_from_names(tyk2_ligands, tyk2_small_custom_network):
     """Make sure we can plan a network using the names of the ligands."""
+
     edges = extract_custom_ligand_network(tyk2_small_custom_network)
+
     planner = NetworkPlanner(network_planning_method=CustomNetworkPlanner(edges=edges))
     network = planner.generate_network(ligands=tyk2_ligands).to_ligand_network()
+    from rdkit import Chem
+
+    # let us ensure that we are pickling all properties
+    # if not generating the  network from names will fail
+    assert Chem.GetDefaultPickleProperties() == Chem.PropertyPickleOptions.AllProps
+
     # make sure the edges are as we expect
     for edge in network.edges:
         assert (edge.componentA.name, edge.componentB.name) in edges
@@ -356,7 +373,7 @@ def test_fec_dataset_duplicate_ligands(tyk2_ligands, tyk2_protein):
 
 def test_fec_dataset_missing_names(tyk2_ligands, tyk2_protein):
     """Make sure missing ligand names are caught"""
-    ligands = [ligand.copy(deep=True) for ligand in tyk2_ligands]
+    ligands = [ligand.model_copy(deep=True) for ligand in tyk2_ligands]
     ligands[0].compound_name = ""
 
     factory = FreeEnergyCalculationFactory()
@@ -448,7 +465,7 @@ def test_results_to_cinnabar_missing_phase(tyk2_fec_network):
     # mock a full result object
     scope = Scope(org="asap", campaign="testing", project="tyk2")
     result_network = AlchemiscaleResults(
-        network_key=ScopedKey(gufe_key=alchem_network.key, **scope.dict()),
+        network_key=ScopedKey(gufe_key=alchem_network.key, **scope.model_dump()),
         results=results,
     )
     # make sure a specific error related to a missing solvent phase is raised.
@@ -487,7 +504,7 @@ def test_results_to_cinnabar_too_many_legs(tyk2_fec_network):
     # mock a full result object
     scope = Scope(org="asap", campaign="testing", project="tyk2")
     result_network = AlchemiscaleResults(
-        network_key=ScopedKey(gufe_key=alchem_network.key, **scope.dict()),
+        network_key=ScopedKey(gufe_key=alchem_network.key, **scope.model_dump()),
         results=results,
     )
     # make sure a specific error related to a missing solvent phase is raised.

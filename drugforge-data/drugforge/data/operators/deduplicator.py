@@ -1,5 +1,5 @@
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import BaseModel
+from pydantic import BaseModel
 
 
 class LigandDeDuplicator(BaseModel):

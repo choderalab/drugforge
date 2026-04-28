@@ -17,8 +17,7 @@ from drugforge.docking.scorer import (
 from drugforge.ml.inference import InferenceBase, get_inference_cls_from_model_type
 from drugforge.ml.models import MLModelSpecBase
 from mtenn.config import ModelType
-from multimethod import multimethod
-from pydantic.v1 import Field
+from pydantic import Field
 
 
 def endpoint_and_model_type_to_score_type(endpoint: str, model_type: str) -> ScoreType:
@@ -197,8 +196,24 @@ class GATScorer(MLModelScorer):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
-    @multimethod
     def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, str, Ligand]],
+        return_for_disk_backend: bool = False,
+        **kwargs,
+    ) -> list[Score]:
+        if isinstance(inputs[0], DockingResult):
+            return self._dispatch_docking(
+                inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
+            )
+        elif isinstance(inputs[0], str):
+            return self._dispatch_smiles(inputs, **kwargs)
+        elif isinstance(inputs[0], Ligand):
+            return self._dispatch_ligands(inputs, **kwargs)
+        else:
+            raise ValueError(f"Input type {type(inputs[0])} not recognized")
+
+    def _dispatch_docking(
         self,
         inputs: list[DockingResult],
         return_for_disk_backend: bool = False,
@@ -222,8 +237,7 @@ class GATScorer(MLModelScorer):
             results.append(sc)
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[str], **kwargs) -> list[Score]:
+    def _dispatch_smiles(self, inputs: list[str], **kwargs) -> list[Score]:
         """
         Dispatch for SMILES strings
         """
@@ -240,8 +254,7 @@ class GATScorer(MLModelScorer):
             )
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Ligand], **kwargs) -> list[Score]:
+    def _dispatch_ligands(self, inputs: list[Ligand], **kwargs) -> list[Score]:
         """
         Dispatch for Ligands
         """
@@ -281,8 +294,24 @@ class E3MLModelScorer(MLModelScorer):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
-    @multimethod
     def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, Complex, Path]],
+        return_for_disk_backend: bool = False,
+        **kwargs,
+    ) -> list[Score]:
+        if isinstance(inputs[0], DockingResult):
+            return self._dispatch_docking(
+                inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
+            )
+        elif isinstance(inputs[0], Complex):
+            return self._dispatch_complex(inputs, **kwargs)
+        elif isinstance(inputs[0], Path):
+            return self._dispatch_pdb(inputs, **kwargs)
+        else:
+            raise ValueError(f"Input type {type(inputs[0])} not recognized")
+
+    def _dispatch_docking(
         self,
         inputs: list[DockingResult],
         return_for_disk_backend: bool = False,
@@ -302,8 +331,7 @@ class E3MLModelScorer(MLModelScorer):
 
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Complex], **kwargs) -> list[Score]:
+    def _dispatch_complex(self, inputs: list[Complex], **kwargs) -> list[Score]:
         results = []
         for inp in inputs:
             score = self.inference_cls.predict_from_oemol(inp.to_combined_oemol())
@@ -312,8 +340,7 @@ class E3MLModelScorer(MLModelScorer):
             )
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Path], **kwargs) -> list[Score]:
+    def _dispatch_pdb(self, inputs: list[Path], **kwargs) -> list[Score]:
         # assuming reading PDB files from disk
         complexes = [
             Complex.from_pdb(

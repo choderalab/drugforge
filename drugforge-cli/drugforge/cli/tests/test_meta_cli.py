@@ -1,3 +1,4 @@
+import os
 import traceback
 
 import pytest
@@ -29,7 +30,10 @@ def test_toplevel_runnable():
         "spectrum",
         pytest.param(
             "ml",
-            marks=pytest.mark.xfail(reason="ML package is not currently available."),
+            marks=pytest.mark.xfail(
+                condition=os.getenv("RUNNER_OS") == "macOS",
+                reason="ML package is not currently available for macOS.",
+            ),
         ),
         "visualization",
         "simulation",

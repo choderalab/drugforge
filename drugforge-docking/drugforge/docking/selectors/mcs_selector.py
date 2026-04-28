@@ -12,7 +12,7 @@ from drugforge.data.util.dask_utils import FailureMode, actualise_dask_delayed_i
 from drugforge.docking.docking import DockingInputPair  # TODO: move to backend
 from drugforge.docking.selectors.selector import SelectorBase
 from drugforge.modeling.schema import PreppedComplex
-from pydantic.v1 import Field
+from pydantic import Field
 from rdkit import Chem, rdBase
 from rdkit.Chem import rdRascalMCES
 

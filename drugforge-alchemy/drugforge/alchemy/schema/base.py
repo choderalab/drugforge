@@ -2,7 +2,22 @@ import abc
 import json
 from typing import Literal
 
-from openff.models.models import DefaultModel
+from pydantic import BaseModel, ConfigDict
+
+# the original DefaultModel from openff.models is deprecated, as it only supports pydantic v1
+# from openff.models.models import DefaultModel
+# The BaseModel and associated functions are copied and updated from openff.models
+
+
+class DefaultModel(BaseModel):
+    """A custom Pydantic model used by other components."""
+
+    model_config = ConfigDict(
+        # use_enum_values=True,
+        arbitrary_types_allowed=True,
+        validate_assignment=True,
+        extra="forbid",
+    )
 
 
 class _SchemaBase(abc.ABC, DefaultModel):
@@ -23,7 +38,7 @@ class _SchemaBase(abc.ABC, DefaultModel):
         JSON_HANDLER.add_codec(SCOPEDKEY_CODEC)
 
         with open(filename, "w") as output:
-            json.dump(self.dict(), output, cls=JSON_HANDLER.encoder, indent=2)
+            json.dump(self.model_dump(), output, cls=JSON_HANDLER.encoder, indent=2)
 
     @classmethod
     def from_file(cls, filename: str):
@@ -36,11 +51,10 @@ class _SchemaBase(abc.ABC, DefaultModel):
 
         JSON_HANDLER.add_codec(SCOPEDKEY_CODEC)
         with open(filename) as f:
-            return cls.parse_obj(json.load(f, cls=JSON_HANDLER.decoder))
+            return cls.model_validate(json.load(f, cls=JSON_HANDLER.decoder))
 
 
 class _SchemaBaseFrozen(_SchemaBase):
     type: Literal["_SchemaBaseFrozen"] = "_SchemaBaseFrozen"
 
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
