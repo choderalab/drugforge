@@ -41,11 +41,11 @@ class ScoreInputs(ScoreSpectrumInputsBase):
         OpenMM platform to use for MD minimization
     run_vina : bool = False
         Whether to run Autodock Vina on the docked poses.
-    vina_box_x : Optional[float] = None
+    vina_box_x : float, optional
         X coordinate of the center of the Vina docking box.
-    vina_box_y : Optional[float] = None
+    vina_box_y : float, optional
         Y coordinate of the center of the Vina docking box.
-    vina_box_z : Optional[float] = None
+    vina_box_z : float, optional
         Z coordinate of the center of the Vina docking box.
     dock_vina : bool = False
         Whether to run extra docking step with autodock vina.

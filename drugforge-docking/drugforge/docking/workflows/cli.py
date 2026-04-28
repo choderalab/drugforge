@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Union
+from typing import Union
 
 import click
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
@@ -27,7 +27,8 @@ from drugforge.docking.workflows.cross_docking import (
 
 
 @click.group()
-def cli(help="Command-line interface for drugforge-docking"): ...
+def cli(help="Command-line interface for drugforge-docking"):
+    ...
 
 
 @cli.command()
@@ -104,24 +105,24 @@ def cross_docking(
     structure_selector: StructureSelector = StructureSelector.LEAVE_SIMILAR_OUT,
     use_omega: bool = False,
     omega_dense: bool = False,
-    posit_method: Optional[str] = POSIT_METHOD.ALL.name,
-    relax_mode: Optional[str] = POSIT_RELAX_MODE.NONE.name,
+    posit_method: str | None = POSIT_METHOD.ALL.name,
+    relax_mode: str | None = POSIT_RELAX_MODE.NONE.name,
     num_poses: int = 1,
     allow_retries: bool = False,
     allow_final_clash: bool = False,
-    ligands: Optional[str] = None,
-    pdb_file: Optional[str] = None,
-    fragalysis_dir: Optional[str] = None,
-    structure_dir: Optional[str] = None,
+    ligands: str | None = None,
+    pdb_file: str | None = None,
+    fragalysis_dir: str | None = None,
+    structure_dir: str | None = None,
     use_only_cache: bool = False,
-    save_to_cache: Optional[bool] = True,
-    cache_dir: Optional[str] = None,
+    save_to_cache: bool | None = True,
+    cache_dir: str | None = None,
     output_dir: str = "output",
     overwrite: bool = True,
-    input_json: Optional[str] = None,
+    input_json: str | None = None,
     use_dask: bool = False,
     dask_type: DaskType = DaskType.LOCAL,
-    dask_n_workers: Optional[int] = None,
+    dask_n_workers: int | None = None,
     failure_mode: FailureMode = FailureMode.SKIP,
     loglevel: Union[int, str] = logging.INFO,
 ):

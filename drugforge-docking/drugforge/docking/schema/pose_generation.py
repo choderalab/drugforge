@@ -1,7 +1,7 @@
 import abc
 import warnings
 from enum import Enum
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from drugforge.data.backend.openeye import (
     get_SD_data,
@@ -76,7 +76,7 @@ class _BasicConstrainedPoseGenerator(BaseModel, abc.ABC):
         self,
         prepared_complex: PreppedComplex,
         ligands: list[Ligand],
-        core_smarts: Optional[str] = None,
+        core_smarts: str | None = None,
         processors: int = 1,
     ) -> tuple[list[oechem.OEMol], list[oechem.OEMol]]:
         """The main worker method which should generate ligand poses in the receptor using the reference ligand where required."""
@@ -86,7 +86,7 @@ class _BasicConstrainedPoseGenerator(BaseModel, abc.ABC):
         self,
         prepared_complex: PreppedComplex,
         ligands: list[Ligand],
-        core_smarts: Optional[str] = None,
+        core_smarts: str | None = None,
         processors: int = 1,
     ) -> PosedLigands:
         """
@@ -360,7 +360,7 @@ class OpenEyeConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
         self,
         target_ligand: oechem.OEMol,
         reference_ligand: oechem.OEMol,
-        core_smarts: Optional[str] = None,
+        core_smarts: str | None = None,
     ) -> oechem.OEMol:
         """
         Use the configured openeye Omega instance to generate conformers for the target ligand.
@@ -419,7 +419,7 @@ class OpenEyeConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
         self,
         prepared_complex: PreppedComplex,
         ligands: list[Ligand],
-        core_smarts: Optional[str] = None,
+        core_smarts: str | None = None,
         processors: int = 1,
     ) -> tuple[list[oechem.OEMol], list[oechem.OEMol]]:
         """
@@ -604,7 +604,7 @@ class RDKitConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
         self,
         target_ligand: Chem.Mol,
         core_ligand: Chem.Mol,
-        core_smarts: Optional[str] = None,
+        core_smarts: str | None = None,
     ) -> Chem.Mol:
         """
         Generate the poses for the target molecule while restraining the MCS to the core ligand.
@@ -738,7 +738,7 @@ class RDKitConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
         self,
         prepared_complex: PreppedComplex,
         ligands: list[Ligand],
-        core_smarts: Optional[str] = None,
+        core_smarts: str | None = None,
         processors: int = 1,
     ) -> tuple[list[oechem.OEMol], list[oechem.OEMol]]:
         """
@@ -783,7 +783,6 @@ class RDKitConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
                     for mol in ligands
                 ]
                 for work in as_completed(work_list):
-
                     succ, target_ligand, err_code = work.result()
                     if succ:
                         try:

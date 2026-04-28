@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 from drugforge.data.metadata.resources import master_structures
 from drugforge.data.readers.structure_dir import StructureDirFactory
@@ -21,27 +21,27 @@ class ProteinPrepInputs(BaseModel):
     ----------
     target : TargetTags
         The target to prep
-    pdb_file : Optional[str]
+    pdb_file : str, optional
         Path to a PDB file to prep
-    fragalysis_dir : Optional[str]
+    fragalysis_dir : str, optional
         Path to a fragalysis dump to prep
-    structure_dir : Optional[str]
+    structure_dir : str, optional
         Path to a directory of structures to prep
     cache_dir : Path
         Path to a directory of cached prepped structures.
     save_to_cache: bool
         If newly prepared structures should also be saved to the global cache
-    align : Optional[Path]
+    align : Path, optional
         Path to a reference structure to align to
-    ref_chain : Optional[str]
+    ref_chain : str, optional
         Chain ID to align to
-    active_site_chain : Optional[str]
+    active_site_chain : str, optional
         Active site chain ID to align to
-    seqres_yaml : Optional[Path]
+    seqres_yaml : Path, optional
         Path to a seqres yaml to mutate to
-    loop_db : Optional[Path]
+    loop_db : Path, optional
         Path to a loop database to use for prepping
-    oe_active_site_residue : Optional[str]
+    oe_active_site_residue : str, optional
         OE formatted string of active site residue to use if not ligand bound
     use_dask : bool
         Whether to use dask for parallelism
@@ -57,16 +57,16 @@ class ProteinPrepInputs(BaseModel):
 
     target: TargetTags = Field(None, description="The target to prep")
 
-    pdb_file: Optional[Path] = Field(None, description="Path to a PDB file.")
+    pdb_file: Path | None = Field(None, description="Path to a PDB file.")
 
-    fragalysis_dir: Optional[Path] = Field(
+    fragalysis_dir: Path | None = Field(
         None, description="Path to a directory containing a Fragalysis dump."
     )
-    structure_dir: Optional[Path] = Field(
+    structure_dir: Path | None = Field(
         None,
         description="Path to a directory containing structures to dock instead of a full fragalysis database.",
     )
-    cache_dir: Optional[str] = Field(
+    cache_dir: str | None = Field(
         "prepped_structure_cache",
         description="Path to a directory of cached prepared Complex structures.",
     )
@@ -75,20 +75,18 @@ class ProteinPrepInputs(BaseModel):
         description="If newly prepared structures should also be saved to the cache_dir, has no effect if the cache_dir is not set.",
     )
 
-    align: Optional[Path] = Field(
-        None, description="Reference structure pdb to align to."
-    )
-    ref_chain: Optional[str] = Field("A", description="Reference chain ID to align to.")
-    active_site_chain: Optional[str] = Field(
+    align: Path | None = Field(None, description="Reference structure pdb to align to.")
+    ref_chain: str | None = Field("A", description="Reference chain ID to align to.")
+    active_site_chain: str | None = Field(
         "A", description="Chain ID to align to reference."
     )
-    seqres_yaml: Optional[Path] = Field(
+    seqres_yaml: Path | None = Field(
         None, description="Path to seqres yaml to mutate to."
     )
-    loop_db: Optional[Path] = Field(
+    loop_db: Path | None = Field(
         None, description="Path to loop database to use for prepping"
     )
-    oe_active_site_residue: Optional[str] = Field(
+    oe_active_site_residue: str | None = Field(
         None, description="OE formatted string of active site residue to use"
     )
 
@@ -98,7 +96,7 @@ class ProteinPrepInputs(BaseModel):
         DaskType.LOCAL, description="Dask client to use for parallelism."
     )
 
-    dask_n_workers: Optional[PositiveInt] = Field(None, description="Number of workers")
+    dask_n_workers: PositiveInt | None = Field(None, description="Number of workers")
 
     logname: str = Field("", description="Name of the log file.")
 

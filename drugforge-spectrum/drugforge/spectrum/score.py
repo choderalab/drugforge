@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 import pandas as pd
 from drugforge.data.backend.openeye import (
@@ -48,27 +48,27 @@ class ScoreSpectrumInputsBase(BaseModel):
         Output directory where results will be stored.
     overwrite : bool
         Whether to overwrite existing output.
-    ref_chain : Optional[str]
+    ref_chain : str, optional
         Chain ID to align to in reference structure containing the active site
-    dock_chain : Optional[str]
+    dock_chain : str, optional
         Active site chain ID to align to ref_chain in reference structure
-    lig_resname : Optional[str]
+    lig_resname : str, optional
         Name of residue with Ligand
     run_vina : bool
         Whether to run vina scoring.
-    vina_box_x : Optional[float]
+    vina_box_x : float, optional
         Coordinate x of vina box
-    vina_box_y : Optional[float]
+    vina_box_y : float, optional
         Coordinate y of vina box
-    vina_box_z : Optional[float]
+    vina_box_z : float, optional
         Coordinate z of vina box
     dock_vina : bool
         Optionally run extra docking step with autodock vina
     gnina_score : bool
         Whether to run gnina scoring.
-    gnina_script : Optional[Path]
+    gnina_script : Path, optional
         Path to bash script that runs Gnina CLI.
-    gnina_out_dir : Optional[Path]
+    gnina_out_dir : Path, optional
         Path to directory to process gnina files.
         Gnina has problems with remote directories so location in $HOME is recommended when running in a remote cluster.
 
@@ -103,24 +103,24 @@ class ScoreSpectrumInputsBase(BaseModel):
     output_dir: Path = Field(Path("score_output"), description="Output directory")
 
     overwrite: bool = Field(False, description="Whether to overwrite existing output.")
-    ref_chain: Optional[str] = Field(
+    ref_chain: str | None = Field(
         None,
         description="Chain ID to align to in reference structure containing the active site",
     )
-    dock_chain: Optional[str] = Field(
+    dock_chain: str | None = Field(
         None,
         description="Active site chain ID to align to ref_chain in reference structure",
     )
-    lig_resname: Optional[str] = Field(
+    lig_resname: str | None = Field(
         None,
         description="Name of residue with Ligand",
     )
 
     # Running Vina
     run_vina: bool = Field(False, description="Whether to run vina scoring.")
-    vina_box_x: Optional[float] = Field(None, description="Coordinate x of vina box")
-    vina_box_y: Optional[float] = Field(None, description="Coordinate y of vina box")
-    vina_box_z: Optional[float] = Field(None, description="Coordinate z of vina box")
+    vina_box_x: float | None = Field(None, description="Coordinate x of vina box")
+    vina_box_y: float | None = Field(None, description="Coordinate y of vina box")
+    vina_box_z: float | None = Field(None, description="Coordinate z of vina box")
     dock_vina: bool = Field(
         False, description="Optionally run extra docking step with autodock vina "
     )
@@ -128,11 +128,11 @@ class ScoreSpectrumInputsBase(BaseModel):
     # Running Gnina
     gnina_score: bool = Field(False, description="Whether to run gnina scoring.")
 
-    gnina_script: Optional[Path] = Field(
+    gnina_script: Path | None = Field(
         None, description="Path to bash script that runs Gnina CLI."
     )
 
-    gnina_out_dir: Optional[Path] = Field(
+    gnina_out_dir: Path | None = Field(
         None,
         description="Path to directory to process gnina files. Gnina has problems with remote directories so location in $HOME is recommended when running in a remote cluster.",
     )

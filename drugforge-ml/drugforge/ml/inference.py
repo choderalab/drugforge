@@ -1,7 +1,7 @@
 import abc
 import json
 from pathlib import Path
-from typing import ClassVar, Optional, Union
+from typing import ClassVar, Union
 
 import mtenn
 import numpy as np
@@ -42,35 +42,35 @@ each model and store in S3 to use during testing.
 class InferenceBase(abc.ABC, BaseModel):
     model_config = {"frozen": True, "arbitrary_types_allowed": True}
 
-    targets: Optional[set[TargetTags]] = Field(
+    targets: set[TargetTags] | None = Field(
         None,
         description="Targets that them model can predict for",  # FIXME: should be Optional[Set[TargetTags]] but this causes issues with pydantic
     )
     model_type: ClassVar[ModelType.INVALID] = ModelType.INVALID
-    representation_type: Optional[RepresentationType] = Field(
+    representation_type: RepresentationType | None = Field(
         ..., description="Representation type of the underlying model(s)."
     )
-    complex_representation_type: Optional[RepresentationType] = Field(
+    complex_representation_type: RepresentationType | None = Field(
         ...,
         description="Representation type of complex in the underlying split model(s).",
     )
-    ligand_representation_type: Optional[RepresentationType] = Field(
+    ligand_representation_type: RepresentationType | None = Field(
         ...,
         description="Representation type of ligand in the underlying split model(s).",
     )
-    protein_representation_type: Optional[RepresentationType] = Field(
+    protein_representation_type: RepresentationType | None = Field(
         ...,
         description="Representation type of protein in the underlying split model(s).",
     )
     model_name: str = Field(..., description="Name of model to use")
-    model_spec: Optional[MLModelSpecBase] = Field(
+    model_spec: MLModelSpecBase | None = Field(
         ..., description="Model spec used to create Model to use"
     )
     local_model_spec: LocalMLModelSpecBase = Field(
         ..., description="Local model spec used to create Model to use"
     )
     device: str = Field("cpu", description="Device to use for inference")
-    models: Optional[list[torch.nn.Module]] = Field(..., description="PyTorch model(s)")
+    models: list[torch.nn.Module] | None = Field(..., description="PyTorch model(s)")
 
     @property
     def is_ensemble(self):
@@ -175,8 +175,8 @@ class InferenceBase(abc.ABC, BaseModel):
         cls,
         model_spec: MLModelSpec,
         device: str = "cpu",
-        local_dir: Optional[Union[str, Path]] = None,
-        build_model_kwargs: Optional[dict] = {},
+        local_dir: Union[str, Path] | None = None,
+        build_model_kwargs: dict | None = None,
     ) -> "InferenceBase":
         """
         Create an InferenceBase object from an MLModelSpec.
@@ -191,6 +191,9 @@ class InferenceBase(abc.ABC, BaseModel):
         InferenceBase
             InferenceBase object created from MLModelSpec.
         """
+        if not build_model_kwargs:
+            build_model_kwargs = {}
+
         model_components = model_spec.pull(local_dir=local_dir)
         return cls.from_local_model_spec(
             model_components,
@@ -204,8 +207,8 @@ class InferenceBase(abc.ABC, BaseModel):
         cls,
         local_model_spec: LocalMLModelSpecBase,
         device: str = "cpu",
-        model_spec: Optional[MLModelSpec] = None,
-        build_model_kwargs: Optional[dict] = {},
+        model_spec: MLModelSpec | None = None,
+        build_model_kwargs: dict | None = None,
     ) -> "InferenceBase":
         """
         Create an InferenceBase object from a LocalMLModelSpec.
@@ -220,6 +223,8 @@ class InferenceBase(abc.ABC, BaseModel):
         InferenceBase
             InferenceBase object created from LocalMLModelSpec.
         """
+        if not build_model_kwargs:
+            build_model_kwargs = {}
 
         # First make sure mtenn versions are compatible
         if not local_model_spec.check_mtenn_version():

@@ -4,7 +4,7 @@ import tempfile
 import warnings
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Union
 from warnings import warn
 
 import logomaker
@@ -95,15 +95,11 @@ class HTMLVisualizer(VisualizerBase):
     align: bool = Field(
         True, description="Whether to align the poses to the reference protein"
     )
-    ref_chain: Optional[str] = Field(
-        None, description="Reference chain ID to align to."
-    )
-    active_site_chain: Optional[str] = Field(
-        None, description="Mobile chain ID to align."
-    )
-    fitness_data: Optional[Any] = None
-    fitness_data_logoplots: Optional[Any] = None
-    reference_protein: Optional[Any] = None
+    ref_chain: str | None = Field(None, description="Reference chain ID to align to.")
+    active_site_chain: str | None = Field(None, description="Mobile chain ID to align.")
+    fitness_data: Any | None = None
+    fitness_data_logoplots: Any | None = None
+    reference_protein: Any | None = None
 
     @model_validator(mode="before")
     def check_and_set_chains(cls, values):
@@ -159,7 +155,7 @@ class HTMLVisualizer(VisualizerBase):
     def _visualize(
         self,
         inputs: list[DockingResult],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         **kwargs,
     ) -> list[dict[str, str]]:
         """
@@ -181,7 +177,7 @@ class HTMLVisualizer(VisualizerBase):
     def _dispatch(
         self,
         inputs: list[Union[DockingResult, Path, Complex, tuple[Complex, list[Ligand]]]],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ) -> Union[list[dict[str, str]], list[str]]:
@@ -192,7 +188,7 @@ class HTMLVisualizer(VisualizerBase):
         ----------
         inputs : list[Union[DockingResult, Path, Complex, tuple[Complex, list[Ligand]]]]
             List of inputs to visualize
-        outpaths : Optional[list[Path]], optional
+        outpaths : list[Path], optional
             List of output paths, by default None
         failure_mode : str, optional
             Failure mode, by default "skip"
@@ -236,7 +232,7 @@ class HTMLVisualizer(VisualizerBase):
     def _dispatch_docking_result(
         self,
         inputs: list[DockingResult],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ) -> Union[list[dict[str, str]], list[str]]:
@@ -247,7 +243,7 @@ class HTMLVisualizer(VisualizerBase):
         ----------
         inputs : list[DockingResult]
             List of DockingResult objects
-        outpaths : Optional[list[Path]], optional
+        outpaths : list[Path], optional
             List of output paths, by default None
 
         Returns
@@ -280,12 +276,12 @@ class HTMLVisualizer(VisualizerBase):
 
                 # make dataframe with ligand name, target name, and path to HTML
                 row = {}
-                row[DockingResultCols.LIGAND_ID.value] = (
-                    result.input_pair.ligand.compound_name
-                )
-                row[DockingResultCols.TARGET_ID.value] = (
-                    result.input_pair.complex.target.target_name
-                )
+                row[
+                    DockingResultCols.LIGAND_ID.value
+                ] = result.input_pair.ligand.compound_name
+                row[
+                    DockingResultCols.TARGET_ID.value
+                ] = result.input_pair.complex.target.target_name
                 row[DockingResultCols.SMILES.value] = result.posed_ligand.smiles
                 row[self.get_tag_for_color_method()] = outpath
                 data.append(row)
@@ -305,7 +301,7 @@ class HTMLVisualizer(VisualizerBase):
             return viz_data
 
     def _dispatch_path(
-        self, inputs: list[Path], outpaths: Optional[list[Path]] = None, **kwargs
+        self, inputs: list[Path], outpaths: list[Path] | None = None, **kwargs
     ) -> Union[list[dict[str, str]], list[str]]:
         """
         Implementation for a list of Path objects. Assumes that the Path objects are PDB files.
@@ -315,7 +311,7 @@ class HTMLVisualizer(VisualizerBase):
         ----------
         inputs : list[Path]
             List of Path objects
-        outpaths : Optional[list[Path]], optional
+        outpaths : list[Path], optional
             List of output paths, by default None
 
         Returns
@@ -337,7 +333,7 @@ class HTMLVisualizer(VisualizerBase):
     def _dispatch_complex(
         self,
         inputs: list[Complex],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ) -> Union[list[dict[str, str]], list[str]]:
@@ -348,7 +344,7 @@ class HTMLVisualizer(VisualizerBase):
         ----------
         inputs : list[Complex]
             List of Complex objects
-        outpaths : Optional[list[Path]], optional
+        outpaths : list[Path], optional
             List of output paths, by default None
 
         Returns
@@ -407,7 +403,7 @@ class HTMLVisualizer(VisualizerBase):
     def _dispatch_complex_ligand(
         self,
         inputs: list[tuple[Complex, list[Ligand]]],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ) -> Union[list[dict[str, str]], list[str]]:
@@ -419,7 +415,7 @@ class HTMLVisualizer(VisualizerBase):
         ----------
         inputs : list[tuple[Complex, list[Ligand]]]
             List of tuples of Complex and list of Ligand objects
-        outpaths : Optional[list[Path]], optional
+        outpaths : list[Path], optional
             List of output paths, by default None
 
         Returns

@@ -4,7 +4,7 @@ Schema for workflows base classes
 
 import logging
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 from drugforge.data.metadata.resources import active_site_chains
 from drugforge.data.services.postera.manifold_data_validation import TargetTags
@@ -13,23 +13,23 @@ from pydantic import BaseModel, Field, PositiveInt, model_validator
 
 
 class DockingWorkflowInputsBase(BaseModel):
-    ligands: Optional[str] = Field(
+    ligands: str | None = Field(
         None, description="Path to a molecule file containing query ligands."
     )
 
-    pdb_file: Optional[Path] = Field(
+    pdb_file: Path | None = Field(
         None, description="Path to a PDB file to prep and dock to."
     )
 
-    fragalysis_dir: Optional[Path] = Field(
+    fragalysis_dir: Path | None = Field(
         None, description="Path to a directory containing a Fragalysis dump."
     )
-    structure_dir: Optional[Path] = Field(
+    structure_dir: Path | None = Field(
         None,
         description="Path to a directory containing structures to dock instead of a full fragalysis database.",
     )
 
-    cache_dir: Optional[str] = Field(
+    cache_dir: str | None = Field(
         None, description="Path to a directory where a cache has been generated"
     )
 
@@ -55,7 +55,7 @@ class DockingWorkflowInputsBase(BaseModel):
         DaskType.LOCAL, description="Dask client to use for parallelism."
     )
 
-    dask_n_workers: Optional[PositiveInt] = Field(None, description="Number of workers")
+    dask_n_workers: PositiveInt | None = Field(None, description="Number of workers")
 
     failure_mode: FailureMode = Field(
         FailureMode.SKIP, description="Dask failure mode."
@@ -75,11 +75,11 @@ class DockingWorkflowInputsBase(BaseModel):
     overwrite: bool = Field(
         False, description="Whether to overwrite existing output directory."
     )
-    ref_chain: Optional[str] = Field(
+    ref_chain: str | None = Field(
         None,
         description="Chain ID to align to in reference structure containing the active site",
     )
-    active_site_chain: Optional[str] = Field(
+    active_site_chain: str | None = Field(
         None,
         description="Active site chain ID to align to ref_chain in reference structure",
     )
@@ -142,6 +142,6 @@ class PosteraDockingWorkflowInputs(DockingWorkflowInputsBase):
     postera_upload: bool = Field(
         False, description="Whether to upload the results to Postera."
     )
-    postera_molset_name: Optional[str] = Field(
+    postera_molset_name: str | None = Field(
         None, description="The name of the molecule set to upload to."
     )

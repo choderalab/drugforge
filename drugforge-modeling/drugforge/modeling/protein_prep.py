@@ -2,7 +2,7 @@ import abc
 import logging
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal, Optional, Union
+from typing import TYPE_CHECKING, Literal, Union
 
 import dask
 import yaml
@@ -48,7 +48,8 @@ class ProteinPrepperBase(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @abc.abstractmethod
-    def _prep(self, inputs: list[Complex]) -> list[PreppedComplex]: ...
+    def _prep(self, inputs: list[Complex]) -> list[PreppedComplex]:
+        ...
 
     @staticmethod
     def _gather_new_tasks(
@@ -85,9 +86,9 @@ class ProteinPrepperBase(BaseModel):
         self,
         inputs: list[Complex],
         use_dask: bool = False,
-        dask_client: Optional["Client"] = None,
+        dask_client: "Client" | None = None,
         failure_mode: FailureMode = FailureMode.SKIP,
-        cache_dir: Optional[str] = None,
+        cache_dir: str | None = None,
         use_only_cache: bool = False,
     ) -> list[PreppedComplex]:
         """
@@ -162,7 +163,8 @@ class ProteinPrepperBase(BaseModel):
         return all_outputs
 
     @abc.abstractmethod
-    def provenance(self) -> dict[str, str]: ...
+    def provenance(self) -> dict[str, str]:
+        ...
 
     @staticmethod
     def cache(
@@ -222,23 +224,21 @@ class ProteinPrepper(ProteinPrepperBase):
         "ProteinPrepper", description="The type of prepper to use"
     )
 
-    align: Optional[Complex] = Field(
-        None, description="Reference structure to align to."
-    )
-    ref_chain: Optional[str] = Field(
+    align: Complex | None = Field(None, description="Reference structure to align to.")
+    ref_chain: str | None = Field(
         None, description="Chain ID to align to in reference structure"
     )
-    active_site_chain: Optional[str] = Field(
+    active_site_chain: str | None = Field(
         None,
         description="Active site chain ID to align to ref_chain in reference structure",
     )
-    seqres_yaml: Optional[Path] = Field(
+    seqres_yaml: Path | None = Field(
         None, description="Path to seqres yaml to mutate to."
     )
-    loop_db: Optional[Path] = Field(
+    loop_db: Path | None = Field(
         None, description="Path to loop database to use for prepping"
     )
-    oe_active_site_residue: Optional[str] = Field(
+    oe_active_site_residue: str | None = Field(
         None, description="OE formatted string of active site residue to use"
     )
 
@@ -248,7 +248,6 @@ class ProteinPrepper(ProteinPrepperBase):
         """
         prepped_complexes = []
         for complex_target in inputs:
-
             logger.debug(
                 f"Prepping complex: {complex_target.target.target_name} - {complex_target.ligand.compound_name}"
             )
@@ -355,15 +354,15 @@ class LigandTransferProteinPrepper(ProteinPrepper):
         ..., description="A list of reference complexes to transfer ligands from."
     )
 
-    ref_chain: Optional[str] = Field("A", description="Reference chain ID to align to.")
+    ref_chain: str | None = Field("A", description="Reference chain ID to align to.")
 
-    active_site_chain: Optional[str] = Field(
+    active_site_chain: str | None = Field(
         "A", description="Chain ID to align to reference."
     )
-    seqres_yaml: Optional[Path] = Field(
+    seqres_yaml: Path | None = Field(
         None, description="Path to seqres yaml to mutate to."
     )
-    loop_db: Optional[Path] = Field(
+    loop_db: Path | None = Field(
         None, description="Path to loop database to use for prepping"
     )
 

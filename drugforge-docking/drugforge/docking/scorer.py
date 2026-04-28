@@ -4,7 +4,7 @@ import warnings
 from enum import Enum
 from io import StringIO
 from pathlib import Path
-from typing import Any, ClassVar, Optional, Union
+from typing import Any, ClassVar, Union
 
 import MDAnalysis as mda
 import numpy as np
@@ -80,17 +80,17 @@ class Score(BaseModel):
 
     score_type: ScoreType
     score: float
-    compound_name: Optional[str] = None
-    smiles: Optional[str] = None
-    ligand_identifiers: Optional[LigandIdentifiers] = None
-    ligand_inchikey: Optional[str] = None
-    target_name: Optional[str] = None
-    target_identifiers: Optional[TargetIdentifiers] = None
-    complex_ligand_smiles: Optional[str] = None
-    probability: Optional[float] = None
-    pose_id: Optional[int] = None
+    compound_name: str | None = None
+    smiles: str | None = None
+    ligand_identifiers: LigandIdentifiers | None = None
+    ligand_inchikey: str | None = None
+    target_name: str | None = None
+    target_identifiers: TargetIdentifiers | None = None
+    complex_ligand_smiles: str | None = None
+    probability: float | None = None
+    pose_id: int | None = None
     units: ScoreUnits
-    input: Optional[Any] = None
+    input: Any | None = None
 
     @classmethod
     def from_score_and_docking_result(
@@ -221,7 +221,8 @@ class ScorerBase(BaseModel):
     score_units: ClassVar[ScoreUnits.INVALID] = ScoreUnits.INVALID
 
     @abc.abstractmethod
-    def _score() -> list[DockingResult]: ...
+    def _score() -> list[DockingResult]:
+        ...
 
     def score(
         self,

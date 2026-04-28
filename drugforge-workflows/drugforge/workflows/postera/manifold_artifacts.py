@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -44,10 +43,10 @@ class ManifoldArtifactUploader(BaseModel):
         ...,
         description="The dataframe containing the molecules and artifacts to upload",
     )
-    molecule_set_id: Optional[str] = Field(
+    molecule_set_id: str | None = Field(
         None, description="The UUID of the molecule set to upload to"
     )
-    molecule_set_name: Optional[str] = Field(
+    molecule_set_name: str | None = Field(
         None, description="The name of the molecule set to upload to"
     )
 
@@ -62,15 +61,15 @@ class ManifoldArtifactUploader(BaseModel):
         None, description="The type of artifacts to upload"
     )
 
-    moleculeset_api: Optional[MoleculeSetAPI] = Field(
+    moleculeset_api: MoleculeSetAPI | None = Field(
         None, description="The MoleculeSetAPI object to use to upload to Manifold"
     )
 
-    cloudfront: Optional[CloudFront] = Field(
+    cloudfront: CloudFront | None = Field(
         None, description="The CloudFront object to use to generate signed urls"
     )
 
-    s3: Optional[S3] = Field(None, description="The S3 object to use to upload to S3")
+    s3: S3 | None = Field(None, description="The S3 object to use to upload to S3")
 
     manifold_id_column: str = Field(
         DockingResultCols.LIGAND_ID.value,

@@ -5,7 +5,6 @@ import os
 import shutil
 from pathlib import Path
 from shutil import copy, rmtree
-from typing import Optional
 
 import click
 import matplotlib.pyplot as plt
@@ -320,7 +319,7 @@ def _train_single_model(
     exp_data_json: Path,
     output_dir: Path,
     n_epochs: int = 5000,
-    wandb_project: Optional[str] = None,
+    wandb_project: str | None = None,
 ):
     """
     Train a single GAT model for a specific endpoint

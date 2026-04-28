@@ -1,7 +1,7 @@
 import logging
 import shutil
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from drugforge.data.metadata.resources import master_structures
 from drugforge.data.schema.complex import Complex
@@ -97,7 +97,7 @@ class GIFVisualizer(VisualizerBase):
     @dask_vmap(["inputs"], has_failure_mode=True)
     @backend_wrapper("inputs")
     def _visualize(
-        self, inputs: list[Any], outpaths: Optional[list[Path]] = None, **kwargs
+        self, inputs: list[Any], outpaths: list[Path] | None = None, **kwargs
     ) -> list[dict[str, str]]:
         if outpaths:
             if len(outpaths) != len(inputs):
@@ -111,7 +111,7 @@ class GIFVisualizer(VisualizerBase):
     @staticmethod
     def pymol_traj_viz(
         target: str,
-        traj: Optional[Path],
+        traj: Path | None,
         system: Path,
         static_view_only: bool,
         pse: bool,
@@ -123,8 +123,8 @@ class GIFVisualizer(VisualizerBase):
         contacts: bool,
         frames_per_ns: int,
         zoom_view: bool,
-        outpath: Optional[Path] = None,
-        out_dir: Optional[Path] = None,
+        outpath: Path | None = None,
+        out_dir: Path | None = None,
     ):
         view_coords = GIFBlockData.get_view_coords()
 
@@ -341,7 +341,7 @@ class GIFVisualizer(VisualizerBase):
     def _dispatch(
         self,
         inputs: list[Any],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ):
@@ -355,13 +355,13 @@ class GIFVisualizer(VisualizerBase):
             )
         else:
             raise ValueError(
-                f"Unsupported input type {type(inputs[0])}, must be SimulationResult or tuple of (Optional[Path], Path)"
+                f"Unsupported input type {type(inputs[0])}, must be SimulationResult or tuple of (Path | None, Path)"
             )
 
     def _dispatch_simulation_result(
         self,
         inputs: list[SimulationResult],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ):
@@ -403,15 +403,15 @@ class GIFVisualizer(VisualizerBase):
                     out_dir=self.output_dir,
                 )
                 row = {}
-                row[DockingResultCols.LIGAND_ID.value] = (
-                    res.input_docking_result.posed_ligand.compound_name
-                )
-                row[DockingResultCols.TARGET_ID.value] = (
-                    res.input_docking_result.input_pair.complex.target.target_name
-                )
-                row[DockingResultCols.SMILES.value] = (
-                    res.input_docking_result.posed_ligand.smiles
-                )
+                row[
+                    DockingResultCols.LIGAND_ID.value
+                ] = res.input_docking_result.posed_ligand.compound_name
+                row[
+                    DockingResultCols.TARGET_ID.value
+                ] = res.input_docking_result.input_pair.complex.target.target_name
+                row[
+                    DockingResultCols.SMILES.value
+                ] = res.input_docking_result.posed_ligand.smiles
                 row[DockingResultCols.GIF_PATH.value] = path
                 data.append(row)
             except Exception as e:
@@ -429,8 +429,8 @@ class GIFVisualizer(VisualizerBase):
 
     def _dispatch_path(
         self,
-        inputs: list[tuple[Optional[Path], Path]],
-        outpaths: Optional[list[Path]] = None,
+        inputs: list[tuple[Path | None, Path]],
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ):

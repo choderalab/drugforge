@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, ClassVar, Optional, Union
+from typing import Any, ClassVar, Union
 
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
@@ -70,7 +70,7 @@ class MLModelScorer(ScorerBase):
 
     model_type: ClassVar[ModelType.INVALID] = ModelType.INVALID
     score_type: ScoreType = Field(..., description="Type of score")
-    endpoint: Optional[str] = Field(None, description="Endpoint biological property")
+    endpoint: str | None = Field(None, description="Endpoint biological property")
     units: ClassVar[ScoreUnits.INVALID] = ScoreUnits.INVALID
 
     targets: Any = Field(

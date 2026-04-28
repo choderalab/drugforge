@@ -2,7 +2,7 @@ import itertools
 import logging
 from pathlib import Path
 from shutil import rmtree
-from typing import Optional, Union
+from typing import Union
 
 import click
 from drugforge.cli.cli_args import (
@@ -37,15 +37,14 @@ def simulation():
 @loglevel
 @use_dask
 def vanilla_md(
-    ligands: Optional[str] = None,
-    pdb_file: Optional[str] = None,
+    ligands: str | None = None,
+    pdb_file: str | None = None,
     md_steps: int = 2500000,  # 10 ns @ 4.0 fs timestep
     md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
     output_dir: str = "output",
     loglevel: Union[int, str] = logging.INFO,
     use_dask: bool = False,
 ):
-
     # make output directory
     output_dir = Path(output_dir)
 

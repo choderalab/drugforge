@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from typing import Optional
 
 import click
 import pandas as pd
@@ -105,13 +104,13 @@ def spectrum():
 @loglevel
 def seq_alignment(
     seq_file: str,
-    seq_type: Optional[str] = None,
+    seq_type: str | None = None,
     nalign: int = 1000,
     e_thr: float = 10.0,
     sel_key: str = "",
     plot_width: int = 1500,
-    blast_json: Optional[str] = None,
-    save_blast: Optional[str] = "blast.csv",
+    blast_json: str | None = None,
+    save_blast: str | None = "blast.csv",
     email: str = "",
     multimer: bool = False,
     n_chains: int = 1,
@@ -122,7 +121,7 @@ def seq_alignment(
     max_mismatches: int = 2,
     custom_order: str = "",
     loglevel: str = "INFO",
-    pdb_file: Optional[str] = None,
+    pdb_file: str | None = None,
 ):
     """
     Find similarities between reference protein and its related proteins by sequence.
@@ -261,13 +260,13 @@ def seq_alignment(
 def struct_alignment(
     seq_file: str,
     pdb_file: str,
-    cfold_results: Optional[str] = None,
-    struct_dir: Optional[str] = None,
-    pdb_align: Optional[str] = None,
-    pymol_save: Optional[str] = "aligned_proteins.pse",
-    color_by_rmsd: Optional[bool] = False,
-    chain: Optional[str] = "A",
-    cf_format: Optional[str] = "alphafold2_ptm",
+    cfold_results: str | None = None,
+    struct_dir: str | None = None,
+    pdb_align: str | None = None,
+    pymol_save: str | None = "aligned_proteins.pse",
+    color_by_rmsd: bool | None = False,
+    chain: str | None = "A",
+    cf_format: str | None = "alphafold2_ptm",
     output_dir: str = "output",
     loglevel: str = "INFO",
 ):
@@ -623,19 +622,19 @@ def score(
     ref_chain: str,
     lig_resname: str,
     vina_score: bool = False,
-    vina_box_x: Optional[float] = None,
-    vina_box_y: Optional[float] = None,
-    vina_box_z: Optional[float] = None,
+    vina_box_x: float | None = None,
+    vina_box_y: float | None = None,
+    vina_box_z: float | None = None,
     docking_vina: bool = False,
     minimize: bool = False,
     md_openmm_platform: OpenMMPlatform = OpenMMPlatform.Fastest,
     ml_score: bool = False,
     bsite_rmsd: bool = False,
     gnina_score: bool = False,
-    gnina_script: Optional[str] = None,
-    gnina_out_dir: Optional[str] = None,
+    gnina_script: str | None = None,
+    gnina_out_dir: str | None = None,
     log_level: str = "info",
-    input_json: Optional[str] = None,
+    input_json: str | None = None,
 ) -> None:
     """Run scoring workflow on docked and minimized poses"""
 

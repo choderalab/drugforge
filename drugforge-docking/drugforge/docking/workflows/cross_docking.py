@@ -6,7 +6,7 @@ Removes all the additional layers in the other workflows and adds some features 
 import logging
 from pathlib import Path
 from shutil import rmtree
-from typing import Optional, Union
+from typing import Union
 
 from drugforge.data.metadata.resources import active_site_chains
 from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
@@ -32,23 +32,23 @@ from pydantic.v1 import BaseModel, Field, PositiveInt, root_validator
 
 
 class DockingWorkflowInputsBase(BaseModel):
-    ligands: Optional[str] = Field(
+    ligands: str | None = Field(
         None, description="Path to a molecule file containing query ligands."
     )
 
-    pdb_file: Optional[Path] = Field(
+    pdb_file: Path | None = Field(
         None, description="Path to a PDB file to prep and dock to."
     )
 
-    fragalysis_dir: Optional[Path] = Field(
+    fragalysis_dir: Path | None = Field(
         None, description="Path to a directory containing a Fragalysis dump."
     )
-    structure_dir: Optional[Path] = Field(
+    structure_dir: Path | None = Field(
         None,
         description="Path to a directory containing structures to dock instead of a full fragalysis database.",
     )
 
-    cache_dir: Optional[str] = Field(
+    cache_dir: str | None = Field(
         None, description="Path to a directory where a cache has been generated"
     )
 
@@ -74,7 +74,7 @@ class DockingWorkflowInputsBase(BaseModel):
         DaskType.LOCAL, description="Dask client to use for parallelism."
     )
 
-    dask_n_workers: Optional[PositiveInt] = Field(None, description="Number of workers")
+    dask_n_workers: PositiveInt | None = Field(None, description="Number of workers")
 
     failure_mode: FailureMode = Field(
         FailureMode.SKIP, description="Dask failure mode."
@@ -94,11 +94,11 @@ class DockingWorkflowInputsBase(BaseModel):
     overwrite: bool = Field(
         False, description="Whether to overwrite existing output directory."
     )
-    ref_chain: Optional[str] = Field(
+    ref_chain: str | None = Field(
         None,
         description="Chain ID to align to in reference structure containing the active site",
     )
-    active_site_chain: Optional[str] = Field(
+    active_site_chain: str | None = Field(
         None,
         description="Active site chain ID to align to ref_chain in reference structure",
     )

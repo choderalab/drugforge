@@ -1,7 +1,6 @@
 import logging
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 from drugforge.data.backend.openeye import oechem, oeszybki
@@ -79,8 +78,8 @@ class SzybkiFreeformConformerAnalyzer:
     def __init__(
         self,
         ligand_paths: list[Path],
-        output_paths: Optional[list[Path]] = None,
-        logger: Optional[FileLogger] = None,
+        output_paths: list[Path] | None = None,
+        logger: FileLogger | None = None,
         debug: bool = False,
     ):
         """

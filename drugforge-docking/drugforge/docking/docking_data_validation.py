@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional  # noqa: F401
+from typing import List
 
 
 class DockingResultCols(str, Enum):
@@ -27,5 +27,5 @@ class DockingResultCols(str, Enum):
     SYMEXP_CLASH_NUM = "symexp-clash-num"  # postera
 
     @classmethod
-    def get_columns(cls) -> list[str]:
+    def get_columns(cls) -> List[str]:
         return [col.value for col in cls]

@@ -6,7 +6,7 @@ import abc
 import json
 import logging
 from pathlib import Path
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Union
 
 import numpy as np
 from drugforge.data.backend.openeye import (
@@ -33,7 +33,8 @@ class DockingInputBase(BaseModel):
     """
 
     @abc.abstractmethod
-    def to_design_units(self) -> list[oechem.OEDesignUnit]: ...
+    def to_design_units(self) -> list[oechem.OEDesignUnit]:
+        ...
 
 
 class DockingInputPair(CompoundStructurePair, DockingInputBase):
@@ -84,12 +85,13 @@ class DockingBase(BaseModel):
     @abc.abstractmethod
     def _dock(
         self, inputs: list[DockingInputPair], output_dir: Union[str, Path]
-    ) -> list["DockingResult"]: ...
+    ) -> list["DockingResult"]:
+        ...
 
     def dock(
         self,
         inputs: list[DockingInputPair],
-        output_dir: Optional[Union[str, Path]] = None,
+        output_dir: Union[str, Path] | None = None,
         use_dask: bool = False,
         dask_client=None,
         failure_mode=FailureMode.SKIP,
@@ -102,7 +104,7 @@ class DockingBase(BaseModel):
         ----------
         inputs : list[DockingInputPair]
             List of DockingInputPairs
-        output_dir : Optional[Union[str, Path]], optional
+        output_dir : Union[str, Path], optional
             Output directory, to write docking results to, by default None
             means no output files are written
         use_dask : bool, optional
@@ -158,7 +160,8 @@ class DockingBase(BaseModel):
             result.write_docking_files(output_dir)
 
     @abc.abstractmethod
-    def provenance(self) -> dict[str, str]: ...
+    def provenance(self) -> dict[str, str]:
+        ...
 
 
 class DockingResult(BaseModel):
@@ -183,13 +186,13 @@ class DockingResult(BaseModel):
     type: Literal["DockingResult"] = "DockingResult"
     input_pair: DockingInputPair = Field(description="Input pair")
     posed_ligand: Ligand = Field(description="Posed ligand")
-    probability: Optional[PositiveFloat] = Field(
+    probability: PositiveFloat | None = Field(
         description="Probability", default=None
     )  # not easy to get the probability from rescoring
-    pose_id: Optional[int] = Field(
+    pose_id: int | None = Field(
         description="Nth returned pose from docking", default=None
     )
-    num_poses: Optional[int] = Field(
+    num_poses: int | None = Field(
         description="Total number of poses returned from docking", default=None
     )
     provenance: dict[str, Union[str, int]] = Field(description="Provenance")
@@ -204,7 +207,8 @@ class DockingResult(BaseModel):
             return cls.model_validate_json(f.read())
 
     @abc.abstractmethod
-    def _get_single_pose_results(self) -> list["DockingResult"]: ...
+    def _get_single_pose_results(self) -> list["DockingResult"]:
+        ...
 
     def get_single_pose_results(self) -> list["DockingResult"]:
         return self._get_single_pose_results()
@@ -354,7 +358,7 @@ def write_results_to_multi_sdf(
         List of DockingResults or paths to DockingResult json files
     backend : BackendType, optional
         Backend to use, by default BackendType.IN_MEMORY
-    reconstruct_cls : Optional[DockingResult], optional
+    reconstruct_cls : DockingResult, optional
         DockingResult class to use for disk backend, by default None
     include_reference_data : bool, optional
         Whether to include reference structure and ligand data in the SD data, by default False

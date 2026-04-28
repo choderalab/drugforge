@@ -3,7 +3,7 @@ import warnings
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 from urllib.parse import urljoin
 
 import mtenn
@@ -35,18 +35,18 @@ class MLModelBase(BaseModel):
     name: str = Field(..., description="Model name")
     endpoint: str = Field(..., description="Endpoint for model")
     type: ModelType = Field(..., description="Model type")
-    representation_type: Optional[RepresentationType] = Field(
+    representation_type: RepresentationType | None = Field(
         None, description="Representation type of the underlying model(s)."
     )
-    complex_representation_type: Optional[RepresentationType] = Field(
+    complex_representation_type: RepresentationType | None = Field(
         None,
         description="Representation type of complex in the underlying split model(s).",
     )
-    ligand_representation_type: Optional[RepresentationType] = Field(
+    ligand_representation_type: RepresentationType | None = Field(
         None,
         description="Representation type of ligand in the underlying split model(s).",
     )
-    protein_representation_type: Optional[RepresentationType] = Field(
+    protein_representation_type: RepresentationType | None = Field(
         None,
         description="Representation type of protein in the underlying split model(s).",
     )
@@ -132,8 +132,8 @@ class MLModelSpec(MLModelSpecBase):
     base_url: HttpUrl = Field(..., description="Base url for model files")
     weights_resource: str = Field(..., description="Weights file resource name")
     weights_sha256hash: str = Field(..., description="Weights file sha256 hash")
-    config_resource: Optional[str] = Field(None, description="Config resource name")
-    config_sha256hash: Optional[str] = Field(None, description="Config sha256 hash")
+    config_resource: str | None = Field(None, description="Config resource name")
+    config_sha256hash: str | None = Field(None, description="Config sha256 hash")
 
     def pull(self, local_dir: Union[Path, str] = None) -> "LocalMLModelSpec":
         """
@@ -250,7 +250,7 @@ class EnsembleMLModelSpec(MLModelSpecBase):
         )
 
     def pull_plot(
-        self, plotname: str, filename: Optional[str] = None, return_as="memory"
+        self, plotname: str, filename: str | None = None, return_as="memory"
     ) -> str:
         """
         Pull plot of model performance from a URL
@@ -259,7 +259,7 @@ class EnsembleMLModelSpec(MLModelSpecBase):
         ----------
         plotname : str
             Name of plot
-        filename : Optional[str], optional
+        filename : str, optional
             Filename to save plot to, by default None
         return_as : str, optional
             How to return the plot, either 'memory', 'file' or 'url', by default 'memory'
@@ -532,8 +532,8 @@ class LocalMLModelSpec(LocalMLModelSpecBase):
     """
 
     weights_file: Path = Field(..., description="Weights file path")
-    config_file: Optional[Path] = Field(..., description="Optional config file path")
-    local_dir: Optional[Path] = Field(
+    config_file: Path | None = Field(..., description="Optional config file path")
+    local_dir: Path | None = Field(
         None,
         description="Local directory for model files, otherwise defaults to pooch.os_cache",
     )
@@ -563,7 +563,7 @@ class MLModelRegistry(BaseModel):
     models: dict[str, MLModelSpecBase] = Field(
         ..., description="Models in the model registry, keyed by name"
     )
-    source_yaml: Optional[Union[str, Path]] = Field(
+    source_yaml: Union[str, Path] | None = Field(
         None, description="Source yaml file for model registry"
     )
     time_updated: datetime = Field(datetime.utcnow(), description="Time last updated")

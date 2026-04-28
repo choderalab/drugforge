@@ -4,7 +4,7 @@ This module contains the inputs, docker, and output schema for using POSIT
 
 import logging
 from pathlib import Path
-from typing import ClassVar, Literal, Optional, Union
+from typing import ClassVar, Literal, Union
 
 import pandas as pd
 from drugforge.data.backend.openeye import oechem, oedocking, oeomega
@@ -92,21 +92,21 @@ class POSITDockingResults(DockingResult):
         df_prep = []
         for result in results:
             docking_dict = {}
-            docking_dict[DockingResultCols.LIGAND_ID.value] = (
-                result.input_pair.ligand.compound_name
-            )
-            docking_dict[DockingResultCols.TARGET_ID.value] = (
-                result.input_pair.complex.target.target_name
-            )
-            docking_dict["target_bound_compound_smiles"] = (
-                result.input_pair.complex.ligand.smiles
-            )
-            docking_dict[DockingResultCols.SMILES.value] = (
-                result.input_pair.ligand.smiles
-            )
-            docking_dict[DockingResultCols.DOCKING_CONFIDENCE_POSIT.value] = (
-                result.probability
-            )
+            docking_dict[
+                DockingResultCols.LIGAND_ID.value
+            ] = result.input_pair.ligand.compound_name
+            docking_dict[
+                DockingResultCols.TARGET_ID.value
+            ] = result.input_pair.complex.target.target_name
+            docking_dict[
+                "target_bound_compound_smiles"
+            ] = result.input_pair.complex.ligand.smiles
+            docking_dict[
+                DockingResultCols.SMILES.value
+            ] = result.input_pair.ligand.smiles
+            docking_dict[
+                DockingResultCols.DOCKING_CONFIDENCE_POSIT.value
+            ] = result.probability
             df_prep.append(docking_dict)
 
         df = pd.DataFrame(df_prep)
@@ -210,7 +210,7 @@ class POSITDocker(DockingBase):
     def _dock(
         self,
         inputs: list[DockingInputBase],
-        output_dir: Optional[Union[str, Path]] = None,
+        output_dir: Union[str, Path] | None = None,
         failure_mode="skip",
         return_for_disk_backend=False,
         **kwargs,
@@ -393,7 +393,6 @@ class POSITDocker(DockingBase):
                             )
                         # Now we can decide if we want to return a path to the json file or the actual object
                         for docking_result in docking_results_objects:
-
                             if output_dir is not None:
                                 json_path = docking_result.write_docking_files(
                                     output_dir

@@ -1,6 +1,6 @@
 import base64
 import warnings
-from typing import Literal, Optional
+from typing import Literal
 
 import bokeh.models.widgets.tables
 import bokeh.palettes
@@ -424,9 +424,9 @@ def add_relative_expt(
 def get_data_from_femap(
     fe_map: cinnabar.FEMap,
     ligands: list,
-    assay_units: Optional[str] = None,
-    reference_dataset: Optional[str] = None,
-    cdd_protocol: Optional[str] = None,
+    assay_units: str | None = None,
+    reference_dataset: str | None = None,
+    cdd_protocol: str | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Given a `cinnabar` `FEMap` add the experimental reference data and generate and return:
@@ -524,9 +524,9 @@ def plotmol_absolute(
     calculated: np.array,
     experimental: np.array,
     smiles: list[str],
-    titles: Optional[list[str]] = None,
-    calculated_uncertainty: Optional[np.array] = None,
-    experimental_uncertainty: Optional[np.array] = None,
+    titles: list[str] | None = None,
+    calculated_uncertainty: np.array | None = None,
+    experimental_uncertainty: np.array | None = None,
 ) -> bokeh.plotting.figure:
     """
     Create an interactive plot using Plotmol for the absolute predictions of the free energies.
@@ -585,8 +585,8 @@ def _plot_with_plotmol(
     experimental: np.array,
     smiles: list[str],
     custom_column_data: dict[str, list],
-    calculated_uncertainty: Optional[np.array] = None,
-    experimental_uncertainty: Optional[np.array] = None,
+    calculated_uncertainty: np.array | None = None,
+    experimental_uncertainty: np.array | None = None,
 ) -> bokeh.plotting.figure:
     # set up the x and y range and plot x=y line
     axis_padding = 0.5
@@ -675,9 +675,9 @@ def plotmol_relative(
     calculated: np.array,
     experimental: np.array,
     smiles: list[str],
-    titles: Optional[list[tuple[str, str]]] = None,
-    calculated_uncertainty: Optional[np.array] = None,
-    experimental_uncertainty: Optional[np.array] = None,
+    titles: list[tuple[str, str]] | None = None,
+    calculated_uncertainty: np.array | None = None,
+    experimental_uncertainty: np.array | None = None,
 ) -> bokeh.plotting.figure:
     """
     Create an interactive plot using Plotmol for the relative predictions of the free energies.
@@ -777,7 +777,6 @@ def create_absolute_report(dataframe: pd.DataFrame) -> panel.Column:
     plotting_df.reset_index(inplace=True)
     # only make the plot if we have exp data and more than one point
     if len(plotting_df) > 3 and "DG (kcal/mol) (EXPT)" in plotting_df.columns:
-
         # add pIC50 columns beside DG
         add_pic50_columns(plotting_df)
 

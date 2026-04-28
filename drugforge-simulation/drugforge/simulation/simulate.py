@@ -3,7 +3,7 @@ import logging
 import shutil
 import warnings
 from pathlib import Path
-from typing import Any, ClassVar, Optional, Union  # noqa: F401
+from typing import Union
 
 import mdtraj
 import openmm
@@ -82,7 +82,8 @@ class SimulatorBase(BaseModel):
     debug: bool = Field(False, description="Debug mode of the simulation")
 
     @abc.abstractmethod
-    def _simulate(self) -> list["SimulationResult"]: ...
+    def _simulate(self) -> list["SimulationResult"]:
+        ...
 
     def simulate(
         self,
@@ -94,7 +95,6 @@ class SimulatorBase(BaseModel):
         reconstruct_cls=None,
         **kwargs,
     ) -> pd.DataFrame:
-
         return self._simulate(
             inputs=inputs,
             use_dask=use_dask,
@@ -106,15 +106,16 @@ class SimulatorBase(BaseModel):
         )
 
     @abc.abstractmethod
-    def provenance(self) -> dict[str, str]: ...
+    def provenance(self) -> dict[str, str]:
+        ...
 
 
 class SimulationResult(BaseModel):
     traj_path: Path
     minimized_pdb_path: Path
-    final_pdb_path: Optional[Path]
-    success: Optional[bool]
-    input_docking_result: Optional[DockingResult]
+    final_pdb_path: Path | None
+    success: bool | None
+    input_docking_result: DockingResult | None
 
 
 class VanillaMDSimulator(SimulatorBase):
@@ -158,7 +159,7 @@ class VanillaMDSimulator(SimulatorBase):
         [],
         description="Atom indices to apply the RMSD restraint to, cannot be used with rmsd_restraint_type",
     )
-    rmsd_restraint_type: Optional[str] = Field(
+    rmsd_restraint_type: str | None = Field(
         None,
         description="Type of RMSD restraint to apply, must be 'CA' or 'heavy', cannot be used with rmsd_restraint_atom_indices",
     )
@@ -176,7 +177,7 @@ class VanillaMDSimulator(SimulatorBase):
         "openff-2.2.0",
         description="The OpenFF small molecule force field which should be used for the ligand.",
     )
-    collect_dir: Optional[Path] = Field(
+    collect_dir: Path | None = Field(
         None, description="Directory to collect results in a single directory"
     )
     minimize_only: bool = Field(
@@ -288,7 +289,7 @@ class VanillaMDSimulator(SimulatorBase):
     def _simulate(
         self,
         inputs: Union[list[DockingResult], list[tuple[Path, Path]]],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         **kwargs,
     ) -> list[dict[str, str]]:
         if outpaths:
@@ -300,7 +301,7 @@ class VanillaMDSimulator(SimulatorBase):
     def _dispatch(
         self,
         inputs: list[Union[DockingResult, tuple[Path, Path]]],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
         **kwargs,
     ):
@@ -345,7 +346,7 @@ class VanillaMDSimulator(SimulatorBase):
     def _dispatch_path(
         self,
         inputs: list[tuple[Path, Path]],
-        outpaths: Optional[list[Path]] = None,
+        outpaths: list[Path] | None = None,
         failure_mode: str = "skip",
     ):
         results = []
@@ -378,7 +379,7 @@ class VanillaMDSimulator(SimulatorBase):
         protein: Path,
         ligand: Path,
         outpath: Path,
-        input_docking_result: Optional[DockingResult] = None,
+        input_docking_result: DockingResult | None = None,
     ) -> list[SimulationResult]:
         logger.info(f"Running simulation for {protein.stem} and {ligand.stem}")
         _platform = self._to_openmm_units()

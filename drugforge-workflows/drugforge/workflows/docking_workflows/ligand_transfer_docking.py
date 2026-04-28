@@ -12,7 +12,6 @@ The workflow is as follows:
 
 from pathlib import Path
 from shutil import rmtree
-from typing import Optional
 
 from drugforge.data.readers.meta_structure_factory import MetaStructureFactory
 from drugforge.data.util.dask_utils import BackendType, DaskType, make_dask_client_meta
@@ -33,30 +32,30 @@ from pydantic import Field, PositiveInt, model_validator
 
 
 class LigandTransferDockingWorkflowInputs(DockingWorkflowInputsBase):
-    target_structure_dir: Optional[Path] = Field(
+    target_structure_dir: Path | None = Field(
         None,
         description="Path to a directory containing apo structures to transfer the ligands.",
     )
-    target_pdb_file: Optional[Path] = Field(
+    target_pdb_file: Path | None = Field(
         None, description="Path to a PDB file to prep and dock to."
     )
 
-    target_fragalysis_dir: Optional[Path] = Field(
+    target_fragalysis_dir: Path | None = Field(
         None, description="Path to a directory containing a Fragalysis dump."
     )
 
-    reference_complex_dir: Optional[Path] = Field(
+    reference_complex_dir: Path | None = Field(
         None, description="Path to a directory containing reference complexes."
     )
-    reference_pdb_file: Optional[Path] = Field(
+    reference_pdb_file: Path | None = Field(
         None, description="Path to a PDB file to prep and dock to."
     )
 
-    reference_fragalysis_dir: Optional[Path] = Field(
+    reference_fragalysis_dir: Path | None = Field(
         None, description="Path to a directory containing a Fragalysis dump."
     )
 
-    cache_dir: Optional[str] = Field(
+    cache_dir: str | None = Field(
         None, description="Path to a directory where a cache has been generated"
     )
 
@@ -75,15 +74,15 @@ class LigandTransferDockingWorkflowInputs(DockingWorkflowInputsBase):
     )
 
     # Copied from LigandTransferProteinPrepper
-    ref_chain: Optional[str] = Field("A", description="Reference chain ID to align to.")
+    ref_chain: str | None = Field("A", description="Reference chain ID to align to.")
 
-    active_site_chain: Optional[str] = Field(
+    active_site_chain: str | None = Field(
         "A", description="Chain ID to align to reference."
     )
-    seqres_yaml: Optional[Path] = Field(
+    seqres_yaml: Path | None = Field(
         None, description="Path to seqres yaml to mutate to."
     )
-    loop_db: Optional[Path] = Field(
+    loop_db: Path | None = Field(
         None, description="Path to loop database to use for prepping"
     )
 

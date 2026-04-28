@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import click
 from drugforge.cli.cli_args import (
@@ -62,23 +62,23 @@ def protein_prep():
 @input_json
 def protein_prep(
     target: "TargetTags",
-    align: Optional[str] = None,
-    ref_chain: Optional[str] = None,
-    active_site_chain: Optional[str] = None,
-    seqres_yaml: Optional[str] = None,
-    loop_db: Optional[str] = None,
-    oe_active_site_residue: Optional[str] = None,
-    pdb_file: Optional[str] = None,
-    fragalysis_dir: Optional[str] = None,
-    structure_dir: Optional[str] = None,
-    cache_dir: Optional[str] = None,
+    align: str | None = None,
+    ref_chain: str | None = None,
+    active_site_chain: str | None = None,
+    seqres_yaml: str | None = None,
+    loop_db: str | None = None,
+    oe_active_site_residue: str | None = None,
+    pdb_file: str | None = None,
+    fragalysis_dir: str | None = None,
+    structure_dir: str | None = None,
+    cache_dir: str | None = None,
     save_to_cache: bool = True,
     use_dask: bool = False,
     dask_type: DaskType = DaskType.LOCAL,
-    dask_n_workers: Optional[int] = None,
+    dask_n_workers: int | None = None,
     failure_mode: FailureMode = FailureMode.SKIP,
     output_dir: str = "output",
-    input_json: Optional[str] = None,
+    input_json: str | None = None,
 ):
     """
     Run protein prep on a set of structures.
