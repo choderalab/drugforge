@@ -46,15 +46,15 @@ jobs:
               --file devtools/conda-envs/ubuntu-latest/dataviz.yaml
               --file devtools/conda-envs/ubuntu-latest/spectrum.yaml
               --file devtools/conda-envs/ubuntu-latest/ml.yaml
-          - os: macOS-latest
+          - os: macos-latest
             yaml_file_args:
-              --file devtools/conda-envs/macOS-latest/data.yaml
-              --file devtools/conda-envs/macOS-latest/docking.yaml
-              --file devtools/conda-envs/macOS-latest/modeling.yaml
-              --file devtools/conda-envs/macOS-latest/alchemy.yaml
-              --file devtools/conda-envs/macOS-latest/simulation.yaml
-              --file devtools/conda-envs/macOS-latest/dataviz.yaml
-              --file devtools/conda-envs/macOS-latest/spectrum.yaml
+              --file devtools/conda-envs/macos-latest/data.yaml
+              --file devtools/conda-envs/macos-latest/docking.yaml
+              --file devtools/conda-envs/macos-latest/modeling.yaml
+              --file devtools/conda-envs/macos-latest/alchemy.yaml
+              --file devtools/conda-envs/macos-latest/simulation.yaml
+              --file devtools/conda-envs/macos-latest/dataviz.yaml
+              --file devtools/conda-envs/macos-latest/spectrum.yaml
 
     env:
       OE_LICENSE: ${{ github.workspace }}/oe_license.txt
