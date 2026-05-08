@@ -14,8 +14,7 @@ from drugforge.docking.scorer import (
     _get_disk_path_from_docking_result,
 )
 from drugforge.spectrum.fitness import target_has_fitness_data
-from multimethod import multimethod
-from pydantic.v1 import Field, validator
+from pydantic import Field, field_validator
 
 
 class FINTScorer(ScorerBase):
@@ -29,7 +28,7 @@ class FINTScorer(ScorerBase):
     units: ClassVar[ScoreUnits.arbitrary] = ScoreUnits.arbitrary
     target: TargetTags = Field(..., description="Which target to use for scoring")
 
-    @validator("target")
+    @field_validator("target", mode="before")
     @classmethod
     def validate_target(cls, v):
         if not target_has_fitness_data(v):
@@ -53,8 +52,25 @@ class FINTScorer(ScorerBase):
             inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
         )
 
-    @multimethod
     def _dispatch(
+        self,
+        inputs: list[Union[DockingResult, Complex, Path]],
+        return_for_disk_backend: bool = False,
+        **kwargs,
+    ) -> list[Score]:
+        """
+        Dispatch all the methods based on input type.
+        """
+        if isinstance(inputs[0], DockingResult):
+            return self._dispatch_docking_result(
+                inputs, return_for_disk_backend=return_for_disk_backend, **kwargs
+            )
+        elif isinstance(inputs[0], Complex):
+            return self._dispatch_complex(inputs, **kwargs)
+        elif isinstance(inputs[0], Path):
+            return self._dispatch_from_path(inputs, **kwargs)
+
+    def _dispatch_docking_result(
         self,
         inputs: list[DockingResult],
         return_for_disk_backend: bool = False,
@@ -80,8 +96,7 @@ class FINTScorer(ScorerBase):
 
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Complex], **kwargs):
+    def _dispatch_complex(self, inputs: list[Complex], **kwargs):
         """
         Dispatch for Complexes
         """
@@ -97,8 +112,7 @@ class FINTScorer(ScorerBase):
             )
         return results
 
-    @_dispatch.register
-    def _dispatch(self, inputs: list[Path], **kwargs):
+    def _dispatch_from_path(self, inputs: list[Path], **kwargs):
         """
         Dispatch for PDB files from disk
         """
@@ -112,4 +126,4 @@ class FINTScorer(ScorerBase):
             for p in inputs
         ]
 
-        return self._dispatch(complexes, **kwargs)
+        return self._dispatch_complex(complexes, **kwargs)

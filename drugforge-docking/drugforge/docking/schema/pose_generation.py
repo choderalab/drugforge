@@ -14,7 +14,7 @@ from drugforge.data.backend.openeye import (
 )
 from drugforge.data.schema.ligand import Ligand
 from drugforge.modeling.schema import PreppedComplex
-from pydantic.v1 import BaseModel, Field, PositiveFloat, PositiveInt
+from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, PositiveInt
 from rdkit import Chem, RDLogger
 
 RDLogger.DisableLog(
@@ -65,9 +65,7 @@ class _BasicConstrainedPoseGenerator(BaseModel, abc.ABC):
         description="If the main scoring function fails to descriminate between conformers the backup score will be used based on the internal energy of the molecule.",
     )
 
-    class Config:
-        allow_mutation = True
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(frozen=False, arbitrary_types_allowed=True)
 
     @abc.abstractmethod
     def provenance(self) -> dict[str, Any]:
@@ -282,7 +280,7 @@ class OpenEyeConstrainedPoseGenerator(_BasicConstrainedPoseGenerator):
         input_mol = oechem.OEMol(reference_ligand)
         oechem.OESuppressHydrogens(input_mol)
         # build a query mol which allows for wild card matches
-        # <https://github.com/choderalab/asapdiscovery/pull/430#issuecomment-1702360130>
+        # <https://github.com/choderalab/drugforge/pull/430#issuecomment-1702360130>
         smarts_mol = oechem.OEGraphMol()
         oechem.OESmilesToMol(smarts_mol, core_smarts)
         pattern_query = oechem.OEQMol(smarts_mol)

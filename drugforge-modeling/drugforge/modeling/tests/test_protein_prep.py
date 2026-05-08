@@ -9,7 +9,6 @@ from drugforge.data.services.postera.manifold_data_validation import TargetTags
 from drugforge.data.testing.test_resources import fetch_test_file
 from drugforge.modeling.protein_prep import ProteinPrepper
 from drugforge.modeling.schema import PreppedComplex, PreppedTarget
-from pydantic.v1 import ValidationError
 
 
 @pytest.fixture
@@ -155,7 +154,7 @@ def test_preppedtarget_from_oedu_file(oedu_file):
 
 
 def test_preppedtarget_from_oedu_file_at_least_one_id(oedu_file):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         # neither id is set
         PreppedTarget.from_oedu_file(oedu_file)
 
@@ -173,7 +172,7 @@ def test_preppedtarget_to_pdb_file(oedu_file, tmpdir):
 
 
 def test_preppedtarget_from_oedu_file_at_least_one_target_id(oedu_file):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         _ = PreppedTarget.from_oedu_file(oedu_file, ids=TargetIdentifiers())
 
 

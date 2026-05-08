@@ -23,7 +23,7 @@ from drugforge.modeling.schema import PreppedComplex
 from drugforge.simulation.simulate import VanillaMDSimulator
 from drugforge.spectrum.calculate_rmsd import rmsd_alignment
 from openbabel import pybel
-from pydantic.v1 import BaseModel, Field, root_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from rdkit import Chem
 
 logger = logging.getLogger(__name__)
@@ -137,19 +137,21 @@ class ScoreSpectrumInputsBase(BaseModel):
         description="Path to directory to process gnina files. Gnina has problems with remote directories so location in $HOME is recommended when running in a remote cluster.",
     )
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @classmethod
     def from_json_file(cls, file: str | Path):
-        return cls.parse_file(str(file))
+        from drugforge.data.schema.schema_base import read_file_directly
+
+        # first load the file, then use the json parser
+        contents = read_file_directly(file)
+        return cls.from_json(contents)
 
     def to_json_file(self, file: str | Path):
         with open(file, "w") as f:
-            f.write(self.json(indent=2))
+            f.write(self.model_dump_json(indent=2))
 
-    @root_validator
-    @classmethod
+    @model_validator(mode="before")
     def check_inputs_gnina(cls, values):
         """
         Validate gnina inputs. A bash script to run the gnina CLI is required, as well as a directory to store gnina outputs.
@@ -165,7 +167,7 @@ class ScoreSpectrumInputsBase(BaseModel):
 
         return values
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     def check_and_set_chains(cls, values):
         dock_chain = values.get("dock_chain")
         ref_chain = values.get("ref_chain")

@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from drugforge.data.schema.complex import Complex
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.pairs import CompoundStructurePair
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 

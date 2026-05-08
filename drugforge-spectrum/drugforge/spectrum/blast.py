@@ -8,7 +8,7 @@ import pandas as pd
 # BioPython
 from Bio import SeqIO, pairwise2
 from Bio.Blast import NCBIWWW, NCBIXML
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 def parse_blast(

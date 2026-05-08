@@ -7,7 +7,7 @@ from drugforge.data.backend.rdkit import rdkit_smiles_roundtrip
 from drugforge.data.services.postera.molecule_set import MoleculeSetAPI, MoleculeSetKeys
 from drugforge.data.services.services_config import PosteraSettings
 from drugforge.docking.docking_data_validation import DockingResultCols
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 

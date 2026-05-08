@@ -353,8 +353,8 @@ def _train_single_model(
     )
     optimizer_config = OptimizerConfig()
     gat_model_config = GATModelConfig()
-    es_config = EarlyStoppingConfig(
-        es_type="patient_converged",
+    early_stopping_config = EarlyStoppingConfig(
+        early_stopping_type="patient_converged",
         patience=20,
         n_check=20,
         divergence=0.01,
@@ -365,7 +365,7 @@ def _train_single_model(
 
     logging.debug(f"Optimizer config: {optimizer_config}")
     logging.debug(f"GAT model config: {gat_model_config}")
-    logging.debug(f"Early stopping config: {es_config}")
+    logging.debug(f"Early stopping config: {early_stopping_config}")
     logging.debug(f"Loss function config: {loss_config}")
     logging.debug(f"Dataset splitter config: {ds_splitter_config}")
 
@@ -389,7 +389,7 @@ def _train_single_model(
         target_prop=target_prop,
         optimizer_config=optimizer_config,
         model_config=gat_model_config,
-        es_config=es_config,
+        early_stopping_config=early_stopping_config,
         ds_config=gat_ds_config,
         ds_splitter_config=ds_splitter_config,
         loss_configs=[loss_config],

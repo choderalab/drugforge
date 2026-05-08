@@ -37,7 +37,7 @@ from drugforge.workflows.postera.manifold_artifacts import (
     ManifoldArtifactUploader,
 )
 from drugforge.workflows.postera.postera_uploader import PosteraUploader
-from pydantic.v1 import Field, PositiveInt
+from pydantic import Field, PositiveInt
 
 
 class LargeScaleDockingInputs(PosteraDockingWorkflowInputs):
@@ -372,21 +372,29 @@ def large_scale_docking_workflow(inputs: LargeScaleDockingInputs):
             reconstruct_cls=docker.result_cls,
         )
 
-        # duplicate target id column so we can join
-        fitness_visualizations[DockingResultCols.DOCKING_STRUCTURE_POSIT.value] = (
-            fitness_visualizations[DockingResultCols.TARGET_ID.value]
-        )
+        if (
+            fitness_visualizations.empty
+            or DockingResultCols.TARGET_ID.value not in fitness_visualizations.columns
+        ):
+            logger.warning(
+                "Fitness visualizer produced no results (all poses may have failed); skipping fitness merge."
+            )
+        else:
+            # duplicate target id column so we can join
+            fitness_visualizations[DockingResultCols.DOCKING_STRUCTURE_POSIT.value] = (
+                fitness_visualizations[DockingResultCols.TARGET_ID.value]
+            )
 
-        # join the two dataframes on ligand_id, target_id and smiles
-        scores_df = scores_df.merge(
-            fitness_visualizations,
-            on=[
-                DockingResultCols.LIGAND_ID.value,
-                DockingResultCols.DOCKING_STRUCTURE_POSIT.value,
-                DockingResultCols.SMILES.value,
-            ],
-            how="outer",  # preserves rows where there is no fitness visualisation
-        )
+            # join the two dataframes on ligand_id, target_id and smiles
+            scores_df = scores_df.merge(
+                fitness_visualizations,
+                on=[
+                    DockingResultCols.LIGAND_ID.value,
+                    DockingResultCols.DOCKING_STRUCTURE_POSIT.value,
+                    DockingResultCols.SMILES.value,
+                ],
+                how="outer",  # preserves rows where there is no fitness visualisation
+            )
     else:
         logger.info(
             f"Target {inputs.target} does not have fitness data, skipping fitness visualisation"

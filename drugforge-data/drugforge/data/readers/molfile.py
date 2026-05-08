@@ -4,7 +4,7 @@ from typing import Union
 
 from drugforge.data.backend.openeye import oechem
 from drugforge.data.schema.ligand import Ligand
-from pydantic.v1 import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class MolFileFactory(BaseModel):
             ligands.append(ligand)
         return ligands
 
-    @validator("filename")
+    @field_validator("filename", mode="before")
     @classmethod
     def check_file_exists(cls, v):
         if not Path(v).exists():

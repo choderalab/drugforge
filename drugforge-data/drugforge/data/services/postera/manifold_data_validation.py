@@ -4,13 +4,17 @@ import warnings
 from collections import defaultdict
 from collections.abc import Iterable
 from enum import Enum
-from importlib import resources
 from pathlib import Path
 from typing import List, Optional, Tuple, Union  # noqa: F401
 
 import pandas as pd
 import yaml
+from drugforge.data.services import postera
 from drugforge.data.util.stringenum import StringEnum
+
+# static path to the spec
+# use the get_path_string helper function that uses importlib.resources to get the path to the yaml file
+from drugforge.data.util.utils import get_path_string
 
 logger = logging.getLogger(__name__)
 
@@ -225,9 +229,8 @@ def make_static_tags(yaml_path) -> tuple[Enum, set]:
 # OK finally we can actually make the enums
 
 # static path to the spec
-manifold_data_spec = (
-    resources.files("drugforge.data.services.postera") / "manifold_data_tags.yaml"
-)
+manifold_data_spec = get_path_string(postera) + "/manifold_data_tags.yaml"
+
 
 # make target enum and set
 (

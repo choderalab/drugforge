@@ -2,7 +2,7 @@ import numpy as np
 from drugforge.data.util.dask_utils import BackendType, FailureMode
 from drugforge.docking.docking import DockingResult
 from drugforge.docking.scorer import Score, ScorerBase
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class MetaScorer(BaseModel):

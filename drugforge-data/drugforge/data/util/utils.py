@@ -10,7 +10,7 @@ import pandas
 from drugforge.data.backend.openeye import oechem
 from drugforge.data.schema.experimental import ExperimentalCompoundData
 from drugforge.data.schema.legacy import EnantiomerPair, EnantiomerPairList
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 # Not sure if this is the right place for these
 # Regex patterns for extracting Mpro dataset ID and Moonshot CDD style compound ID
@@ -1234,3 +1234,37 @@ def check_empty_dataframe(
             return True
         else:
             raise ValueError(f"fail argument {fail} not recognised")
+
+
+def get_path_string(module) -> str:
+    """
+    Get the absolute path as a string to an imported module.
+
+    Parameters
+    ----------
+    module : module
+        The module to get the path of.
+
+    Returns
+    -------
+    str
+        The path of the module as a string.
+    """
+
+    from importlib import resources
+    from importlib.readers import MultiplexedPath
+
+    temp_path = resources.files(module)
+
+    # in some cases, using importlib.resources returns a MultiplexedPath object and other times a regular path
+    # this helper function is designed to handle both cases
+
+    # see if we have a MultiplexedPath object
+    if isinstance(temp_path, MultiplexedPath):
+        if len(temp_path._paths) == 0:
+            raise ValueError(f"No paths found for module {module}")
+
+        # return the first path, which is to the directory, as a string
+        return str(temp_path._paths[0])
+    else:  # return the path as a string
+        return str(temp_path)

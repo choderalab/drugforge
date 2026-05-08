@@ -51,4 +51,41 @@ def test_cdd_to_schema(cdd_to_schema_files, tmp_path):
 
     json_check = sorted(json_check, key=lambda d: d.get("compound_id"))
     json_test = sorted(json_test, key=lambda d: d.get("compound_id"))
-    assert all([d1 == d2 for d1, d2 in zip(json_check, json_test)])
+
+    # note in one case, the stdevs in the experimental data
+    # are listed as nan, in the other as None
+    # e.g.,: 'dG_stderr': nan, 'dG_95ci_lower': nan, 'dG_95ci_upper': nan
+    # nan and None are not equal, obviously, in this comparison, but are effectively equivalent in their meaning here
+    # so we just need to do some extra work to ensure that those specific values are treated as equal
+    # This is just a recursive function that will loop through the entries.
+    # If the entry is not equivalent, it will dig down into the individual elements or subelements
+    # It will also treat nan and None as equivalent
+    import math
+
+    def compare_vals(v1, v2):
+        # Handle exact equality ("pure" values)
+        if v1 == v2:
+            return True
+
+        # Handle the NaN == None case
+        is_v1_nan_none = v1 is None or (isinstance(v1, float) and math.isnan(v1))
+        is_v2_nan_none = v2 is None or (isinstance(v2, float) and math.isnan(v2))
+
+        if is_v1_nan_none and is_v2_nan_none:
+            return True
+
+        # Handle dictionaries recursively
+        if isinstance(v1, dict) and isinstance(v2, dict):
+            # Ensure they have the exact same keys
+            if v1.keys() != v2.keys():
+                return False
+            # Recurse through values
+            return all(compare_vals(v1[k], v2[k]) for k in v1)
+
+        return False
+
+    equivalence = []
+    for d1, d2 in zip(json_check, json_test):
+        equivalence.append(compare_vals(d1, d2))
+
+    assert all(equivalence)

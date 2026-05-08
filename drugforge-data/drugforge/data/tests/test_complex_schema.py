@@ -2,7 +2,6 @@ import pytest
 from drugforge.data.backend.openeye import load_openeye_pdb
 from drugforge.data.schema.complex import Complex
 from drugforge.data.testing.test_resources import fetch_test_file
-from pydantic.v1 import ValidationError
 
 
 @pytest.fixture(scope="session")
@@ -72,7 +71,7 @@ def test_data_equal(complex_pdb):
 
 def test_complex_from_pdb_needs_ids(complex_pdb):
     """Make sure an error is raised if we do not supply ligand and receptor ids"""
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Complex.from_pdb(complex_pdb)
 
 

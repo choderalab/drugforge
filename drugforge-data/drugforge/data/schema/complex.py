@@ -14,7 +14,7 @@ from drugforge.data.backend.openeye import (
 from drugforge.data.schema.ligand import Ligand
 from drugforge.data.schema.schema_base import DataModelAbstractBase, MoleculeFilter
 from drugforge.data.schema.target import Target
-from pydantic.v1 import Field
+from pydantic import Field, field_validator
 
 logger = logging.getLogger(__name__)
 
@@ -49,13 +49,19 @@ class Complex(ComplexBase):
 
     target: Target = Field(description="Target schema object")
     ligand: Ligand = Field(description="Ligand schema object")
-    ligand_chain: str = Field(None, description="Chain ID of ligand in complex")
+    ligand_chain: str | None = Field(None, description="Chain ID of ligand in complex")
 
     # Overload from base class to check target and ligand individually
     def data_equal(self, other: Complex):
         return self.target.data_equal(other.target) and self.ligand.data_equal(
             other.ligand
         )
+
+    @field_validator("ligand_chain")
+    def check_ligand_chain(cls, v):
+        if v is None:
+            v = ""
+        return v
 
     @classmethod
     def from_oemol(

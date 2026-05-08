@@ -2,6 +2,7 @@ name: data
 channels:
   - openeye
   - conda-forge
+  - rapidsai
 dependencies:
   # Base depends
   - pip
@@ -32,9 +33,9 @@ dependencies:
   - biopython
   - mdanalysis
   - openeye-toolkits
-  - openfe ~=1.0
+  - openfe >=1.7
   - openmm
-  - gufe >=1.0.0
+  - gufe >= 1.7.0
   - pymol-open-source
   - rdkit
   - plip

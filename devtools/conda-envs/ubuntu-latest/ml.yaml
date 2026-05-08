@@ -2,11 +2,13 @@ name: ml
 channels:
   - openeye
   - conda-forge
+  - rapidsai
 dependencies:
   # Base depends
   - pip
   - python >=3.10,<3.12
   - pydantic >=2.0.0a0
+  - pydantic-settings
   - typing-extensions
   - semver
 
@@ -37,13 +39,13 @@ dependencies:
   - openeye-toolkits
   - openff-forcefields >=2024.04.0
   - openff-toolkit
-  - openfe ~=1.0
+  - openfe >=1.7.0
   - openmm
   - openmmtools
-  - openmmforcefields >= 0.13.0
+  - openmmforcefields >= 0.15.0
   - mdtraj
   - cudatoolkit
-  - gufe >=1.0.0
+  - gufe >= 1.7.1
   - pymol-open-source
   - rdkit
   - plip
@@ -68,13 +70,14 @@ dependencies:
   - boto3
 
   # ML
-  - dgl<=2.0.0
+  - dgl
   - dgllife
-  - mtenn >=0.6.3
+  - mtenn >=0.7.0
   - pytorch
-  - pytorch_geometric >=2.5.0
+  - pytorch_geometric
   - pytorch_cluster
   - pytorch_scatter
   - pytorch_sparse
   - scipy >=1.13.1
+  - torchdata <=0.9.0
   - wandb

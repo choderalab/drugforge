@@ -5,7 +5,7 @@ import pytest
 from drugforge.data.schema.complex import Complex
 from drugforge.data.services.fragalysis.fragalysis_reader import FragalysisFactory
 from drugforge.data.testing.test_resources import fetch_test_file
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 
 @pytest.fixture(scope="session")
@@ -199,6 +199,6 @@ def test_ff_dict_roundtrip(mpro_frag_dir):
     parent_dir, _ = mpro_frag_dir
 
     ff1 = FragalysisFactory.from_dir(parent_dir)
-    ff2 = FragalysisFactory.parse_obj(ff1.dict())
+    ff2 = FragalysisFactory.model_validate(ff1.model_dump())
 
     assert ff1 == ff2

@@ -32,7 +32,7 @@ from drugforge.workflows.postera.manifold_artifacts import (
     ManifoldArtifactUploader,
 )
 from drugforge.workflows.postera.postera_uploader import PosteraUploader
-from pydantic.v1 import Field
+from pydantic import Field
 
 
 class SymExpCrystalPackingInputs(PosteraDockingWorkflowInputs):

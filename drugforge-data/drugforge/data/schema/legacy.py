@@ -1,10 +1,9 @@
 from drugforge.data.schema.experimental import ExperimentalCompoundData
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CrystalCompoundData(BaseModel):
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
     compound_id: str = Field(
         None, description="The unique compound identifier of the ligand."

@@ -18,7 +18,7 @@ from drugforge.data.services.services_config import (
     S3Settings,
 )
 from drugforge.docking.docking_data_validation import DockingResultCols
-from pydantic.v1 import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, model_validator
 
 
 class ArtifactType(Enum):
@@ -80,11 +80,10 @@ class ManifoldArtifactUploader(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    @root_validator
-    @classmethod
-    def validate_artifact_columns_and_types(cls, values):
-        artifact_columns = values.get("artifact_columns")
-        artifact_types = values.get("artifact_types")
+    @model_validator(mode="after")
+    def validate_artifact_columns_and_types(self):
+        artifact_columns = self.artifact_columns
+        artifact_types = self.artifact_types
         if len(artifact_columns) != len(artifact_types):
             raise ValueError(
                 "Number of artifact columns must match number of artifact types"
@@ -92,13 +91,12 @@ class ManifoldArtifactUploader(BaseModel):
         if len(artifact_columns) == len(artifact_types) == 0:
             raise ValueError("Must have at least one artifact column")
 
-        return values
+        return self
 
-    @root_validator
-    @classmethod
-    def name_id_mutually_exclusive(cls, values):
-        molecule_set_id = values.get("molecule_set_id")
-        molecule_set_name = values.get("molecule_set_name")
+    @model_validator(mode="after")
+    def name_id_mutually_exclusive(self):
+        molecule_set_id = self.molecule_set_id
+        molecule_set_name = self.molecule_set_name
 
         if not molecule_set_id and not molecule_set_name:
             raise ValueError("Must provide molecule_set_id or molecule_set_name")
@@ -107,7 +105,7 @@ class ManifoldArtifactUploader(BaseModel):
             raise ValueError(
                 "molecule_set_id and molecule_set_name are mutually exclusive"
             )
-        return values
+        return self
 
     def generate_cloudfront_url(
         self, bucket_path, expires_delta: timedelta = timedelta(days=365 * 5)
@@ -128,7 +126,7 @@ class ManifoldArtifactUploader(BaseModel):
             The signed url for the file on S3
         """
         # make a signed url with default timedelta of 5 years
-        expiry = datetime.utcnow() + expires_delta
+        expiry = datetime.now(datetime.UTC) + expires_delta
         return self.cloudfront.generate_signed_url(bucket_path, expiry)
 
     def upload_artifacts(self, sort_column=None, sort_ascending=False) -> None:

@@ -105,7 +105,7 @@ def test_data(graph_dataset):
     g1 = graph_dataset[0][1]["g"]
     g2 = graph_dataset[1][1]["g"]
     g3 = graph_dataset[2][1]["g"]
-    return g1, g2, g3, graph_dataset
+    return {"g": g1}, {"g": g2}, {"g": g3}, graph_dataset
 
 
 @pytest.fixture()

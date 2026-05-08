@@ -37,12 +37,12 @@ dependencies:
   - openeye-toolkits
   - openff-forcefields >=2024.04.0
   - openff-toolkit
-  - openfe ~=1.0
+  - openfe >=1.7.0
   - openmm
   - openmmtools
-  - openmmforcefields >= 0.13.0
+  - openmmforcefields >= 0.15.0
   - mdtraj
-  - gufe >=1.0.0
+  - gufe >= 1.7.1
   - pymol-open-source
   - rdkit
   - plip
