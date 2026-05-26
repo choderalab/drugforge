@@ -690,7 +690,9 @@ class DatasetConfig(ConfigBase):
             case DatasetType.structural:
                 if self.grouped:
                     ds = GroupedDockedDataset.from_complexes(
-                        self.input_data, exp_dict=self.exp_data
+                        self.input_data,
+                        exp_dict=self.exp_data,
+                        random_iter=self.random_iter,
                     )
                 else:
                     ds = DockedDataset.from_complexes(
