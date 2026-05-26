@@ -402,7 +402,12 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
     ),
     required=True,
 )
-def training_progress(collection_args_fn, out_fn):
+@click.option(
+    "--filter-date",
+    type=click.DateTime(),
+    help="Don't load results from before this date.",
+)
+def training_progress(collection_args_fn, out_fn, filter_date: datetime.date):
     """
     Check how many epochs of training each model has been through by finding highest
     numbered weights file in the output directory.
@@ -425,6 +430,8 @@ def training_progress(collection_args_fn, out_fn):
     out_fn : Path
         Output CSV file with formatted column names and labels, as well as the number of
         epochs each experiment has been trained for
+    fiter_date : datetime.date, optional
+        Ignore runs that were started before this date stamp
 
     Returns
     -------
@@ -490,7 +497,23 @@ def training_progress(collection_args_fn, out_fn):
     for full_model_spec, formatted_d in model_metadata_dict.items():
         # Find largest-numbered weights file for each experiment
         model_wts_dir = top_level_dir / full_model_spec
-        model_wts_dir /= (model_wts_dir / "run_id").read_text()
+
+        run_id_fn = model_wts_dir / "run_id"
+
+        if not (run_id_fn).is_file():
+            formatted_d["Epochs"] = -1
+            df = pandas.DataFrame(formatted_d, index=[0])
+            n_epochs_df.append(df)
+            continue
+
+        mod_time = datetime.datetime.fromtimestamp(run_id_fn.stat().st_mtime)
+        if filter_date and (mod_time < filter_date):
+            formatted_d["Epochs"] = -1
+            df = pandas.DataFrame(formatted_d, index=[0])
+            n_epochs_df.append(df)
+            continue
+
+        model_wts_dir /= (run_id_fn).read_text()
         model_wts = [
             int(p.stem) for p in model_wts_dir.glob("*.th") if p.stem.isdecimal()
         ]
