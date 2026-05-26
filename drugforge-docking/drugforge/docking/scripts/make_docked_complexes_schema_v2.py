@@ -46,7 +46,7 @@ def make_docked_complex(docked_fn, xtal_dir, out_name, compound_regex, xtal_rege
     target = Target.from_pdb(target_fn, target_name=xtal_id)
 
     for i, ligand in enumerate(all_ligs):
-        out_fn = docked_fn.parent / f"{docked_fn.parts[-2]}_{i}_{out_name}"
+        out_fn = docked_fn.with_name(f"{docked_fn.stem}_{i}_{out_name}")
         Complex(target=target, ligand=ligand, ligand_chain="L").to_pdb(out_fn)
 
 
