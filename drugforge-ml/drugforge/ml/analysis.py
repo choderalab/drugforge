@@ -282,7 +282,7 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
 
     # Load DF
     df = pandas.read_csv(in_fn, dtype=dtypes)
-    df = df.fillna(value={"Strategy": ""})
+    df = df.fillna("")
     print("loaded df", flush=True)
 
     # Loop through each split and run the stats calculations
@@ -291,14 +291,14 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
     for keys, g in df.groupby(gb_keys):
         target_vals = g["target"].values
         preds = g["pred"].values
-        if ("in_range" not in g) or g["in_range"].isna().all():
+        if ("in_range" not in g) or (g["in_range"] == "").all():
             use_range = False
             in_range = np.zeros(len(preds))
         else:
             use_range = True
             in_range = g["in_range"].values
 
-        num_compounds = len(preds)
+        num_compounds = len(g["compound_id"].unique())
 
         # Values and low/high bounds of 95% CIs for all stats
         stat_names = []
@@ -345,7 +345,7 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         preds = preds[range_idx]
         in_range = in_range[range_idx]
 
-        num_compounds = len(preds)
+        num_compounds = len(g[range_idx, "compound_id"].unique())
 
         # Values and low/high bounds of 95% CIs for all stats
         stat_names = []
