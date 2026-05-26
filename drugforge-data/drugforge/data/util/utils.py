@@ -266,6 +266,10 @@ def cdd_to_schema(cdd_csv, out_json=None, out_csv=None):
             if not seen_compounds[compound_id]:
                 continue
 
+        if np.isnan(c["pIC50"]):
+            print(f"Skipping {compound_id}, has None pIC50 val", flush=True)
+            continue
+
         smiles = c["smiles"]
         experimental_data = {
             "pIC50": c["pIC50"],
