@@ -798,12 +798,17 @@ class Trainer(BaseModel):
             # Get splits directly from pred_tracker, if available (otherwise will fall
             #  back to splits from self.ds_splitter_config)
             if len(self.pred_tracker) > 0:
-                split_dict = self.pred_tracker.get_compounds()
+                if self.ds_splitter_config.split_type != "manual":
+                    split_dict = self.pred_tracker.get_compounds()
 
-                self.ds_splitter_config = DatasetSplitterConfig(
-                    split_type="manual", split_dict=split_dict
-                )
-                print("Using pred_tracker compounds for manual splitting.", flush=True)
+                    self.ds_splitter_config = DatasetSplitterConfig(
+                        split_type="manual",
+                        split_dict=split_dict,
+                        grouped=self.mtenn_model_config.grouped,
+                    )
+                    print(
+                        "Using pred_tracker compounds for manual splitting.", flush=True
+                    )
                 (
                     self.ds_train,
                     self.ds_val,
