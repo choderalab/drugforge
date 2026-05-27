@@ -173,26 +173,25 @@ class PositionShuffle:
             if dict_inp:
                 dict_copy = deepcopy(coords)
                 coords_copy = dict_copy[self.dict_key]
-                lig_idx_copy = dict_copy[self.lig_idx_key]
             else:
                 coords_copy = coords.clone().detach()
-                lig_idx_copy = lig_idx.clone().detach()
         else:
             # Should just be a reference so inputs should get modified
             if dict_inp:
                 dict_copy = coords
                 coords_copy = coords_copy[self.dict_key]
-                lig_idx_copy = lig_idx_copy[self.dict_key]
             else:
                 coords_copy = coords
-                lig_idx_copy = lig_idx
+
+        if dict_inp and (self.which != "both"):
+            lig_idx = coords[self.lig_idx_key]
 
         # Get indices that we'll actually be shuffling
         shuffle_indices = torch.arange(coords_copy.shape[0])
         if self.which == "lig":
-            shuffle_indices = shuffle_indices[lig_idx_copy]
+            shuffle_indices = shuffle_indices[lig_idx]
         elif self.which == "prot":
-            shuffle_indices = shuffle_indices[~lig_idx_copy]
+            shuffle_indices = shuffle_indices[~lig_idx]
 
         # Generate new index
         idx = torch.randperm(shuffle_indices, generator=self.g)
