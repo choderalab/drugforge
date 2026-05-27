@@ -194,10 +194,10 @@ class PositionShuffle:
             shuffle_indices = shuffle_indices[~lig_idx]
 
         # Generate new index
-        idx = torch.randperm(shuffle_indices, generator=self.g)
+        idx = torch.randperm(len(shuffle_indices), generator=self.g)
 
         # Shuffle the positions
-        coords_copy = coords_copy[idx, :]
+        coords_copy = coords_copy[shuffle_indices[idx], :]
 
         if dict_inp:
             return dict_copy
