@@ -1255,6 +1255,9 @@ class DataAugType(StringEnum):
     # Jitter all coordinates by a fixed amount
     jitter_fixed = "jitter_fixed"
 
+    # Shuffle position coordinates
+    pos_shuffle = "pos_shuffle"
+
 
 class DataAugConfig(BaseModel):
     """
@@ -1279,18 +1282,30 @@ class DataAugConfig(BaseModel):
         description="Standard deviation of gaussian distribution to draw noise from.",
     )
 
-    # Seed for randomly jittering
-    jitter_rand_seed: int | None = Field(
+    # Which coordinates to shuffle
+    which_shuffle: str | None = Field(
+        None,
+        description=(
+            "Which coordinates to shuffle. Supported values are "
+            '["both", "lig", "prot"].'
+        ),
+    )
+
+    # Seed for randomness
+    rand_seed: int | None = Field(
         None, description="Random seed to use for reproducbility, if desired."
     )
 
-    # Dict key for the positions
-    jitter_pos_key: str | None = Field(
+    # Dict keys
+    pos_key: str | None = Field(
         None, description="Key to access the coords in pose dict."
+    )
+    lig_idx_key: str | None = Field(
+        None, description="Key to access the ligand index in pose dict."
     )
 
     def build(self):
-        from drugforge.ml.data_augmentation import JitterFixed
+        from drugforge.ml.data_augmentation import JitterFixed, PositionShuffle
 
         match self.aug_type:
             case DataAugType.jitter_fixed:
@@ -1298,8 +1313,16 @@ class DataAugConfig(BaseModel):
                 kwargs = {
                     "mean": "jitter_fixed_mean",
                     "std": "jitter_fixed_std",
-                    "rand_seed": "jitter_rand_seed",
-                    "dict_key": "jitter_pos_key",
+                    "rand_seed": "rand_seed",
+                    "dict_key": "pos_key",
+                }
+            case DataAugType.pos_shuffle:
+                build_class = PositionShuffle
+                kwargs = {
+                    "which": "which_shuffle",
+                    "rand_seed": "rand_seed",
+                    "dict_key": "pos_key",
+                    "lig_idx_key": "lig_idx_key",
                 }
 
         # Remove any None kwargs
