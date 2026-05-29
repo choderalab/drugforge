@@ -1200,21 +1200,28 @@ def load_collection_df(
         # Format dir string and try to load files
         cur_model_dir = model_dir_str.format(**kwargs_dict)
         run_id_fn = top_level_dir / cur_model_dir / "run_id"
-        if not run_id_fn.exists():
+        if run_id_fn.is_file():
+            run_id = run_id_fn.read_text()
+            mod_time = datetime.fromtimestamp(run_id_fn.stat().st_mtime)
+            pred_tracker_fn = (
+                top_level_dir / cur_model_dir / f"{run_id}/pred_tracker.json"
+            )
+        elif (top_level_dir / cur_model_dir / "pred_tracker.json").is_file():
+            run_id = ""
+            pred_tracker_fn = top_level_dir / cur_model_dir / "pred_tracker.json"
+            mod_time = datetime.fromtimestamp(pred_tracker_fn.stat().st_mtime)
+        else:
             if verbose:
                 print(kwargs_dict, run_id_fn, "not run yet", flush=True)
             continue
 
         # Make sure that the file was updated this year (ie recent run)
-        mod_time = datetime.fromtimestamp(run_id_fn.stat().st_mtime)
         if run_date and (mod_time < run_date):
             if verbose:
                 print(kwargs_dict, "missed date cutoff", flush=True)
             continue
 
-        run_id = run_id_fn.read_text()
-        pred_tracker_fn = top_level_dir / cur_model_dir / f"{run_id}/pred_tracker.json"
-        if not pred_tracker_fn.exists():
+        if not pred_tracker_fn.is_file():
             if verbose:
                 print(kwargs_dict, "still running", flush=True)
             continue

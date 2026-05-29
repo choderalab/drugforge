@@ -282,7 +282,7 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
 
     # Load DF
     df = pandas.read_csv(in_fn, dtype=dtypes)
-    df = df.fillna(value={"Strategy": ""})
+    df = df.fillna("")
     print("loaded df", flush=True)
 
     # Loop through each split and run the stats calculations
@@ -291,14 +291,14 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
     for keys, g in df.groupby(gb_keys):
         target_vals = g["target"].values
         preds = g["pred"].values
-        if ("in_range" not in g) or g["in_range"].isna().all():
+        if ("in_range" not in g) or (g["in_range"] == "").all():
             use_range = False
             in_range = np.zeros(len(preds))
         else:
             use_range = True
             in_range = g["in_range"].values
 
-        num_compounds = len(preds)
+        num_compounds = len(g["compound_id"].unique())
 
         # Values and low/high bounds of 95% CIs for all stats
         stat_names = []
@@ -345,7 +345,9 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         preds = preds[range_idx]
         in_range = in_range[range_idx]
 
-        num_compounds = len(preds)
+        # When calculating stats across multiple seeds, you can have each compound id
+        #  present multiple times
+        num_compounds = len(g.loc[range_idx, "compound_id"].unique())
 
         # Values and low/high bounds of 95% CIs for all stats
         stat_names = []
@@ -402,7 +404,12 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
     ),
     required=True,
 )
-def training_progress(collection_args_fn, out_fn):
+@click.option(
+    "--filter-date",
+    type=click.DateTime(),
+    help="Don't load results from before this date.",
+)
+def training_progress(collection_args_fn, out_fn, filter_date: datetime.date):
     """
     Check how many epochs of training each model has been through by finding highest
     numbered weights file in the output directory.
@@ -425,6 +432,8 @@ def training_progress(collection_args_fn, out_fn):
     out_fn : Path
         Output CSV file with formatted column names and labels, as well as the number of
         epochs each experiment has been trained for
+    fiter_date : datetime.date, optional
+        Ignore runs that were started before this date stamp
 
     Returns
     -------
@@ -490,7 +499,23 @@ def training_progress(collection_args_fn, out_fn):
     for full_model_spec, formatted_d in model_metadata_dict.items():
         # Find largest-numbered weights file for each experiment
         model_wts_dir = top_level_dir / full_model_spec
-        model_wts_dir /= (model_wts_dir / "run_id").read_text()
+
+        run_id_fn = model_wts_dir / "run_id"
+
+        if not (run_id_fn).is_file():
+            formatted_d["Epochs"] = -1
+            df = pandas.DataFrame(formatted_d, index=[0])
+            n_epochs_df.append(df)
+            continue
+
+        mod_time = datetime.datetime.fromtimestamp(run_id_fn.stat().st_mtime)
+        if filter_date and (mod_time < filter_date):
+            formatted_d["Epochs"] = -1
+            df = pandas.DataFrame(formatted_d, index=[0])
+            n_epochs_df.append(df)
+            continue
+
+        model_wts_dir /= (run_id_fn).read_text()
         model_wts = [
             int(p.stem) for p in model_wts_dir.glob("*.th") if p.stem.isdecimal()
         ]
