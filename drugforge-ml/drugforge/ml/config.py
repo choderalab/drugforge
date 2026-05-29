@@ -1258,6 +1258,9 @@ class DataAugType(StringEnum):
     # Shuffle position coordinates
     pos_shuffle = "pos_shuffle"
 
+    # Randomize position coordinates
+    pos_randomize = "pos_randomize"
+
 
 class DataAugConfig(BaseModel):
     """
@@ -1282,7 +1285,7 @@ class DataAugConfig(BaseModel):
         description="Standard deviation of gaussian distribution to draw noise from.",
     )
 
-    # Which coordinates to shuffle
+    # Which coordinates to shuffle/randomize
     which_shuffle: str | None = Field(
         None,
         description=(
@@ -1305,7 +1308,11 @@ class DataAugConfig(BaseModel):
     )
 
     def build(self):
-        from drugforge.ml.data_augmentation import JitterFixed, PositionShuffle
+        from drugforge.ml.data_augmentation import (
+            JitterFixed,
+            PositionRandomize,
+            PositionShuffle,
+        )
 
         match self.aug_type:
             case DataAugType.jitter_fixed:
@@ -1324,7 +1331,14 @@ class DataAugConfig(BaseModel):
                     "dict_key": "pos_key",
                     "lig_idx_key": "lig_idx_key",
                 }
-
+            case DataAugType.pos_randomize:
+                build_class = PositionRandomize
+                kwargs = {
+                    "which": "which_shuffle",
+                    "rand_seed": "rand_seed",
+                    "dict_key": "pos_key",
+                    "lig_idx_key": "lig_idx_key",
+                }
         # Remove any None kwargs
         kwargs = {
             k: getattr(self, v)
