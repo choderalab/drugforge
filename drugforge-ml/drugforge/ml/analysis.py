@@ -345,7 +345,7 @@ def calc_stats(in_fn: Path, out_fn: Path, gb_keys: str):
         preds = preds[range_idx]
         in_range = in_range[range_idx]
 
-        num_compounds = len(g[range_idx, "compound_id"].unique())
+        num_compounds = len(g.loc[range_idx, "compound_id"].unique())
 
         # Values and low/high bounds of 95% CIs for all stats
         stat_names = []
