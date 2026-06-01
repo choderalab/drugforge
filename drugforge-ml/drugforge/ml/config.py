@@ -1307,6 +1307,11 @@ class DataAugConfig(BaseModel):
         None, description="Key to access the ligand index in pose dict."
     )
 
+    # Data type for randomly generated data
+    data_type: str | None = Field(
+        None, description="What type of data to randomly generate."
+    )
+
     def build(self):
         from drugforge.ml.data_augmentation import (
             JitterFixed,
@@ -1338,6 +1343,7 @@ class DataAugConfig(BaseModel):
                     "rand_seed": "rand_seed",
                     "dict_key": "dict_key",
                     "lig_idx_key": "lig_idx_key",
+                    "data_type": "data_type",
                 }
         # Remove any None kwargs
         kwargs = {
