@@ -1300,8 +1300,8 @@ class DataAugConfig(BaseModel):
     )
 
     # Dict keys
-    pos_key: str | None = Field(
-        None, description="Key to access the coords in pose dict."
+    dict_key: str | None = Field(
+        None, description="Key to access the data in pose dict to modify."
     )
     lig_idx_key: str | None = Field(
         None, description="Key to access the ligand index in pose dict."
@@ -1321,14 +1321,14 @@ class DataAugConfig(BaseModel):
                     "mean": "jitter_fixed_mean",
                     "std": "jitter_fixed_std",
                     "rand_seed": "rand_seed",
-                    "dict_key": "pos_key",
+                    "dict_key": "dict_key",
                 }
             case DataAugType.pos_shuffle:
                 build_class = PositionShuffle
                 kwargs = {
                     "which": "which_shuffle",
                     "rand_seed": "rand_seed",
-                    "dict_key": "pos_key",
+                    "dict_key": "dict_key",
                     "lig_idx_key": "lig_idx_key",
                 }
             case DataAugType.pos_randomize:
@@ -1336,7 +1336,7 @@ class DataAugConfig(BaseModel):
                 kwargs = {
                     "which": "which_shuffle",
                     "rand_seed": "rand_seed",
-                    "dict_key": "pos_key",
+                    "dict_key": "dict_key",
                     "lig_idx_key": "lig_idx_key",
                 }
         # Remove any None kwargs
