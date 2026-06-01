@@ -218,6 +218,7 @@ class PositionRandomize:
         rand_seed: int | None = None,
         dict_key: str = "pos",
         lig_idx_key: str = "lig",
+        data_type: str = "float",
     ):
         """
         Parameters
@@ -233,6 +234,14 @@ class PositionRandomize:
         lig_idx_key : str, default="lig"
             If the inputs are a dict, this will be the key used to access the lig_idx in
             the dict
+        data_type : str, default="float"
+            What type of data to generate. Options are:
+                - "float": Random floats will be generated in the range of passed data
+                on a per-column basis
+                - "int": Random ints will be generated in the range of passed data on a
+                per-column basis
+                - "onehot": Random one-hot vectors will be generated with the same shape
+                as the passed data
         """
 
         which = which.lower()
@@ -240,6 +249,13 @@ class PositionRandomize:
             raise ValueError(
                 f"unsupported value {which} for which (supported values are "
                 '["both", "lig", "prot"])'
+            )
+
+        data_type = data_type.lower()
+        if data_type not in {"float", "int", "onehot"}:
+            raise ValueError(
+                f"unsupported value {data_type} for data_type (supported values are "
+                '["float", "int", "onehot"])'
             )
 
         self.which = which
@@ -250,6 +266,7 @@ class PositionRandomize:
             self.g = torch.Generator().manual_seed(torch.random.seed())
         self.dict_key = dict_key
         self.lig_idx_key = lig_idx_key
+        self.data_type = data_type
 
     def __call__(self, coords, lig_idx=None, inplace=False):
         """
@@ -291,22 +308,28 @@ class PositionRandomize:
         else:
             coord_mins = coords.min(axis=0).values
             coord_maxes = coords.max(axis=0).values
+
+        # Unsqueeze if the input is a 0-order tensor so later logic works properly
+        if coord_mins.dim() == 0:
+            coord_mins = coord_mins.unsqueeze(-1)
+            coord_maxes = coord_maxes.unsqueeze(-1)
+
         coord_ranges = coord_maxes - coord_mins
 
         # Fist make a copy of the input coords (if inplace is False)
-        if not inplace:
-            if dict_inp:
-                dict_copy = deepcopy(coords)
-                coords_copy = dict_copy[self.dict_key]
-            else:
-                coords_copy = coords.clone().detach()
+        # if not inplace:
+        if dict_inp:
+            dict_copy = deepcopy(coords)
+            coords_copy = dict_copy[self.dict_key]
         else:
-            # Should just be a reference so inputs should get modified
-            if dict_inp:
-                dict_copy = coords
-                coords_copy = coords_copy[self.dict_key]
-            else:
-                coords_copy = coords
+            coords_copy = coords.clone().detach()
+        # else:
+        #     # Should just be a reference so inputs should get modified
+        #     if dict_inp:
+        #         dict_copy = coords
+        #         coords_copy = coords_copy[self.dict_key]
+        #     else:
+        #         coords_copy = coords
 
         if dict_inp and (self.which != "both"):
             lig_idx = coords[self.lig_idx_key]
@@ -318,16 +341,32 @@ class PositionRandomize:
         elif self.which == "prot":
             shuffle_indices = shuffle_indices[~lig_idx]
 
-        # Generate and scale new coords
-        new_coords = torch.rand(
-            (len(shuffle_indices), coords_copy.shape[1]),
-            dtype=coords_copy.dtype,
-            generator=self.g,
-        )
-        new_coords *= coord_ranges
-        new_coords += coord_mins
+        match self.data_type:
+            case "float":
+                # Generate and scale new coords
+                new_coords = torch.rand(
+                    (len(shuffle_indices), coords_copy.shape[1]),
+                    dtype=coords_copy.dtype,
+                    generator=self.g,
+                )
+                new_coords *= coord_ranges
+                new_coords += coord_mins
+            case "int":
+                new_coords = [
+                    torch.randint(col_min, col_max + 1, (len(shuffle_indices), 1))
+                    for col_min, col_max in zip(coord_mins, coord_maxes)
+                ]
+                new_coords = torch.hstack(new_coords)
+                if new_coords.shape[1] == 1:
+                    new_coords = new_coords.squeeze(-1)
+            case "onehot":
+                num_classes = coords_copy.shape[1]
+                new_coords = torch.nn.functional.one_hot(
+                    torch.randint(num_classes, (len(shuffle_indices),)),
+                    num_classes=num_classes,
+                )
 
-        coords_copy[shuffle_indices, :] = new_coords
+        coords_copy[shuffle_indices, ...] = new_coords
 
         if dict_inp:
             return dict_copy
