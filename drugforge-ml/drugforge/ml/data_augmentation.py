@@ -353,7 +353,12 @@ class PositionRandomize:
                 new_coords += coord_mins
             case "int":
                 new_coords = [
-                    torch.randint(col_min, col_max + 1, (len(shuffle_indices), 1))
+                    torch.randint(
+                        col_min,
+                        col_max + 1,
+                        (len(shuffle_indices), 1),
+                        dtype=coords_copy.dtype,
+                    )
                     for col_min, col_max in zip(coord_mins, coord_maxes)
                 ]
                 new_coords = torch.hstack(new_coords)
@@ -364,7 +369,7 @@ class PositionRandomize:
                 new_coords = torch.nn.functional.one_hot(
                     torch.randint(num_classes, (len(shuffle_indices),)),
                     num_classes=num_classes,
-                )
+                ).to(dtype=coords_copy.dtype)
 
         coords_copy[shuffle_indices, ...] = new_coords
 
