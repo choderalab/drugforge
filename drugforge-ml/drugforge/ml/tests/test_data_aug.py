@@ -1,7 +1,11 @@
 import pytest
 import torch
 
-from drugforge.ml.data_augmentation import PositionRandomize, PositionShuffle
+from drugforge.ml.data_augmentation import (
+    PositionRandomize,
+    PositionShuffle,
+    SplitComplex,
+)
 
 
 @pytest.fixture()
@@ -340,3 +344,24 @@ def test_randomized_fixed_seed(data):
     pos2 = shuff(pos)
 
     assert torch.allclose(pos1, pos2)
+
+
+def test_split(data):
+    pos, lig_idx, *_ = data
+
+    split = SplitComplex()
+    split_pos = split(pos, lig_idx)
+
+    assert torch.allclose(pos[~lig_idx], split_pos[~lig_idx])
+    assert torch.allclose(pos[lig_idx] + split.split_dist, split_pos[lig_idx])
+
+
+def test_split_dict(data_dict):
+    pos = data_dict["pos"]
+    lig_idx = data_dict["lig"]
+
+    split = SplitComplex()
+    split_pos = split(data_dict)["pos"]
+
+    assert torch.allclose(pos[~lig_idx], split_pos[~lig_idx])
+    assert torch.allclose(pos[lig_idx] + split.split_dist, split_pos[lig_idx])
