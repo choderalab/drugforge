@@ -1261,6 +1261,9 @@ class DataAugType(StringEnum):
     # Randomize position coordinates
     pos_randomize = "pos_randomize"
 
+    # Split up the protein-ligand complex
+    split_complex = "split_complex"
+
 
 class DataAugConfig(BaseModel):
     """
@@ -1312,11 +1315,17 @@ class DataAugConfig(BaseModel):
         None, description="What type of data to randomly generate."
     )
 
+    # Distance to move ligand for complex splitting
+    split_dist: float | None = Field(
+        None, description="How far to move the ligand in each (x, y, z) coordinate."
+    )
+
     def build(self):
         from drugforge.ml.data_augmentation import (
             JitterFixed,
             PositionRandomize,
             PositionShuffle,
+            SplitComplex,
         )
 
         match self.aug_type:
@@ -1344,6 +1353,13 @@ class DataAugConfig(BaseModel):
                     "dict_key": "dict_key",
                     "lig_idx_key": "lig_idx_key",
                     "data_type": "data_type",
+                }
+            case DataAugType.split_complex:
+                build_class = SplitComplex
+                kwargs = {
+                    "dict_key": "dict_key",
+                    "lig_idx_key": "lig_idx_key",
+                    "split_dist": "split_dist",
                 }
         # Remove any None kwargs
         kwargs = {
