@@ -1,6 +1,5 @@
 import pytest
 import torch
-
 from drugforge.ml.data_augmentation import (
     PositionRandomize,
     PositionShuffle,
