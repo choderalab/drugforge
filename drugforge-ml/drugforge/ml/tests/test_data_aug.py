@@ -28,6 +28,7 @@ def data_dict():
 
 
 def test_shuffle_pos_both(data):
+    # Test shuffling all positions when input is passed directly
     pos = data[0]
 
     shuff = PositionShuffle()
@@ -35,6 +36,7 @@ def test_shuffle_pos_both(data):
 
 
 def test_shuffle_pos_lig(data):
+    # Test shuffling only ligand positions when input is passed directly
     pos, lig_idx, *_ = data
 
     shuff = PositionShuffle(which="lig")
@@ -45,6 +47,7 @@ def test_shuffle_pos_lig(data):
 
 
 def test_shuffle_pos_prot(data):
+    # Test shuffling only protein positions when input is passed directly
     pos, lig_idx, *_ = data
 
     shuff = PositionShuffle(which="prot")
@@ -55,6 +58,7 @@ def test_shuffle_pos_prot(data):
 
 
 def test_shuffle_pos_lig_dict(data_dict):
+    # Test shuffling only ligand positions when input is passed as a dict
     pos = data_dict["pos"]
     lig_idx = data_dict["lig"]
 
@@ -66,6 +70,7 @@ def test_shuffle_pos_lig_dict(data_dict):
 
 
 def test_shuffle_pos_prot_dict(data_dict):
+    # Test shuffling only protein positions when input is passed as a dict
     pos = data_dict["pos"]
     lig_idx = data_dict["lig"]
 
@@ -77,6 +82,7 @@ def test_shuffle_pos_prot_dict(data_dict):
 
 
 def test_shuffle_atomic_num_both(data):
+    # Test shuffling all atomic numbers when input is passed directly
     atomic_num = data[2]
 
     shuff = PositionShuffle()
@@ -84,6 +90,7 @@ def test_shuffle_atomic_num_both(data):
 
 
 def test_shuffle_atomic_num_lig(data):
+    # Test shuffling only ligand atomic numbers when input is passed directly
     _, lig_idx, atomic_num, _ = data
 
     shuff = PositionShuffle(which="lig")
@@ -94,6 +101,7 @@ def test_shuffle_atomic_num_lig(data):
 
 
 def test_shuffle_atomic_num_prot(data):
+    # Test shuffling only protein atomic numbers when input is passed directly
     _, lig_idx, atomic_num, _ = data
 
     shuff = PositionShuffle(which="prot")
@@ -104,6 +112,7 @@ def test_shuffle_atomic_num_prot(data):
 
 
 def test_shuffle_atomic_num_lig_dict(data_dict):
+    # Test shuffling only ligand atomic numbers when input is passed as a dict
     atomic_num = data_dict["atomic_num"]
     lig_idx = data_dict["lig"]
 
@@ -115,6 +124,7 @@ def test_shuffle_atomic_num_lig_dict(data_dict):
 
 
 def test_shuffle_atomic_num_prot_dict(data_dict):
+    # Test shuffling only protein atomic numbers when input is passed as a dict
     atomic_num = data_dict["atomic_num"]
     lig_idx = data_dict["lig"]
 
@@ -126,6 +136,7 @@ def test_shuffle_atomic_num_prot_dict(data_dict):
 
 
 def test_shuffle_one_hot_both(data):
+    # Test shuffling a one-hot encoding when input is passed directly
     one_hot = data[3]
 
     shuff = PositionShuffle()
@@ -133,6 +144,8 @@ def test_shuffle_one_hot_both(data):
 
 
 def test_shuffle_one_hot_lig(data):
+    # Test shuffling a one-hot encoding for only ligand atoms when input is passed
+    #  directly
     _, lig_idx, _, one_hot = data
 
     shuff = PositionShuffle(which="lig")
@@ -143,6 +156,8 @@ def test_shuffle_one_hot_lig(data):
 
 
 def test_shuffle_one_hot_prot(data):
+    # Test shuffling a one-hot encoding for only protein atoms when input is passed
+    #  directly
     _, lig_idx, _, one_hot = data
 
     shuff = PositionShuffle(which="prot")
@@ -153,6 +168,8 @@ def test_shuffle_one_hot_prot(data):
 
 
 def test_shuffle_one_hot_lig_dict(data_dict):
+    # Test shuffling a one-hot encoding for only ligand atoms when input is passed as a
+    #  dict
     one_hot = data_dict["one_hot"]
     lig_idx = data_dict["lig"]
 
@@ -164,6 +181,8 @@ def test_shuffle_one_hot_lig_dict(data_dict):
 
 
 def test_shuffle_one_hot_prot_dict(data_dict):
+    # Test shuffling a one-hot encoding for only protein atoms when input is passed as a
+    #  dict
     one_hot = data_dict["one_hot"]
     lig_idx = data_dict["lig"]
 
@@ -175,6 +194,7 @@ def test_shuffle_one_hot_prot_dict(data_dict):
 
 
 def test_shuffled_pos_fixed_seed(data):
+    # Make sure that using a fixed seed shuffles reproducibly
     pos = data[0]
 
     shuff = PositionShuffle(rand_seed=0)
@@ -187,6 +207,7 @@ def test_shuffled_pos_fixed_seed(data):
 
 
 def test_randomize_pos_both(data):
+    # Test randomizing all positions when input is passed directly
     pos = data[0]
 
     shuff = PositionRandomize()
@@ -194,6 +215,7 @@ def test_randomize_pos_both(data):
 
 
 def test_randomize_pos_lig(data):
+    # Test randomizing ligand positions when input is passed directly
     pos, lig_idx, *_ = data
 
     shuff = PositionRandomize(which="lig")
@@ -204,6 +226,7 @@ def test_randomize_pos_lig(data):
 
 
 def test_randomize_pos_prot(data):
+    # Test randomizing protein positions when input is passed directly
     pos, lig_idx, *_ = data
 
     shuff = PositionRandomize(which="prot")
@@ -214,6 +237,7 @@ def test_randomize_pos_prot(data):
 
 
 def test_randomize_pos_lig_dict(data_dict):
+    # Test randomizing ligand positions when input is passed as a dict
     pos = data_dict["pos"]
     lig_idx = data_dict["lig"]
 
@@ -225,6 +249,7 @@ def test_randomize_pos_lig_dict(data_dict):
 
 
 def test_randomize_pos_prot_dict(data_dict):
+    # Test randomizing protein positions when input is passed as a dict
     pos = data_dict["pos"]
     lig_idx = data_dict["lig"]
 
@@ -236,6 +261,7 @@ def test_randomize_pos_prot_dict(data_dict):
 
 
 def test_randomize_int_both(data):
+    # Test randomizing integer data when input is passed directly
     atomic_num = data[2]
 
     rand = PositionRandomize(dict_key="atomic_num", data_type="int")
@@ -243,6 +269,7 @@ def test_randomize_int_both(data):
 
 
 def test_randomize_int_lig(data):
+    # Test randomizing integer data for only ligand atoms when input is passed directly
     _, lig_idx, atomic_num, _ = data
 
     rand = PositionRandomize(which="lig", dict_key="atomic_num", data_type="int")
@@ -253,6 +280,7 @@ def test_randomize_int_lig(data):
 
 
 def test_randomize_int_prot(data):
+    # Test randomizing integer data for only protein atoms when input is passed directly
     _, lig_idx, atomic_num, _ = data
 
     rand = PositionRandomize(which="prot", dict_key="atomic_num", data_type="int")
@@ -263,6 +291,7 @@ def test_randomize_int_prot(data):
 
 
 def test_randomize_int_lig_dict(data_dict):
+    # Test randomizing integer data for only ligand atoms when input is passed as a dict
     atomic_num = data_dict["atomic_num"]
     lig_idx = data_dict["lig"]
 
@@ -274,6 +303,8 @@ def test_randomize_int_lig_dict(data_dict):
 
 
 def test_randomize_int_prot_dict(data_dict):
+    # Test randomizing integer data for only protein atoms when input is passed as a
+    #  dict
     atomic_num = data_dict["atomic_num"]
     lig_idx = data_dict["lig"]
 
@@ -285,6 +316,7 @@ def test_randomize_int_prot_dict(data_dict):
 
 
 def test_randomize_one_hot_both(data):
+    # Test randomizing one-hot data when input is passed directly
     one_hot = data[3]
 
     rand = PositionRandomize(dict_key="one_hot", data_type="onehot")
@@ -292,6 +324,7 @@ def test_randomize_one_hot_both(data):
 
 
 def test_randomize_one_hot_lig(data):
+    # Test randomizing one-hot data for only ligand atoms when input is passed directly
     _, lig_idx, _, one_hot = data
 
     rand = PositionRandomize(which="lig", dict_key="one_hot", data_type="onehot")
@@ -302,6 +335,7 @@ def test_randomize_one_hot_lig(data):
 
 
 def test_randomize_one_hot_prot(data):
+    # Test randomizing one-hot data for only protein atoms when input is passed directly
     _, lig_idx, _, one_hot = data
 
     rand = PositionRandomize(which="prot", dict_key="one_hot", data_type="onehot")
@@ -312,6 +346,7 @@ def test_randomize_one_hot_prot(data):
 
 
 def test_randomize_one_hot_lig_dict(data_dict):
+    # Test randomizing one-hot data for only ligand atoms when input is passed as a dict
     one_hot = data_dict["one_hot"]
     lig_idx = data_dict["lig"]
 
@@ -323,6 +358,8 @@ def test_randomize_one_hot_lig_dict(data_dict):
 
 
 def test_randomize_one_hot_prot_dict(data_dict):
+    # Test randomizing one-hot data for only protein atoms when input is passed as a
+    #  dict
     one_hot = data_dict["one_hot"]
     lig_idx = data_dict["lig"]
 
@@ -334,6 +371,7 @@ def test_randomize_one_hot_prot_dict(data_dict):
 
 
 def test_randomized_fixed_seed(data):
+    # Make sure that using a fixed seed randomizes reproducibly
     pos = data[0]
 
     shuff = PositionRandomize(rand_seed=0)
@@ -346,6 +384,8 @@ def test_randomized_fixed_seed(data):
 
 
 def test_split(data):
+    # Test that SplitComplex is moving only the ligand atoms the correct distance away
+    #  for input passed directly
     pos, lig_idx, *_ = data
 
     split = SplitComplex()
@@ -356,6 +396,8 @@ def test_split(data):
 
 
 def test_split_dict(data_dict):
+    # Test that SplitComplex is moving only the ligand atoms the correct distance away
+    #  for input passed as a dict
     pos = data_dict["pos"]
     lig_idx = data_dict["lig"]
 
