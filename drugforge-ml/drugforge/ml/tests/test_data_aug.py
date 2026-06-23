@@ -206,6 +206,19 @@ def test_shuffled_pos_fixed_seed(data):
     assert torch.allclose(pos1, pos2)
 
 
+def test_shuffled_pos_diff_seeds(data):
+    # Make sure that using different fixed seeds produces different shuffles
+    pos = data[0]
+
+    shuff = PositionShuffle(rand_seed=0)
+    pos1 = shuff(pos)
+
+    shuff = PositionShuffle(rand_seed=1)
+    pos2 = shuff(pos)
+
+    assert not torch.allclose(pos1, pos2)
+
+
 def test_randomize_pos_both(data):
     # Test randomizing all positions when input is passed directly
     pos = data[0]
@@ -381,6 +394,19 @@ def test_randomized_fixed_seed(data):
     pos2 = shuff(pos)
 
     assert torch.allclose(pos1, pos2)
+
+
+def test_randomized_diff_seeds(data):
+    # Make sure that using different fixed seeds produces different randomizations
+    pos = data[0]
+
+    shuff = PositionRandomize(rand_seed=0)
+    pos1 = shuff(pos)
+
+    shuff = PositionRandomize(rand_seed=1)
+    pos2 = shuff(pos)
+
+    assert not torch.allclose(pos1, pos2)
 
 
 def test_split(data):
