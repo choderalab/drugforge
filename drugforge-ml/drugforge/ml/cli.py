@@ -355,7 +355,7 @@ def build(
     start_epoch: int | None = None,
     n_epochs: int | None = None,
     batch_size: int | None = None,
-    target_prop: str | None = None,
+    target_prop: tuple[str] = (),
     cont: bool | None = None,
     loss_dict: dict | None = None,
     device: torch.device | None = None,
@@ -598,8 +598,11 @@ def build(
         total number of epochs to train for
     batch_size: int, optional
         Number of samples to predict on before performing backprop
-    target_prop: str, optional
-        Target property to train against
+    target_prop: tuple[str], optional
+        Target property(s) to train against. If one value is passed, the same target
+        prop will be used for all loss functions. If multiple values are passed, there
+        must be one for each loss function, and they will be assumed to be in the same
+        order
     cont: bool, optional
         This is a continuation of a previous training run
     loss_dict: dict, optional
@@ -771,7 +774,7 @@ def build(
         "start_epoch": start_epoch,
         "n_epochs": n_epochs,
         "batch_size": batch_size,
-        "target_prop": target_prop,
+        "target_props": target_prop,
         "cont": cont,
         "loss_dict": loss_dict,
         "device": device,
@@ -887,7 +890,7 @@ def build_and_train(
     start_epoch: int | None = None,
     n_epochs: int | None = None,
     batch_size: int | None = None,
-    target_prop: str | None = None,
+    target_prop: tuple[str] = (),
     cont: bool | None = None,
     loss_dict: dict | None = None,
     device: torch.device | None = None,
@@ -1128,8 +1131,11 @@ def build_and_train(
         total number of epochs to train for
     batch_size: int, optional
         Number of samples to predict on before performing backprop
-    target_prop: str, optional
-        Target property to train against
+    target_prop: tuple[str], optional
+        Target property(s) to train against. If one value is passed, the same target
+        prop will be used for all loss functions. If multiple values are passed, there
+        must be one for each loss function, and they will be assumed to be in the same
+        order
     cont: bool, optional
         This is a continuation of a previous training run
     loss_dict: dict, optional
@@ -1302,7 +1308,7 @@ def build_and_train(
         "start_epoch": start_epoch,
         "n_epochs": n_epochs,
         "batch_size": batch_size,
-        "target_prop": target_prop,
+        "target_props": target_prop,
         "cont": cont,
         "loss_dict": loss_dict,
         "device": device,
