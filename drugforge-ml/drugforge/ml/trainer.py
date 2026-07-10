@@ -1042,7 +1042,6 @@ class Trainer(BaseModel):
                     # Make prediction and calculate loss
                     pred, pose_preds = self.model(model_inp)
 
-                ## Still need to make sure we're skipping missing target props
                 losses = [
                     (
                         loss_func(
@@ -1057,14 +1056,21 @@ class Trainer(BaseModel):
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
                 )
 
+                # Adjust loss weights as needed to rebalance for missing targets
+                use_loss_weights = self.loss_weights.clone().detach()
+                for i, t in enumerate(all_targets):
+                    if t is None:
+                        use_loss_weights[i] = 0
+                use_loss_weights = use_loss_weights / use_loss_weights.sum()
+
                 # Calculate final loss based on loss weights
-                loss = losses.flatten().dot(self.loss_weights)
+                loss = losses.flatten().dot(use_loss_weights)
 
                 # Update pred_tracker
                 for loss_val, loss_config, loss_wt, target_prop in zip(
                     losses,
                     self.loss_configs,
-                    self.loss_weights,
+                    use_loss_weights,
                     self.target_props,
                 ):
                     if target is None:
@@ -1245,7 +1251,6 @@ class Trainer(BaseModel):
                     with torch.no_grad():
                         pred, pose_preds = self.model(model_inp)
 
-                ## Still need to make sure we're skipping missing target props
                 losses = [
                     (
                         loss_func(
@@ -1260,14 +1265,23 @@ class Trainer(BaseModel):
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
                 )
 
+                # Adjust loss weights as needed to rebalance for missing targets
+                use_eval_loss_weights = self.eval_loss_weights.clone().detach()
+                for i, t in enumerate(all_targets):
+                    if t is None:
+                        use_eval_loss_weights[i] = 0
+                use_eval_loss_weights = (
+                    use_eval_loss_weights / use_eval_loss_weights.sum()
+                )
+
                 # Calculate final loss based on loss weights
-                loss = losses.flatten().dot(self.eval_loss_weights)
+                loss = losses.flatten().dot(use_eval_loss_weights)
 
                 # Update pred_tracker
                 for loss_val, loss_config, loss_wt, target_prop in zip(
                     losses,
                     self.loss_configs,
-                    self.eval_loss_weights,
+                    use_eval_loss_weights,
                     self.target_props,
                 ):
                     if target is None:
@@ -1374,7 +1388,6 @@ class Trainer(BaseModel):
                     with torch.no_grad():
                         pred, pose_preds = self.model(model_inp)
 
-                ## Still need to make sure we're skipping missing target props
                 losses = [
                     (
                         loss_func(
@@ -1389,14 +1402,23 @@ class Trainer(BaseModel):
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
                 )
 
+                # Adjust loss weights as needed to rebalance for missing targets
+                use_eval_loss_weights = self.eval_loss_weights.clone().detach()
+                for i, t in enumerate(all_targets):
+                    if t is None:
+                        use_eval_loss_weights[i] = 0
+                use_eval_loss_weights = (
+                    use_eval_loss_weights / use_eval_loss_weights.sum()
+                )
+
                 # Calculate final loss based on loss weights
-                loss = losses.flatten().dot(self.eval_loss_weights)
+                loss = losses.flatten().dot(use_eval_loss_weights)
 
                 # Update pred_tracker
                 for loss_val, loss_config, loss_wt, target_prop in zip(
                     losses,
                     self.loss_configs,
-                    self.eval_loss_weights,
+                    use_eval_loss_weights,
                     self.target_props,
                 ):
                     if target is None:
