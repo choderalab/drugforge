@@ -133,7 +133,15 @@ class Trainer(BaseModel):
             "Set to -1 (default) to use the entire training set as a batch."
         ),
     )
-    target_prop: str = Field("pIC50", description=("Target property to train against."))
+    target_props: list[str] = Field(
+        ["pIC50"],
+        description=(
+            "Target property(s) to train against. If one value is passed, the same "
+            "target prop will be used for all loss functions. If multiple values are "
+            "passed, there must be one for each loss function, and they will be "
+            "assumed to be in the same order."
+        ),
+    )
     cont: bool = Field(
         False, description="This is a continuation of a previous training run."
     )
@@ -622,6 +630,22 @@ class Trainer(BaseModel):
 
         # Normalize to 1
         v /= v.sum()
+
+        return v
+
+    @field_validator("target_props", mode="before")
+    def check_target_props(cls, v, info):
+        """
+        Make sure that we have the right number of target props.
+        """
+        if (len(v) > 0) and (len(v) != len(info.data["loss_configs"])):
+            raise ValueError(
+                f"Mismatch between number of target props ({len(v)}) and number of "
+                f"loss functions ({len(info.data['loss_configs'])})."
+            )
+
+        if len(v) == 1:
+            v = v * len(info.data["loss_configs"])
 
         return v
 
