@@ -1048,6 +1048,8 @@ class Trainer(BaseModel):
                             pred, pose_preds, target, in_range, uncertainty
                         ).reshape((1,))
                     )
+                    if target is not None
+                    else torch.tensor(torch.nan).reshape((1,))
                     for loss_func, target, in_range, uncertainty in zip(
                         self.loss_funcs, all_targets, all_in_ranges, all_uncertainties
                     )
@@ -1257,6 +1259,8 @@ class Trainer(BaseModel):
                             pred, pose_preds, target, in_range, uncertainty
                         ).reshape((1,))
                     )
+                    if target is not None
+                    else torch.tensor(torch.nan).reshape((1,))
                     for loss_func, target, in_range, uncertainty in zip(
                         self.loss_funcs, all_targets, all_in_ranges, all_uncertainties
                     )
@@ -1394,6 +1398,8 @@ class Trainer(BaseModel):
                             pred, pose_preds, target, in_range, uncertainty
                         ).reshape((1,))
                     )
+                    if target is not None
+                    else torch.tensor(torch.nan).reshape((1,))
                     for loss_func, target, in_range, uncertainty in zip(
                         self.loss_funcs, all_targets, all_in_ranges, all_uncertainties
                     )
