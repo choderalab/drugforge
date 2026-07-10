@@ -58,7 +58,12 @@ class TrainingPrediction(BaseModel):
     @field_validator("target_val", mode="before")
     def cast_target_val(cls, v):
         if isinstance(v, torch.Tensor):
-            return v.item()
+            try:
+                return v.item()
+            except RuntimeError:
+                # Assume data is one-hot/we're trying to predict the max, collapse just
+                #  to idx of max of target
+                return v.argmax().item()
 
         return v
 
