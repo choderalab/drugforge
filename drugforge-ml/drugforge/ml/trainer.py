@@ -956,35 +956,62 @@ class Trainer(BaseModel):
                     xtal_id = "NA"
                     compound_id = compound
 
-                try:
-                    # convert to float to match other types
-                    target = torch.tensor(
-                        pose[self.target_prop], device=self.device
-                    ).float()
-                except KeyError:
+                all_targets = []
+                all_in_ranges = []
+                all_uncertainties = []
+                for target_prop in self.target_props:
+                    try:
+                        # convert to float to match other types
+                        target = torch.tensor(
+                            pose[target_prop], device=self.device
+                        ).float()
+                    except KeyError:
+                        print(
+                            f"{target_prop} not found in compound {compound}.",
+                            flush=True,
+                        )
+                        if self.log_file:
+                            self.logger.info(
+                                f"{target_prop} not found in compound {compound}."
+                            )
+
+                        # If there's no target val just skip this one, assume there will
+                        #  be other targets that do apply
+                        all_targets.append(None)
+                        all_in_ranges.append(None)
+                        all_uncertainties.append(None)
+
+                        continue
+                    in_range = (
+                        torch.tensor(
+                            pose[f"{target_prop}_range"], device=self.device
+                        ).float()
+                        if f"{target_prop}_range" in pose
+                        else None
+                    )
+                    uncertainty = (
+                        torch.tensor(
+                            pose[f"{target_prop}_stderr"], device=self.device
+                        ).float()
+                        if f"{target_prop}_range" in pose
+                        else None
+                    )
+
+                    all_targets.append(target)
+                    all_in_ranges.append(in_range)
+                    all_uncertainties.append(uncertainty)
+
+                # Make sure there's at least one target
+                if all([t is None for t in all_targets]):
                     print(
-                        f"{self.target_prop} not found in compound {compound}, skipping.",
+                        f"No targets found in compound {compound}, skipping.",
                         flush=True,
                     )
                     if self.log_file:
                         self.logger.info(
-                            f"{self.target_prop} not found in compound {compound}, skipping."
+                            f"No targets found in compound {compound}, skipping."
                         )
                     continue
-                in_range = (
-                    torch.tensor(
-                        pose[f"{self.target_prop}_range"], device=self.device
-                    ).float()
-                    if f"{self.target_prop}_range" in pose
-                    else None
-                )
-                uncertainty = (
-                    torch.tensor(
-                        pose[f"{self.target_prop}_stderr"], device=self.device
-                    ).float()
-                    if f"{self.target_prop}_range" in pose
-                    else None
-                )
 
                 if self.mtenn_model_config.model_type == ModelType.split:
                     # Data augmentation not yet implemented for split models
@@ -1015,13 +1042,16 @@ class Trainer(BaseModel):
                     # Make prediction and calculate loss
                     pred, pose_preds = self.model(model_inp)
 
+                ## Still need to make sure we're skipping missing target props
                 losses = [
                     (
                         loss_func(
                             pred, pose_preds, target, in_range, uncertainty
                         ).reshape((1,))
                     )
-                    for loss_func in self.loss_funcs
+                    for loss_func, target, in_range, uncertainty in zip(
+                        self.loss_funcs, all_targets, all_in_ranges, all_uncertainties
+                    )
                 ]
                 losses = torch.cat(
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
@@ -1031,14 +1061,11 @@ class Trainer(BaseModel):
                 loss = losses.flatten().dot(self.loss_weights)
 
                 # Update pred_tracker
-                for (
-                    loss_val,
-                    loss_config,
-                    loss_wt,
-                ) in zip(
+                for loss_val, loss_config, loss_wt, target_prop in zip(
                     losses,
                     self.loss_configs,
                     self.loss_weights,
+                    self.target_props,
                 ):
                     if target is None:
                         continue
@@ -1049,7 +1076,7 @@ class Trainer(BaseModel):
                         split="train",
                         compound_id=compound_id,
                         xtal_id=xtal_id,
-                        target_prop=self.target_prop,
+                        target_prop=target_prop,
                         target_val=target,
                         in_range=in_range,
                         uncertainty=uncertainty,
@@ -1142,35 +1169,62 @@ class Trainer(BaseModel):
                     xtal_id = "NA"
                     compound_id = compound
 
-                try:
-                    # convert to float to match other types
-                    target = torch.tensor(
-                        pose[self.target_prop], device=self.device
-                    ).float()
-                except KeyError:
+                all_targets = []
+                all_in_ranges = []
+                all_uncertainties = []
+                for target_prop in self.target_props:
+                    try:
+                        # convert to float to match other types
+                        target = torch.tensor(
+                            pose[target_prop], device=self.device
+                        ).float()
+                    except KeyError:
+                        print(
+                            f"{target_prop} not found in compound {compound}.",
+                            flush=True,
+                        )
+                        if self.log_file:
+                            self.logger.info(
+                                f"{target_prop} not found in compound {compound}."
+                            )
+
+                        # If there's no target val just skip this one, assume there will
+                        #  be other targets that do apply
+                        all_targets.append(None)
+                        all_in_ranges.append(None)
+                        all_uncertainties.append(None)
+
+                        continue
+                    in_range = (
+                        torch.tensor(
+                            pose[f"{target_prop}_range"], device=self.device
+                        ).float()
+                        if f"{target_prop}_range" in pose
+                        else None
+                    )
+                    uncertainty = (
+                        torch.tensor(
+                            pose[f"{target_prop}_stderr"], device=self.device
+                        ).float()
+                        if f"{target_prop}_range" in pose
+                        else None
+                    )
+
+                    all_targets.append(target)
+                    all_in_ranges.append(in_range)
+                    all_uncertainties.append(uncertainty)
+
+                # Make sure there's at least one target
+                if all([t is None for t in all_targets]):
                     print(
-                        f"{self.target_prop} not found in compound {compound}, skipping.",
+                        f"No targets found in compound {compound}, skipping.",
                         flush=True,
                     )
                     if self.log_file:
                         self.logger.info(
-                            f"{self.target_prop} not found in compound {compound}, skipping."
+                            f"No targets found in compound {compound}, skipping."
                         )
                     continue
-                in_range = (
-                    torch.tensor(
-                        pose[f"{self.target_prop}_range"], device=self.device
-                    ).float()
-                    if f"{self.target_prop}_range" in pose
-                    else None
-                )
-                uncertainty = (
-                    torch.tensor(
-                        pose[f"{self.target_prop}_stderr"], device=self.device
-                    ).float()
-                    if f"{self.target_prop}_range" in pose
-                    else None
-                )
 
                 if self.mtenn_model_config.model_type == ModelType.split:
                     # Make prediction and calculate loss
@@ -1191,13 +1245,16 @@ class Trainer(BaseModel):
                     with torch.no_grad():
                         pred, pose_preds = self.model(model_inp)
 
+                ## Still need to make sure we're skipping missing target props
                 losses = [
                     (
                         loss_func(
                             pred, pose_preds, target, in_range, uncertainty
                         ).reshape((1,))
                     )
-                    for loss_func in self.loss_funcs
+                    for loss_func, target, in_range, uncertainty in zip(
+                        self.loss_funcs, all_targets, all_in_ranges, all_uncertainties
+                    )
                 ]
                 losses = torch.cat(
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
@@ -1207,14 +1264,11 @@ class Trainer(BaseModel):
                 loss = losses.flatten().dot(self.eval_loss_weights)
 
                 # Update pred_tracker
-                for (
-                    loss_val,
-                    loss_config,
-                    loss_wt,
-                ) in zip(
+                for loss_val, loss_config, loss_wt, target_prop in zip(
                     losses,
                     self.loss_configs,
                     self.eval_loss_weights,
+                    self.target_props,
                 ):
                     if target is None:
                         continue
@@ -1225,7 +1279,7 @@ class Trainer(BaseModel):
                         split="val",
                         compound_id=compound_id,
                         xtal_id=xtal_id,
-                        target_prop=self.target_prop,
+                        target_prop=target_prop,
                         target_val=target,
                         in_range=in_range,
                         uncertainty=uncertainty,
@@ -1244,35 +1298,62 @@ class Trainer(BaseModel):
                     xtal_id = "NA"
                     compound_id = compound
 
-                try:
-                    # convert to float to match other types
-                    target = torch.tensor(
-                        pose[self.target_prop], device=self.device
-                    ).float()
-                except KeyError:
+                all_targets = []
+                all_in_ranges = []
+                all_uncertainties = []
+                for target_prop in self.target_props:
+                    try:
+                        # convert to float to match other types
+                        target = torch.tensor(
+                            pose[target_prop], device=self.device
+                        ).float()
+                    except KeyError:
+                        print(
+                            f"{target_prop} not found in compound {compound}.",
+                            flush=True,
+                        )
+                        if self.log_file:
+                            self.logger.info(
+                                f"{target_prop} not found in compound {compound}."
+                            )
+
+                        # If there's no target val just skip this one, assume there will
+                        #  be other targets that do apply
+                        all_targets.append(None)
+                        all_in_ranges.append(None)
+                        all_uncertainties.append(None)
+
+                        continue
+                    in_range = (
+                        torch.tensor(
+                            pose[f"{target_prop}_range"], device=self.device
+                        ).float()
+                        if f"{target_prop}_range" in pose
+                        else None
+                    )
+                    uncertainty = (
+                        torch.tensor(
+                            pose[f"{target_prop}_stderr"], device=self.device
+                        ).float()
+                        if f"{target_prop}_range" in pose
+                        else None
+                    )
+
+                    all_targets.append(target)
+                    all_in_ranges.append(in_range)
+                    all_uncertainties.append(uncertainty)
+
+                # Make sure there's at least one target
+                if all([t is None for t in all_targets]):
                     print(
-                        f"{self.target_prop} not found in compound {compound}, skipping.",
+                        f"No targets found in compound {compound}, skipping.",
                         flush=True,
                     )
                     if self.log_file:
                         self.logger.info(
-                            f"{self.target_prop} not found in compound {compound}, skipping."
+                            f"No targets found in compound {compound}, skipping."
                         )
                     continue
-                in_range = (
-                    torch.tensor(
-                        pose[f"{self.target_prop}_range"], device=self.device
-                    ).float()
-                    if f"{self.target_prop}_range" in pose
-                    else None
-                )
-                uncertainty = (
-                    torch.tensor(
-                        pose[f"{self.target_prop}_stderr"], device=self.device
-                    ).float()
-                    if f"{self.target_prop}_range" in pose
-                    else None
-                )
 
                 if self.mtenn_model_config.model_type == ModelType.split:
                     # Make prediction and calculate loss
@@ -1293,13 +1374,16 @@ class Trainer(BaseModel):
                     with torch.no_grad():
                         pred, pose_preds = self.model(model_inp)
 
+                ## Still need to make sure we're skipping missing target props
                 losses = [
                     (
                         loss_func(
                             pred, pose_preds, target, in_range, uncertainty
                         ).reshape((1,))
                     )
-                    for loss_func in self.loss_funcs
+                    for loss_func, target, in_range, uncertainty in zip(
+                        self.loss_funcs, all_targets, all_in_ranges, all_uncertainties
+                    )
                 ]
                 losses = torch.cat(
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
@@ -1309,14 +1393,11 @@ class Trainer(BaseModel):
                 loss = losses.flatten().dot(self.eval_loss_weights)
 
                 # Update pred_tracker
-                for (
-                    loss_val,
-                    loss_config,
-                    loss_wt,
-                ) in zip(
+                for loss_val, loss_config, loss_wt, target_prop in zip(
                     losses,
                     self.loss_configs,
                     self.eval_loss_weights,
+                    self.target_props,
                 ):
                     if target is None:
                         continue
@@ -1327,7 +1408,7 @@ class Trainer(BaseModel):
                         split="test",
                         compound_id=compound_id,
                         xtal_id=xtal_id,
-                        target_prop=self.target_prop,
+                        target_prop=target_prop,
                         target_val=target,
                         in_range=in_range,
                         uncertainty=uncertainty,
@@ -1566,11 +1647,8 @@ class Trainer(BaseModel):
         ds_tables = []
 
         table_cols = ["crystal", "compound_id"]
-        table_cols += [
-            self.target_prop,
-            f"{self.target_prop}_range",
-            f"{self.target_prop}_stderr",
-        ]
+        for target_prop in self.target_props:
+            table_cols += [target_prop, f"{target_prop}_range", f"{target_prop}_stderr"]
         table_cols += ["date_created"]
         for ds in [self.ds_train, self.ds_val, self.ds_test]:
             table = wandb.Table(columns=table_cols)
