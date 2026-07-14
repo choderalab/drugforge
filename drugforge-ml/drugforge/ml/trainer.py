@@ -1183,15 +1183,6 @@ class Trainer(BaseModel):
                             pose[target_prop], device=self.device
                         ).float()
                     except KeyError:
-                        print(
-                            f"{target_prop} not found in compound {compound}.",
-                            flush=True,
-                        )
-                        if self.log_file:
-                            self.logger.info(
-                                f"{target_prop} not found in compound {compound}."
-                            )
-
                         # If there's no target val just skip this one, assume there will
                         #  be other targets that do apply
                         all_targets.append(None)
@@ -1327,15 +1318,6 @@ class Trainer(BaseModel):
                             pose[target_prop], device=self.device
                         ).float()
                     except KeyError:
-                        print(
-                            f"{target_prop} not found in compound {compound}.",
-                            flush=True,
-                        )
-                        if self.log_file:
-                            self.logger.info(
-                                f"{target_prop} not found in compound {compound}."
-                            )
-
                         # If there's no target val just skip this one, assume there will
                         #  be other targets that do apply
                         all_targets.append(None)
