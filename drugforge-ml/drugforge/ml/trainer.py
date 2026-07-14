@@ -966,15 +966,6 @@ class Trainer(BaseModel):
                             pose[target_prop], device=self.device
                         ).float()
                     except KeyError:
-                        print(
-                            f"{target_prop} not found in compound {compound}.",
-                            flush=True,
-                        )
-                        if self.log_file:
-                            self.logger.info(
-                                f"{target_prop} not found in compound {compound}."
-                            )
-
                         # If there's no target val just skip this one, assume there will
                         #  be other targets that do apply
                         all_targets.append(None)
@@ -1058,15 +1049,19 @@ class Trainer(BaseModel):
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
                 )
 
+                # Index of which preds to use (don't filter based on nan losses bc that
+                #  might happen unintentionally and we want to catch those)
+                use_pred_idx = torch.tensor([t is not None for t in all_targets])
+
                 # Adjust loss weights as needed to rebalance for missing targets
                 use_loss_weights = self.loss_weights.clone().detach()
-                for i, t in enumerate(all_targets):
-                    if t is None:
-                        use_loss_weights[i] = 0
+                use_loss_weights[~use_pred_idx] = 0
                 use_loss_weights = use_loss_weights / use_loss_weights.sum()
 
                 # Calculate final loss based on loss weights
-                loss = losses.flatten().dot(use_loss_weights)
+                loss = losses.flatten()[use_pred_idx].dot(
+                    use_loss_weights[use_pred_idx]
+                )
 
                 # Update pred_tracker
                 for loss_val, loss_config, loss_wt, target_prop, target in zip(
@@ -1270,17 +1265,21 @@ class Trainer(BaseModel):
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
                 )
 
+                # Index of which preds to use (don't filter based on nan losses bc that
+                #  might happen unintentionally and we want to catch those)
+                use_pred_idx = torch.tensor([t is not None for t in all_targets])
+
                 # Adjust loss weights as needed to rebalance for missing targets
-                use_eval_loss_weights = self.eval_loss_weights.clone().detach()
-                for i, t in enumerate(all_targets):
-                    if t is None:
-                        use_eval_loss_weights[i] = 0
+                use_eval_loss_weights = self.loss_weights.clone().detach()
+                use_eval_loss_weights[~use_pred_idx] = 0
                 use_eval_loss_weights = (
                     use_eval_loss_weights / use_eval_loss_weights.sum()
                 )
 
                 # Calculate final loss based on loss weights
-                loss = losses.flatten().dot(use_eval_loss_weights)
+                loss = losses.flatten()[use_pred_idx].dot(
+                    use_eval_loss_weights[use_pred_idx]
+                )
 
                 # Update pred_tracker
                 for loss_val, loss_config, loss_wt, target_prop, target in zip(
@@ -1410,17 +1409,21 @@ class Trainer(BaseModel):
                     [loss.to(self.device, dtype=torch.float32) for loss in losses]
                 )
 
+                # Index of which preds to use (don't filter based on nan losses bc that
+                #  might happen unintentionally and we want to catch those)
+                use_pred_idx = torch.tensor([t is not None for t in all_targets])
+
                 # Adjust loss weights as needed to rebalance for missing targets
-                use_eval_loss_weights = self.eval_loss_weights.clone().detach()
-                for i, t in enumerate(all_targets):
-                    if t is None:
-                        use_eval_loss_weights[i] = 0
+                use_eval_loss_weights = self.loss_weights.clone().detach()
+                use_eval_loss_weights[~use_pred_idx] = 0
                 use_eval_loss_weights = (
                     use_eval_loss_weights / use_eval_loss_weights.sum()
                 )
 
                 # Calculate final loss based on loss weights
-                loss = losses.flatten().dot(use_eval_loss_weights)
+                loss = losses.flatten()[use_pred_idx].dot(
+                    use_eval_loss_weights[use_pred_idx]
+                )
 
                 # Update pred_tracker
                 for loss_val, loss_config, loss_wt, target_prop, target in zip(
@@ -1491,7 +1494,9 @@ class Trainer(BaseModel):
                 (self.output_dir / "ds_train.pkl").write_bytes(pkl.dumps(self.ds_train))
                 (self.output_dir / "ds_val.pkl").write_bytes(pkl.dumps(self.ds_val))
                 (self.output_dir / "ds_test.pkl").write_bytes(pkl.dumps(self.ds_test))
-                raise ValueError("Unrecoverable loss value reached.")
+                raise ValueError(
+                    f"Unrecoverable loss value reached {epoch_train_loss}."
+                )
 
             # Stop training if EarlyStopping says to
             if self.early_stopping:
