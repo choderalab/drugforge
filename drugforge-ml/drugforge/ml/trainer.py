@@ -1069,11 +1069,12 @@ class Trainer(BaseModel):
                 loss = losses.flatten().dot(use_loss_weights)
 
                 # Update pred_tracker
-                for loss_val, loss_config, loss_wt, target_prop in zip(
+                for loss_val, loss_config, loss_wt, target_prop, target in zip(
                     losses,
                     self.loss_configs,
                     use_loss_weights,
                     self.target_props,
+                    all_targets,
                 ):
                     if target is None:
                         continue
@@ -1282,11 +1283,12 @@ class Trainer(BaseModel):
                 loss = losses.flatten().dot(use_eval_loss_weights)
 
                 # Update pred_tracker
-                for loss_val, loss_config, loss_wt, target_prop in zip(
+                for loss_val, loss_config, loss_wt, target_prop, target in zip(
                     losses,
                     self.loss_configs,
                     use_eval_loss_weights,
                     self.target_props,
+                    all_targets,
                 ):
                     if target is None:
                         continue
@@ -1421,11 +1423,12 @@ class Trainer(BaseModel):
                 loss = losses.flatten().dot(use_eval_loss_weights)
 
                 # Update pred_tracker
-                for loss_val, loss_config, loss_wt, target_prop in zip(
+                for loss_val, loss_config, loss_wt, target_prop, target in zip(
                     losses,
                     self.loss_configs,
                     use_eval_loss_weights,
                     self.target_props,
+                    all_targets,
                 ):
                     if target is None:
                         continue
