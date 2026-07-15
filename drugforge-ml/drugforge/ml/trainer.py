@@ -1064,12 +1064,20 @@ class Trainer(BaseModel):
                 )
 
                 # Update pred_tracker
-                for loss_val, loss_config, loss_wt, target_prop, target in zip(
+                for (
+                    loss_val,
+                    loss_config,
+                    loss_wt,
+                    target_prop,
+                    target,
+                    in_range,
+                ) in zip(
                     losses,
                     self.loss_configs,
                     use_loss_weights,
                     self.target_props,
                     all_targets,
+                    all_in_ranges,
                 ):
                     if target is None:
                         continue
@@ -1273,12 +1281,20 @@ class Trainer(BaseModel):
                 )
 
                 # Update pred_tracker
-                for loss_val, loss_config, loss_wt, target_prop, target in zip(
+                for (
+                    loss_val,
+                    loss_config,
+                    loss_wt,
+                    target_prop,
+                    target,
+                    in_range,
+                ) in zip(
                     losses,
                     self.loss_configs,
                     use_eval_loss_weights,
                     self.target_props,
                     all_targets,
+                    all_in_ranges,
                 ):
                     if target is None:
                         continue
@@ -1408,12 +1424,20 @@ class Trainer(BaseModel):
                 )
 
                 # Update pred_tracker
-                for loss_val, loss_config, loss_wt, target_prop, target in zip(
+                for (
+                    loss_val,
+                    loss_config,
+                    loss_wt,
+                    target_prop,
+                    target,
+                    in_range,
+                ) in zip(
                     losses,
                     self.loss_configs,
                     use_eval_loss_weights,
                     self.target_props,
                     all_targets,
+                    all_in_ranges,
                 ):
                     if target is None:
                         continue
