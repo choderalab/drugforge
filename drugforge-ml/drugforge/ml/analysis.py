@@ -49,6 +49,12 @@ def analysis():
     type=click.DateTime(),
     help="Don't load results from before this date.",
 )
+@click.option(
+    "--pred-tracker-name",
+    type=str,
+    default="pred_tracker.json",
+    help="Name of individual pred tracker files to load.",
+)
 def build_results_dfs(
     collection_args_fn: Path,
     output_dir: Path = None,
@@ -57,6 +63,7 @@ def build_results_dfs(
     gat: bool = False,
     n_workers: int = 16,
     filter_date: datetime.date = None,
+    pred_tracker_name: str = "pred_tracker.json",
 ):
     """
     Build and save results df CSV files for an experiment, combining results from all
@@ -86,6 +93,8 @@ def build_results_dfs(
         Number of concurrent processes to run when loading files
     fiter_date : datetime.date, optional
         Only run pred_tracker.json files that were last modified on or after this date
+    pred_tracker_name, default="pred_tracker.json"
+        Name of individual pred tracker files to load
     """
     collection_kwargs = yaml.safe_load(collection_args_fn.read_text())
     top_level_dir = Path(collection_kwargs["top_level_dir"])
@@ -110,6 +119,7 @@ def build_results_dfs(
         top_level_dir=top_level_dir,
         model_dir_str=model_dir_str,
         model_spec_kwargs=model_spec_kwargs,
+        pred_tracker_name=pred_tracker_name,
         spec_name_to_output_name=spec_name_to_output_name,
         spec_lab_to_output_lab=spec_lab_to_output_lab,
         extract_epochs=parsed_extract_epochs,
@@ -140,6 +150,7 @@ def build_results_dfs(
             top_level_dir=top_level_dir,
             model_dir_str=model_dir_str,
             model_spec_kwargs=model_spec_kwargs,
+            pred_tracker_name=pred_tracker_name,
             spec_name_to_output_name=spec_name_to_output_name,
             spec_lab_to_output_lab=spec_lab_to_output_lab,
             extract_epochs=parsed_extract_epochs,

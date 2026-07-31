@@ -1119,6 +1119,7 @@ def load_collection_df(
     top_level_dir: Path,
     model_dir_str: str,
     model_spec_kwargs: dict[str, list[str]],
+    pred_tracker_name: str = "pred_tracker.json",
     spec_name_to_output_name: dict[str, str] = None,
     spec_lab_to_output_lab: dict[str, dict[str, str]] = None,
     extract_epochs: list[str | int] = None,
@@ -1148,6 +1149,8 @@ def load_collection_df(
         Dict mapping list of field names from `model_dir_str` to all the possible
         options for each field. The runs that will be loaded will be the cartesian
         product of all the values in this dict
+    pred_tracker_name, default="pred_tracker.json"
+        Name of individual pred tracker files to load
     spec_name_to_output_name : dict[str, str], optional
         Dict mapping the field name in `model_dir_str`/`model_spec_kwargs` to a
         different string to be used as the keys in the output key tuples. If not provided
@@ -1209,11 +1212,11 @@ def load_collection_df(
             run_id = run_id_fn.read_text()
             mod_time = datetime.fromtimestamp(run_id_fn.stat().st_mtime)
             pred_tracker_fn = (
-                top_level_dir / cur_model_dir / f"{run_id}/pred_tracker.json"
+                top_level_dir / cur_model_dir / f"{run_id}/{pred_tracker_name}"
             )
-        elif (top_level_dir / cur_model_dir / "pred_tracker.json").is_file():
+        elif (top_level_dir / cur_model_dir / pred_tracker_name).is_file():
             run_id = ""
-            pred_tracker_fn = top_level_dir / cur_model_dir / "pred_tracker.json"
+            pred_tracker_fn = top_level_dir / cur_model_dir / pred_tracker_name
             mod_time = datetime.fromtimestamp(pred_tracker_fn.stat().st_mtime)
         else:
             if verbose:
