@@ -141,6 +141,7 @@ class Trainer(BaseModel):
             "passed, there must be one for each loss function, and they will be "
             "assumed to be in the same order."
         ),
+        min_length=1,
     )
     cont: bool = Field(
         False, description="This is a continuation of a previous training run."
@@ -638,6 +639,11 @@ class Trainer(BaseModel):
         """
         Make sure that we have the right number of target props.
         """
+        # First check if a target_prop was specfied (old version, won't have
+        #  target_props)
+        if "target_prop" in info.data:
+            return [info.data["target_prop"]] * len(info.data["loss_configs"])
+
         if (len(v) > 0) and (len(v) != len(info.data["loss_configs"])):
             raise ValueError(
                 f"Mismatch between number of target props ({len(v)}) and number of "
