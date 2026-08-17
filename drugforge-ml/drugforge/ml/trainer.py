@@ -640,11 +640,6 @@ class Trainer(BaseModel):
         """
         Make sure that we have the right number of target props.
         """
-        # First check if a target_prop was specfied (old version, won't have
-        #  target_props)
-        if "target_prop" in info.data:
-            return [info.data["target_prop"]] * len(info.data["loss_configs"])
-
         if (len(v) > 0) and (len(v) != len(info.data["loss_configs"])):
             raise ValueError(
                 f"Mismatch between number of target props ({len(v)}) and number of "
@@ -655,6 +650,17 @@ class Trainer(BaseModel):
             v = v * len(info.data["loss_configs"])
 
         return v
+
+    @model_validator(mode="after")
+    def transfer_target_prop(self):
+        """
+        If Trainer is older, will have target_prop specified instead of target_props,
+        so need to transfer those over.
+        """
+        if hasattr(self, "target_prop"):
+            self.target_props = [self.target_prop] * len(self.target_props)
+
+        return self
 
     @field_validator("pred_tracker", mode="before")
     def init_pred_tracker(cls, pred_tracker):
