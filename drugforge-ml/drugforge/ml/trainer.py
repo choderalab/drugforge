@@ -142,6 +142,7 @@ class Trainer(BaseModel):
             "assumed to be in the same order."
         ),
         min_length=1,
+        validate_default=True,
     )
     cont: bool = Field(
         False, description="This is a continuation of a previous training run."
