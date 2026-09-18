@@ -952,7 +952,7 @@ def predict(
                 "NaNs? You can manually remove these or run `predict -c` to remove them automatically."
             )
     elif not is_connected and force_largest:
-        fe_map = cinnabar_femap_get_largest_subnetwork(fe_map, result_network, console)
+        fe_map = cinnabar_femap_get_largest_subnetwork(fe_map, console)
         fe_map.generate_absolute_values()
     else:
         raise ValueError(

@@ -4,7 +4,11 @@ from uuid import uuid4
 import pandas
 import pytest
 from alchemiscale import Scope, ScopedKey
-from drugforge.alchemy.cli.utils import get_cdd_molecules, upload_to_postera
+from drugforge.alchemy.cli.utils import (
+    cinnabar_femap_get_largest_subnetwork,
+    get_cdd_molecules,
+    upload_to_postera,
+)
 from drugforge.alchemy.schema.fec import (
     AlchemiscaleResults,
     FreeEnergyCalculationNetwork,
@@ -13,6 +17,23 @@ from drugforge.alchemy.utils import extract_custom_ligand_network
 from gufe.protocols import ProtocolDAGResult, ProtocolUnitResult
 from openfe.protocols.openmm_rfe import RelativeHybridTopologyProtocolResult
 from openff.units import unit as OFFUnit
+from rich.console import Console
+
+
+def test_cinnabar_femap_get_largest_subnetwork(
+    tyk2_result_network_disconnected,
+):
+    """The largest disconnected component can round-trip through networkx."""
+    fe_map = tyk2_result_network_disconnected.results.to_fe_map()
+
+    largest_subnetwork = cinnabar_femap_get_largest_subnetwork(
+        fe_map=fe_map,
+        console=Console(),
+    )
+
+    assert fe_map.n_ligands == 7
+    assert largest_subnetwork.n_ligands == 4
+    assert largest_subnetwork.check_weakly_connected()
 
 
 def test_create_network(monkeypatch, tyk2_fec_network, alchemiscale_helper):
